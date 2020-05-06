@@ -23,11 +23,11 @@ class PanTextField extends StatefulWidget {
   final TextInputAction textInputAction;
   final EdgeInsetsGeometry margin, padding;
   final FocusNode focusNode, nextFocusNode;
+  final bool isPassword, bottomBorderOnly;
   final String text, hint, fontFamily;
   final FontWeight fontWeight;
   final FontStyle fontStyle;
   final Alignment alignment;
-  final bool isPassword;
 
   PanTextField(
       {Key key,
@@ -50,6 +50,7 @@ class PanTextField extends StatefulWidget {
       this.focusedBorderWidth,
       this.hint,
       this.isPassword = false,
+      this.bottomBorderOnly = false,
       this.controller,
       this.textInputAction = TextInputAction.done,
       this.focusNode,
@@ -78,15 +79,20 @@ class _PanTextFieldState extends State<PanTextField> {
   @override
   Widget build(BuildContext context) {
     var border;
+    var borderSide;
+    var focusedBorderSide;
     if (widget.borderColor != null || widget.borderWidth != null) {
-      border = new OutlineInputBorder(
-          borderRadius: BorderRadius.circular(widget.radius),
-          borderSide: BorderSide(
-              width: widget.borderWidth,
-              color: widget.borderColor,
-              style: BorderStyle.solid));
+      borderSide = BorderSide(
+          width: widget.borderWidth,
+          color: widget.borderColor,
+          style: BorderStyle.solid);
+      if (!widget.bottomBorderOnly) {
+        border = new OutlineInputBorder(
+            borderRadius: BorderRadius.circular(widget.radius),
+            borderSide: borderSide);
+      }
     } else {
-      if (widget.radius != null) {
+      if (widget.radius != 0) {
         border = new OutlineInputBorder(
             borderRadius: BorderRadius.circular(widget.radius));
       }
@@ -94,14 +100,17 @@ class _PanTextFieldState extends State<PanTextField> {
     var focusedBorder;
     if (widget.focusedBorderColor != null ||
         widget.focusedBorderWidth != null) {
-      focusedBorder = new OutlineInputBorder(
-          borderRadius: BorderRadius.circular(widget.radius),
-          borderSide: BorderSide(
-              width: widget.focusedBorderWidth,
-              color: widget.focusedBorderColor,
-              style: BorderStyle.solid));
+      focusedBorderSide = BorderSide(
+          width: widget.borderWidth,
+          color: widget.borderColor,
+          style: BorderStyle.solid);
+      if (!widget.bottomBorderOnly) {
+        focusedBorder = new OutlineInputBorder(
+            borderRadius: BorderRadius.circular(widget.radius),
+            borderSide: focusedBorderSide);
+      }
     } else {
-      if (widget.radius != null) {
+      if (widget.radius != 0) {
         focusedBorder = new OutlineInputBorder(
             borderRadius: BorderRadius.circular(widget.radius));
       }
@@ -125,6 +134,12 @@ class _PanTextFieldState extends State<PanTextField> {
       height: widget.height,
       margin: widget.margin,
       alignment: widget.alignment,
+      decoration: widget.bottomBorderOnly
+          ? BoxDecoration(
+              borderRadius: BorderRadius.circular(widget.radius),
+              border: Border(bottom: borderSide),
+            )
+          : null,
       child: TextFormField(
         controller: widget.controller,
         obscureText: _obscureText,
@@ -148,8 +163,8 @@ class _PanTextFieldState extends State<PanTextField> {
           height: widget.fontHeight,
         ),
         decoration: InputDecoration(
-            border: border,
-            focusedBorder: focusedBorder,
+            border: !widget.bottomBorderOnly ? border : null,
+            focusedBorder: !widget.bottomBorderOnly ? focusedBorder : null,
             fillColor: widget.background,
             contentPadding: widget.padding,
             hintText: widget.hint,
