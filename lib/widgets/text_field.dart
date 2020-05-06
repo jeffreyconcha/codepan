@@ -9,7 +9,8 @@ class PanTextField extends StatefulWidget {
       background,
       borderColor,
       focusedBorderColor,
-      hintFontColor;
+      hintFontColor,
+      iconColor;
   final double width,
       height,
       fontSize,
@@ -40,7 +41,7 @@ class PanTextField extends StatefulWidget {
       this.fontWeight = FontWeight.normal,
       this.alignment = Alignment.center,
       this.background = C.none,
-      this.radius = 0,
+      this.radius,
       this.margin,
       this.padding,
       this.hintFontColor,
@@ -60,7 +61,8 @@ class PanTextField extends StatefulWidget {
       this.minLines,
       this.maxLength,
       this.width,
-      this.height})
+      this.height,
+      this.iconColor})
       : super(key: key);
 
   @override
@@ -69,58 +71,39 @@ class PanTextField extends StatefulWidget {
 
 class _PanTextFieldState extends State<PanTextField> {
   bool _obscureText;
+  Color _borderColor;
+  double _borderWidth;
 
   @override
   void initState() {
     super.initState();
     _obscureText = widget.isPassword;
+    _borderColor = widget.borderColor;
+    _borderWidth = widget.borderWidth;
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     var border;
-    var borderSide;
-    var focusedBorder;
-    var focusedBorderSide;
-    if (widget.borderColor != null || widget.borderWidth != null) {
-      borderSide = BorderSide(
-          width: widget.borderWidth,
-          color: widget.borderColor,
-          style: BorderStyle.solid);
-      if (!widget.bottomBorderOnly) {
-        border = new OutlineInputBorder(
-            borderRadius: BorderRadius.circular(widget.radius),
-            borderSide: borderSide);
-      }
-    } else {
-      if (widget.radius != 0) {
-        border = new OutlineInputBorder(
-            borderRadius: BorderRadius.circular(widget.radius));
-      }
+    if (_borderWidth != null && _borderColor != null) {
+      final side = BorderSide(color: _borderColor, width: _borderWidth);
+      border = widget.bottomBorderOnly
+          ? new Border(bottom: side)
+          : Border.fromBorderSide(side);
     }
-    if (widget.focusedBorderColor != null ||
-        widget.focusedBorderWidth != null) {
-      focusedBorderSide = BorderSide(
-          width: widget.focusedBorderWidth,
-          color: widget.focusedBorderColor,
-          style: BorderStyle.solid);
-      if (!widget.bottomBorderOnly) {
-        focusedBorder = new OutlineInputBorder(
-            borderRadius: BorderRadius.circular(widget.radius),
-            borderSide: focusedBorderSide);
-      }
-    } else {
-      if (widget.radius != 0) {
-        focusedBorder = new OutlineInputBorder(
-            borderRadius: BorderRadius.circular(widget.radius));
-      }
-    }
+    final borderRadius =
+        widget.radius != null ? BorderRadius.circular(widget.radius) : null;
     var suffixIcon;
     if (widget.isPassword) {
       suffixIcon = IconButton(
         icon: Icon(
           _obscureText ? Icons.visibility_off : Icons.visibility,
-          color: Default.fontColor,
+          color: widget.iconColor,
         ),
         onPressed: () {
           setState(() {
@@ -133,47 +116,54 @@ class _PanTextFieldState extends State<PanTextField> {
       width: widget.width,
       height: widget.height,
       margin: widget.margin,
-      alignment: widget.alignment,
-      decoration: widget.bottomBorderOnly
-          ? BoxDecoration(
-              borderRadius: BorderRadius.circular(widget.radius),
-              border: Border(bottom: borderSide),
-            )
-          : null,
-      child: TextFormField(
-        controller: widget.controller,
-        obscureText: _obscureText,
-        textInputAction: widget.textInputAction,
-        focusNode: widget.focusNode,
-        onFieldSubmitted: (value) {
-          if (widget.textInputAction == TextInputAction.next) {
-            FocusScope.of(context).requestFocus(widget.nextFocusNode);
-          }
-          widget.onFieldSubmitted(value);
-        },
-        maxLines: widget.isPassword ? 1 : widget.maxLength,
-        minLines: widget.minLines,
-        maxLength: widget.maxLength,
-        style: TextStyle(
-          color: widget.fontColor,
-          fontFamily: widget.fontFamily,
-          fontStyle: widget.fontStyle,
-          fontWeight: widget.fontWeight,
-          fontSize: widget.fontSize,
-          height: widget.fontHeight,
+      decoration: BoxDecoration(
+        color: widget.background,
+        border: border,
+        borderRadius: borderRadius,
+      ),
+      child: Focus(
+        child: TextFormField(
+          controller: widget.controller,
+          obscureText: _obscureText,
+          textInputAction: widget.textInputAction,
+          onFieldSubmitted: (value) {
+            if (widget.textInputAction == TextInputAction.next) {
+              FocusScope.of(context).requestFocus(widget.nextFocusNode);
+            }
+            widget.onFieldSubmitted(value);
+          },
+          maxLines: widget.isPassword ? 1 : widget.maxLength,
+          minLines: widget.minLines,
+          maxLength: widget.maxLength,
+          style: TextStyle(
+            color: widget.fontColor,
+            fontFamily: widget.fontFamily,
+            fontStyle: widget.fontStyle,
+            fontWeight: widget.fontWeight,
+            fontSize: widget.fontSize,
+            height: widget.fontHeight,
+          ),
+          decoration: InputDecoration(
+              border: InputBorder.none,
+              focusedBorder: InputBorder.none,
+              disabledBorder: InputBorder.none,
+              enabledBorder: InputBorder.none,
+              contentPadding: widget.padding,
+              hintText: widget.hint,
+              hintStyle: TextStyle(
+                  color: widget.hintFontColor,
+                  fontFamily: widget.fontFamily,
+                  fontSize: widget.fontSize),
+              suffixIcon: suffixIcon),
         ),
-        decoration: InputDecoration(
-//            border: !widget.bottomBorderOnly ? border : null,
-//            focusedBorder: !widget.bottomBorderOnly ? focusedBorder : null,
-            fillColor: widget.background,
-            contentPadding: widget.padding,
-            hintText: widget.hint,
-            hintStyle: TextStyle(
-                color: widget.hintFontColor,
-                fontFamily: widget.fontFamily,
-                fontSize: widget.fontSize),
-            suffixIcon: suffixIcon,
-            filled: true),
+        onFocusChange: (hasFocus) {
+          setState(() {
+            this._borderColor =
+                hasFocus ? widget.focusedBorderColor : widget.borderColor;
+            this._borderWidth =
+                hasFocus ? widget.focusedBorderWidth : widget.borderWidth;
+          });
+        },
       ),
     );
   }
