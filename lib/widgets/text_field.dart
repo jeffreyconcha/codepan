@@ -163,8 +163,8 @@ class _PanTextFieldState extends State<PanTextField> {
           height: widget.fontHeight,
         ),
         decoration: InputDecoration(
-            border: !widget.bottomBorderOnly ? border : null,
-            focusedBorder: !widget.bottomBorderOnly ? focusedBorder : null,
+//            border: !widget.bottomBorderOnly ? border : null,
+//            focusedBorder: !widget.bottomBorderOnly ? focusedBorder : null,
             fillColor: widget.background,
             contentPadding: widget.padding,
             hintText: widget.hint,
