@@ -4,7 +4,7 @@ import 'package:codepan/properties.dart';
 import 'package:codepan/resources/colors.dart';
 
 // ignore: must_be_immutable
-class CPTextField extends StatefulWidget {
+class PanTextField extends StatefulWidget {
   final Color fontColor,
       background,
       borderColor,
@@ -29,7 +29,7 @@ class CPTextField extends StatefulWidget {
   final Alignment alignment;
   final bool isPassword;
 
-  CPTextField(
+  PanTextField(
       {Key key,
       this.text,
       this.fontSize,
@@ -63,10 +63,10 @@ class CPTextField extends StatefulWidget {
       : super(key: key);
 
   @override
-  _CPTextFieldState createState() => _CPTextFieldState();
+  _PanTextFieldState createState() => _PanTextFieldState();
 }
 
-class _CPTextFieldState extends State<CPTextField> {
+class _PanTextFieldState extends State<PanTextField> {
   bool _obscureText;
 
   @override

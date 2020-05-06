@@ -3,7 +3,7 @@ import 'package:flutter/widgets.dart';
 import 'package:codepan/properties.dart';
 import 'package:codepan/resources/colors.dart';
 
-class CPText extends StatelessWidget {
+class PanText extends StatelessWidget {
   final double width, height, fontSize, fontHeight, radius, borderWidth;
   final Color fontColor, background, borderColor;
   final EdgeInsetsGeometry margin, padding;
@@ -12,7 +12,7 @@ class CPText extends StatelessWidget {
   final FontStyle fontStyle;
   final Alignment alignment;
 
-  const CPText({
+  const PanText({
     Key key,
     this.text,
     this.fontSize,

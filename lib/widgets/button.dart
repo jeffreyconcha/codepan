@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:codepan/widgets/text.dart';
 import 'package:codepan/resources/colors.dart';
 
-class CPButton extends StatelessWidget {
+class PanButton extends StatelessWidget {
   final double fontSize, fontHeight, radius, borderWidth, width, height;
   final Color fontColor, background, borderColor;
   final EdgeInsetsGeometry margin, padding;
@@ -12,8 +12,9 @@ class CPButton extends StatelessWidget {
   final FontWeight fontWeight;
   final FontStyle fontStyle;
   final Alignment alignment;
+  final Widget child;
 
-  const CPButton({
+  const PanButton({
     Key key,
     this.text,
     this.fontSize,
@@ -32,10 +33,20 @@ class CPButton extends StatelessWidget {
     this.onPressed,
     this.width,
     this.height,
+    this.child,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    var child = this.child != null
+        ? this.child
+        : PanText(
+            text: text,
+            fontSize: fontSize,
+            fontColor: fontColor,
+            fontWeight: fontWeight,
+            fontFamily: fontFamily,
+          );
     return Container(
       width: width,
       height: height,
@@ -47,12 +58,7 @@ class CPButton extends StatelessWidget {
               borderRadius: BorderRadius.circular(radius),
               side: BorderSide(color: borderColor, width: borderWidth)),
           padding: padding,
-          child: CPText(
-            text: text,
-            fontSize: fontSize,
-            fontColor: fontColor,
-            fontWeight: fontWeight,
-          ),
+          child: child,
           onPressed: onPressed),
     );
   }
