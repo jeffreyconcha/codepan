@@ -11,6 +11,7 @@ class PanText extends StatelessWidget {
   final FontWeight fontWeight;
   final FontStyle fontStyle;
   final Alignment alignment;
+  final TextAlign textAlign;
 
   const PanText({
     Key key,
@@ -23,6 +24,7 @@ class PanText extends StatelessWidget {
     this.fontWeight = FontWeight.normal,
     this.alignment = Alignment.center,
     this.background = C.none,
+    this.textAlign = TextAlign.center,
     this.radius = 0,
     this.margin,
     this.padding,
@@ -40,14 +42,17 @@ class PanText extends StatelessWidget {
       margin: margin,
       padding: padding,
       alignment: alignment,
-      child: Text(text,
-          style: TextStyle(
-              color: fontColor,
-              fontFamily: fontFamily,
-              fontStyle: fontStyle,
-              fontWeight: fontWeight,
-              height: fontHeight,
-              fontSize: fontSize)),
+      child: Text(
+        text,
+        style: TextStyle(
+            color: fontColor,
+            fontFamily: fontFamily,
+            fontStyle: fontStyle,
+            fontWeight: fontWeight,
+            height: fontHeight,
+            fontSize: fontSize),
+        textAlign: textAlign,
+      ),
       decoration: BoxDecoration(
         color: background,
         borderRadius: BorderRadius.circular(radius),
