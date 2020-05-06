@@ -12,7 +12,7 @@ mixin Dimension {
     if (_context != null) {
       MediaQueryData data = MediaQuery.of(_context);
       Size size = data.size;
-      return dp * (baseline / size.width);
+      return dp * (size.width / baseline);
     }
     return dp;
   }
