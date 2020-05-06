@@ -80,6 +80,7 @@ class _PanTextFieldState extends State<PanTextField> {
   Widget build(BuildContext context) {
     var border;
     var borderSide;
+    var focusedBorder;
     var focusedBorderSide;
     if (widget.borderColor != null || widget.borderWidth != null) {
       borderSide = BorderSide(
@@ -97,12 +98,11 @@ class _PanTextFieldState extends State<PanTextField> {
             borderRadius: BorderRadius.circular(widget.radius));
       }
     }
-    var focusedBorder;
     if (widget.focusedBorderColor != null ||
         widget.focusedBorderWidth != null) {
       focusedBorderSide = BorderSide(
-          width: widget.borderWidth,
-          color: widget.borderColor,
+          width: widget.focusedBorderWidth,
+          color: widget.focusedBorderColor,
           style: BorderStyle.solid);
       if (!widget.bottomBorderOnly) {
         focusedBorder = new OutlineInputBorder(
