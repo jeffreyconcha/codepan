@@ -1,12 +1,12 @@
 import 'package:flutter/cupertino.dart';
 
-class CPScrollView extends StatelessWidget {
+class PanScrollView extends StatelessWidget {
   final Axis scrollDirection;
   final EdgeInsets padding;
   final bool disableGlow;
   final Widget child;
 
-  const CPScrollView(
+  const PanScrollView(
       {Key key,
       this.child,
       this.scrollDirection,

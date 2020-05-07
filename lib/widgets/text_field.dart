@@ -3,7 +3,6 @@ import 'package:flutter/widgets.dart';
 import 'package:codepan/properties.dart';
 import 'package:codepan/resources/colors.dart';
 
-// ignore: must_be_immutable
 class PanTextField extends StatefulWidget {
   final Color fontColor,
       background,
@@ -30,7 +29,7 @@ class PanTextField extends StatefulWidget {
   final FontStyle fontStyle;
   final Alignment alignment;
 
-  PanTextField(
+  const PanTextField(
       {Key key,
       this.text,
       this.fontSize,
