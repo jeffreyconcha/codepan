@@ -26,8 +26,6 @@ class SQLiteBinder {
     bool result = false;
     await _batch.commit(noResult: true).then((v) {
       result = true;
-    }).catchError((e) {
-      print(e);
     });
     return result;
   }

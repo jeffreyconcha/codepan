@@ -2,19 +2,26 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:sqflite_sqlcipher/sqflite.dart';
 import 'package:path/path.dart';
+import 'package:codepan/database/sqlite_exception.dart';
+
+typedef OnDatabaseCreate = FutureOr<void> Function(
+    SQLiteAdapter db, int version);
+typedef OnDatabaseUpgrade = FutureOr<void> Function(
+    SQLiteAdapter db, int ov, int nv);
+typedef OnDatabaseDowngrade = FutureOr<void> Function(
+    SQLiteAdapter db, int ov, int nv);
 
 class SQLiteAdapter implements DatabaseExecutor {
-  final FutureOr<void> Function(Database db, int ov, int nv) onUpgrade,
-      onDowngrade;
-  final FutureOr<void> Function(Database db, int version) onCreate;
+  final OnDatabaseDowngrade onDowngrade;
+  final OnDatabaseUpgrade onUpgrade;
+  final OnDatabaseCreate onCreate;
   final String name, password;
   final int version;
-  String _path;
   Database _db;
 
   Database get instance {
     if (_db == null || !_db.isOpen) {
-      throw SQLiteAdapterException(SQLiteAdapterException.DATABASE_NOT_OPENED);
+      throw SQLiteException(SQLiteException.DATABASE_NOT_OPENED);
     }
     return _db;
   }
@@ -31,15 +38,37 @@ class SQLiteAdapter implements DatabaseExecutor {
   /// Always use await when opening a database
   Future<void> openConnection() async {
     if (_db == null || !_db.isOpen) {
-      var directory = await getDatabasesPath();
-      this._path = join(directory, name);
+      int old;
+      bool isCreated = false;
+      bool isUpgraded = false;
+      bool isDowngraded = false;
+      final directory = await getDatabasesPath();
+      final path = join(directory, name);
       this._db = await openDatabase(
-        _path,
+        path,
         version: version,
         password: password,
-        onCreate: onCreate,
-        onUpgrade: onUpgrade,
+        onCreate: (db, nv) {
+          isCreated = onCreate != null;
+        },
+        onUpgrade: (db, ov, nv) {
+          isUpgraded = onUpgrade != null;
+          old = ov;
+        },
+        onDowngrade: (db, ov, nv) {
+          isDowngraded = onDowngrade != null;
+          old = ov;
+        },
       );
+      if (isCreated) {
+        onCreate(this, version);
+      }
+      if (isUpgraded) {
+        onUpgrade(this, old, version);
+      }
+      if (isDowngraded) {
+        onDowngrade(this, old, version);
+      }
     }
   }
 
@@ -48,16 +77,16 @@ class SQLiteAdapter implements DatabaseExecutor {
   }
 
   Future<dynamic> getValue(String sql) async {
-    var list = await instance.rawQuery(sql);
+    final list = await instance.rawQuery(sql);
     if (list.isNotEmpty) {
-      var first = list.first;
-      return first.values.toList()[0];
+      final first = list.first;
+      return first.values.first;
     }
     return null;
   }
 
   Future<Map<String, dynamic>> getRecord(String sql) async {
-    var list = await instance.rawQuery(sql);
+    final list = await instance.rawQuery(sql);
     if (list.isNotEmpty) {
       return list.first;
     }
@@ -80,6 +109,32 @@ class SQLiteAdapter implements DatabaseExecutor {
       transaction = txn;
     }, exclusive: true);
     return transaction;
+  }
+
+  Future<List<String>> getColumnList(String table) async {
+    final list = new List<String>();
+    final sql = "PRAGMA table_info($table)";
+    final cursor = await instance.rawQuery(sql);
+    if (cursor.isNotEmpty) {
+      cursor.forEach((map) {
+        if (map.isNotEmpty) {
+          list.add(map['name'] as String);
+        }
+      });
+    }
+    return list;
+  }
+
+  Future<int> getTableColumnCount(String table) async {
+    final sql = "PRAGMA table_info($table)";
+    final cursor = await instance.rawQuery(sql);
+    return cursor.length;
+  }
+
+  Future<int> getIndexColumnCount(String index) async {
+    final sql = "PRAGMA index_info($index)";
+    final cursor = await instance.rawQuery(sql);
+    return cursor.length;
   }
 
   @override
@@ -150,13 +205,4 @@ class SQLiteAdapter implements DatabaseExecutor {
         whereArgs: whereArgs,
         conflictAlgorithm: conflictAlgorithm);
   }
-}
-
-class SQLiteAdapterException extends DatabaseException {
-
-  static const String DATABASE_NOT_OPENED = "Database is not open, "
-          "client did not call await openDatabase().";
-
-  SQLiteAdapterException(String message) : super(message);
-
 }

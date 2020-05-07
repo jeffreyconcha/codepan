@@ -12,25 +12,47 @@ class Field extends SQLiteEntity {
 
   bool get hasDataType => type != null;
 
-  String get dataType => hasDataType ? type.toString() : null;
+  String get dataType => hasDataType ? type.toString().split('.').last : null;
 
-  String get defaultValue => value != null ? value.toString() : null;
+  String get defaultValue {
+    if (value != null) {
+      if (value is bool) {
+        return value ? "1" : "0";
+      } else {
+        return value.toString();
+      }
+    }
+    return null;
+  }
 
   Field(String _field, {this.type, this.constraint, this.value})
       : super(_field) {
     if (value != null) {
       this.constraint = Constraint.DEFAULT;
-      this.type = value is int ? DataType.INTEGER : DataType.TEXT;
+      this.type =
+          value is int || value is bool ? DataType.INTEGER : DataType.TEXT;
     }
   }
 
-  Field.foreignKey(this.table) : super(null) {
+  Field.asPrimaryKey() : super(SQLiteQuery.ID) {
+    this.constraint = Constraint.PRIMARY_KEY;
+    this.type = DataType.INTEGER;
+    this.table = table;
+  }
+
+  Field.asForeignKey(String field, Table table) : super(field) {
     this.constraint = Constraint.FOREIGN_KEY;
+    this.type = DataType.INTEGER;
+    this.table = table;
+  }
+
+  Field.asUnique(String field) : super(field) {
+    this.constraint = Constraint.UNIQUE;
     this.type = DataType.INTEGER;
   }
 
   String asString() {
-    var buffer = new StringBuffer();
+    final buffer = new StringBuffer();
     if (hasDataType) {
       buffer.write("$field $dataType");
       if (hasConstraint) {
