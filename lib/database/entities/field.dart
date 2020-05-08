@@ -34,7 +34,7 @@ class Field extends SQLiteEntity {
     }
   }
 
-  Field.asPrimaryKey() : super(SQLiteQuery.ID) {
+  Field.asPrimaryKey([String field = SQLiteQuery.ID]) : super(field) {
     this.constraint = Constraint.PRIMARY_KEY;
     this.type = DataType.INTEGER;
     this.table = table;
