@@ -1,12 +1,10 @@
 import 'package:flutter/widgets.dart';
 
-mixin Dimension {
+class Dimension {
   final double baseline = 360;
-  BuildContext _context;
+  final BuildContext _context;
 
-  void setDimensionContext(BuildContext context) {
-    this._context = context;
-  }
+  Dimension(this._context);
 
   double dimen(double dp) {
     if (_context != null) {
