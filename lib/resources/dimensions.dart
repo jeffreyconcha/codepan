@@ -1,23 +1,23 @@
 import 'package:flutter/widgets.dart';
 
 class Dimension {
-  final double baseline = 360;
-  final BuildContext _context;
+  static const double BASELINE = 360;
+  final BuildContext context;
 
-  Dimension(this._context);
+  const Dimension(this.context);
 
-  double dimen(double dp) {
-    if (_context != null) {
-      MediaQueryData data = MediaQuery.of(_context);
+  double at(double dp) {
+    if (context != null) {
+      MediaQueryData data = MediaQuery.of(context);
       Size size = data.size;
-      return dp * (size.width / baseline);
+      return dp * (size.width / BASELINE);
     }
     return dp;
   }
 
   double get maxHeight {
-    if (_context != null) {
-      MediaQueryData data = MediaQuery.of(_context);
+    if (context != null) {
+      MediaQueryData data = MediaQuery.of(context);
       print(data.size);
       return data.size.height;
     }
@@ -25,8 +25,8 @@ class Dimension {
   }
 
   double get maxWidth {
-    if (_context != null) {
-      MediaQueryData data = MediaQuery.of(_context);
+    if (context != null) {
+      MediaQueryData data = MediaQuery.of(context);
       print(data.size);
       return data.size.width;
     }
