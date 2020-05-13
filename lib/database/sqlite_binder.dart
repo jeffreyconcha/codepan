@@ -116,25 +116,25 @@ class SQLiteBinder {
   }
 
   void dropTable(String table) {
-    var query = new SQLiteQuery();
+    final query = SQLiteQuery();
     String sql = query.dropTable(table);
     batch.execute(sql);
   }
 
   void dropIndex(String idx) {
-    var query = new SQLiteQuery();
+    final query = SQLiteQuery();
     String sql = query.dropIndex(idx);
     batch.execute(sql);
   }
 
   void renameTable(String oldName, String newName) {
-    var query = new SQLiteQuery();
+    final query = SQLiteQuery();
     String sql = query.renameTable(oldName, newName);
     batch.execute(sql);
   }
 
   void addColumn(String table, Field field) {
-    var query = new SQLiteQuery();
+    final query = SQLiteQuery();
     String sql = query.addColumn(table, field);
     batch.execute(sql);
   }

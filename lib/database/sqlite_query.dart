@@ -43,11 +43,21 @@ class SQLiteQuery {
   SQLiteQuery();
 
   SQLiteQuery.fromMap(Map<String, dynamic> map) {
-    if (map != null && map.isNotEmpty) {
-      map.forEach((k, v) {
-        addFieldValue(new FieldValue(k, v));
-      });
-    }
+    map?.forEach((key, value) {
+      final fv = FieldValue(key, value);
+      addFieldValue(fv);
+    });
+  }
+
+  SQLiteQuery.fromList(List<dynamic> list) {
+    list?.forEach((field) {
+      if (field is Field) {
+        addField(field);
+      } else if (field is String) {
+        final f = Field(field);
+        addField(f);
+      }
+    });
   }
 
   List<FieldValue> get fieldValueList => _fieldValueList;
@@ -56,12 +66,11 @@ class SQLiteQuery {
 
   List<Field> get fieldList => _fieldList;
 
-  bool get hasFields => _fieldList != null && _fieldList.isNotEmpty;
+  bool get hasFields => _fieldList?.isNotEmpty;
 
-  bool get hasFieldValues =>
-      _fieldValueList != null && _fieldValueList.isNotEmpty;
+  bool get hasFieldValues => _fieldValueList?.isNotEmpty;
 
-  bool get hasConditions => _conditionList != null && _conditionList.isNotEmpty;
+  bool get hasConditions => _conditionList?.isNotEmpty;
 
   SQLiteQuery clearAll() {
     if (hasConditions) _conditionList.clear();
@@ -228,23 +237,17 @@ class SQLiteQuery {
   }
 
   void addField(Field f) {
-    if (_fieldList == null) {
-      _fieldList = new List();
-    }
+    _fieldList ??= [];
     _fieldList.add(f);
   }
 
   void addCondition(Condition c) {
-    if (_conditionList == null) {
-      _conditionList = new List();
-    }
+    _conditionList ??= [];
     _conditionList.add(c);
   }
 
   void addFieldValue(FieldValue fv) {
-    if (_fieldValueList == null) {
-      _fieldValueList = new List();
-    }
+    _fieldValueList ??= [];
     _fieldValueList.add(fv);
   }
 

@@ -112,7 +112,7 @@ class SQLiteAdapter implements DatabaseExecutor {
   }
 
   Future<List<String>> getColumnList(String table) async {
-    final list = new List<String>();
+    final list = <String>[];
     final sql = "PRAGMA table_info($table)";
     final cursor = await instance.rawQuery(sql);
     if (cursor.isNotEmpty) {
