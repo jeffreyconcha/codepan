@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:codepan/properties.dart';
+import 'package:codepan/config/properties.dart';
 import 'package:codepan/resources/colors.dart';
 
 class PanTextField extends StatefulWidget {
