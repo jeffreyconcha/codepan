@@ -42,6 +42,7 @@ class SQLiteQuery {
 
   SQLiteQuery();
 
+  /// Constructor for field value list.
   SQLiteQuery.fromMap(Map<String, dynamic> map) {
     map?.forEach((key, value) {
       final fv = FieldValue(key, value);
@@ -49,6 +50,7 @@ class SQLiteQuery {
     });
   }
 
+  /// Constructor for field list.
   SQLiteQuery.fromList(List<dynamic> list) {
     list?.forEach((field) {
       if (field is Field) {
@@ -60,6 +62,7 @@ class SQLiteQuery {
     });
   }
 
+  /// [params] - Must be either a List<Condition> or Map<String, dynamic>
   SQLiteQuery withConditions(dynamic params) {
     if (params is List<Condition>) {
       _conditionList?.addAll(params);
