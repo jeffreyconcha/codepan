@@ -81,11 +81,12 @@ class SQLiteQuery {
 
   List<Field> get fieldList => _fieldList;
 
-  bool get hasFields => _fieldList?.isNotEmpty;
+  bool get hasFields => _fieldList != null && fieldList.isNotEmpty;
 
-  bool get hasFieldValues => _fieldValueList?.isNotEmpty;
+  bool get hasFieldValues =>
+      _fieldValueList != null && _fieldValueList.isNotEmpty;
 
-  bool get hasConditions => _conditionList?.isNotEmpty;
+  bool get hasConditions => _conditionList != null && _conditionList.isNotEmpty;
 
   SQLiteQuery clearAll() {
     if (hasConditions) _conditionList.clear();

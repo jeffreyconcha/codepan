@@ -85,6 +85,11 @@ class SQLiteAdapter implements DatabaseExecutor {
     return null;
   }
 
+  Future<bool> isRecordExists(String sql) async {
+    final list = await instance.rawQuery(sql);
+    return list.isNotEmpty;
+  }
+
   Future<Map<String, dynamic>> getRecord(String sql) async {
     final list = await instance.rawQuery(sql);
     if (list.isNotEmpty) {
@@ -135,6 +140,12 @@ class SQLiteAdapter implements DatabaseExecutor {
     final sql = "PRAGMA index_info($index)";
     final cursor = await instance.rawQuery(sql);
     return cursor.length;
+  }
+
+  Future<void> checkVersion() async {
+    final sql = "PRAGMA user_version";
+    int version = await getValue(sql);
+    print('$name at version: $version');
   }
 
   @override

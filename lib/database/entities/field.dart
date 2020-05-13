@@ -1,6 +1,7 @@
 import 'package:codepan/database/entities/sqlite_entity.dart';
 import 'package:codepan/database/entities/table.dart';
 import 'package:codepan/database/sqlite_query.dart';
+import 'package:flutter/foundation.dart';
 
 class Field extends SQLiteEntity {
   Constraint constraint;
@@ -40,10 +41,10 @@ class Field extends SQLiteEntity {
     this.table = table;
   }
 
-  Field.asForeignKey(String field, Table table) : super(field) {
+  Field.asForeignKey(String field, {@required Table reference}) : super(field) {
     this.constraint = Constraint.FOREIGN_KEY;
     this.type = DataType.INTEGER;
-    this.table = table;
+    this.table = reference;
   }
 
   Field.asUnique(String field) : super(field) {
