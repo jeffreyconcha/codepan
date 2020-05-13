@@ -60,7 +60,7 @@ class SQLiteQuery {
     });
   }
 
-  void withConditions(dynamic params) {
+  SQLiteQuery withConditions(dynamic params) {
     if (params is List<Condition>) {
       _conditionList?.addAll(params);
     } else if (params is Map<String, dynamic>) {
@@ -69,6 +69,7 @@ class SQLiteQuery {
         addCondition(c);
       });
     }
+    return this;
   }
 
   List<FieldValue> get fieldValueList => _fieldValueList;
