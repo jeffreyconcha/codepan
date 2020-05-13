@@ -60,6 +60,17 @@ class SQLiteQuery {
     });
   }
 
+  void withConditions(dynamic params) {
+    if (params is List<Condition>) {
+      _conditionList?.addAll(params);
+    } else if (params is Map<String, dynamic>) {
+      params.forEach((key, value) {
+        final c = Condition(key, value);
+        addCondition(c);
+      });
+    }
+  }
+
   List<FieldValue> get fieldValueList => _fieldValueList;
 
   List<Condition> get conditionList => _conditionList;
