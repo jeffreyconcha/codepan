@@ -4,7 +4,7 @@ class Dimension {
   static const double BASELINE = 360;
   final BuildContext context;
 
-  const Dimension(this.context);
+  const Dimension.of(this.context);
 
   double at(double dp) {
     if (context != null) {
