@@ -187,7 +187,7 @@ class SQLiteQuery {
   }
 
   String insert(String table) {
-    if (!hasFieldValues) throw SQLiteException(SQLiteException.NO_FIELD_VALUES);
+    if (!hasFieldValues) throw SQLiteException(SQLiteException.noFieldValues);
     var f = new StringBuffer();
     var v = new StringBuffer();
     for (var fv in fieldValueList) {
@@ -202,13 +202,13 @@ class SQLiteQuery {
   }
 
   String update(String table, dynamic id) {
-    if (!hasFieldValues) throw SQLiteException(SQLiteException.NO_FIELD_VALUES);
+    if (!hasFieldValues) throw SQLiteException(SQLiteException.noFieldValues);
     return "UPDATE $table SET $fieldValues WHERE $ID = ${id.toString()}";
   }
 
   String updateWithConditions(String table) {
-    if (!hasFieldValues) throw SQLiteException(SQLiteException.NO_FIELD_VALUES);
-    if (!hasConditions) throw SQLiteException(SQLiteException.NO_CONDITIONS);
+    if (!hasFieldValues) throw SQLiteException(SQLiteException.noFieldValues);
+    if (!hasConditions) throw SQLiteException(SQLiteException.noConditions);
     return "UPDATE $table SET $fieldValues WHERE $conditions";
   }
 
@@ -217,7 +217,7 @@ class SQLiteQuery {
   }
 
   String deleteWithConditions(String table) {
-    if (!hasConditions) throw SQLiteException(SQLiteException.NO_CONDITIONS);
+    if (!hasConditions) throw SQLiteException(SQLiteException.noConditions);
     return "DELETE FROM $table WHERE $conditions";
   }
 
@@ -277,7 +277,7 @@ class SQLiteQuery {
         addField(entity);
       }
     } else {
-      throw SQLiteException(SQLiteException.INVALID_SQLITE_ENTITY);
+      throw SQLiteException(SQLiteException.invalidSqliteEntity);
     }
   }
 }

@@ -21,7 +21,7 @@ class SQLiteAdapter implements DatabaseExecutor {
 
   Database get instance {
     if (_db == null || !_db.isOpen) {
-      throw SQLiteException(SQLiteException.DATABASE_NOT_OPENED);
+      throw SQLiteException(SQLiteException.databaseNotOpened);
     }
     return _db;
   }
