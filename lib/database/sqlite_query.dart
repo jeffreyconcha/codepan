@@ -186,7 +186,7 @@ class SQLiteQuery {
     return buffer.toString();
   }
 
-  String insert(String table) {
+  String insert(String table, {bool replace = false}) {
     if (!hasFieldValues) throw SQLiteException(SQLiteException.noFieldValues);
     var f = new StringBuffer();
     var v = new StringBuffer();
@@ -198,7 +198,8 @@ class SQLiteQuery {
         v.write(", ");
       }
     }
-    return "INSERT INTO $table (${f.toString()}) VALUES (${v.toString()})";
+    final sql = replace ? 'OR REPLACE': '';
+    return "INSERT $sql INTO $table (${f.toString()}) VALUES (${v.toString()})";
   }
 
   String update(String table, dynamic id) {

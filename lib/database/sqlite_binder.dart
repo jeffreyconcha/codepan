@@ -30,8 +30,9 @@ class SQLiteBinder {
     return result;
   }
 
-  Future<dynamic> txnInsert(String table, SQLiteQuery query) {
-    String sql = query.insert(table);
+  Future<dynamic> txnInsert(String table, SQLiteQuery query,
+      {bool replace = false}) {
+    String sql = query.insert(table, replace: replace);
     return txn.rawInsert(sql);
   }
 
