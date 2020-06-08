@@ -6,13 +6,13 @@ class PanScrollView extends StatelessWidget {
   final bool disableGlow;
   final Widget child;
 
-  const PanScrollView(
-      {Key key,
-      this.child,
-      this.scrollDirection,
-      this.padding,
-      this.disableGlow = false})
-      : super(key: key);
+  const PanScrollView({
+    Key key,
+    this.child,
+    this.scrollDirection,
+    this.padding,
+    this.disableGlow = false,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

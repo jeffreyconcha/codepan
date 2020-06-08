@@ -10,7 +10,8 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  sqflite_sqlcipher: 1.0.0+6
+  sqflite_sqlcipher: ^1.0.0+6
+  intl: ^0.16.1
 
 dev_dependencies:
   flutter_test:

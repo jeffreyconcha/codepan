@@ -19,6 +19,7 @@ class PanTextField extends StatefulWidget {
       focusedBorderWidth;
   final int maxLines, minLines, maxLength;
   final ValueChanged<String> onFieldSubmitted;
+  final TextAlignVertical textAlignVertical;
   final TextEditingController controller;
   final TextInputAction textInputAction;
   final EdgeInsetsGeometry margin, padding;
@@ -26,43 +27,48 @@ class PanTextField extends StatefulWidget {
   final bool isPassword, bottomBorderOnly;
   final String text, hint, fontFamily;
   final FontWeight fontWeight;
+  final TextAlign textAlign;
   final FontStyle fontStyle;
   final Alignment alignment;
+  final Widget suffixIcon;
 
-  const PanTextField(
-      {Key key,
-      this.text,
-      this.fontSize,
-      this.fontHeight,
-      this.fontColor = Default.fontColor,
-      this.fontFamily = Default.fontFamily,
-      this.fontStyle = FontStyle.normal,
-      this.fontWeight = FontWeight.normal,
-      this.alignment = Alignment.center,
-      this.background = C.none,
-      this.radius,
-      this.margin,
-      this.padding,
-      this.hintFontColor,
-      this.borderColor,
-      this.borderWidth,
-      this.focusedBorderColor,
-      this.focusedBorderWidth,
-      this.hint,
-      this.isPassword = false,
-      this.bottomBorderOnly = false,
-      this.controller,
-      this.textInputAction = TextInputAction.done,
-      this.focusNode,
-      this.nextFocusNode,
-      this.onFieldSubmitted,
-      this.maxLines,
-      this.minLines,
-      this.maxLength,
-      this.width,
-      this.height,
-      this.iconColor})
-      : super(key: key);
+  const PanTextField({
+    Key key,
+    this.text,
+    this.fontSize,
+    this.fontHeight,
+    this.fontColor = Default.fontColor,
+    this.fontFamily = Default.fontFamily,
+    this.fontStyle = FontStyle.normal,
+    this.fontWeight = FontWeight.normal,
+    this.alignment = Alignment.center,
+    this.background = C.none,
+    this.radius,
+    this.margin,
+    this.padding,
+    this.hintFontColor,
+    this.borderColor,
+    this.borderWidth,
+    this.focusedBorderColor,
+    this.focusedBorderWidth,
+    this.hint,
+    this.isPassword = false,
+    this.bottomBorderOnly = false,
+    this.controller,
+    this.textInputAction = TextInputAction.done,
+    this.focusNode,
+    this.nextFocusNode,
+    this.onFieldSubmitted,
+    this.maxLines,
+    this.minLines,
+    this.maxLength,
+    this.width,
+    this.height,
+    this.suffixIcon,
+    this.iconColor,
+    this.textAlign = TextAlign.start,
+    this.textAlignVertical,
+  }) : super(key: key);
 
   @override
   _PanTextFieldState createState() => _PanTextFieldState();
@@ -110,6 +116,8 @@ class _PanTextFieldState extends State<PanTextField> {
           });
         },
       );
+    } else {
+      suffixIcon = widget.suffixIcon;
     }
     return Container(
       width: widget.width,
@@ -122,6 +130,8 @@ class _PanTextFieldState extends State<PanTextField> {
       ),
       child: Focus(
         child: TextFormField(
+          textAlign: widget.textAlign,
+          textAlignVertical: widget.textAlignVertical,
           controller: widget.controller,
           obscureText: _obscureText,
           textInputAction: widget.textInputAction,

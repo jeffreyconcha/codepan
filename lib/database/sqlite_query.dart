@@ -44,14 +44,29 @@ class SQLiteQuery {
 
   /// Constructor for field value list.
   SQLiteQuery.fromMap(Map<String, dynamic> map) {
+    addFieldsAndValues(map);
+  }
+
+  /// Constructor for field list.
+  SQLiteQuery.fromList(List<dynamic> list) {
+    list?.forEach((field) {
+      if (field is Field) {
+        addField(field);
+      } else if (field is String) {
+        final f = Field(field);
+        addField(f);
+      }
+    });
+  }
+
+  void addFieldsAndValues(Map<String, dynamic> map) {
     map?.forEach((key, value) {
       final fv = FieldValue(key, value);
       addFieldValue(fv);
     });
   }
 
-  /// Constructor for field list.
-  SQLiteQuery.fromList(List<dynamic> list) {
+  void addFields(List<dynamic> list) {
     list?.forEach((field) {
       if (field is Field) {
         addField(field);
@@ -109,8 +124,8 @@ class SQLiteQuery {
 
   Map<String, dynamic> get map {
     if (hasFieldValues) {
-      var map = new Map<String, dynamic>();
-      for (var fv in fieldValueList) {
+      final map = Map<String, dynamic>();
+      for (final fv in fieldValueList) {
         map[fv.field] = fv.rawValue;
       }
       return map;
@@ -119,9 +134,9 @@ class SQLiteQuery {
   }
 
   String get fields {
-    var buffer = new StringBuffer();
+    final buffer = StringBuffer();
     if (hasFields) {
-      for (var f in fieldList) {
+      for (final f in fieldList) {
         buffer.write(f.field);
         if (fieldList.indexOf(f) < fieldList.length - 1) {
           buffer.write(", ");
@@ -132,9 +147,9 @@ class SQLiteQuery {
   }
 
   String get tableFields {
-    var buffer = new StringBuffer();
+    final buffer = StringBuffer();
     if (fieldList != null) {
-      for (var field in fieldList) {
+      for (final field in fieldList) {
         buffer.write(field.asString());
         if (fieldList.indexOf(field) < fieldList.length - 1) {
           buffer.write(", ");
@@ -145,10 +160,10 @@ class SQLiteQuery {
   }
 
   String get fieldValues {
-    var buffer = new StringBuffer();
+    final buffer = StringBuffer();
     if (hasFieldValues) {
-      for (var fv in fieldValueList) {
-        var value = fv.value != null ? fv.value : NULL;
+      for (final fv in fieldValueList) {
+        final value = fv.value != null ? fv.value : NULL;
         buffer.write("${fv.field} = $value");
         if (fieldValueList.indexOf(fv) < fieldValueList.length - 1) {
           buffer.write(", ");
@@ -159,16 +174,16 @@ class SQLiteQuery {
   }
 
   String get conditions {
-    var buffer = new StringBuffer();
+    final buffer = StringBuffer();
     if (hasConditions) {
-      for (var c in conditionList) {
-        var operator = c.operator;
+      for (final c in conditionList) {
+        final operator = c.operator;
         if (operator != null) {
           buffer.write(c.asString());
         } else {
-          var orList = c.orList;
+          final orList = c.orList;
           if (orList != null && orList.isNotEmpty) {
-            var b = new StringBuffer();
+            final b = StringBuffer();
             for (Condition c in orList) {
               b.write(c.asString());
               if (orList.indexOf(c) < orList.length - 1) {
@@ -188,9 +203,9 @@ class SQLiteQuery {
 
   String insert(String table, {bool replace = false}) {
     if (!hasFieldValues) throw SQLiteException(SQLiteException.noFieldValues);
-    var f = new StringBuffer();
-    var v = new StringBuffer();
-    for (var fv in fieldValueList) {
+    final f = StringBuffer();
+    final v = StringBuffer();
+    for (final fv in fieldValueList) {
       f.write(fv.field);
       v.write(fv.value);
       if (fieldValueList.indexOf(fv) < fieldValueList.length - 1) {
@@ -198,7 +213,7 @@ class SQLiteQuery {
         v.write(", ");
       }
     }
-    final sql = replace ? 'OR REPLACE': '';
+    final sql = replace ? 'OR REPLACE' : '';
     return "INSERT $sql INTO $table (${f.toString()}) VALUES (${v.toString()})";
   }
 
@@ -249,6 +264,18 @@ class SQLiteQuery {
   String addColumn(String table, Field field) {
     if (field != null) {
       return "ALTER TABLE $table ADD COLUMN ${field.asString()}";
+    }
+    return null;
+  }
+
+  String select(String table) {
+    if (hasFields) {
+      final buffer = StringBuffer();
+      buffer.write('SELECT $fields FROM $table');
+      if (hasConditions) {
+        buffer.write(' WHERE $conditions');
+      }
+      return buffer.toString();
     }
     return null;
   }
