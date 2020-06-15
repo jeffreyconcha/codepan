@@ -1,6 +1,6 @@
 import 'package:codepan/database/entities/field.dart';
 import 'package:codepan/database/sqlite_adapter.dart';
-import 'package:codepan/database/sqlite_query.dart';
+import 'package:codepan/database/sqlite_statement.dart';
 import 'package:sqflite_sqlcipher/sqflite.dart';
 import 'package:sqflite_sqlcipher/sqlite_api.dart';
 
@@ -30,45 +30,45 @@ class SQLiteBinder {
     return result;
   }
 
-  Future<dynamic> txnInsert(String table, SQLiteQuery query,
+  Future<dynamic> txnInsert(String table, SQLiteStatement stmt,
       {bool replace = false}) {
-    String sql = query.insert(table, replace: replace);
+    String sql = stmt.insert(table, replace: replace);
     return txn.rawInsert(sql);
   }
 
-  Future<dynamic> txnUpdate(String table, SQLiteQuery query, dynamic id) {
-    String sql = query.update(table, id);
+  Future<dynamic> txnUpdate(String table, SQLiteStatement stmt, dynamic id) {
+    String sql = stmt.update(table, id);
     return txn.rawUpdate(sql);
   }
 
-  Future<dynamic> txnUpdateWithConditions(String table, SQLiteQuery query) {
-    String sql = query.updateWithConditions(table);
+  Future<dynamic> txnUpdateWithConditions(String table, SQLiteStatement stmt) {
+    String sql = stmt.updateWithConditions(table);
     return txn.rawUpdate(sql);
   }
 
-  Future<dynamic> txnDelete(String table, SQLiteQuery query, dynamic id) {
-    String sql = query.delete(table, id);
+  Future<dynamic> txnDelete(String table, SQLiteStatement stmt, dynamic id) {
+    String sql = stmt.delete(table, id);
     return txn.rawUpdate(sql);
   }
 
-  Future<dynamic> txnDeleteWithConditions(String table, SQLiteQuery query) {
-    String sql = query.deleteWithConditions(table);
+  Future<dynamic> txnDeleteWithConditions(String table, SQLiteStatement stmt) {
+    String sql = stmt.deleteWithConditions(table);
     return txn.rawUpdate(sql);
   }
 
-  void bindInsert(String table, SQLiteQuery query) {
+  void bindInsert(String table, SQLiteStatement stmt) {
     batch.insert(
       table,
-      query.map,
+      stmt.map,
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
   }
 
-  void bindUpdate(String table, SQLiteQuery query, dynamic id) {
+  void bindUpdate(String table, SQLiteStatement stmt, dynamic id) {
     batch.update(
       table,
-      query.map,
-      where: "${SQLiteQuery.ID} = ?",
+      stmt.map,
+      where: "${SQLiteStatement.ID} = ?",
       whereArgs: [id],
     );
   }
@@ -76,67 +76,67 @@ class SQLiteBinder {
   void bindDelete(String table, dynamic id) {
     batch.delete(
       table,
-      where: "${SQLiteQuery.ID} = ?",
+      where: "${SQLiteStatement.ID} = ?",
       whereArgs: [id],
     );
   }
 
-  void insert(String table, SQLiteQuery query) {
-    String sql = query.insert(table);
+  void insert(String table, SQLiteStatement stmt) {
+    String sql = stmt.insert(table);
     batch.rawInsert(sql);
   }
 
-  void update(String table, SQLiteQuery query, dynamic id) {
-    String sql = query.update(table, id);
+  void update(String table, SQLiteStatement stmt, dynamic id) {
+    String sql = stmt.update(table, id);
     batch.rawUpdate(sql);
   }
 
-  void updateWithConditions(String table, SQLiteQuery query) {
-    String sql = query.updateWithConditions(table);
+  void updateWithConditions(String table, SQLiteStatement stmt) {
+    String sql = stmt.updateWithConditions(table);
     batch.rawUpdate(sql);
   }
 
-  void delete(String table, SQLiteQuery query, dynamic id) {
-    String sql = query.delete(table, id);
+  void delete(String table, SQLiteStatement stmt, dynamic id) {
+    String sql = stmt.delete(table, id);
     batch.rawUpdate(sql);
   }
 
-  void deleteWithConditions(String table, SQLiteQuery query) {
-    String sql = query.deleteWithConditions(table);
+  void deleteWithConditions(String table, SQLiteStatement stmt) {
+    String sql = stmt.deleteWithConditions(table);
     batch.rawUpdate(sql);
   }
 
-  void createTable(String table, SQLiteQuery query) {
-    String sql = query.createTable(table);
+  void createTable(String table, SQLiteStatement stmt) {
+    String sql = stmt.createTable(table);
     batch.execute(sql);
   }
 
-  void createIndex(String idx, String table, SQLiteQuery query) {
-    String sql = query.createIndex(idx, table);
+  void createIndex(String idx, String table, SQLiteStatement stmt) {
+    String sql = stmt.createIndex(idx, table);
     batch.execute(sql);
   }
 
   void dropTable(String table) {
-    final query = SQLiteQuery();
-    String sql = query.dropTable(table);
+    final stmt = SQLiteStatement();
+    String sql = stmt.dropTable(table);
     batch.execute(sql);
   }
 
   void dropIndex(String idx) {
-    final query = SQLiteQuery();
-    String sql = query.dropIndex(idx);
+    final stmt = SQLiteStatement();
+    String sql = stmt.dropIndex(idx);
     batch.execute(sql);
   }
 
   void renameTable(String oldName, String newName) {
-    final query = SQLiteQuery();
-    String sql = query.renameTable(oldName, newName);
+    final stmt = SQLiteStatement();
+    String sql = stmt.renameTable(oldName, newName);
     batch.execute(sql);
   }
 
   void addColumn(String table, Field field) {
-    final query = SQLiteQuery();
-    String sql = query.addColumn(table, field);
+    final stmt = SQLiteStatement();
+    String sql = stmt.addColumn(table, field);
     batch.execute(sql);
   }
 }

@@ -1,6 +1,6 @@
 import 'package:codepan/database/entities/sqlite_entity.dart';
 import 'package:codepan/database/entities/table.dart';
-import 'package:codepan/database/sqlite_query.dart';
+import 'package:codepan/database/sqlite_statement.dart';
 import 'package:flutter/foundation.dart';
 
 class Field extends SQLiteEntity {
@@ -18,7 +18,7 @@ class Field extends SQLiteEntity {
   String get defaultValue {
     if (value != null) {
       if (value is bool) {
-        return value ? "1" : "0";
+        return value ? '1' : '0';
       } else {
         return value.toString();
       }
@@ -35,10 +35,9 @@ class Field extends SQLiteEntity {
     }
   }
 
-  Field.asPrimaryKey([String field = SQLiteQuery.ID]) : super(field) {
+  Field.asPrimaryKey([String field = SQLiteStatement.ID]) : super(field) {
     this.constraint = Constraint.PRIMARY_KEY;
     this.type = DataType.INTEGER;
-    this.table = table;
   }
 
   Field.asForeignKey(String field, {@required Table reference}) : super(field) {
@@ -62,7 +61,7 @@ class Field extends SQLiteEntity {
             buffer.write(" PRIMARY KEY AUTOINCREMENT NOT NULL");
             break;
           case Constraint.FOREIGN_KEY:
-            buffer.write(" REFERENCES ${table.name}(${SQLiteQuery.ID})");
+            buffer.write(" REFERENCES ${table.name}(${SQLiteStatement.ID})");
             break;
           case Constraint.UNIQUE:
             buffer.write(" UNIQUE");

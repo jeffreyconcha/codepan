@@ -1,5 +1,6 @@
+import 'package:codepan/database/entities/field.dart';
 import 'package:codepan/database/entities/sqlite_entity.dart';
-import 'package:codepan/database/sqlite_query.dart';
+import 'package:codepan/database/sqlite_statement.dart';
 
 class Condition extends SQLiteEntity {
   String start, end;
@@ -11,15 +12,19 @@ class Condition extends SQLiteEntity {
     if (_value != null) {
       if (_value is bool) {
         return _value
-            ? SQLiteQuery.TRUE.toString()
-            : SQLiteQuery.FALSE.toString();
+            ? SQLiteStatement.TRUE.toString()
+            : SQLiteStatement.FALSE.toString();
       } else if (_value is String) {
-        return "'$value'";
+        final text = _value as String;
+        return '\'$text\'';
+      } else if (_value is Field) {
+        final field = _value as Field;
+        return field.field;
       } else {
         return _value.toString();
       }
     } else {
-      return SQLiteQuery.NULL;
+      return SQLiteStatement.NULL;
     }
   }
 
