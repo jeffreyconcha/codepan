@@ -134,7 +134,7 @@ class SQLiteQuery with QueryProperties {
         buffer.write(bq.toString());
       } else {
         if (hasFields) {
-          buffer.write('SELECT $fields FROM ${table.name} as ${table.alias}');
+          buffer.write('SELECT $fieldsWithAlias FROM ${table.name} as ${table.alias}');
         }
       }
       if (hasConditions) {
