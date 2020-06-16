@@ -1,3 +1,6 @@
+import 'field.dart';
+import 'package:codepan/extensions/string.dart';
+
 class Table {
   final String name;
 
@@ -11,20 +14,22 @@ class Table {
       final rest = raw.substring(1, raw.length);
       List<String> list = rest.split('_');
       for (final word in list) {
-        final consonants = word.replaceAllMapped(vowels, (match) => '');
+        final text = word.replaceAllMapped(vowels, (match) => '').toLowerCase();
         int m = word == list.first ? max - 1 : max;
+        final consonants = word != list.first ? text.capitalize() : text;
         if (consonants.length > m) {
           buffer.write(consonants.substring(0, m));
         } else {
           buffer.write(consonants);
         }
-        if (word != list.last) {
-          buffer.write('_');
-        }
       }
       return buffer.toString();
     }
     return null;
+  }
+
+  Field field(String name) {
+    return Field(name)..setAlias(alias);
   }
 
   Table(this.name);

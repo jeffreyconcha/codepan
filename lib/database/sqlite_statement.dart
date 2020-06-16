@@ -5,31 +5,7 @@ import 'package:codepan/database/entities/sqlite_entity.dart';
 import 'package:codepan/database/mixin/query_properties.dart';
 import 'package:codepan/database/sqlite_exception.dart';
 import 'package:codepan/database/sqlite_query.dart';
-
-enum Constraint {
-  PRIMARY_KEY,
-  FOREIGN_KEY,
-  DEFAULT,
-  UNIQUE,
-}
-enum DataType {
-  INTEGER,
-  TEXT,
-}
-enum Operator {
-  EQUALS,
-  NOT_EQUALS,
-  GREATER_THAN,
-  LESS_THAN,
-  GREATER_THAN_OR_EQUALS,
-  LESS_THAN_OR_EQUALS,
-  BETWEEN,
-  IS_NULL,
-  NOT_NULL,
-  IS_EMPTY,
-  NOT_EMPTY,
-  LIKE
-}
+import 'package:flutter/foundation.dart';
 
 class SQLiteStatement with QueryProperties {
   static const String ID = "id";
@@ -49,14 +25,17 @@ class SQLiteStatement with QueryProperties {
 
   /// Constructor for field list.
   SQLiteStatement.fromList(List<dynamic> list) {
-    list?.forEach((field) {
-      if (field is Field) {
-        addField(field);
-      } else if (field is String) {
-        final f = Field(field);
-        addField(f);
-      }
-    });
+    addFields(list);
+  }
+
+  SQLiteStatement.from({
+    List<dynamic> fields,
+    Map<String, dynamic> fieldsAndValues,
+    dynamic conditions,
+  }) {
+    addFields(fields);
+    addConditions(conditions);
+    addFieldsAndValues(fieldsAndValues);
   }
 
   void addFieldsAndValues(Map<String, dynamic> map) {
@@ -91,19 +70,6 @@ class SQLiteStatement with QueryProperties {
       return map;
     }
     return null;
-  }
-
-  String get tableFields {
-    final buffer = StringBuffer();
-    if (fieldList != null) {
-      for (final field in fieldList) {
-        buffer.write(field.asString());
-        if (fieldList.indexOf(field) < fieldList.length - 1) {
-          buffer.write(", ");
-        }
-      }
-    }
-    return buffer.toString();
   }
 
   String get fieldValues {
@@ -157,7 +123,7 @@ class SQLiteStatement with QueryProperties {
   }
 
   String createTable(String table) {
-    return "CREATE TABLE IF NOT EXISTS $table ($tableFields)";
+    return "CREATE TABLE IF NOT EXISTS $table (${getCommandFields(fieldList)})";
   }
 
   String createIndex(String idx, String table) {
@@ -188,15 +154,12 @@ class SQLiteStatement with QueryProperties {
   }
 
   String select(String table) {
-    if (hasFields) {
-      final buffer = StringBuffer();
-      buffer.write('SELECT $fields FROM $table');
-      if (hasConditions) {
-        buffer.write(' WHERE $conditions');
-      }
-      return buffer.toString();
-    }
-    return null;
+    final query = SQLiteQuery(
+      select: fieldList,
+      from: table,
+      where: conditionList,
+    );
+    return query.build();
   }
 
   void addFieldValue(FieldValue fv) {
@@ -216,38 +179,5 @@ class SQLiteStatement with QueryProperties {
     } else {
       throw SQLiteException(SQLiteException.invalidSqliteEntity);
     }
-  }
-
-  String query(SQLiteQuery query) {
-    if (query.hasFields) {
-      final table = query.table;
-      final buffer = new StringBuffer();
-      if (query.hasJoin) {
-        final bf = new StringBuffer();
-        final bq = new StringBuffer();
-        for (final q in query.joinList) {
-          if (q.hasFields) {
-            bf.write(', ${q.uniqueFields}');
-          }
-          final tb = q.table;
-          final type = q.type.toString().split('.').last;
-          bq.write(' $type JOIN ${tb.name} as ${tb.alias} ON ${q.conditions}');
-        }
-        buffer.write('SELECT ${query.uniqueFields}');
-        buffer.write(bf.toString());
-        buffer.write(' FROM ${table.name} as ${table.alias} ');
-        buffer.write(bq.toString());
-      } else {
-        if (query.hasFields) {
-          buffer.write(
-              'SELECT ${query.fields} FROM ${table.name} as ${table.alias}');
-        }
-      }
-      if (query.hasConditions) {
-        buffer.write(' WHERE ${query.conditions}');
-      }
-      return buffer.toString();
-    }
-    return null;
   }
 }

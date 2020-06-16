@@ -21,11 +21,18 @@ mixin QueryProperties {
     if (hasConditions) _conditionList.clear();
   }
 
-  String get fields {
+  String get fields => getFields(fieldList);
+
+  String get fieldsWithAlias => getFields(fieldList, withAlias: true);
+
+  String getFields(List<Field> fieldList, {bool withAlias = false}) {
     final buffer = StringBuffer();
-    if (hasFields) {
+    if (fieldList != null) {
       for (final f in fieldList) {
         buffer.write(f.field);
+        if (withAlias) {
+          buffer.write(' as \'${f.field}\'');
+        }
         if (fieldList.indexOf(f) < fieldList.length - 1) {
           buffer.write(", ");
         }
@@ -34,11 +41,14 @@ mixin QueryProperties {
     return buffer.toString();
   }
 
-  String get uniqueFields {
+  String getFieldsAsString(List<Field> fieldList, {bool withAlias = false}) {
     final buffer = StringBuffer();
-    if (hasFields) {
+    if (fieldList != null) {
       for (final f in fieldList) {
-        buffer.write('${f.field} as \'${f.field}\'');
+        buffer.write(f.field);
+        if (withAlias) {
+          buffer.write(' as \'${f.field}\'');
+        }
         if (fieldList.indexOf(f) < fieldList.length - 1) {
           buffer.write(", ");
         }
@@ -81,12 +91,6 @@ mixin QueryProperties {
     _fieldList.add(f);
   }
 
-  void addCondition(Condition c, {String alias}) {
-    c.setAlias(alias);
-    _conditionList ??= [];
-    _conditionList.add(c);
-  }
-
   void addFields(List<dynamic> list, {String alias}) {
     list?.forEach((field) {
       if (field is Field) {
@@ -98,10 +102,37 @@ mixin QueryProperties {
     });
   }
 
-  void withConditions(Map<String, dynamic> map, {String alias}) {
-    map?.forEach((key, value) {
-      final c = Condition(key, value);
-      addCondition(c, alias: alias);
-    });
+  void addCondition(Condition c, {String alias}) {
+    if (c.hasValue) {
+      c.setAlias(alias);
+      _conditionList ??= [];
+      _conditionList.add(c);
+    }
+  }
+
+  void addConditions(dynamic conditions, {String alias}) {
+    if (conditions is Map<String, dynamic>) {
+      conditions?.forEach((key, value) {
+        final c = Condition(key, value);
+        addCondition(c, alias: alias);
+      });
+    } else if (conditions is List<Condition>) {
+      conditions.forEach((condition) {
+        addCondition(condition, alias: alias);
+      });
+    }
+  }
+
+  String getCommandFields(List<Field> fieldList) {
+    final buffer = StringBuffer();
+    if (fieldList != null) {
+      for (final field in fieldList) {
+        buffer.write(field.asString());
+        if (fieldList.indexOf(field) < fieldList.length - 1) {
+          buffer.write(", ");
+        }
+      }
+    }
+    return buffer.toString();
   }
 }

@@ -2,11 +2,32 @@ import 'package:codepan/database/entities/field.dart';
 import 'package:codepan/database/entities/sqlite_entity.dart';
 import 'package:codepan/database/sqlite_statement.dart';
 
+enum Operator {
+  EQUALS,
+  NOT_EQUALS,
+  GREATER_THAN,
+  LESS_THAN,
+  GREATER_THAN_OR_EQUALS,
+  LESS_THAN_OR_EQUALS,
+  BETWEEN,
+  IS_NULL,
+  NOT_NULL,
+  IS_EMPTY,
+  NOT_EMPTY,
+  LIKE,
+}
+
 class Condition extends SQLiteEntity {
-  String start, end;
   List<Condition> orList;
-  Operator operator;
+  Operator _operator;
+  String _start, _end;
   dynamic _value;
+
+  String get start => _start;
+
+  String get end => _end;
+
+  Operator get operator => _operator;
 
   String get value {
     if (_value != null) {
@@ -23,23 +44,29 @@ class Condition extends SQLiteEntity {
       } else {
         return _value.toString();
       }
-    } else {
-      return SQLiteStatement.NULL;
     }
+    return SQLiteStatement.NULL;
   }
+
+  bool get hasValue => _value != null;
 
   Condition(
     String _field,
     this._value, {
-    this.operator = Operator.EQUALS,
-    this.start,
-    this.end,
-  }) : super(_field);
+    String start,
+    String end,
+    Operator operator = Operator.EQUALS,
+  }) : super(_field) {
+    this._start = start;
+    this._end = end;
+    this._operator = operator;
+  }
 
   Condition.or(this.orList) : super(null);
 
   String asString() {
-    switch (operator) {
+    final type = hasValue && _value is Operator ? _value : operator;
+    switch (type) {
       case Operator.EQUALS:
         return "$field = $value";
         break;
