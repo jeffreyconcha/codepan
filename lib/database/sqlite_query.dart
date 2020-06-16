@@ -18,6 +18,7 @@ class SQLiteQuery with QueryProperties {
   List<SQLiteQuery> _joinList;
   List<Field> _orderList;
   List<Field> _groupList;
+  bool _randomOrder;
   tb.Table _table;
   JoinType _type;
   int _limit;
@@ -49,6 +50,7 @@ class SQLiteQuery with QueryProperties {
     dynamic where,
     List<dynamic> orderBy,
     List<dynamic> groupBy,
+    bool randomOrder = false,
     int limit,
   }) {
     if (from is tb.Table) {
@@ -60,6 +62,7 @@ class SQLiteQuery with QueryProperties {
     addConditions(where, alias: _table.alias);
     _addOrders(orderBy, alias: _table.alias);
     _addGroups(orderBy, alias: _table.alias);
+    this._randomOrder = randomOrder;
     this._limit = limit;
   }
 
@@ -134,7 +137,8 @@ class SQLiteQuery with QueryProperties {
         buffer.write(bq.toString());
       } else {
         if (hasFields) {
-          buffer.write('SELECT $fieldsWithAlias FROM ${table.name} as ${table.alias}');
+          buffer.write(
+              'SELECT $fieldsWithAlias FROM ${table.name} as ${table.alias}');
         }
       }
       if (hasConditions) {
@@ -147,6 +151,9 @@ class SQLiteQuery with QueryProperties {
       if (hasOrder) {
         final order = getCommandFields(orderList);
         buffer.write(' ORDER BY $order');
+      }
+      else {
+        buffer.write(' ORDER BY RANDOM()');
       }
       if (hasLimit) {
         buffer.write(' LIMIT $limit');
