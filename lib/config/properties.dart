@@ -4,5 +4,5 @@ import '../resources/colors.dart';
 
 class Default {
   static const String fontFamily = FontFamily.calibri;
-  static const Color fontColor = C.font;
+  static const Color fontColor = PanColors.font;
 }

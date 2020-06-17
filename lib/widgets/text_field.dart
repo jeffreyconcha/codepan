@@ -42,7 +42,7 @@ class PanTextField extends StatefulWidget {
     this.fontStyle = FontStyle.normal,
     this.fontWeight = FontWeight.normal,
     this.alignment = Alignment.center,
-    this.background = C.none,
+    this.background = PanColors.none,
     this.radius,
     this.margin,
     this.padding,
