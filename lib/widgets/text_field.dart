@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:codepan/config/properties.dart';
 import 'package:codepan/resources/colors.dart';
@@ -17,6 +18,7 @@ class PanTextField extends StatefulWidget {
       radius,
       borderWidth,
       focusedBorderWidth;
+  final List<TextInputFormatter> inputFormatters;
   final int maxLines, minLines, maxLength;
   final ValueChanged<String> onFieldSubmitted;
   final TextAlignVertical textAlignVertical;
@@ -26,6 +28,7 @@ class PanTextField extends StatefulWidget {
   final FocusNode focusNode, nextFocusNode;
   final bool isPassword, bottomBorderOnly;
   final String text, hint, fontFamily;
+  final TextInputType keyboardType;
   final FontWeight fontWeight;
   final TextAlign textAlign;
   final FontStyle fontStyle;
@@ -37,8 +40,8 @@ class PanTextField extends StatefulWidget {
     this.text,
     this.fontSize,
     this.fontHeight,
-    this.fontColor = Default.fontColor,
-    this.fontFamily = Default.fontFamily,
+    this.fontColor,
+    this.fontFamily,
     this.fontStyle = FontStyle.normal,
     this.fontWeight = FontWeight.normal,
     this.alignment = Alignment.center,
@@ -68,6 +71,8 @@ class PanTextField extends StatefulWidget {
     this.iconColor,
     this.textAlign = TextAlign.start,
     this.textAlignVertical,
+    this.inputFormatters,
+    this.keyboardType,
   }) : super(key: key);
 
   @override
@@ -130,6 +135,8 @@ class _PanTextFieldState extends State<PanTextField> {
       ),
       child: Focus(
         child: TextFormField(
+          inputFormatters: widget.inputFormatters,
+          keyboardType: widget.keyboardType,
           textAlign: widget.textAlign,
           textAlignVertical: widget.textAlignVertical,
           controller: widget.controller,

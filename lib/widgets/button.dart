@@ -19,8 +19,8 @@ class PanButton extends StatelessWidget {
     this.text,
     this.fontSize,
     this.fontHeight,
-    this.fontColor = Default.fontColor,
-    this.fontFamily = Default.fontFamily,
+    this.fontColor,
+    this.fontFamily,
     this.fontStyle = FontStyle.normal,
     this.fontWeight = FontWeight.normal,
     this.alignment = Alignment.center,
@@ -53,13 +53,14 @@ class PanButton extends StatelessWidget {
       margin: margin,
       alignment: alignment,
       child: FlatButton(
-          color: background,
-          shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(radius),
-              side: BorderSide(color: borderColor, width: borderWidth)),
-          padding: padding,
-          child: child,
-          onPressed: onPressed),
+        color: background,
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(radius),
+            side: BorderSide(color: borderColor, width: borderWidth)),
+        padding: padding,
+        child: child,
+        onPressed: onPressed,
+      ),
     );
   }
 }

@@ -20,7 +20,7 @@ class PanText extends StatelessWidget {
     this.fontSize,
     this.fontHeight,
     this.fontColor,
-    this.fontFamily = Default.fontFamily,
+    this.fontFamily,
     this.fontStyle = FontStyle.normal,
     this.fontWeight = FontWeight.normal,
     this.alignment = Alignment.center,
