@@ -142,8 +142,9 @@ class _PanTextFieldState extends State<PanTextField> {
           controller: widget.controller,
           obscureText: _obscureText,
           textInputAction: widget.textInputAction,
+          focusNode: widget.focusNode,
           onFieldSubmitted: (value) {
-            if (widget.textInputAction == TextInputAction.next) {
+            if (widget.nextFocusNode != null) {
               FocusScope.of(context).requestFocus(widget.nextFocusNode);
             }
             widget.onFieldSubmitted(value);

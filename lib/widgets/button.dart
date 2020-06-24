@@ -12,6 +12,7 @@ class PanButton extends StatelessWidget {
   final FontWeight fontWeight;
   final FontStyle fontStyle;
   final Alignment alignment;
+  final FocusNode focusNode;
   final Widget child;
 
   const PanButton({
@@ -34,6 +35,7 @@ class PanButton extends StatelessWidget {
     this.width,
     this.height,
     this.child,
+    this.focusNode,
   }) : super(key: key);
 
   @override
@@ -54,6 +56,7 @@ class PanButton extends StatelessWidget {
       alignment: alignment,
       child: FlatButton(
         color: background,
+        focusNode: focusNode,
         shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(radius),
             side: BorderSide(color: borderColor, width: borderWidth)),

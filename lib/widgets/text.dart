@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:codepan/config/properties.dart';
 import 'package:codepan/resources/colors.dart';
 
 class PanText extends StatelessWidget {
   final double width, height, fontSize, fontHeight, radius, borderWidth;
   final Color fontColor, background, borderColor;
   final EdgeInsetsGeometry margin, padding;
+  final TextDecoration decoration;
   final String text, fontFamily;
   final FontWeight fontWeight;
   final FontStyle fontStyle;
@@ -26,6 +26,7 @@ class PanText extends StatelessWidget {
     this.alignment = Alignment.center,
     this.background = PanColors.none,
     this.textAlign = TextAlign.center,
+    this.decoration,
     this.radius = 0,
     this.margin,
     this.padding,
@@ -54,7 +55,7 @@ class PanText extends StatelessWidget {
           fontWeight: fontWeight,
           height: fontHeight,
           fontSize: fontSize,
-
+          decoration: decoration,
         ),
         textAlign: textAlign,
       ),
