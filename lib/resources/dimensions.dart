@@ -8,17 +8,19 @@ class Dimension {
 
   double at(double dp) {
     if (context != null) {
-      MediaQueryData data = MediaQuery.of(context);
-      Size size = data.size;
-      return dp * (size.width / BASELINE);
+      final data = MediaQuery.of(context);
+      final size = data.size;
+      final width = size.width;
+      final height = size.height;
+      final reference = width < height ? width : height;
+      return dp * (reference / BASELINE);
     }
     return dp;
   }
 
   double get maxHeight {
     if (context != null) {
-      MediaQueryData data = MediaQuery.of(context);
-      print(data.size);
+      final data = MediaQuery.of(context);
       return data.size.height;
     }
     return double.infinity;
@@ -26,8 +28,7 @@ class Dimension {
 
   double get maxWidth {
     if (context != null) {
-      MediaQueryData data = MediaQuery.of(context);
-      print(data.size);
+      final data = MediaQuery.of(context);
       return data.size.width;
     }
     return double.infinity;

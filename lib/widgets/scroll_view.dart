@@ -3,34 +3,38 @@ import 'package:flutter/cupertino.dart';
 class PanScrollView extends StatelessWidget {
   final Axis scrollDirection;
   final EdgeInsets padding;
-  final bool disableGlow;
   final Widget child;
 
   const PanScrollView({
     Key key,
     this.child,
-    this.scrollDirection,
     this.padding,
-    this.disableGlow = false,
+    this.scrollDirection = Axis.vertical,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return ScrollConfiguration(
-      behavior: disableGlow ? DisableScrollGlow() : ScrollBehavior(),
-      child: SingleChildScrollView(
-        child: child,
-        padding: padding,
-        scrollDirection: scrollDirection,
-      ),
+    final isVertical = scrollDirection == Axis.vertical;
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        return SingleChildScrollView(
+          padding: padding,
+          scrollDirection: scrollDirection,
+          child: ConstrainedBox(
+            constraints: BoxConstraints(
+              minHeight: isVertical ? constraints.maxHeight : 0,
+              minWidth: !isVertical ? constraints.maxWidth : 0,
+            ),
+            child: isVertical
+                ? IntrinsicHeight(
+                    child: child,
+                  )
+                : IntrinsicWidth(
+                    child: child,
+                  ),
+          ),
+        );
+      },
     );
-  }
-}
-
-class DisableScrollGlow extends ScrollBehavior {
-  @override
-  Widget buildViewportChrome(
-      BuildContext context, Widget child, AxisDirection axisDirection) {
-    return child;
   }
 }
