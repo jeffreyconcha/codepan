@@ -18,13 +18,13 @@ class Dimension {
     return dp;
   }
 
-  double get absHeight {
+  double get max {
     final mw = maxHeight;
     final mh = maxHeight;
     return mh > mw ? mh : mw;
   }
 
-  double get absWidth {
+  double get min {
     final mw = maxHeight;
     final mh = maxHeight;
     return mh < mw ? mh : mw;
