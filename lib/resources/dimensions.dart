@@ -18,6 +18,18 @@ class Dimension {
     return dp;
   }
 
+  double get absHeight {
+    final mw = maxHeight;
+    final mh = maxHeight;
+    return mh > mw ? mh : mw;
+  }
+
+  double get absWidth {
+    final mw = maxHeight;
+    final mh = maxHeight;
+    return mh < mw ? mh : mw;
+  }
+
   double get maxHeight {
     if (context != null) {
       final data = MediaQuery.of(context);
