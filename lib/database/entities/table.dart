@@ -1,5 +1,5 @@
 import 'field.dart';
-import 'package:codepan/extensions/string.dart';
+import 'package:codepan/extensions/string_ext.dart';
 
 class Table {
   final String name;
