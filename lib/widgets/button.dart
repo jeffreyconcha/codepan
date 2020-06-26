@@ -43,7 +43,7 @@ class PanButton extends StatelessWidget {
     var child = this.child != null
         ? this.child
         : PanText(
-            text: text,
+            text: text ?? '',
             fontSize: fontSize,
             fontColor: fontColor,
             fontWeight: fontWeight,

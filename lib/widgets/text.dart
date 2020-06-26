@@ -46,7 +46,7 @@ class PanText extends StatelessWidget {
       padding: padding,
       alignment: alignment,
       child: Text(
-        text,
+        text ?? '',
         maxLines: maxLines,
         style: TextStyle(
           color: fontColor,

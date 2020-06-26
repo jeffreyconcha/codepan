@@ -1,13 +1,13 @@
 import 'package:flutter/widgets.dart';
 
-class IconImage extends StatelessWidget {
+class PanImage extends StatelessWidget {
   final EdgeInsetsGeometry margin, padding;
   final double width, height;
   final Alignment alignment;
   final String icon;
   final BoxFit fit;
 
-  const IconImage({
+  const PanImage({
     Key key,
     this.icon,
     this.width,
