@@ -3,8 +3,12 @@ import 'package:flutter/widgets.dart';
 class Dimension {
   static const double BASELINE = 360;
   final BuildContext context;
+  final bool isSafeArea;
 
-  const Dimension.of(this.context);
+  const Dimension.of(
+    this.context, {
+    this.isSafeArea = false,
+  });
 
   double at(double dp) {
     if (context != null) {
@@ -19,13 +23,13 @@ class Dimension {
   }
 
   double get max {
-    final mw = maxHeight;
+    final mw = maxWidth;
     final mh = maxHeight;
     return mh > mw ? mh : mw;
   }
 
   double get min {
-    final mw = maxHeight;
+    final mw = maxWidth;
     final mh = maxHeight;
     return mh < mw ? mh : mw;
   }
@@ -33,7 +37,8 @@ class Dimension {
   double get maxHeight {
     if (context != null) {
       final data = MediaQuery.of(context);
-      return data.size.height;
+      final padding = isSafeArea ? data.padding.top : 0;
+      return data.size.height - padding;
     }
     return double.infinity;
   }

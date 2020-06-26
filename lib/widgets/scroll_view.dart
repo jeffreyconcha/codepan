@@ -17,16 +17,13 @@ class PanScrollView extends StatelessWidget {
     final isVertical = scrollDirection == Axis.vertical;
     return LayoutBuilder(
       builder: (context, constraints) {
-        final mw = constraints.maxWidth;
-        final mh = constraints.maxHeight;
-        final max = mh > mw ? mh : mw;
         return SingleChildScrollView(
           padding: padding,
           scrollDirection: scrollDirection,
           child: ConstrainedBox(
             constraints: BoxConstraints(
-              minHeight: isVertical ? max : 0,
-              minWidth: !isVertical ? max : 0,
+              minHeight: isVertical ? constraints.maxHeight : 0,
+              minWidth: !isVertical ? constraints.maxWidth : 0,
             ),
             child: isVertical
                 ? IntrinsicHeight(
