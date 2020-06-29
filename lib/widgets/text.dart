@@ -9,6 +9,7 @@ class PanText extends StatelessWidget {
   final TextDecoration decoration;
   final String text, fontFamily;
   final FontWeight fontWeight;
+  final TextOverflow overflow;
   final FontStyle fontStyle;
   final Alignment alignment;
   final TextAlign textAlign;
@@ -26,6 +27,7 @@ class PanText extends StatelessWidget {
     this.alignment = Alignment.center,
     this.background = PanColors.none,
     this.textAlign = TextAlign.center,
+    this.overflow,
     this.decoration,
     this.radius = 0,
     this.margin,
@@ -47,6 +49,7 @@ class PanText extends StatelessWidget {
       alignment: alignment,
       child: Text(
         text ?? '',
+        overflow: overflow,
         maxLines: maxLines,
         style: TextStyle(
           color: fontColor,
