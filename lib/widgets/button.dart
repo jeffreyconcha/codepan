@@ -4,8 +4,8 @@ import 'package:codepan/widgets/text.dart';
 import 'package:codepan/resources/colors.dart';
 
 class PanButton extends StatelessWidget {
+  final Color fontColor, background, borderColor, splashColor, highlightColor;
   final double fontSize, fontHeight, radius, borderWidth, width, height;
-  final Color fontColor, background, borderColor;
   final EdgeInsetsGeometry margin, padding;
   final String text, fontFamily;
   final VoidCallback onPressed;
@@ -36,6 +36,8 @@ class PanButton extends StatelessWidget {
     this.height,
     this.child,
     this.focusNode,
+    this.highlightColor,
+    this.splashColor,
   }) : super(key: key);
 
   @override
@@ -54,15 +56,22 @@ class PanButton extends StatelessWidget {
       height: height,
       margin: margin,
       alignment: alignment,
-      child: FlatButton(
-        color: background,
-        focusNode: focusNode,
-        shape: RoundedRectangleBorder(
+      child: SizedBox(
+        width: width,
+        height: height,
+        child: FlatButton(
+          color: background,
+          focusNode: focusNode,
+          shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(radius),
-            side: BorderSide(color: borderColor, width: borderWidth)),
-        padding: padding,
-        child: child,
-        onPressed: onPressed,
+            side: BorderSide(color: borderColor, width: borderWidth),
+          ),
+          padding: padding,
+          child: child,
+          onPressed: onPressed,
+          splashColor: splashColor,
+          highlightColor: highlightColor,
+        ),
       ),
     );
   }

@@ -22,6 +22,14 @@ class Dimension {
     return dp;
   }
 
+  double get statusBarHeight {
+    if (context != null) {
+      final data = MediaQuery.of(context);
+      return data.padding.top;
+    }
+    return double.infinity;
+  }
+
   double get max {
     final mw = maxWidth;
     final mh = maxHeight;
