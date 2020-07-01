@@ -60,8 +60,15 @@ class Field extends SQLiteEntity {
       : super(_field) {
     if (value != null) {
       this._constraint = Constraint.DEFAULT;
-      this._type =
-          _value is int || _value is bool ? DataType.INTEGER : DataType.TEXT;
+      if (value is int || value is bool) {
+        this._type = DataType.INTEGER;
+      } else if (value is double) {
+        this._type = DataType.REAL;
+      } else if (value is String) {
+        this._type = DataType.TEXT;
+      } else {
+        this._type = DataType.BLOB;
+      }
     } else {
       this._constraint = constraint;
       this._type = type;
