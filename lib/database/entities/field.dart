@@ -13,6 +13,8 @@ enum Constraint {
 enum DataType {
   INTEGER,
   TEXT,
+  REAL,
+  BLOB,
 }
 
 class Field extends SQLiteEntity {
