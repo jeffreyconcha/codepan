@@ -24,4 +24,10 @@ class PanUtils {
     }
     return null;
   }
+
+  static String formatMoney(double input) {
+    if (input == null) return null;
+    final nf = NumberFormat('#,###.00', 'en_US');
+    return nf.format(input);
+  }
 }
