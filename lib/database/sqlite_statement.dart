@@ -98,8 +98,8 @@ class SQLiteStatement with QueryProperties {
         v.write(", ");
       }
     }
-    final sql = replace ? 'OR REPLACE' : '';
-    return "INSERT $sql INTO $table (${f.toString()}) VALUES (${v.toString()})";
+    final option = replace ? ' OR REPLACE' : '';
+    return "INSERT$option INTO $table (${f.toString()}) VALUES (${v.toString()})";
   }
 
   String update(String table, dynamic id) {
