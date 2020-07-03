@@ -151,8 +151,7 @@ class SQLiteQuery with QueryProperties {
       if (hasOrder) {
         final order = getCommandFields(orderList);
         buffer.write(' ORDER BY $order');
-      }
-      else {
+      } else if (_randomOrder) {
         buffer.write(' ORDER BY RANDOM()');
       }
       if (hasLimit) {

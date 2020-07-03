@@ -1,24 +1,22 @@
 import 'package:codepan/database/entities/field.dart';
 import 'package:codepan/database/sqlite_adapter.dart';
+import 'package:codepan/database/sqlite_query.dart';
 import 'package:codepan/database/sqlite_statement.dart';
 import 'package:sqflite_sqlcipher/sqflite.dart';
 import 'package:sqflite_sqlcipher/sqlite_api.dart';
 
 class SQLiteBinder {
   final SQLiteAdapter db;
-  Transaction _txn;
+  Map<String, int> bank;
   Batch _batch;
 
   SQLiteBinder(this.db);
-
-  Transaction get txn => this._txn;
 
   Batch get batch => this._batch;
 
   Future<void> beginTransaction() async {
     await db.instance.transaction((txn) async {
       this._batch = txn.batch();
-      this._txn = txn;
     });
   }
 
@@ -30,45 +28,82 @@ class SQLiteBinder {
     return result;
   }
 
-  Future<dynamic> txnInsert(String table, SQLiteStatement stmt,
-      {bool replace = false}) {
-    String sql = stmt.insert(table, replace: replace);
-    return txn.rawInsert(sql);
+  Future<void> _registerLastId(String table) async {
+    bank ??= {};
+    if (!bank.containsKey(table)) {
+      final query = SQLiteQuery(
+        select: [
+          'rowId',
+        ],
+        from: table,
+        orderBy: [
+          Field.asOrder(
+            field: 'rowId',
+            order: Order.DESC,
+          )
+        ],
+        limit: 1,
+      );
+      final id = await db.getValue(query.build());
+      bank[table] = id ?? 0;
+    }
   }
 
-  Future<dynamic> txnUpdate(String table, SQLiteStatement stmt, dynamic id) {
-    String sql = stmt.update(table, id);
-    return txn.rawUpdate(sql);
+  Future<int> _mapId(
+    String table,
+    SQLiteStatement stmt, {
+    String unique,
+  }) async {
+    await _registerLastId(table);
+    final pk = SQLiteStatement.ID;
+    final map = stmt.map;
+    if (unique != null && unique != pk) {
+      final query = SQLiteQuery(
+        select: [
+          'rowId',
+        ],
+        from: table,
+        where: {
+          unique: map[unique],
+        },
+      );
+      final id = await db.getValue(query.build());
+      if (id != null) {
+        return id;
+      }
+    }
+    return _generateId(map, table);
   }
 
-  Future<dynamic> txnUpdateWithConditions(String table, SQLiteStatement stmt) {
-    String sql = stmt.updateWithConditions(table);
-    return txn.rawUpdate(sql);
+  int _generateId(Map<String, dynamic> map, String table) {
+    final id = map[SQLiteStatement.ID] as int;
+    if (id == null && bank != null && bank.containsKey(table)) {
+      final oldId = bank[table];
+      final newId = oldId + 1;
+      bank[table] = newId;
+      return newId;
+    }
+    return id;
   }
 
-  Future<dynamic> txnDelete(String table, SQLiteStatement stmt, dynamic id) {
-    String sql = stmt.delete(table, id);
-    return txn.rawUpdate(sql);
-  }
-
-  Future<dynamic> txnDeleteWithConditions(String table, SQLiteStatement stmt) {
-    String sql = stmt.deleteWithConditions(table);
-    return txn.rawUpdate(sql);
-  }
-
-  void bindInsert(String table, SQLiteStatement stmt) {
+  Future<int> bindInsert(
+    String table,
+    SQLiteStatement stmt, {
+    ConflictAlgorithm conflictAlgorithm,
+  }) async {
     batch.insert(
       table,
       stmt.map,
-      conflictAlgorithm: ConflictAlgorithm.replace,
+      conflictAlgorithm: conflictAlgorithm,
     );
+    return await _mapId(table, stmt);
   }
 
   void bindUpdate(String table, SQLiteStatement stmt, dynamic id) {
     batch.update(
       table,
       stmt.map,
-      where: "${SQLiteStatement.ID} = ?",
+      where: '${SQLiteStatement.ID} = ?',
       whereArgs: [id],
     );
   }
@@ -76,14 +111,19 @@ class SQLiteBinder {
   void bindDelete(String table, dynamic id) {
     batch.delete(
       table,
-      where: "${SQLiteStatement.ID} = ?",
+      where: '${SQLiteStatement.ID} = ?',
       whereArgs: [id],
     );
   }
 
-  void insert(String table, SQLiteStatement stmt) {
-    String sql = stmt.insert(table);
+  Future<int> insert(String table, SQLiteStatement stmt,
+      [String unique]) async {
+    final pk = SQLiteStatement.ID;
+    final map = stmt.map;
+    final field = map[pk] != null ? pk : unique;
+    String sql = stmt.insert(table, unique: field);
     batch.rawInsert(sql);
+    return await _mapId(table, stmt, unique: field);
   }
 
   void update(String table, SQLiteStatement stmt, dynamic id) {
