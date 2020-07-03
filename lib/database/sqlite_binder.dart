@@ -67,7 +67,7 @@ class SQLiteBinder {
           unique: map[unique],
         },
       );
-      final key = '$table.$unique';
+      final key = '$table.$unique(${map[unique]})';
       final oldId = _map[key];
       final id = oldId ?? await db.getValue(query.build());
       if (id != null) {
