@@ -7,7 +7,7 @@ import 'package:sqflite_sqlcipher/sqlite_api.dart';
 
 class SQLiteBinder {
   final SQLiteAdapter db;
-  Map<String, int> bank;
+  Map<String, int> _map;
   Batch _batch;
 
   SQLiteBinder(this.db);
@@ -29,8 +29,8 @@ class SQLiteBinder {
   }
 
   Future<void> _registerLastId(String table) async {
-    bank ??= {};
-    if (!bank.containsKey(table)) {
+    _map ??= {};
+    if (!_map.containsKey(table)) {
       final query = SQLiteQuery(
         select: [
           'rowId',
@@ -45,7 +45,7 @@ class SQLiteBinder {
         limit: 1,
       );
       final id = await db.getValue(query.build());
-      bank[table] = id ?? 0;
+      _map[table] = id ?? 0;
     }
   }
 
@@ -67,23 +67,34 @@ class SQLiteBinder {
           unique: map[unique],
         },
       );
-      final id = await db.getValue(query.build());
+      final key = '$table.$unique';
+      final oldId = _map[key];
+      final id = oldId ?? await db.getValue(query.build());
       if (id != null) {
+        _map[key] = id;
         return id;
+      } else {
+        final newId = _generateId(map, table);
+        _map[key] = newId;
+        return newId;
       }
     }
     return _generateId(map, table);
   }
 
   int _generateId(Map<String, dynamic> map, String table) {
-    final id = map[SQLiteStatement.ID] as int;
-    if (id == null && bank != null && bank.containsKey(table)) {
-      final oldId = bank[table];
-      final newId = oldId + 1;
-      bank[table] = newId;
-      return newId;
+    final id = map[SQLiteStatement.ID];
+    if (id != null) {
+      return id as int;
+    } else {
+      if (_map.containsKey(table)) {
+        final oldId = _map[table];
+        final newId = oldId + 1;
+        _map[table] = newId;
+        return newId;
+      }
     }
-    return id;
+    return null;
   }
 
   Future<int> bindInsert(
