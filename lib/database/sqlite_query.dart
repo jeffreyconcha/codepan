@@ -61,7 +61,7 @@ class SQLiteQuery with QueryProperties {
     addFields(select, alias: _table.alias);
     addConditions(where, alias: _table.alias);
     _addOrders(orderBy, alias: _table.alias);
-    _addGroups(orderBy, alias: _table.alias);
+    _addGroups(groupBy, alias: _table.alias);
     this._randomOrder = randomOrder;
     this._limit = limit;
   }
