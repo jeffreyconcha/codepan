@@ -1,4 +1,4 @@
-import 'package:codepan/model/DateTimeData.dart';
+import 'package:codepan/model/date_time.dart';
 import 'package:intl/intl.dart';
 
 class PanUtils {
