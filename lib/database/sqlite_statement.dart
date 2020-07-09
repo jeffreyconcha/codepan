@@ -171,8 +171,10 @@ class SQLiteStatement with QueryProperties {
   }
 
   void addFieldValue(FieldValue fv) {
-    _fieldValueList ??= [];
-    _fieldValueList.add(fv);
+    if (fv != null) {
+      _fieldValueList ??= [];
+      _fieldValueList.add(fv);
+    }
   }
 
   void add(SQLiteEntity entity) {

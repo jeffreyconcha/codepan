@@ -86,9 +86,11 @@ mixin QueryProperties {
   }
 
   void addField(Field f, {String alias}) {
-    f.setAlias(alias);
-    _fieldList ??= [];
-    _fieldList.add(f);
+    if (f != null) {
+      f.setAlias(alias);
+      _fieldList ??= [];
+      _fieldList.add(f);
+    }
   }
 
   void addFields(List<dynamic> list, {String alias}) {
@@ -103,7 +105,7 @@ mixin QueryProperties {
   }
 
   void addCondition(Condition c, {String alias}) {
-    if (c.hasValue) {
+    if (c != null && c.hasValue) {
       c.setAlias(alias);
       _conditionList ??= [];
       _conditionList.add(c);

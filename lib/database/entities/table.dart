@@ -10,17 +10,19 @@ class Table {
       final buffer = StringBuffer();
       final vowels = RegExp(r'[aeiuo]');
       final raw = name.replaceAll('_tb', '');
-      buffer.write(raw.substring(0, 1));
-      final rest = raw.substring(1, raw.length);
-      List<String> list = rest.split('_');
+      List<String> list = raw.split('_');
       for (final word in list) {
-        final text = word.replaceAllMapped(vowels, (match) => '').toLowerCase();
-        int m = word == list.first ? max - 1 : max;
-        final consonants = word != list.first ? text.capitalize() : text;
-        if (consonants.length > m) {
-          buffer.write(consonants.substring(0, m));
+        final lower = word.toLowerCase();
+        final first = lower.substring(0, 1);
+        final rest = lower.substring(1, word.length);
+        final consonants = rest.replaceAllMapped(vowels, (match) => '');
+        final result = word != list.first
+            ? '${first.toUpperCase()}$consonants'
+            : '$first$consonants';
+        if (result.length >= max) {
+          buffer.write(result.substring(0, max));
         } else {
-          buffer.write(consonants);
+          buffer.write(result);
         }
       }
       return buffer.toString();
