@@ -9,7 +9,7 @@ class PanImage extends StatelessWidget {
 
   const PanImage({
     Key key,
-    this.icon,
+    @required this.icon,
     this.width,
     this.height,
     this.fit,
@@ -26,9 +26,10 @@ class PanImage extends StatelessWidget {
       margin: margin,
       padding: padding,
       alignment: alignment ?? Alignment.center,
-      decoration: BoxDecoration(
-          image: DecorationImage(
-              image: AssetImage('assets/images/$icon.png'), fit: fit)),
+      child: Image.asset(
+        'assets/images/$icon.png',
+        fit: fit,
+      ),
     );
   }
 }
