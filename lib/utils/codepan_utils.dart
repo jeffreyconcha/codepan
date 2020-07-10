@@ -30,4 +30,15 @@ class PanUtils {
     final nf = NumberFormat('#,###.00', 'en_US');
     return nf.format(input);
   }
+
+  static formatDuration(Duration duration, {bool withHours = false}) {
+    String format(int n) => n.toString().padLeft(2, "0");
+    String seconds = format(duration.inSeconds.remainder(60));
+    String minutes = format(duration.inMinutes.remainder(60));
+    if (withHours) {
+      String hours = format(duration.inHours);
+      return '$hours:$minutes:$seconds';
+    }
+    return '$minutes:$seconds';
+  }
 }
