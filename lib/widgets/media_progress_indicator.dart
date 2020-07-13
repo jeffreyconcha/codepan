@@ -40,6 +40,13 @@ class MediaProgressIndicator extends StatelessWidget {
   Widget build(BuildContext context) {
     final d = Dimension.of(context);
     final trackHeight = barHeight ?? d.at(4);
+    final shadow = <Shadow>[
+      Shadow(
+        offset: Offset(d.at(1), d.at(1)),
+        blurRadius: d.at(3),
+        color: Colors.black,
+      ),
+    ];
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
@@ -54,6 +61,7 @@ class MediaProgressIndicator extends StatelessWidget {
                   fontColor: Colors.white,
                   alignment: Alignment.centerLeft,
                   fontSize: 13,
+                  shadows: shadow,
                 ),
               ),
               Expanded(
@@ -63,6 +71,7 @@ class MediaProgressIndicator extends StatelessWidget {
                   fontColor: Colors.white,
                   alignment: Alignment.centerRight,
                   fontSize: 13,
+                  shadows: shadow,
                 ),
               ),
             ],

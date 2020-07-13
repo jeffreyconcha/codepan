@@ -29,6 +29,8 @@ class PanImage extends StatelessWidget {
       child: Image.asset(
         'assets/images/$icon.png',
         fit: fit,
+        width: width,
+        height: height,
       ),
     );
   }

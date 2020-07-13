@@ -27,7 +27,7 @@ class PanButton extends StatelessWidget {
     this.alignment = Alignment.center,
     this.background = PanColors.none,
     this.margin,
-    this.padding,
+    this.padding = const EdgeInsets.all(0),
     this.radius = 0,
     this.borderWidth = 0,
     this.borderColor = PanColors.none,

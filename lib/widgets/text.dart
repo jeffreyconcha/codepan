@@ -13,6 +13,7 @@ class PanText extends StatelessWidget {
   final FontStyle fontStyle;
   final Alignment alignment;
   final TextAlign textAlign;
+  final List<Shadow> shadows;
   final int maxLines;
 
   const PanText({
@@ -37,6 +38,7 @@ class PanText extends StatelessWidget {
     this.width,
     this.height,
     this.maxLines,
+    this.shadows,
   }) : super(key: key);
 
   @override
@@ -59,6 +61,7 @@ class PanText extends StatelessWidget {
           height: fontHeight,
           fontSize: fontSize,
           decoration: decoration,
+          shadows: shadows,
         ),
         textAlign: textAlign,
       ),

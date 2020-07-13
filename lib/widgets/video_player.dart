@@ -1,9 +1,13 @@
+import 'package:codepan/database/entities/condition.dart';
 import 'package:codepan/resources/dimensions.dart';
+import 'package:codepan/services/navigation.dart';
+import 'package:codepan/transitions/route_transition.dart';
 import 'package:codepan/widgets/button.dart';
 import 'package:codepan/widgets/loading_indicator.dart';
 import 'package:codepan/widgets/media_progress_indicator.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:video_player/video_player.dart';
 
 class PanVideoPlayer extends StatefulWidget {
@@ -11,13 +15,17 @@ class PanVideoPlayer extends StatefulWidget {
   final double width;
   final double height;
   final String uri;
+  final bool isFullScreen;
+  final _PanVideoPlayerState state;
 
-  const PanVideoPlayer({
+  PanVideoPlayer({
     Key key,
     @required this.uri,
     this.color,
     this.width,
     this.height,
+    this.isFullScreen = false,
+    this.state,
   }) : super(key: key);
 
   @override
@@ -32,24 +40,40 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
   bool _isPlaying = false;
   bool _isBuffering = false;
   double _buffered = 0;
-  double
-  _current = 0;
+  double _current = 0;
   double _max = 0;
 
   VideoPlayerValue get _value => _controller?.value;
+
+  bool get isFullscreen => widget.isFullScreen;
 
   double get aspectRatio => _isInitialized ? _value.aspectRatio : 16 / 9;
 
   @override
   void initState() {
-    _controller = VideoPlayerController.network(widget.uri);
+    if (widget.isFullScreen) {
+      final state = widget.state;
+      _controller = state._controller;
+      _isControllerVisible = state._isControllerVisible;
+      _isInitialized = state._isInitialized;
+      _isLoading = state._isLoading;
+      _isPlaying = state._isPlaying;
+      _isBuffering = state._isBuffering;
+      _current = state._current;
+      _buffered = state._buffered;
+      _max = state._max;
+    } else {
+      _controller = VideoPlayerController.network(widget.uri);
+    }
     super.initState();
   }
 
   @override
-  void dispose() {
-    _controller.removeListener(_listener);
-    _controller?.dispose();
+  void dispose() async {
+    if (!widget.isFullScreen) {
+      _controller.removeListener(_listener);
+      _controller?.dispose();
+    }
     super.dispose();
   }
 
@@ -57,90 +81,121 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
   Widget build(BuildContext context) {
     final d = Dimension.of(context);
     final width = widget.width ?? d.maxWidth;
-    final height = widget.height ?? d.maxWidth / aspectRatio;
-    return Material(
-      color: Colors.grey.shade900,
-      child: SizedBox(
-        width: width,
-        height: height,
-        child: Stack(
-          children: <Widget>[
-            Center(
-              child: _isInitialized
-                  ? Stack(
-                      children: <Widget>[
-                        AspectRatio(
-                          aspectRatio: aspectRatio,
-                          child: VideoPlayer(_controller),
+    final height =
+        isFullscreen ? d.maxHeight : widget.height ?? d.maxWidth / aspectRatio;
+    return WillPopScope(
+        child: Material(
+          color: Colors.grey.shade900,
+          child: SizedBox(
+            width: width,
+            height: height,
+            child: Stack(
+              children: <Widget>[
+                Center(
+                  child: _isInitialized
+                      ? Stack(
+                          children: <Widget>[
+                            Center(
+                              child: AspectRatio(
+                                aspectRatio: aspectRatio,
+                                child: VideoPlayer(_controller),
+                              ),
+                            ),
+                            Container(
+                              child: _isBuffering ? LoadingIndicator() : null,
+                            ),
+                          ],
+                        )
+                      : Container(
+                          child: _isLoading ? LoadingIndicator() : null,
                         ),
-                        Container(
-                          child: _isBuffering ? LoadingIndicator() : null,
-                        ),
-                      ],
-                    )
-                  : Container(
-                      child: _isLoading ? LoadingIndicator() : null,
+                ),
+                SizedBox(
+                  width: width,
+                  height: height,
+                  child: GestureDetector(
+                    child: AnimatedOpacity(
+                      duration: Duration(milliseconds: 250),
+                      opacity: _isControllerVisible ? 1 : 0,
+                      child: Container(
+                        color: Colors.black.withOpacity(0.2),
+                        child: _isControllerVisible
+                            ? Stack(
+                                children: <Widget>[
+                                  Center(
+                                    child: !_isLoading
+                                        ? PanButton(
+                                            background: widget.color ??
+                                                Theme.of(context).primaryColor,
+                                            radius: d.at(100),
+                                            width: d.at(70),
+                                            height: d.at(70),
+                                            onPressed: _onPlay,
+                                            child: Icon(
+                                              _isPlaying
+                                                  ? Icons.pause
+                                                  : Icons.play_arrow,
+                                              size: d.at(40),
+                                              color: Colors.white,
+                                            ),
+                                          )
+                                        : LoadingIndicator(),
+                                  ),
+                                  Container(
+                                    alignment: Alignment.bottomCenter,
+                                    child: _isInitialized
+                                        ? MediaProgressIndicator(
+                                            color: widget.color,
+                                            buffered: _buffered,
+                                            current: _current,
+                                            max: _max,
+                                            onSeekProgress: (value) {
+                                              _seekTo(value);
+                                            },
+                                          )
+                                        : null,
+                                  ),
+                                  Align(
+                                    alignment: Alignment.topRight,
+                                    child: PanButton(
+                                      radius: d.at(50),
+                                      width: d.at(40),
+                                      height: d.at(40),
+                                      margin: EdgeInsets.all(d.at(5)),
+                                      alignment: Alignment.center,
+                                      child: Icon(
+                                        isFullscreen
+                                            ? Icons.fullscreen_exit
+                                            : Icons.fullscreen,
+                                        size: d.at(30),
+                                        color: Colors.white,
+                                      ),
+                                      onPressed: _fullScreen,
+                                    ),
+                                  ),
+                                ],
+                              )
+                            : null,
+                      ),
                     ),
-            ),
-            SizedBox(
-              width: width,
-              height: height,
-              child: GestureDetector(
-                child: AnimatedOpacity(
-                  duration: Duration(milliseconds: 250),
-                  opacity: _isControllerVisible ? 1 : 0,
-                  child: Container(
-                    color: Colors.black.withOpacity(0.2),
-                    child: _isControllerVisible
-                        ? Stack(
-                            children: <Widget>[
-                              Center(
-                                child: !_isLoading
-                                    ? PanButton(
-                                        background: widget.color ??
-                                            Theme.of(context).primaryColor,
-                                        radius: d.at(100),
-                                        width: d.at(70),
-                                        height: d.at(70),
-                                        onPressed: _onPlay,
-                                        child: Icon(
-                                          _isPlaying
-                                              ? Icons.pause
-                                              : Icons.play_arrow,
-                                          size: d.at(40),
-                                          color: Colors.white,
-                                        ),
-                                      )
-                                    : LoadingIndicator(),
-                              ),
-                              Container(
-                                alignment: Alignment.bottomCenter,
-                                child: _isInitialized
-                                    ? MediaProgressIndicator(
-                                        color: widget.color,
-                                        buffered: _buffered,
-                                        current: _current,
-                                        max: _max,
-                                        onSeekProgress: (value) {
-                                          _seekTo(value);
-                                        },
-                                      )
-                                    : null,
-                              ),
-                            ],
-                          )
-                        : null,
+                    onTap: () {
+                      _setControllerVisible(!_isControllerVisible);
+                    },
                   ),
                 ),
-                onTap: () {
-                  _setControllerVisible(!_isControllerVisible);
-                },
-              ),
+              ],
             ),
-          ],
+          ),
         ),
-      ),
-    );
+        onWillPop: () async {
+          if (isFullscreen) {
+            await SystemChrome.setPreferredOrientations([
+              DeviceOrientation.portraitUp,
+              DeviceOrientation.portraitDown,
+            ]);
+          }
+          return true;
+        });
   }
 
   Future<void> initializeVideo() async {
@@ -238,5 +293,28 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
       return buffered / _max;
     }
     return 0;
+  }
+
+  void _fullScreen() async {
+    if (!isFullscreen) {
+      await SystemChrome.setPreferredOrientations([
+        DeviceOrientation.landscapeLeft,
+        DeviceOrientation.landscapeRight,
+      ]);
+      NavigationService().push(FadeRoute(
+        enter: PanVideoPlayer(
+          uri: widget.uri,
+          color: widget.color,
+          isFullScreen: !isFullscreen,
+          state: this,
+        ),
+      ));
+    } else {
+      await SystemChrome.setPreferredOrientations([
+        DeviceOrientation.portraitUp,
+        DeviceOrientation.portraitDown,
+      ]);
+      NavigationService().pop();
+    }
   }
 }
