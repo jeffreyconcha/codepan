@@ -13,6 +13,7 @@ dependencies:
   sqflite_sqlcipher: ^1.0.0+6
   intl: ^0.16.1
   video_player: ^0.10.11+2
+  audioplayer: ^0.8.1
 
 dev_dependencies:
   flutter_test:

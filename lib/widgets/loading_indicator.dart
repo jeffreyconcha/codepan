@@ -3,11 +3,13 @@ import 'package:flutter/material.dart';
 class LoadingIndicator extends StatelessWidget {
   final double width;
   final double height;
+  final Color color;
 
   const LoadingIndicator({
     Key key,
     this.width,
     this.height,
+    this.color,
   }) : super(key: key);
 
   @override
@@ -17,7 +19,9 @@ class LoadingIndicator extends StatelessWidget {
         width: width,
         height: height,
         alignment: Alignment.center,
-        child: CircularProgressIndicator(),
+        child: CircularProgressIndicator(
+          valueColor: AlwaysStoppedAnimation<Color>(color),
+        ),
       ),
     );
   }

@@ -1,21 +1,22 @@
-import 'package:codepan/database/entities/condition.dart';
+import 'package:codepan/media/callback.dart';
 import 'package:codepan/resources/dimensions.dart';
 import 'package:codepan/services/navigation.dart';
 import 'package:codepan/transitions/route_transition.dart';
 import 'package:codepan/widgets/button.dart';
 import 'package:codepan/widgets/loading_indicator.dart';
 import 'package:codepan/widgets/media_progress_indicator.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:video_player/video_player.dart';
 
 class PanVideoPlayer extends StatefulWidget {
+  final OnProgressChanged onProgressChanged;
+  final OnCompleted onCompleted;
+  final bool isFullScreen;
   final Color color;
   final double width;
   final double height;
   final String uri;
-  final bool isFullScreen;
   final _PanVideoPlayerState state;
 
   PanVideoPlayer({
@@ -26,6 +27,8 @@ class PanVideoPlayer extends StatefulWidget {
     this.height,
     this.isFullScreen = false,
     this.state,
+    this.onProgressChanged,
+    this.onCompleted,
   }) : super(key: key);
 
   @override
@@ -72,7 +75,7 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
   void dispose() async {
     if (!widget.isFullScreen) {
       _controller.removeListener(_listener);
-      _controller?.dispose();
+      await _controller?.dispose();
     }
     super.dispose();
   }
@@ -139,19 +142,26 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
                                               color: Colors.white,
                                             ),
                                           )
-                                        : LoadingIndicator(),
+                                        : LoadingIndicator(
+                                            color: widget.color,
+                                          ),
                                   ),
                                   Container(
                                     alignment: Alignment.bottomCenter,
                                     child: _isInitialized
-                                        ? MediaProgressIndicator(
-                                            color: widget.color,
-                                            buffered: _buffered,
-                                            current: _current,
-                                            max: _max,
-                                            onSeekProgress: (value) {
-                                              _seekTo(value);
-                                            },
+                                        ? Padding(
+                                            padding: EdgeInsets.symmetric(
+                                              horizontal: d.at(20),
+                                            ),
+                                            child: MediaProgressIndicator(
+                                              activeColor: widget.color,
+                                              buffered: _buffered,
+                                              current: _current,
+                                              max: _max,
+                                              onSeekProgress: (value) {
+                                                _seekTo(value);
+                                              },
+                                            ),
                                           )
                                         : null,
                                   ),
@@ -232,9 +242,11 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
     double value = _value.position.inMilliseconds.toDouble();
     if (value != _current) {
       _setCurrent(value);
+      widget.onProgressChanged?.call(value, _max);
     }
     if (value == _max) {
       _setPlaying(false);
+      widget.onCompleted?.call();
     }
     _updateBuffered();
   }
