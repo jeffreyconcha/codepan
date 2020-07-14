@@ -107,6 +107,10 @@ class MediaProgressIndicator extends StatelessWidget {
                   thumbColor: activeColor,
                   trackShape: TrackShape(),
                   trackHeight: trackHeight,
+                  thumbShape: RectangularThumb(
+                    width: d.at(4),
+                    height: d.at(13),
+                  ),
                 ),
                 child: Slider(
                   max: max,
@@ -142,5 +146,45 @@ class TrackShape extends RectangularSliderTrackShape {
     final double left = offset.dx;
     final double width = size.width;
     return Rect.fromLTWH(left, top, width, height);
+  }
+}
+
+class RectangularThumb extends SliderComponentShape {
+  final double width;
+  final double height;
+
+  const RectangularThumb({
+    this.width,
+    this.height,
+  });
+
+  @override
+  Size getPreferredSize(bool isEnabled, bool isDiscrete) {
+    return Size(0, 0);
+  }
+
+  @override
+  void paint(
+    PaintingContext context,
+    Offset center, {
+    Animation<double> activationAnimation,
+    Animation<double> enableAnimation,
+    bool isDiscrete,
+    TextPainter labelPainter,
+    RenderBox parentBox,
+    SliderThemeData sliderTheme,
+    TextDirection textDirection,
+    double value,
+  }) {
+    final canvas = context.canvas;
+    final rect = Rect.fromCenter(
+      center: center,
+      width: width,
+      height: height,
+    );
+    final paint = Paint()
+      ..color = sliderTheme.activeTrackColor
+      ..style = PaintingStyle.fill;
+    canvas.drawRect(rect, paint);
   }
 }

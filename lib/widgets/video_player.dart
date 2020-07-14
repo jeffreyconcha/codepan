@@ -105,12 +105,20 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
                               ),
                             ),
                             Container(
-                              child: _isBuffering ? LoadingIndicator() : null,
+                              child: _isBuffering
+                                  ? LoadingIndicator(
+                                      color: widget.color,
+                                    )
+                                  : null,
                             ),
                           ],
                         )
                       : Container(
-                          child: _isLoading ? LoadingIndicator() : null,
+                          child: _isLoading
+                              ? LoadingIndicator(
+                                  color: widget.color,
+                                )
+                              : null,
                         ),
                 ),
                 SizedBox(
