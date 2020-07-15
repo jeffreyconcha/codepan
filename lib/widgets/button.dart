@@ -14,6 +14,7 @@ class PanButton extends StatelessWidget {
   final Alignment alignment;
   final FocusNode focusNode;
   final Widget child;
+  final TextAlign textAlign;
 
   const PanButton({
     Key key,
@@ -26,6 +27,7 @@ class PanButton extends StatelessWidget {
     this.fontWeight = FontWeight.normal,
     this.alignment = Alignment.center,
     this.background = PanColors.none,
+    this.textAlign = TextAlign.center,
     this.margin,
     this.padding = const EdgeInsets.all(0),
     this.radius = 0,
@@ -50,12 +52,13 @@ class PanButton extends StatelessWidget {
             fontColor: fontColor,
             fontWeight: fontWeight,
             fontFamily: fontFamily,
+            textAlign: textAlign,
+            alignment: alignment,
           );
     return Container(
       width: width,
       height: height,
       margin: margin,
-      alignment: alignment,
       child: SizedBox(
         width: width,
         height: height,

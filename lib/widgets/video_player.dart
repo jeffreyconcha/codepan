@@ -74,7 +74,7 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
   @override
   void dispose() async {
     if (!widget.isFullScreen) {
-      _controller.removeListener(_listener);
+      _controller?.removeListener(_listener);
       await _controller?.dispose();
     }
     super.dispose();

@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 
 class NavigationService {
   static final NavigationService _service = NavigationService._internal();
-  final key = GlobalKey<NavigatorState>();
+  final key = GlobalKey<NavigatorState>(debugLabel: 'Key');
 
   NavigationService._internal();
 
