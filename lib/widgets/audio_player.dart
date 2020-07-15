@@ -69,10 +69,10 @@ class _PanAudioPlayerState extends State<PanAudioPlayer> {
   }
 
   @override
-  void dispose() async {
+  void dispose() {
     _onPositionChanged.cancel();
     _onPlayerStateChanged.cancel();
-    await _audio.stop();
+    _audio.stop();
     super.dispose();
   }
 
