@@ -1,7 +1,7 @@
 import 'package:flutter/widgets.dart';
 
 class Dimension {
-  static const double BASELINE = 360;
+  static const double baseline = 360;
   final BuildContext context;
   final bool isSafeArea;
 
@@ -17,7 +17,7 @@ class Dimension {
       final width = size.width;
       final height = size.height;
       final reference = width < height ? width : height;
-      return dp * (reference / BASELINE);
+      return dp * (reference / baseline);
     }
     return dp;
   }
