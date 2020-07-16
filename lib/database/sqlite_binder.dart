@@ -33,12 +33,12 @@ class SQLiteBinder {
     if (!_map.containsKey(table)) {
       final query = SQLiteQuery(
         select: [
-          'rowId',
+          SQLiteStatement.ID,
         ],
         from: table,
         orderBy: [
           Field.asOrder(
-            field: 'rowId',
+            field: SQLiteStatement.ID,
             order: Order.DESC,
           )
         ],
@@ -60,7 +60,7 @@ class SQLiteBinder {
     if (unique != null && unique != pk) {
       final query = SQLiteQuery(
         select: [
-          'rowId',
+          SQLiteStatement.ID,
         ],
         from: table,
         where: {
