@@ -3,8 +3,11 @@ import 'package:codepan/resources/dimensions.dart';
 import 'package:codepan/services/navigation.dart';
 import 'package:codepan/transitions/route_transition.dart';
 import 'package:codepan/widgets/button.dart';
+import 'package:codepan/widgets/icon.dart';
 import 'package:codepan/widgets/loading_indicator.dart';
 import 'package:codepan/widgets/media_progress_indicator.dart';
+import 'package:codepan/widgets/text.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:video_player/video_player.dart';
@@ -135,20 +138,55 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
                                 children: <Widget>[
                                   Center(
                                     child: !_isLoading
-                                        ? PanButton(
-                                            background: widget.color ??
-                                                Theme.of(context).primaryColor,
-                                            radius: d.at(100),
-                                            width: d.at(70),
-                                            height: d.at(70),
-                                            onPressed: _onPlay,
-                                            child: Icon(
-                                              _isPlaying
-                                                  ? Icons.pause
-                                                  : Icons.play_arrow,
-                                              size: d.at(40),
-                                              color: Colors.white,
-                                            ),
+                                        ? Row(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: <Widget>[
+                                              Expanded(
+                                                flex: 1,
+                                                child: SkipButton(
+                                                  direction:
+                                                      Direction.backward,
+                                                  onPressed: () {
+                                                    _seekTo(_current - 10000);
+                                                  },
+                                                  isInitialized:
+                                                      _isInitialized,
+                                                ),
+                                              ),
+                                              Expanded(
+                                                flex: 1,
+                                                child: Center(
+                                                  child: PanButton(
+                                                    background: !_isInitialized
+                                                        ? widget.color ??
+                                                            Theme.of(context)
+                                                                .primaryColor
+                                                        : Colors.transparent,
+                                                    radius: d.at(100),
+                                                    width: d.at(70),
+                                                    height: d.at(70),
+                                                    child: Icon(
+                                                      _isPlaying
+                                                          ? Icons.pause
+                                                          : Icons.play_arrow,
+                                                      size: d.at(40),
+                                                      color: Colors.white,
+                                                    ),
+                                                    onPressed: _onPlay,
+                                                  ),
+                                                ),
+                                              ),
+                                              Expanded(
+                                                flex: 1,
+                                                child: SkipButton(
+                                                  direction: Direction.forward,
+                                                  onPressed: () {
+                                                    _seekTo(_current + 10000);
+                                                  },
+                                                  isInitialized: _isInitialized,
+                                                ),
+                                              ),
+                                            ],
                                           )
                                         : LoadingIndicator(
                                             color: widget.color,
@@ -259,7 +297,8 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
     _updateBuffered();
   }
 
-  Future<void> _seekTo(double milliseconds) async {
+  Future<void> _seekTo(double input) async {
+    final milliseconds = input < 0 ? 0 : (input > _max ? _max : input);
     _setLoading(true);
     await _controller.seekTo(
       Duration(
@@ -336,5 +375,61 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
       ]);
       NavigationService().pop();
     }
+  }
+}
+
+enum Direction {
+  backward,
+  forward,
+}
+
+class SkipButton extends StatelessWidget {
+  final Direction direction;
+  final VoidCallback onPressed;
+  final bool isInitialized;
+
+  const SkipButton({
+    Key key,
+    @required this.direction,
+    this.onPressed,
+    this.isInitialized,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    final d = Dimension.of(context);
+    final isForward = direction == Direction.forward;
+    return Container(
+      alignment: isForward ? Alignment.centerLeft : Alignment.centerRight,
+      child: isInitialized
+          ? PanButton(
+              radius: d.at(60),
+              width: d.at(60),
+              height: d.at(60),
+              margin: EdgeInsets.only(
+                top: d.at(12),
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  PanIcon(
+                    icon: isForward ? 'fast_forward' : 'fast_rewind',
+                    width: d.at(15),
+                    height: d.at(13),
+                    isInternal: true,
+                  ),
+                  PanText(
+                    text: '10',
+                    fontColor: Colors.white,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 12,
+                    margin: EdgeInsets.only(top: d.at(3)),
+                  )
+                ],
+              ),
+              onPressed: onPressed,
+            )
+          : null,
+    );
   }
 }

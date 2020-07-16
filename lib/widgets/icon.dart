@@ -3,9 +3,11 @@ import 'package:flutter_svg/svg.dart';
 
 class PanIcon extends StatelessWidget {
   final EdgeInsetsGeometry margin, padding;
+  final bool isInternal;
   final Alignment alignment;
   final Color color, background;
   final double width, height;
+  final String package;
   final String icon;
   final BoxFit fit;
 
@@ -20,6 +22,8 @@ class PanIcon extends StatelessWidget {
     this.background,
     this.margin,
     this.padding,
+    this.package,
+    this.isInternal = false,
   }) : super(key: key);
 
   @override
@@ -35,6 +39,7 @@ class PanIcon extends StatelessWidget {
         color: color,
         fit: fit,
         alignment: alignment,
+        package: package ?? isInternal ? 'codepan' : null,
       ),
     );
   }
