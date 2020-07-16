@@ -298,7 +298,7 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
   }
 
   Future<void> _seekTo(double input) async {
-    final milliseconds = input < 0 ? 0 : (input > _max ? _max : input);
+    final milliseconds = input < 0.0 ? 0.0 : (input > _max ? _max : input);
     _setLoading(true);
     await _controller.seekTo(
       Duration(
@@ -407,7 +407,7 @@ class SkipButton extends StatelessWidget {
               width: d.at(60),
               height: d.at(60),
               margin: EdgeInsets.only(
-                top: d.at(12),
+                top: d.at(15),
               ),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
