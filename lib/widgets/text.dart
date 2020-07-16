@@ -18,6 +18,7 @@ class PanText extends StatelessWidget {
   final Alignment alignment;
   final TextAlign textAlign;
   final List<Shadow> shadows;
+  final Widget overflowWidget;
   final int maxLines;
 
   const PanText({
@@ -45,6 +46,7 @@ class PanText extends StatelessWidget {
     this.maxLines,
     this.shadows,
     this.onTextOverflow,
+    this.overflowWidget,
   }) : super(key: key);
 
   @override
@@ -59,7 +61,7 @@ class PanText extends StatelessWidget {
       decoration: decoration,
       shadows: shadows,
     );
-    final child = onTextOverflow != null && maxLines != null
+    final child = overflowWidget != null
         ? LayoutBuilder(
             builder: (ctx, c) {
               final span = TextSpan(
@@ -79,12 +81,18 @@ class PanText extends StatelessWidget {
                   onTextOverflow.call(lines.length);
                 }
               }
-              return Text.rich(
-                span,
-                overflow: overflow,
-                maxLines: maxLines,
-                textAlign: textAlign,
-                textDirection: textDirection,
+              return Column(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  Text.rich(
+                    span,
+                    overflow: overflow,
+                    maxLines: maxLines,
+                    textAlign: textAlign,
+                    textDirection: textDirection,
+                  ),
+                  overflowWidget,
+                ],
               );
             },
           )
