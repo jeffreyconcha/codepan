@@ -33,6 +33,7 @@ class PanTextField extends StatefulWidget {
   final FontStyle fontStyle;
   final Alignment alignment;
   final Widget suffixIcon;
+  final ValueChanged<String> onChanged;
 
   const PanTextField({
     Key key,
@@ -74,6 +75,7 @@ class PanTextField extends StatefulWidget {
     this.textAlignVertical,
     this.inputFormatters,
     this.keyboardType,
+    this.onChanged,
   }) : super(key: key);
 
   @override
@@ -139,6 +141,7 @@ class _PanTextFieldState extends State<PanTextField> {
           initialValue: widget.text,
           enabled: widget.enabled,
           enableInteractiveSelection: widget.enableInteractiveSelection,
+          onChanged: widget.onChanged,
           inputFormatters: widget.inputFormatters,
           keyboardType: widget.keyboardType,
           textAlign: widget.textAlign,

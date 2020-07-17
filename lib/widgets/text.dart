@@ -25,6 +25,8 @@ class PanText extends StatelessWidget {
   final TextAlign textAlign;
   final List<Shadow> shadows;
   final OverflowState overflowState;
+  final List<InlineSpan> children;
+  final bool isRequired;
   final int maxLines;
 
   const PanText({
@@ -53,6 +55,8 @@ class PanText extends StatelessWidget {
     this.shadows,
     this.onTextOverflow,
     this.overflowState = OverflowState.initial,
+    this.isRequired = false,
+    this.children,
   }) : super(key: key);
 
   @override
@@ -67,6 +71,34 @@ class PanText extends StatelessWidget {
       decoration: decoration,
       shadows: shadows,
     );
+    final required = TextSpan(
+      text: '*',
+      style: TextStyle(
+        color: Colors.red,
+      ),
+    );
+    List<InlineSpan> spanList;
+    if (isRequired) {
+      if (children != null) {
+        children.add(required);
+      } else {
+        spanList = [required];
+      }
+    } else {
+      spanList = children;
+    }
+    final span = TextSpan(
+      text: text ?? '',
+      style: style,
+      children: spanList,
+    );
+    final rich = Text.rich(
+      span,
+      overflow: overflow,
+      maxLines: maxLines,
+      textAlign: textAlign,
+      textDirection: textDirection,
+    );
     final child = onTextOverflow != null
         ? LayoutBuilder(
             builder: (ctx, c) {
@@ -74,10 +106,6 @@ class PanText extends StatelessWidget {
                   overflowState != OverflowState.expand ? this.maxLines : null;
               final overflow =
                   overflowState != OverflowState.expand ? this.overflow : null;
-              final span = TextSpan(
-                text: text ?? '',
-                style: style,
-              );
               final painter = TextPainter(
                 maxLines: maxLines,
                 textAlign: textAlign,
@@ -95,26 +123,13 @@ class PanText extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
-                  Text.rich(
-                    span,
-                    overflow: overflow,
-                    maxLines: maxLines,
-                    textAlign: textAlign,
-                    textDirection: textDirection,
-                  ),
+                  rich,
                   Container(child: overflowWidget),
                 ],
               );
             },
           )
-        : Text(
-            text ?? '',
-            style: style,
-            overflow: overflow,
-            maxLines: maxLines,
-            textAlign: textAlign,
-            textDirection: textDirection,
-          );
+        : rich;
     return Container(
       width: width,
       height: height,
