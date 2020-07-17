@@ -1,5 +1,6 @@
+import 'package:codepan/database/sqlite_query.dart';
+import 'package:flutter/foundation.dart';
 import 'field.dart';
-import 'package:codepan/extensions/string_ext.dart';
 
 class Table {
   final String name;
@@ -32,6 +33,18 @@ class Table {
 
   Field field(String name) {
     return Field(name)..setAlias(alias);
+  }
+
+  Field fieldAsOrder({
+    @required String field,
+    Order order = Order.ASC,
+    bool collate = false,
+  }) {
+    return Field.asOrder(
+      field: field,
+      order: order,
+      collate: collate,
+    )..setAlias(alias);
   }
 
   Table(this.name);

@@ -78,7 +78,9 @@ class SQLiteQuery with QueryProperties {
   }
 
   void _addOrder(Field f, {String alias}) {
-    f.setAlias(alias);
+    if (!f.hasAlias) {
+      f.setAlias(alias);
+    }
     _orderList ??= [];
     _orderList.add(f);
   }
