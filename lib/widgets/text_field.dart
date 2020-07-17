@@ -25,7 +25,7 @@ class PanTextField extends StatefulWidget {
   final TextInputAction textInputAction;
   final EdgeInsetsGeometry margin, padding;
   final FocusNode focusNode, nextFocusNode;
-  final bool isPassword, bottomBorderOnly;
+  final bool enabled, enableInteractiveSelection, isPassword, bottomBorderOnly;
   final String text, hint, fontFamily;
   final TextInputType keyboardType;
   final FontWeight fontWeight;
@@ -54,8 +54,10 @@ class PanTextField extends StatefulWidget {
     this.focusedBorderColor,
     this.focusedBorderWidth,
     this.hint,
+    this.enabled = true,
     this.isPassword = false,
     this.bottomBorderOnly = false,
+    this.enableInteractiveSelection = true,
     this.controller,
     this.textInputAction = TextInputAction.done,
     this.focusNode,
@@ -135,6 +137,8 @@ class _PanTextFieldState extends State<PanTextField> {
       child: Focus(
         child: TextFormField(
           initialValue: widget.text,
+          enabled: widget.enabled,
+          enableInteractiveSelection: widget.enableInteractiveSelection,
           inputFormatters: widget.inputFormatters,
           keyboardType: widget.keyboardType,
           textAlign: widget.textAlign,
