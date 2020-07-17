@@ -134,6 +134,7 @@ class _PanTextFieldState extends State<PanTextField> {
       ),
       child: Focus(
         child: TextFormField(
+          initialValue: widget.text,
           inputFormatters: widget.inputFormatters,
           keyboardType: widget.keyboardType,
           textAlign: widget.textAlign,
