@@ -1,5 +1,6 @@
 import 'package:codepan/model/date_time.dart';
 import 'package:intl/intl.dart';
+import 'package:time_ago_provider/time_ago_provider.dart' as ago;
 
 class PanUtils {
   static Map<String, String> getDateTime() {
@@ -40,5 +41,11 @@ class PanUtils {
       return '$hours:$minutes:$seconds';
     }
     return '$minutes:$seconds';
+  }
+
+  static String getTimeHistory(String date, String time) {
+    final format = DateFormat('yyyy-MM-dd HH:mm:ss');
+    final value = format.parse('$date $time');
+    return ago.format(value);
   }
 }
