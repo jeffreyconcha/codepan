@@ -2,7 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:codepan/resources/colors.dart';
 
-typedef OnTextOverflow = void Function(int lines);
+enum OverflowState {
+  expand,
+  collapse,
+  initial,
+}
+
+typedef OnTextOverflow = Widget Function(int lines);
 
 class PanText extends StatelessWidget {
   final double width, height, fontSize, fontHeight, radius, borderWidth;
@@ -18,7 +24,7 @@ class PanText extends StatelessWidget {
   final Alignment alignment;
   final TextAlign textAlign;
   final List<Shadow> shadows;
-  final Widget overflowWidget;
+  final OverflowState overflowState;
   final int maxLines;
 
   const PanText({
@@ -46,7 +52,7 @@ class PanText extends StatelessWidget {
     this.maxLines,
     this.shadows,
     this.onTextOverflow,
-    this.overflowWidget,
+    this.overflowState = OverflowState.initial,
   }) : super(key: key);
 
   @override
@@ -61,9 +67,13 @@ class PanText extends StatelessWidget {
       decoration: decoration,
       shadows: shadows,
     );
-    final child = overflowWidget != null
+    final child = onTextOverflow != null
         ? LayoutBuilder(
             builder: (ctx, c) {
+              final maxLines =
+                  overflowState != OverflowState.expand ? this.maxLines : null;
+              final overflow =
+                  overflowState != OverflowState.expand ? this.overflow : null;
               final span = TextSpan(
                 text: text ?? '',
                 style: style,
@@ -75,13 +85,14 @@ class PanText extends StatelessWidget {
                 text: span,
               );
               painter.layout(maxWidth: c.maxWidth);
-              if (painter.didExceedMaxLines) {
-                if (onTextOverflow != null) {
-                  final lines = painter.computeLineMetrics();
-                  onTextOverflow.call(lines.length);
-                }
+              var overflowWidget;
+              if (painter.didExceedMaxLines ||
+                  overflowState == OverflowState.expand) {
+                final lines = painter.computeLineMetrics();
+                overflowWidget = onTextOverflow.call(lines.length);
               }
               return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
                   Text.rich(
@@ -91,7 +102,7 @@ class PanText extends StatelessWidget {
                     textAlign: textAlign,
                     textDirection: textDirection,
                   ),
-                  overflowWidget,
+                  Container(child: overflowWidget),
                 ],
               );
             },
