@@ -35,7 +35,7 @@ class Table {
     return Field(name)..setAlias(alias);
   }
 
-  Field fieldAsOrder({
+  Field order({
     @required String field,
     Order order = Order.ASC,
     bool collate = false,
