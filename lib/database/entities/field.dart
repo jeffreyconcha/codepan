@@ -108,7 +108,7 @@ class Field extends SQLiteEntity {
       if (hasConstraint) {
         switch (constraint) {
           case Constraint.PRIMARY_KEY:
-            buffer.write(' PRIMARY KEY AUTOINCREMENT NOT NULL');
+            buffer.write(' PRIMARY KEY NOT NULL');
             break;
           case Constraint.FOREIGN_KEY:
             buffer.write(' REFERENCES ${table.name}(${SQLiteStatement.ID})');

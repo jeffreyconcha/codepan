@@ -92,6 +92,10 @@ class PanText extends StatelessWidget {
       style: style,
       children: spanList,
     );
+    final maxLines =
+        overflowState != OverflowState.expand ? this.maxLines : null;
+    final overflow =
+        overflowState != OverflowState.expand ? this.overflow : null;
     final rich = Text.rich(
       span,
       overflow: overflow,
@@ -102,10 +106,6 @@ class PanText extends StatelessWidget {
     final child = onTextOverflow != null
         ? LayoutBuilder(
             builder: (ctx, c) {
-              final maxLines =
-                  overflowState != OverflowState.expand ? this.maxLines : null;
-              final overflow =
-                  overflowState != OverflowState.expand ? this.overflow : null;
               final painter = TextPainter(
                 maxLines: maxLines,
                 textAlign: textAlign,

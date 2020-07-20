@@ -68,6 +68,9 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
       _current = state._current;
       _buffered = state._buffered;
       _max = state._max;
+      if (_isInitialized) {
+        _controller.addListener(_listener);
+      }
     } else {
       _controller = VideoPlayerController.network(widget.uri);
     }
@@ -76,8 +79,8 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
 
   @override
   void dispose() {
+    _controller?.removeListener(_listener);
     if (!widget.isFullScreen) {
-      _controller?.removeListener(_listener);
       _controller?.dispose();
     }
     super.dispose();
@@ -142,19 +145,17 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
                                             mainAxisSize: MainAxisSize.min,
                                             children: <Widget>[
                                               Expanded(
-                                                flex: 1,
+                                                flex: 4,
                                                 child: SkipButton(
-                                                  direction:
-                                                      Direction.backward,
+                                                  direction: Direction.backward,
                                                   onPressed: () {
                                                     _seekTo(_current - 10000);
                                                   },
-                                                  isInitialized:
-                                                      _isInitialized,
+                                                  isInitialized: _isInitialized,
                                                 ),
                                               ),
                                               Expanded(
-                                                flex: 1,
+                                                flex: 5,
                                                 child: Center(
                                                   child: PanButton(
                                                     background: !_isInitialized
@@ -162,22 +163,28 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
                                                             Theme.of(context)
                                                                 .primaryColor
                                                         : Colors.transparent,
-                                                    radius: d.at(100),
+                                                    radius: d.at(70),
                                                     width: d.at(70),
                                                     height: d.at(70),
                                                     child: Icon(
                                                       _isPlaying
                                                           ? Icons.pause
                                                           : Icons.play_arrow,
-                                                      size: d.at(40),
+                                                      size: _isInitialized
+                                                          ? d.at(50)
+                                                          : d.at(40),
                                                       color: Colors.white,
                                                     ),
+                                                    splashColor: Colors.white
+                                                        .withOpacity(0.4),
+                                                    highlightColor:
+                                                        Colors.transparent,
                                                     onPressed: _onPlay,
                                                   ),
                                                 ),
                                               ),
                                               Expanded(
-                                                flex: 1,
+                                                flex: 4,
                                                 child: SkipButton(
                                                   direction: Direction.forward,
                                                   onPressed: () {
@@ -219,6 +226,9 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
                                       height: d.at(40),
                                       margin: EdgeInsets.all(d.at(5)),
                                       alignment: Alignment.center,
+                                      splashColor:
+                                          Colors.white.withOpacity(0.4),
+                                      highlightColor: Colors.transparent,
                                       child: Icon(
                                         isFullscreen
                                             ? Icons.fullscreen_exit
@@ -407,15 +417,17 @@ class SkipButton extends StatelessWidget {
               width: d.at(60),
               height: d.at(60),
               margin: EdgeInsets.only(
-                top: d.at(15),
+                top: d.at(20),
               ),
+              splashColor: Colors.white.withOpacity(0.4),
+              highlightColor: Colors.transparent,
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
                   PanIcon(
                     icon: isForward ? 'fast_forward' : 'fast_rewind',
-                    width: d.at(15),
-                    height: d.at(13),
+                    width: d.at(20),
+                    height: d.at(18),
                     isInternal: true,
                   ),
                   PanText(
