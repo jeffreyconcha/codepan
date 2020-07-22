@@ -38,6 +38,7 @@ class PanVideoPlayer extends StatefulWidget {
 
 class _PanVideoPlayerState extends State<PanVideoPlayer> {
   VideoPlayerController _controller;
+  bool _orientationChanged = false;
   bool _isControllerVisible = true;
   bool _isInitialized = false;
   bool _isLoading = false;
@@ -91,15 +92,18 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
     final height = _isFullscreen
         ? d.maxHeight
         : widget.height ?? d.maxWidth / _aspectRatio;
-    return VisibilityDetector(
-      key: Key(widget.uri),
-      onVisibilityChanged: (info) {
-        print(info.visibleFraction);
-        if (_isInitialized && _isPlaying && info.visibleFraction == 0.0) {
-          _onPlay();
-        }
-      },
-      child: WillPopScope(
+    return WillPopScope(
+        child: VisibilityDetector(
+          key: Key(widget.uri),
+          onVisibilityChanged: (info) {
+            if (_isInitialized &&
+                _isPlaying &&
+                !_orientationChanged &&
+                info.visibleFraction == 0.0) {
+              _onPlay();
+            }
+            _orientationChanged = false;
+          },
           child: Material(
             color: Colors.grey.shade900,
             child: SizedBox(
@@ -169,16 +173,17 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
               ),
             ),
           ),
-          onWillPop: () async {
-            if (_isFullscreen) {
-              await SystemChrome.setPreferredOrientations([
-                DeviceOrientation.portraitUp,
-                DeviceOrientation.portraitDown,
-              ]);
-            }
-            return true;
-          }),
-    );
+        ),
+        onWillPop: () async {
+          if (_isFullscreen) {
+            await SystemChrome.setPreferredOrientations([
+              DeviceOrientation.portraitUp,
+              DeviceOrientation.portraitDown,
+            ]);
+            _orientationChanged = true;
+          }
+          return true;
+        });
   }
 
   Future<void> initializeVideo() async {
@@ -187,7 +192,6 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
       _setControllerVisible(false);
       await _controller.initialize();
       _controller.addListener(_listener);
-      print('Video Initialized Success');
       setState(() {
         _max = _value.duration.inMilliseconds.toDouble();
         _isInitialized = true;
@@ -302,5 +306,6 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
       ]);
       NavigationService().pop();
     }
+    _orientationChanged = true;
   }
 }
