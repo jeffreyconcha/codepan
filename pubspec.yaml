@@ -16,6 +16,8 @@ dependencies:
   audioplayer: ^0.8.1
   flutter_svg: ^0.17.1
   time_ago_provider: ^2.0.5
+  visibility_detector: ^0.1.5
+  screenshot: ^0.2.0
 
 dev_dependencies:
   flutter_test:

@@ -3,6 +3,8 @@ import 'package:flutter/widgets.dart';
 
 const delay = Duration(milliseconds: 250);
 
+typedef OnScreenTransition = Future<Widget> Function();
+
 class SlideRoute extends PageRouteBuilder {
   final Widget exit;
   final Widget enter;

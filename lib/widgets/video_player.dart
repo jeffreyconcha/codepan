@@ -7,10 +7,12 @@ import 'package:codepan/widgets/icon.dart';
 import 'package:codepan/widgets/loading_indicator.dart';
 import 'package:codepan/widgets/media_progress_indicator.dart';
 import 'package:codepan/widgets/text.dart';
+import 'package:codepan/widgets/video_controller.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:video_player/video_player.dart';
+import 'package:visibility_detector/visibility_detector.dart';
 
 class PanVideoPlayer extends StatefulWidget {
   final OnProgressChanged onProgressChanged;
@@ -51,9 +53,9 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
 
   VideoPlayerValue get _value => _controller?.value;
 
-  bool get isFullscreen => widget.isFullScreen;
+  bool get _isFullscreen => widget.isFullScreen;
 
-  double get aspectRatio => _isInitialized ? _value.aspectRatio : 16 / 9;
+  double get _aspectRatio => _isInitialized ? _value.aspectRatio : 16 / 9;
 
   @override
   void initState() {
@@ -90,178 +92,97 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
   Widget build(BuildContext context) {
     final d = Dimension.of(context);
     final width = widget.width ?? d.maxWidth;
-    final height =
-        isFullscreen ? d.maxHeight : widget.height ?? d.maxWidth / aspectRatio;
-    return WillPopScope(
-        child: Material(
-          color: Colors.grey.shade900,
-          child: SizedBox(
-            width: width,
-            height: height,
-            child: Stack(
-              children: <Widget>[
-                Center(
-                  child: _isInitialized
-                      ? Stack(
-                          children: <Widget>[
-                            Center(
-                              child: AspectRatio(
-                                aspectRatio: aspectRatio,
-                                child: VideoPlayer(_controller),
+    final height = _isFullscreen
+        ? d.maxHeight
+        : widget.height ?? d.maxWidth / _aspectRatio;
+    return VisibilityDetector(
+      key: Key(widget.uri),
+      onVisibilityChanged: (info) {
+        print(info.visibleFraction);
+        if (_isInitialized && _isPlaying && info.visibleFraction == 0.0) {
+          _onPlay();
+        }
+      },
+      child: WillPopScope(
+          child: Material(
+            color: Colors.grey.shade900,
+            child: SizedBox(
+              width: width,
+              height: height,
+              child: Stack(
+                children: <Widget>[
+                  Center(
+                    child: _isInitialized
+                        ? Stack(
+                            children: <Widget>[
+                              Center(
+                                child: AspectRatio(
+                                  aspectRatio: _aspectRatio,
+                                  child: VideoPlayer(_controller),
+                                ),
                               ),
-                            ),
-                            Container(
-                              child: _isBuffering
-                                  ? LoadingIndicator(
-                                      color: widget.color,
-                                    )
-                                  : null,
-                            ),
-                          ],
-                        )
-                      : Container(
-                          child: _isLoading
-                              ? LoadingIndicator(
+                              Container(
+                                child: _isBuffering
+                                    ? LoadingIndicator(
+                                        color: widget.color,
+                                      )
+                                    : null,
+                              ),
+                            ],
+                          )
+                        : Container(
+                            child: _isLoading
+                                ? LoadingIndicator(
+                                    color: widget.color,
+                                  )
+                                : null,
+                          ),
+                  ),
+                  SizedBox(
+                    width: width,
+                    height: height,
+                    child: GestureDetector(
+                      child: AnimatedOpacity(
+                        duration: Duration(milliseconds: 250),
+                        opacity: _isControllerVisible ? 1 : 0,
+                        child: Container(
+                          color: Colors.black.withOpacity(0.2),
+                          child: _isControllerVisible
+                              ? VideoController(
                                   color: widget.color,
+                                  isInitialized: _isInitialized,
+                                  isLoading: _isLoading,
+                                  isFullscreen: _isFullscreen,
+                                  isPlaying: _isPlaying,
+                                  current: _current,
+                                  max: _max,
+                                  buffered: _buffered,
+                                  onPlay: _onPlay,
+                                  onFullScreen: _onFullScreen,
+                                  onSeekProgress: _onSeekProgress,
                                 )
                               : null,
                         ),
-                ),
-                SizedBox(
-                  width: width,
-                  height: height,
-                  child: GestureDetector(
-                    child: AnimatedOpacity(
-                      duration: Duration(milliseconds: 250),
-                      opacity: _isControllerVisible ? 1 : 0,
-                      child: Container(
-                        color: Colors.black.withOpacity(0.2),
-                        child: _isControllerVisible
-                            ? Stack(
-                                children: <Widget>[
-                                  Center(
-                                    child: !_isLoading
-                                        ? Row(
-                                            mainAxisSize: MainAxisSize.min,
-                                            children: <Widget>[
-                                              Expanded(
-                                                flex: 4,
-                                                child: SkipButton(
-                                                  direction: Direction.backward,
-                                                  onPressed: () {
-                                                    _seekTo(_current - 10000);
-                                                  },
-                                                  isInitialized: _isInitialized,
-                                                ),
-                                              ),
-                                              Expanded(
-                                                flex: 5,
-                                                child: Center(
-                                                  child: PanButton(
-                                                    background: !_isInitialized
-                                                        ? widget.color ??
-                                                            Theme.of(context)
-                                                                .primaryColor
-                                                        : Colors.transparent,
-                                                    radius: d.at(70),
-                                                    width: d.at(70),
-                                                    height: d.at(70),
-                                                    child: Icon(
-                                                      _isPlaying
-                                                          ? Icons.pause
-                                                          : Icons.play_arrow,
-                                                      size: _isInitialized
-                                                          ? d.at(50)
-                                                          : d.at(40),
-                                                      color: Colors.white,
-                                                    ),
-                                                    splashColor: Colors.white
-                                                        .withOpacity(0.4),
-                                                    highlightColor:
-                                                        Colors.transparent,
-                                                    onPressed: _onPlay,
-                                                  ),
-                                                ),
-                                              ),
-                                              Expanded(
-                                                flex: 4,
-                                                child: SkipButton(
-                                                  direction: Direction.forward,
-                                                  onPressed: () {
-                                                    _seekTo(_current + 10000);
-                                                  },
-                                                  isInitialized: _isInitialized,
-                                                ),
-                                              ),
-                                            ],
-                                          )
-                                        : LoadingIndicator(
-                                            color: widget.color,
-                                          ),
-                                  ),
-                                  Container(
-                                    alignment: Alignment.bottomCenter,
-                                    child: _isInitialized
-                                        ? Padding(
-                                            padding: EdgeInsets.symmetric(
-                                              horizontal: d.at(20),
-                                            ),
-                                            child: MediaProgressIndicator(
-                                              activeColor: widget.color,
-                                              buffered: _buffered,
-                                              current: _current,
-                                              max: _max,
-                                              onSeekProgress: (value) {
-                                                _seekTo(value);
-                                              },
-                                            ),
-                                          )
-                                        : null,
-                                  ),
-                                  Align(
-                                    alignment: Alignment.topRight,
-                                    child: PanButton(
-                                      radius: d.at(50),
-                                      width: d.at(40),
-                                      height: d.at(40),
-                                      margin: EdgeInsets.all(d.at(5)),
-                                      alignment: Alignment.center,
-                                      splashColor:
-                                          Colors.white.withOpacity(0.4),
-                                      highlightColor: Colors.transparent,
-                                      child: Icon(
-                                        isFullscreen
-                                            ? Icons.fullscreen_exit
-                                            : Icons.fullscreen,
-                                        size: d.at(30),
-                                        color: Colors.white,
-                                      ),
-                                      onPressed: _fullScreen,
-                                    ),
-                                  ),
-                                ],
-                              )
-                            : null,
                       ),
+                      onTap: () {
+                        _setControllerVisible(!_isControllerVisible);
+                      },
                     ),
-                    onTap: () {
-                      _setControllerVisible(!_isControllerVisible);
-                    },
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
-        ),
-        onWillPop: () async {
-          if (isFullscreen) {
-            await SystemChrome.setPreferredOrientations([
-              DeviceOrientation.portraitUp,
-              DeviceOrientation.portraitDown,
-            ]);
-          }
-          return true;
-        });
+          onWillPop: () async {
+            if (_isFullscreen) {
+              await SystemChrome.setPreferredOrientations([
+                DeviceOrientation.portraitUp,
+                DeviceOrientation.portraitDown,
+              ]);
+            }
+            return true;
+          }),
+    );
   }
 
   Future<void> initializeVideo() async {
@@ -282,7 +203,7 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
   void _onPlay() async {
     await initializeVideo();
     if (_current == _max) {
-      await _seekTo(1);
+      await _onSeekProgress(1);
     }
     if (_value.isPlaying) {
       await _controller.pause();
@@ -307,7 +228,7 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
     _updateBuffered();
   }
 
-  Future<void> _seekTo(double input) async {
+  Future<void> _onSeekProgress(double input) async {
     final milliseconds = input < 0.0 ? 0.0 : (input > _max ? _max : input);
     _setLoading(true);
     await _controller.seekTo(
@@ -364,8 +285,8 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
     return 0;
   }
 
-  void _fullScreen() async {
-    if (!isFullscreen) {
+  void _onFullScreen() async {
+    if (!_isFullscreen) {
       await SystemChrome.setPreferredOrientations([
         DeviceOrientation.landscapeLeft,
         DeviceOrientation.landscapeRight,
@@ -374,7 +295,7 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
         enter: PanVideoPlayer(
           uri: widget.uri,
           color: widget.color,
-          isFullScreen: !isFullscreen,
+          isFullScreen: !_isFullscreen,
           state: this,
         ),
       ));
@@ -385,63 +306,5 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
       ]);
       NavigationService().pop();
     }
-  }
-}
-
-enum Direction {
-  backward,
-  forward,
-}
-
-class SkipButton extends StatelessWidget {
-  final Direction direction;
-  final VoidCallback onPressed;
-  final bool isInitialized;
-
-  const SkipButton({
-    Key key,
-    @required this.direction,
-    this.onPressed,
-    this.isInitialized,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    final d = Dimension.of(context);
-    final isForward = direction == Direction.forward;
-    return Container(
-      alignment: isForward ? Alignment.centerLeft : Alignment.centerRight,
-      child: isInitialized
-          ? PanButton(
-              radius: d.at(60),
-              width: d.at(60),
-              height: d.at(60),
-              margin: EdgeInsets.only(
-                top: d.at(20),
-              ),
-              splashColor: Colors.white.withOpacity(0.4),
-              highlightColor: Colors.transparent,
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: <Widget>[
-                  PanIcon(
-                    icon: isForward ? 'fast_forward' : 'fast_rewind',
-                    width: d.at(20),
-                    height: d.at(18),
-                    isInternal: true,
-                  ),
-                  PanText(
-                    text: '10',
-                    fontColor: Colors.white,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 12,
-                    margin: EdgeInsets.only(top: d.at(3)),
-                  )
-                ],
-              ),
-              onPressed: onPressed,
-            )
-          : null,
-    );
   }
 }
