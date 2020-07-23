@@ -12,7 +12,7 @@ class SQLiteBinder {
 
   SQLiteBinder(this.db);
 
-  void beginTransaction() async {
+  Future<void> beginTransaction() async {
     await db.beginTransaction();
     _sqlList = [];
   }
