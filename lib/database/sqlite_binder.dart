@@ -66,13 +66,11 @@ class SQLiteBinder {
     await _registerLastId(table);
     final pk = SQLiteStatement.ID;
     final map = stmt.map;
-    SQLiteQuery query;
-    String key;
     if (unique != null) {
       if (unique is String && unique != pk) {
         final value = map[unique];
-        key = '$table.$unique($value)';
-        query = SQLiteQuery(
+        final key = '$table.$unique($value)';
+        final query = SQLiteQuery(
           select: [
             SQLiteStatement.ID,
           ],
@@ -81,6 +79,7 @@ class SQLiteBinder {
             unique: value,
           },
         );
+        return _getId(stmt, query, key, table);
       } else if (unique is List<String>) {
         final conditions = <String, dynamic>{};
         final buffer = StringBuffer();
@@ -89,30 +88,40 @@ class SQLiteBinder {
           conditions[field] = value;
           buffer.write('$field($value)');
           if (field != unique.last) {
-            buffer.write('&');
+            buffer.write('.');
           }
         }
-        key = '$table.${buffer.toString()}';
-        query = SQLiteQuery(
+        final key = '$table.${buffer.toString()}';
+        final query = SQLiteQuery(
           select: [
             SQLiteStatement.ID,
           ],
           from: table,
           where: conditions,
         );
-      }
-      final oldId = _map[key];
-      final id = oldId ?? await db.getValue(query.build());
-      if (id != null) {
-        _map[key] = id;
-        return id;
-      } else {
-        final newId = _generateId(map, table);
-        _map[key] = newId;
-        return newId;
+        return _getId(stmt, query, key, table);
       }
     }
     return _generateId(map, table);
+  }
+
+  Future<int> _getId(
+    SQLiteStatement stmt,
+    SQLiteQuery query,
+    String key,
+    String table,
+  ) async {
+    final map = stmt.map;
+    final oldId = _map[key];
+    final id = oldId ?? await db.getValue(query.build());
+    if (id != null) {
+      _map[key] = id;
+      return id;
+    } else {
+      final newId = _generateId(map, table);
+      _map[key] = newId;
+      return newId;
+    }
   }
 
   int _generateId(Map<String, dynamic> map, String table) {
