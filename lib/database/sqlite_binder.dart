@@ -61,22 +61,46 @@ class SQLiteBinder {
   Future<int> _mapId(
     String table,
     SQLiteStatement stmt, {
-    String unique,
+    dynamic unique,
   }) async {
     await _registerLastId(table);
     final pk = SQLiteStatement.ID;
     final map = stmt.map;
-    if (unique != null && unique != pk) {
-      final query = SQLiteQuery(
-        select: [
-          SQLiteStatement.ID,
-        ],
-        from: table,
-        where: {
-          unique: map[unique],
-        },
-      );
-      final key = '$table.$unique(${map[unique]})';
+    SQLiteQuery query;
+    String key;
+    if (unique != null) {
+      if (unique is String && unique != pk) {
+        final value = map[unique];
+        key = '$table.$unique($value)';
+        query = SQLiteQuery(
+          select: [
+            SQLiteStatement.ID,
+          ],
+          from: table,
+          where: {
+            unique: value,
+          },
+        );
+      } else if (unique is List<String>) {
+        final conditions = <String, dynamic>{};
+        final buffer = StringBuffer();
+        for (final field in unique) {
+          final value = map[field];
+          conditions[field] = value;
+          buffer.write('$field($value)');
+          if (field != unique.last) {
+            buffer.write('&');
+          }
+        }
+        key = '$table.${buffer.toString()}';
+        query = SQLiteQuery(
+          select: [
+            SQLiteStatement.ID,
+          ],
+          from: table,
+          where: conditions,
+        );
+      }
       final oldId = _map[key];
       final id = oldId ?? await db.getValue(query.build());
       if (id != null) {
@@ -111,7 +135,7 @@ class SQLiteBinder {
   }
 
   Future<int> insert(String table, SQLiteStatement stmt,
-      [String unique]) async {
+      [dynamic unique]) async {
     final pk = SQLiteStatement.ID;
     final map = stmt.map;
     final field = map[pk] != null ? pk : unique;

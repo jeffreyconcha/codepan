@@ -85,11 +85,7 @@ class SQLiteStatement with QueryProperties {
     return buffer.toString();
   }
 
-  String insert(
-    String table, {
-    String unique,
-    List<String> uniqueGroup,
-  }) {
+  String insert(String table, {dynamic unique}) {
     final buffer = StringBuffer();
     if (!hasFieldValues) throw SQLiteException(SQLiteException.noFieldValues);
     final f = StringBuffer();
@@ -104,15 +100,15 @@ class SQLiteStatement with QueryProperties {
     }
     final fields = f.toString();
     final values = v.toString();
-    if (unique != null || (uniqueGroup != null && uniqueGroup.isNotEmpty)) {
+    if (unique != null) {
       buffer.write('INSERT INTO $table ($fields) VALUES ($values)');
-      if (unique != null) {
+      if (unique is String) {
         buffer.write(' ON CONFLICT ($unique) ');
-      } else {
+      } else if (unique is List<String>) {
         final u = StringBuffer();
-        for (final field in uniqueGroup) {
+        for (final field in unique) {
           u.write(field);
-          if (field != uniqueGroup.last) {
+          if (field != unique.last) {
             u.write(', ');
           }
         }
