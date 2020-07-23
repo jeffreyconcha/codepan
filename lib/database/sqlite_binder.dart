@@ -8,8 +8,12 @@ class SQLiteBinder {
   Map<String, int> _map;
   List<String> _sqlList;
 
-  SQLiteBinder(this.db) {
-    beginTransaction();
+  SQLiteBinder(this.db);
+
+  factory SQLiteBinder.begin(SQLiteAdapter db) {
+    final binder = SQLiteBinder(db);
+    binder.beginTransaction();
+    return binder;
   }
 
   void beginTransaction() async {
