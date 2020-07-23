@@ -2,8 +2,6 @@ import 'package:codepan/database/entities/field.dart';
 import 'package:codepan/database/sqlite_adapter.dart';
 import 'package:codepan/database/sqlite_query.dart';
 import 'package:codepan/database/sqlite_statement.dart';
-import 'package:sqflite_sqlcipher/sqflite.dart';
-import 'package:sqflite_sqlcipher/sqlite_api.dart';
 
 class SQLiteBinder {
   final SQLiteAdapter db;
