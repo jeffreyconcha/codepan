@@ -10,13 +10,7 @@ class SQLiteBinder {
 
   SQLiteBinder(this.db);
 
-  factory SQLiteBinder.begin(SQLiteAdapter db) {
-    final binder = SQLiteBinder(db);
-    binder.beginTransaction();
-    return binder;
-  }
-
-  void beginTransaction() async {
+  Future<void> beginTransaction() async {
     if (!db.inTransaction) {
       await db.beginTransaction();
     }
