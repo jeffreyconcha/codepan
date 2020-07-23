@@ -8,10 +8,14 @@ class SQLiteBinder {
   Map<String, int> _map;
   List<String> _sqlList;
 
-  SQLiteBinder(this.db);
+  SQLiteBinder(this.db) {
+    beginTransaction();
+  }
 
-  Future<void> beginTransaction() async {
-    await db.beginTransaction();
+  void beginTransaction() async {
+    if (!db.inTransaction) {
+      await db.beginTransaction();
+    }
     _sqlList = [];
   }
 
@@ -21,10 +25,14 @@ class SQLiteBinder {
       for (final sql in _sqlList) {
         await db.execute(sql);
       }
-      await db.endTransaction();
+      if (db.inTransaction) {
+        await db.endTransaction();
+      }
       result = true;
     } catch (error) {
-      await db.rollback();
+      if (db.inTransaction) {
+        await db.rollback();
+      }
       print(error.toString());
       rethrow;
     }

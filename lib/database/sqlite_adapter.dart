@@ -17,6 +17,7 @@ class SQLiteAdapter implements DatabaseExecutor {
   final OnDatabaseCreate onCreate;
   final String name, password;
   final int version;
+  bool _inTransaction = false;
   Database _db;
 
   Database get instance {
@@ -25,6 +26,8 @@ class SQLiteAdapter implements DatabaseExecutor {
     }
     return _db;
   }
+
+  bool get inTransaction => this._inTransaction;
 
   SQLiteAdapter({
     @required this.name,
@@ -141,14 +144,17 @@ class SQLiteAdapter implements DatabaseExecutor {
   }
 
   Future<void> beginTransaction() {
+    _inTransaction = true;
     return instance.execute('BEGIN EXCLUSIVE');
   }
 
   Future<void> endTransaction() {
+    _inTransaction = false;
     return instance.execute('END TRANSACTION');
   }
 
   Future<void> rollback() {
+    _inTransaction = false;
     return instance.execute('ROLLBACK');
   }
 
