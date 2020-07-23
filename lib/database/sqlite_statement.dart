@@ -77,7 +77,7 @@ class SQLiteStatement with QueryProperties {
       for (final fv in fieldValueList) {
         final value = fv.value != null ? fv.value : NULL;
         buffer.write('${fv.field} = $value');
-        if (fieldValueList.indexOf(fv) < fieldValueList.length - 1) {
+        if (fv != fieldValueList.last) {
           buffer.write(', ');
         }
       }
@@ -85,7 +85,11 @@ class SQLiteStatement with QueryProperties {
     return buffer.toString();
   }
 
-  String insert(String table, {String unique}) {
+  String insert(
+    String table, {
+    String unique,
+    List<String> uniqueGroup,
+  }) {
     final buffer = StringBuffer();
     if (!hasFieldValues) throw SQLiteException(SQLiteException.noFieldValues);
     final f = StringBuffer();
@@ -93,16 +97,27 @@ class SQLiteStatement with QueryProperties {
     for (final fv in fieldValueList) {
       f.write(fv.field);
       v.write(fv.value);
-      if (fieldValueList.indexOf(fv) < fieldValueList.length - 1) {
+      if (fv != fieldValueList.last) {
         f.write(', ');
         v.write(', ');
       }
     }
     final fields = f.toString();
     final values = v.toString();
-    if (unique != null) {
+    if (unique != null || (uniqueGroup != null && uniqueGroup.isNotEmpty)) {
       buffer.write('INSERT INTO $table ($fields) VALUES ($values)');
-      buffer.write(' ON CONFLICT ($unique) ');
+      if (unique != null) {
+        buffer.write(' ON CONFLICT ($unique) ');
+      } else {
+        final u = StringBuffer();
+        for (final field in uniqueGroup) {
+          u.write(field);
+          if (field != uniqueGroup.last) {
+            u.write(', ');
+          }
+        }
+        buffer.write(' ON CONFLICT (${u.toString()}) ');
+      }
       buffer.write('DO UPDATE SET $fieldValues');
     } else {
       buffer.write('INSERT OR IGNORE INTO $table ($fields) VALUES ($values)');

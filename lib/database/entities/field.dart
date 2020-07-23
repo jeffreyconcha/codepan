@@ -24,6 +24,7 @@ class Field extends SQLiteEntity {
   Table _table;
   Order _order;
   bool _collate;
+  bool _inUniqueGroup;
 
   Constraint get constraint => _constraint;
 
@@ -34,6 +35,8 @@ class Field extends SQLiteEntity {
   Table get table => _table;
 
   Order get order => _order;
+
+  bool get inUniqueGroup => _inUniqueGroup ?? false;
 
   bool get collate => _collate;
 
@@ -56,8 +59,13 @@ class Field extends SQLiteEntity {
     return null;
   }
 
-  Field(String _field, {DataType type, Constraint constraint, dynamic value})
-      : super(_field) {
+  Field(
+    String _field, {
+    DataType type,
+    Constraint constraint,
+    dynamic value,
+    bool inUniqueGroup = false,
+  }) : super(_field) {
     if (value != null) {
       this._constraint = Constraint.DEFAULT;
       if (value is int || value is bool) {
@@ -74,6 +82,7 @@ class Field extends SQLiteEntity {
       this._type = type;
     }
     this._value = value;
+    this._inUniqueGroup = inUniqueGroup;
   }
 
   Field.asPrimaryKey([String field = SQLiteStatement.ID]) : super(field) {
@@ -81,10 +90,15 @@ class Field extends SQLiteEntity {
     this._type = DataType.INTEGER;
   }
 
-  Field.asForeignKey(String field, {@required Table reference}) : super(field) {
+  Field.asForeignKey(
+    String field, {
+    @required Table reference,
+    bool inUniqueGroup = false,
+  }) : super(field) {
     this._constraint = Constraint.FOREIGN_KEY;
     this._type = DataType.INTEGER;
     this._table = reference;
+    this._inUniqueGroup = inUniqueGroup;
   }
 
   Field.asUnique(String field) : super(field) {

@@ -28,12 +28,12 @@ mixin QueryProperties {
   String getFields(List<Field> fieldList, {bool withAlias = false}) {
     final buffer = StringBuffer();
     if (fieldList != null) {
-      for (final f in fieldList) {
-        buffer.write(f.field);
+      for (final field in fieldList) {
+        buffer.write(field.field);
         if (withAlias) {
-          buffer.write(' as \'${f.field}\'');
+          buffer.write(' as \'${field.field}\'');
         }
-        if (fieldList.indexOf(f) < fieldList.length - 1) {
+        if (field != fieldList.last) {
           buffer.write(", ");
         }
       }
@@ -44,12 +44,12 @@ mixin QueryProperties {
   String getFieldsAsString(List<Field> fieldList, {bool withAlias = false}) {
     final buffer = StringBuffer();
     if (fieldList != null) {
-      for (final f in fieldList) {
-        buffer.write(f.field);
+      for (final field in fieldList) {
+        buffer.write(field.field);
         if (withAlias) {
-          buffer.write(' as \'${f.field}\'');
+          buffer.write(' as \'${field.field}\'');
         }
-        if (fieldList.indexOf(f) < fieldList.length - 1) {
+        if (field != fieldList.last) {
           buffer.write(", ");
         }
       }
@@ -60,24 +60,24 @@ mixin QueryProperties {
   String get conditions {
     final buffer = StringBuffer();
     if (hasConditions) {
-      for (final c in conditionList) {
-        final operator = c.operator;
+      for (final condition in conditionList) {
+        final operator = condition.operator;
         if (operator != null) {
-          buffer.write(c.asString());
+          buffer.write(condition.asString());
         } else {
-          final orList = c.orList;
+          final orList = condition.orList;
           if (orList != null && orList.isNotEmpty) {
             final b = StringBuffer();
-            for (Condition c in orList) {
-              b.write(c.asString());
-              if (orList.indexOf(c) < orList.length - 1) {
+            for (final condition in orList) {
+              b.write(condition.asString());
+              if (condition != orList.last) {
                 b.write(" OR ");
               }
             }
             buffer.write("(${b.toString()})");
           }
         }
-        if (conditionList.indexOf(c) < conditionList.length - 1) {
+        if (condition != conditionList.last) {
           buffer.write(" AND ");
         }
       }
@@ -128,10 +128,25 @@ mixin QueryProperties {
   String getCommandFields(List<Field> fieldList) {
     final buffer = StringBuffer();
     if (fieldList != null) {
+      final uniqueList = <String>[];
       for (final field in fieldList) {
         buffer.write(field.asString());
-        if (fieldList.indexOf(field) < fieldList.length - 1) {
+        if (field != fieldList.last) {
           buffer.write(", ");
+        }
+        if (field.inUniqueGroup) {
+          uniqueList.add(field.field);
+        }
+      }
+      if (uniqueList.isNotEmpty) {
+        buffer.write(', UNIQUE (');
+        for (final field in uniqueList) {
+          buffer.write(field);
+          if (field != uniqueList.last) {
+            buffer.write(", ");
+          } else {
+            buffer.write(')');
+          }
         }
       }
     }
