@@ -73,11 +73,11 @@ class SQLiteAdapter implements DatabaseExecutor {
   }
 
   Future<List<Map<String, dynamic>>> read(String sql) {
-    return instance.rawQuery(sql);
+    return rawQuery(sql);
   }
 
   Future<dynamic> getValue(String sql) async {
-    final list = await instance.rawQuery(sql);
+    final list = await rawQuery(sql);
     if (list.isNotEmpty) {
       final first = list.first;
       return first.values.first;
@@ -86,12 +86,12 @@ class SQLiteAdapter implements DatabaseExecutor {
   }
 
   Future<bool> isRecordExists(String sql) async {
-    final list = await instance.rawQuery(sql);
+    final list = await rawQuery(sql);
     return list.isNotEmpty;
   }
 
   Future<Map<String, dynamic>> getRecord(String sql) async {
-    final list = await instance.rawQuery(sql);
+    final list = await rawQuery(sql);
     if (list.isNotEmpty) {
       return list.first;
     }
@@ -108,18 +108,10 @@ class SQLiteAdapter implements DatabaseExecutor {
     return instance.batch();
   }
 
-  Future<Transaction> beginTransaction() async {
-    var transaction;
-    await instance.transaction((txn) async {
-      transaction = txn;
-    }, exclusive: true);
-    return transaction;
-  }
-
   Future<List<String>> getColumnList(String table) async {
     final list = <String>[];
     final sql = "PRAGMA table_info($table)";
-    final cursor = await instance.rawQuery(sql);
+    final cursor = await rawQuery(sql);
     if (cursor.isNotEmpty) {
       cursor.forEach((map) {
         if (map.isNotEmpty) {
@@ -132,13 +124,13 @@ class SQLiteAdapter implements DatabaseExecutor {
 
   Future<int> getTableColumnCount(String table) async {
     final sql = "PRAGMA table_info($table)";
-    final cursor = await instance.rawQuery(sql);
+    final cursor = await rawQuery(sql);
     return cursor.length;
   }
 
   Future<int> getIndexColumnCount(String index) async {
     final sql = "PRAGMA index_info($index)";
-    final cursor = await instance.rawQuery(sql);
+    final cursor = await rawQuery(sql);
     return cursor.length;
   }
 
@@ -148,21 +140,16 @@ class SQLiteAdapter implements DatabaseExecutor {
     print('$name at version: $version');
   }
 
-  @override
-  Future<int> delete(String table, {String where, List whereArgs}) {
-    return instance.delete(table, where: where, whereArgs: whereArgs);
+  Future<void> beginTransaction() {
+    return instance.execute('BEGIN EXCLUSIVE');
   }
 
-  @override
-  Future<void> execute(String sql, [List arguments]) {
-    return instance.execute(sql, arguments);
+  Future<void> endTransaction() {
+    return instance.execute('END TRANSACTION');
   }
 
-  @override
-  Future<int> insert(String table, Map<String, dynamic> values,
-      {String nullColumnHack, ConflictAlgorithm conflictAlgorithm}) {
-    return instance.insert(table, values,
-        nullColumnHack: null, conflictAlgorithm: conflictAlgorithm);
+  Future<void> rollback() {
+    return instance.execute('ROLLBACK');
   }
 
   @override
@@ -186,6 +173,23 @@ class SQLiteAdapter implements DatabaseExecutor {
         orderBy: orderBy,
         limit: limit,
         offset: offset);
+  }
+
+  @override
+  Future<int> delete(String table, {String where, List whereArgs}) {
+    return instance.delete(table, where: where, whereArgs: whereArgs);
+  }
+
+  @override
+  Future<void> execute(String sql, [List arguments]) {
+    return instance.execute(sql, arguments);
+  }
+
+  @override
+  Future<int> insert(String table, Map<String, dynamic> values,
+      {String nullColumnHack, ConflictAlgorithm conflictAlgorithm}) {
+    return instance.insert(table, values,
+        nullColumnHack: null, conflictAlgorithm: conflictAlgorithm);
   }
 
   @override

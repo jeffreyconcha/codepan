@@ -8,23 +8,28 @@ import 'package:sqflite_sqlcipher/sqlite_api.dart';
 class SQLiteBinder {
   final SQLiteAdapter db;
   Map<String, int> _map;
-  Batch _batch;
+  List<String> _sqlList;
 
   SQLiteBinder(this.db);
 
-  Batch get batch => this._batch;
-
-  Future<void> beginTransaction() async {
-    await db.instance.transaction((txn) async {
-      this._batch = txn.batch();
-    });
+  void beginTransaction() async {
+    await db.beginTransaction();
+    _sqlList = [];
   }
 
   Future<bool> finish() async {
     bool result = false;
-    await _batch.commit(noResult: true).then((v) {
+    try {
+      for (final sql in _sqlList) {
+        await db.execute(sql);
+      }
+      await db.endTransaction();
       result = true;
-    });
+    } catch (error) {
+      await db.rollback();
+      print(error.toString());
+      rethrow;
+    }
     return result;
   }
 
@@ -97,34 +102,8 @@ class SQLiteBinder {
     return null;
   }
 
-  Future<int> bindInsert(
-    String table,
-    SQLiteStatement stmt, {
-    ConflictAlgorithm conflictAlgorithm,
-  }) async {
-    batch.insert(
-      table,
-      stmt.map,
-      conflictAlgorithm: conflictAlgorithm,
-    );
-    return await _mapId(table, stmt);
-  }
-
-  void bindUpdate(String table, SQLiteStatement stmt, dynamic id) {
-    batch.update(
-      table,
-      stmt.map,
-      where: '${SQLiteStatement.ID} = ?',
-      whereArgs: [id],
-    );
-  }
-
-  void bindDelete(String table, dynamic id) {
-    batch.delete(
-      table,
-      where: '${SQLiteStatement.ID} = ?',
-      whereArgs: [id],
-    );
+  void addStatement(final sql) {
+    _sqlList.add(sql);
   }
 
   Future<int> insert(String table, SQLiteStatement stmt,
@@ -132,62 +111,61 @@ class SQLiteBinder {
     final pk = SQLiteStatement.ID;
     final map = stmt.map;
     final field = map[pk] != null ? pk : unique;
-    String sql = stmt.insert(table, unique: field);
-    batch.rawInsert(sql);
+    addStatement(stmt.insert(table, unique: field));
     return await _mapId(table, stmt, unique: field);
   }
 
   void update(String table, SQLiteStatement stmt, dynamic id) {
-    String sql = stmt.update(table, id);
-    batch.rawUpdate(sql);
+    final sql = stmt.update(table, id);
+    addStatement(sql);
   }
 
   void updateWithConditions(String table, SQLiteStatement stmt) {
-    String sql = stmt.updateWithConditions(table);
-    batch.rawUpdate(sql);
+    final sql = stmt.updateWithConditions(table);
+    addStatement(sql);
   }
 
-  void delete(String table, SQLiteStatement stmt, dynamic id) {
-    String sql = stmt.delete(table, id);
-    batch.rawUpdate(sql);
+  void delete(String table, dynamic id) {
+    final sql = SQLiteStatement().delete(table, id);
+    addStatement(sql);
   }
 
   void deleteWithConditions(String table, SQLiteStatement stmt) {
-    String sql = stmt.deleteWithConditions(table);
-    batch.rawUpdate(sql);
+    final sql = stmt.deleteWithConditions(table);
+    addStatement(sql);
   }
 
   void createTable(String table, SQLiteStatement stmt) {
-    String sql = stmt.createTable(table);
-    batch.execute(sql);
+    final sql = stmt.createTable(table);
+    addStatement(sql);
   }
 
   void createIndex(String idx, String table, SQLiteStatement stmt) {
-    String sql = stmt.createIndex(idx, table);
-    batch.execute(sql);
+    final sql = stmt.createIndex(idx, table);
+    addStatement(sql);
   }
 
   void dropTable(String table) {
     final stmt = SQLiteStatement();
-    String sql = stmt.dropTable(table);
-    batch.execute(sql);
+    final sql = stmt.dropTable(table);
+    addStatement(sql);
   }
 
   void dropIndex(String idx) {
     final stmt = SQLiteStatement();
-    String sql = stmt.dropIndex(idx);
-    batch.execute(sql);
+    final sql = stmt.dropIndex(idx);
+    addStatement(sql);
   }
 
   void renameTable(String oldName, String newName) {
     final stmt = SQLiteStatement();
-    String sql = stmt.renameTable(oldName, newName);
-    batch.execute(sql);
+    final sql = stmt.renameTable(oldName, newName);
+    addStatement(sql);
   }
 
   void addColumn(String table, Field field) {
     final stmt = SQLiteStatement();
-    String sql = stmt.addColumn(table, field);
-    batch.execute(sql);
+    final sql = stmt.addColumn(table, field);
+    addStatement(sql);
   }
 }
