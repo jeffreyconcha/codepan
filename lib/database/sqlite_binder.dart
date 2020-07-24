@@ -17,6 +17,14 @@ class SQLiteBinder {
     _sqlList = [];
   }
 
+  Future<bool> apply() async {
+    final result = await finish();
+    if (result) {
+      await beginTransaction();
+    }
+    return result;
+  }
+
   Future<bool> finish() async {
     bool result = false;
     try {
