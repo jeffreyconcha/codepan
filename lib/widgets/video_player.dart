@@ -1,6 +1,5 @@
 import 'package:codepan/media/callback.dart';
 import 'package:codepan/resources/dimensions.dart';
-import 'package:codepan/services/navigation.dart';
 import 'package:codepan/transitions/route_transition.dart';
 import 'package:codepan/widgets/loading_indicator.dart';
 import 'package:codepan/widgets/video_controller.dart';
@@ -9,6 +8,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:video_player/video_player.dart';
 import 'package:visibility_detector/visibility_detector.dart';
+
+typedef OnSaveState = void Function(
+  _PanVideoPlayerState state,
+);
 
 class PanVideoPlayer extends StatefulWidget {
   final OnProgressChanged onProgressChanged;
@@ -19,6 +22,7 @@ class PanVideoPlayer extends StatefulWidget {
   final double height;
   final String uri;
   final _PanVideoPlayerState state;
+  final OnSaveState onSaveState;
 
   PanVideoPlayer({
     Key key,
@@ -30,6 +34,7 @@ class PanVideoPlayer extends StatefulWidget {
     this.state,
     this.onProgressChanged,
     this.onCompleted,
+    this.onSaveState,
   }) : super(key: key);
 
   @override
@@ -57,19 +62,7 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
   @override
   void initState() {
     if (widget.isFullScreen) {
-      final state = widget.state;
-      _controller = state._controller;
-      _isControllerVisible = state._isControllerVisible;
-      _isInitialized = state._isInitialized;
-      _isLoading = state._isLoading;
-      _isPlaying = state._isPlaying;
-      _isBuffering = state._isBuffering;
-      _current = state._current;
-      _buffered = state._buffered;
-      _max = state._max;
-      if (_isInitialized) {
-        _controller.addListener(_listener);
-      }
+      _onSaveState(widget.state);
     } else {
       _controller = VideoPlayerController.network(widget.uri);
     }
@@ -81,6 +74,9 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
     _controller?.removeListener(_listener);
     if (!widget.isFullScreen) {
       _controller?.dispose();
+    }
+    if (widget.onSaveState != null) {
+      widget.onSaveState(this);
     }
     super.dispose();
   }
@@ -291,21 +287,39 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
         DeviceOrientation.landscapeLeft,
         DeviceOrientation.landscapeRight,
       ]);
-      NavigationService().push(FadeRoute(
-        enter: PanVideoPlayer(
-          uri: widget.uri,
-          color: widget.color,
-          isFullScreen: !_isFullscreen,
-          state: this,
+      Navigator.of(context).push(
+        FadeRoute(
+          enter: PanVideoPlayer(
+            uri: widget.uri,
+            color: widget.color,
+            isFullScreen: !_isFullscreen,
+            state: this,
+            onSaveState: !_isInitialized ? _onSaveState : null,
+          ),
         ),
-      ));
+      );
     } else {
       await SystemChrome.setPreferredOrientations([
         DeviceOrientation.portraitUp,
         DeviceOrientation.portraitDown,
       ]);
-      NavigationService().pop();
+      Navigator.of(context).pop();
     }
     _orientationChanged = true;
+  }
+
+  void _onSaveState(_PanVideoPlayerState state) {
+    _controller = state._controller;
+    _isControllerVisible = state._isControllerVisible;
+    _isInitialized = state._isInitialized;
+    _isLoading = state._isLoading;
+    _isPlaying = state._isPlaying;
+    _isBuffering = state._isBuffering;
+    _current = state._current;
+    _buffered = state._buffered;
+    _max = state._max;
+    if (_isInitialized) {
+      _controller.addListener(_listener);
+    }
   }
 }
