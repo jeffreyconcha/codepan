@@ -24,6 +24,7 @@ class Field extends SQLiteEntity {
   Table _table;
   Order _order;
   bool _collate;
+  bool _isCount;
   bool _inUniqueGroup;
 
   Constraint get constraint => _constraint;
@@ -38,13 +39,15 @@ class Field extends SQLiteEntity {
 
   bool get inUniqueGroup => _inUniqueGroup ?? false;
 
+  bool get isCount => _isCount ?? false;
+
   bool get collate => _collate;
 
   bool get hasConstraint => _constraint != null;
 
   bool get hasDataType => _type != null;
 
-  bool get hasOrder => _order != null;
+  bool get isOrder => _order != null;
 
   String get dataType => hasDataType ? _type.toString().split('.').last : null;
 
@@ -101,9 +104,25 @@ class Field extends SQLiteEntity {
     this._inUniqueGroup = inUniqueGroup;
   }
 
-  Field.asUnique(String field) : super(field) {
+  Field.asUnique(
+    String field, {
+    DataType type = DataType.INTEGER,
+  }) : super(field) {
     this._constraint = Constraint.UNIQUE;
-    this._type = DataType.INTEGER;
+    this._type = type;
+  }
+
+  Field.asUniqueGroup(
+    String field, {
+    Table reference,
+    DataType type = DataType.INTEGER,
+  }) : super(field) {
+    this._type = type;
+    this._inUniqueGroup = true;
+    if (reference != null) {
+      this._constraint = Constraint.FOREIGN_KEY;
+      this._table = reference;
+    }
   }
 
   Field.asOrder({
@@ -113,6 +132,10 @@ class Field extends SQLiteEntity {
   }) : super(field) {
     this._order = order;
     this._collate = collate;
+  }
+
+  Field.asCount(String field) : super(field) {
+    this._isCount = true;
   }
 
   String asString() {
@@ -136,13 +159,15 @@ class Field extends SQLiteEntity {
         }
       }
     } else {
-      if (hasOrder) {
+      if (isOrder) {
         buffer.write('$field');
         if (collate) {
           buffer.write(' COLLATE NOCASE');
         }
         final direction = order.toString().split('.').last;
         buffer.write(' $direction');
+      } else if (isCount) {
+        buffer.write('COUNT($field)');
       }
     }
     return buffer.toString();

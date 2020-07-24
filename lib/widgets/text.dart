@@ -130,17 +130,19 @@ class PanText extends StatelessWidget {
             },
           )
         : rich;
-    return Container(
-      width: width,
-      height: height,
-      margin: margin,
-      padding: padding,
-      alignment: alignment,
-      child: child,
-      decoration: BoxDecoration(
-        color: background,
-        borderRadius: BorderRadius.circular(radius),
-      ),
-    );
+    return text != null && text.isNotEmpty
+        ? Container(
+            width: width,
+            height: height,
+            margin: margin,
+            padding: padding,
+            alignment: alignment,
+            child: child,
+            decoration: BoxDecoration(
+              color: background,
+              borderRadius: BorderRadius.circular(radius),
+            ),
+          )
+        : Container();
   }
 }

@@ -29,25 +29,17 @@ mixin QueryProperties {
     final buffer = StringBuffer();
     if (fieldList != null) {
       for (final field in fieldList) {
-        buffer.write(field.field);
-        if (withAlias) {
-          buffer.write(' as \'${field.field}\'');
+        if (!field.isCount) {
+          buffer.write(field.field);
+        } else {
+          buffer.write(field.asString());
         }
-        if (field != fieldList.last) {
-          buffer.write(", ");
-        }
-      }
-    }
-    return buffer.toString();
-  }
-
-  String getFieldsAsString(List<Field> fieldList, {bool withAlias = false}) {
-    final buffer = StringBuffer();
-    if (fieldList != null) {
-      for (final field in fieldList) {
-        buffer.write(field.field);
         if (withAlias) {
-          buffer.write(' as \'${field.field}\'');
+          if (!field.isCount) {
+            buffer.write(' as \'${field.field}\'');
+          } else {
+            buffer.write(' as \'${field.asString()}\'');
+          }
         }
         if (field != fieldList.last) {
           buffer.write(", ");
