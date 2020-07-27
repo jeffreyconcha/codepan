@@ -172,11 +172,7 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
         ),
         onWillPop: () async {
           if (_isFullscreen) {
-            await SystemChrome.setPreferredOrientations([
-              DeviceOrientation.portraitUp,
-              DeviceOrientation.portraitDown,
-            ]);
-            _orientationChanged = true;
+            _exitFullScreen();
           }
           return true;
         });
@@ -283,28 +279,41 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
 
   void _onFullScreen() async {
     if (!_isFullscreen) {
-      await SystemChrome.setPreferredOrientations([
-        DeviceOrientation.landscapeLeft,
-        DeviceOrientation.landscapeRight,
-      ]);
-      Navigator.of(context).push(
-        FadeRoute(
-          enter: PanVideoPlayer(
-            uri: widget.uri,
-            color: widget.color,
-            isFullScreen: !_isFullscreen,
-            state: this,
-            onSaveState: !_isInitialized ? _onSaveState : null,
-          ),
-        ),
-      );
+      _enterFullScreen();
     } else {
-      await SystemChrome.setPreferredOrientations([
-        DeviceOrientation.portraitUp,
-        DeviceOrientation.portraitDown,
-      ]);
+      _exitFullScreen();
       Navigator.of(context).pop();
     }
+  }
+
+  void _enterFullScreen() async {
+    await SystemChrome.setPreferredOrientations([
+      DeviceOrientation.landscapeLeft,
+      DeviceOrientation.landscapeRight,
+    ]);
+    await SystemChrome.setEnabledSystemUIOverlays([]);
+    Navigator.of(context).push(
+      FadeRoute(
+        enter: PanVideoPlayer(
+          uri: widget.uri,
+          color: widget.color,
+          isFullScreen: !_isFullscreen,
+          state: this,
+          onSaveState: !_isInitialized ? _onSaveState : null,
+        ),
+      ),
+    );
+    _orientationChanged = true;
+  }
+
+  void _exitFullScreen() async {
+    await SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+    ]);
+    await SystemChrome.setEnabledSystemUIOverlays(
+      SystemUiOverlay.values,
+    );
     _orientationChanged = true;
   }
 
