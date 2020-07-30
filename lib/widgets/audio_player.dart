@@ -41,7 +41,7 @@ class _PanAudioPlayerState extends State<PanAudioPlayer> {
   void initState() {
     _audio = AudioPlayer();
     _onPositionChanged = _audio.onAudioPositionChanged.listen((time) {
-      final value = time.inMilliseconds.toDouble();
+      final value = time.inMilliseconds.roundToDouble();
       _setCurrent(value);
       widget.onProgressChanged?.call(value, _max);
     });
@@ -49,7 +49,7 @@ class _PanAudioPlayerState extends State<PanAudioPlayer> {
       switch (state) {
         case AudioPlayerState.PLAYING:
           setState(() {
-            _max = _audio.duration.inMilliseconds.toDouble();
+            _max = _audio.duration.inMilliseconds.roundToDouble();
           });
           _setPlaying(true);
           _setLoading(false);
@@ -60,8 +60,13 @@ class _PanAudioPlayerState extends State<PanAudioPlayer> {
           break;
         case AudioPlayerState.COMPLETED:
           widget.onCompleted?.call();
+          _setPlaying(false);
+          setState(() {
+            _current = _max;
+          });
           break;
         case AudioPlayerState.STOPPED:
+          _setPlaying(false);
           break;
       }
     }, onError: (msg) {});
@@ -120,7 +125,7 @@ class _PanAudioPlayerState extends State<PanAudioPlayer> {
                 withShadow: false,
                 timerColor: PanColors.text,
                 onSeekProgress: (milliseconds) async {
-                  final seconds = (milliseconds / 1000).toDouble();
+                  final seconds = (milliseconds / 1000).roundToDouble();
                   await _audio.seek(seconds);
                   _setCurrent(milliseconds);
                 },
