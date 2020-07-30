@@ -77,7 +77,7 @@ class PanTextField extends StatefulWidget {
     this.inputFormatters,
     this.keyboardType,
     this.onChanged,
-    this.textCapitalization,
+    this.textCapitalization = TextCapitalization.none,
   }) : super(key: key);
 
   @override
