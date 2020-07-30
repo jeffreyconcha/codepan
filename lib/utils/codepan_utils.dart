@@ -1,5 +1,8 @@
+import 'dart:io';
 import 'package:codepan/model/date_time.dart';
+import 'package:flutter/foundation.dart';
 import 'package:intl/intl.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:time_ago_provider/time_ago_provider.dart' as ago;
 
 class PanUtils {
@@ -47,5 +50,21 @@ class PanUtils {
     final format = DateFormat('yyyy-MM-dd HH:mm:ss');
     final value = format.parse('$date $time');
     return ago.format(value);
+  }
+
+  static Future<File> getFile({
+    String folder,
+    @required String fileName,
+  }) async {
+    final root = await getApplicationDocumentsDirectory();
+    if (folder != null) {
+      final dir = Directory('${root.path}/$folder');
+      if (!await dir.exists()) {
+        await dir.create();
+      }
+      return File('${dir.path}/$fileName');
+    } else {
+      return File('${root.path}/$fileName');
+    }
   }
 }

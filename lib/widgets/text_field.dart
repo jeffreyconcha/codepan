@@ -17,15 +17,17 @@ class PanTextField extends StatefulWidget {
       radius,
       borderWidth,
       focusedBorderWidth;
+  final bool enabled, enableInteractiveSelection, isPassword, bottomBorderOnly;
   final List<TextInputFormatter> inputFormatters;
   final int maxLines, minLines, maxLength;
   final ValueChanged<String> onFieldSubmitted;
+  final TextCapitalization textCapitalization;
   final TextAlignVertical textAlignVertical;
   final TextEditingController controller;
   final TextInputAction textInputAction;
   final EdgeInsetsGeometry margin, padding;
   final FocusNode focusNode, nextFocusNode;
-  final bool enabled, enableInteractiveSelection, isPassword, bottomBorderOnly;
+  final ValueChanged<String> onChanged;
   final String text, hint, fontFamily;
   final TextInputType keyboardType;
   final FontWeight fontWeight;
@@ -33,7 +35,6 @@ class PanTextField extends StatefulWidget {
   final FontStyle fontStyle;
   final Alignment alignment;
   final Widget suffixIcon;
-  final ValueChanged<String> onChanged;
 
   const PanTextField({
     Key key,
@@ -76,6 +77,7 @@ class PanTextField extends StatefulWidget {
     this.inputFormatters,
     this.keyboardType,
     this.onChanged,
+    this.textCapitalization,
   }) : super(key: key);
 
   @override
@@ -141,6 +143,7 @@ class _PanTextFieldState extends State<PanTextField> {
           initialValue: widget.text,
           enabled: widget.enabled,
           enableInteractiveSelection: widget.enableInteractiveSelection,
+          textCapitalization: widget.textCapitalization,
           onChanged: widget.onChanged,
           inputFormatters: widget.inputFormatters,
           keyboardType: widget.keyboardType,

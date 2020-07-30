@@ -59,7 +59,11 @@ class Condition extends SQLiteEntity {
   }) : super(_field) {
     this._start = start;
     this._end = end;
-    this._operator = operator;
+    if (_value is Operator) {
+      this._operator = _value;
+    } else {
+      this._operator = operator;
+    }
   }
 
   Condition.or(this.orList) : super(null);
