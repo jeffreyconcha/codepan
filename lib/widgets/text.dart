@@ -130,7 +130,7 @@ class PanText extends StatelessWidget {
             },
           )
         : rich;
-    return text != null && text.isNotEmpty
+    return (text != null && text.isNotEmpty) || children != null
         ? Container(
             width: width,
             height: height,

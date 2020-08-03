@@ -88,94 +88,87 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
     final height = _isFullscreen
         ? d.maxHeight
         : widget.height ?? d.maxWidth / _aspectRatio;
-    return WillPopScope(
-        child: VisibilityDetector(
-          key: Key(widget.uri),
-          onVisibilityChanged: (info) {
-            if (_isInitialized &&
-                _isPlaying &&
-                !_orientationChanged &&
-                info.visibleFraction == 0.0) {
-              _onPlay();
-            }
-            _orientationChanged = false;
-          },
-          child: Material(
-            color: Colors.grey.shade900,
-            child: SizedBox(
-              width: width,
-              height: height,
-              child: Stack(
-                children: <Widget>[
-                  Center(
-                    child: _isInitialized
-                        ? Stack(
-                            children: <Widget>[
-                              Center(
-                                child: AspectRatio(
-                                  aspectRatio: _aspectRatio,
-                                  child: VideoPlayer(_controller),
-                                ),
-                              ),
-                              Container(
-                                child: _isBuffering
-                                    ? LoadingIndicator(
-                                        color: widget.color,
-                                      )
-                                    : null,
-                              ),
-                            ],
-                          )
-                        : Container(
-                            child: _isLoading
+    return VisibilityDetector(
+      key: Key(widget.uri),
+      onVisibilityChanged: (info) {
+        if (_isInitialized &&
+            _isPlaying &&
+            !_orientationChanged &&
+            info.visibleFraction == 0.0) {
+          _onPlay();
+        }
+        _orientationChanged = false;
+      },
+      child: Material(
+        color: Colors.grey.shade900,
+        child: SizedBox(
+          width: width,
+          height: height,
+          child: Stack(
+            children: <Widget>[
+              Center(
+                child: _isInitialized
+                    ? Stack(
+                        children: <Widget>[
+                          Center(
+                            child: AspectRatio(
+                              aspectRatio: _aspectRatio,
+                              child: VideoPlayer(_controller),
+                            ),
+                          ),
+                          Container(
+                            child: _isBuffering
                                 ? LoadingIndicator(
                                     color: widget.color,
                                   )
                                 : null,
                           ),
-                  ),
-                  SizedBox(
-                    width: width,
-                    height: height,
-                    child: GestureDetector(
-                      child: AnimatedOpacity(
-                        duration: Duration(milliseconds: 250),
-                        opacity: _isControllerVisible ? 1 : 0,
-                        child: Container(
-                          color: Colors.black.withOpacity(0.2),
-                          child: _isControllerVisible
-                              ? VideoController(
-                                  color: widget.color,
-                                  isInitialized: _isInitialized,
-                                  isLoading: _isLoading,
-                                  isFullscreen: _isFullscreen,
-                                  isPlaying: _isPlaying,
-                                  current: _current,
-                                  max: _max,
-                                  buffered: _buffered,
-                                  onPlay: _onPlay,
-                                  onFullScreen: _onFullScreen,
-                                  onSeekProgress: _onSeekProgress,
-                                )
-                              : null,
-                        ),
+                        ],
+                      )
+                    : Container(
+                        child: _isLoading
+                            ? LoadingIndicator(
+                                color: widget.color,
+                              )
+                            : null,
                       ),
-                      onTap: () {
-                        _setControllerVisible(!_isControllerVisible);
-                      },
+              ),
+              SizedBox(
+                width: width,
+                height: height,
+                child: GestureDetector(
+                  child: AnimatedOpacity(
+                    duration: Duration(milliseconds: 250),
+                    opacity: _isControllerVisible ? 1 : 0,
+                    child: Container(
+                      color: Colors.black.withOpacity(0.2),
+                      child: _isControllerVisible
+                          ? VideoController(
+                              color: widget.color,
+                              isInitialized: _isInitialized,
+                              isLoading: _isLoading,
+                              isFullscreen: _isFullscreen,
+                              isPlaying: _isPlaying,
+                              current: _current,
+                              max: _max,
+                              buffered: _buffered,
+                              onPlay: _onPlay,
+                              onFullScreen: _onFullScreen,
+                              onSeekProgress: _onSeekProgress,
+                            )
+                          : null,
                     ),
                   ),
-                ],
+                  onTap: () {
+                    _setControllerVisible(!_isControllerVisible);
+                  },
+                ),
               ),
-            ),
+            ],
           ),
         ),
-        onWillPop: () async {
-          if (_isFullscreen) {
-            _exitFullScreen();
-          }
-          return true;
-        });
+      ),
+    );
   }
 
   Future<void> initializeVideo() async {
@@ -294,12 +287,18 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
     await SystemChrome.setEnabledSystemUIOverlays([]);
     Navigator.of(context).push(
       FadeRoute(
-        enter: PanVideoPlayer(
-          uri: widget.uri,
-          color: widget.color,
-          isFullScreen: !_isFullscreen,
-          state: this,
-          onSaveState: !_isInitialized ? _onSaveState : null,
+        enter: WillPopScope(
+          child: PanVideoPlayer(
+            uri: widget.uri,
+            color: widget.color,
+            isFullScreen: !_isFullscreen,
+            state: this,
+            onSaveState: !_isInitialized ? _onSaveState : null,
+          ),
+          onWillPop: () async {
+            _exitFullScreen();
+            return true;
+          },
         ),
       ),
     );
