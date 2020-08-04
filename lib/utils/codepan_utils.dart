@@ -16,6 +16,30 @@ class PanUtils {
     };
   }
 
+  static String getFormattedDateTime() {
+    final now = DateTime.now();
+    final format = DateFormat.yMMMMd('en_US').add_jm();
+    return format.format(now);
+  }
+
+  static String formatDate(String input) {
+    final date = DateTime.parse(input);
+    final format = DateFormat.yMMMMd('en_US');
+    return format.format(date);
+  }
+
+  static String formatTime(String input) {
+    final time = DateTime.parse(input);
+    final format = DateFormat.jm();
+    return format.format(time);
+  }
+
+  static String formatDateTime(String date, String time) {
+    final dt = DateTime.parse('$date $time');
+    final format = DateFormat.yMMMMd('en_US').add_jm();
+    return format.format(dt);
+  }
+
   static DateTimeData splitDateTime(String input, {String pattern = ' '}) {
     if (input != null) {
       final data = input.split(pattern);
