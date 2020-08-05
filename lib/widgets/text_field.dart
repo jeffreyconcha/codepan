@@ -115,7 +115,7 @@ class _PanTextFieldState extends State<PanTextField> {
     if (_borderWidth != null && _borderColor != null) {
       final side = BorderSide(color: _borderColor, width: _borderWidth);
       border = widget.bottomBorderOnly
-          ? new Border(bottom: side)
+          ? Border(bottom: side)
           : Border.fromBorderSide(side);
     }
     final borderRadius =
@@ -140,6 +140,7 @@ class _PanTextFieldState extends State<PanTextField> {
       width: widget.width,
       height: widget.height,
       margin: widget.margin,
+      alignment: widget.alignment,
       decoration: BoxDecoration(
         color: widget.background,
         border: border,
