@@ -17,7 +17,11 @@ class PanTextField extends StatefulWidget {
       radius,
       borderWidth,
       focusedBorderWidth;
-  final bool enabled, enableInteractiveSelection, isPassword, bottomBorderOnly;
+  final bool enabled,
+      autofocus,
+      enableInteractiveSelection,
+      isPassword,
+      bottomBorderOnly;
   final List<TextInputFormatter> inputFormatters;
   final int maxLines, minLines, maxLength;
   final ValueChanged<String> onFieldSubmitted;
@@ -58,6 +62,7 @@ class PanTextField extends StatefulWidget {
     this.focusedBorderWidth,
     this.hint,
     this.enabled = true,
+    this.autofocus = false,
     this.isPassword = false,
     this.bottomBorderOnly = false,
     this.enableInteractiveSelection = true,
@@ -142,6 +147,7 @@ class _PanTextFieldState extends State<PanTextField> {
       ),
       child: Focus(
         child: TextFormField(
+          autofocus: widget.autofocus,
           initialValue: widget.text,
           enabled: widget.enabled,
           enableInteractiveSelection: widget.enableInteractiveSelection,
