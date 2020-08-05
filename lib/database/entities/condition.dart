@@ -3,31 +3,38 @@ import 'package:codepan/database/entities/sqlite_entity.dart';
 import 'package:codepan/database/sqlite_statement.dart';
 
 enum Operator {
-  EQUALS,
-  NOT_EQUALS,
-  GREATER_THAN,
-  LESS_THAN,
-  GREATER_THAN_OR_EQUALS,
-  LESS_THAN_OR_EQUALS,
-  BETWEEN,
-  IS_NULL,
-  NOT_NULL,
-  IS_EMPTY,
-  NOT_EMPTY,
-  LIKE,
+  equals,
+  notEquals,
+  greaterThan,
+  lessThan,
+  greaterThanOrEquals,
+  lessThanOrEquals,
+  between,
+  isNull,
+  notNull,
+  isEmpty,
+  notEmpty,
+  like,
+}
+enum Scan {
+  start,
+  end,
+  between,
 }
 
 class Condition extends SQLiteEntity {
+  dynamic _value, _start, _end;
   List<Condition> orList;
   Operator _operator;
-  String _start, _end;
-  dynamic _value;
+  Scan _scan;
 
-  String get start => _start;
+  String get start => _getValue(_start);
 
-  String get end => _end;
+  String get end => _getValue(_end);
 
   Operator get operator => _operator;
+
+  bool get hasOrList => orList?.isNotEmpty ?? false;
 
   String get value {
     if (_value != null) {
@@ -37,6 +44,19 @@ class Condition extends SQLiteEntity {
             : SQLiteStatement.FALSE.toString();
       } else if (_value is String) {
         final text = _value as String;
+        if (_operator == Operator.like && _scan != null) {
+          switch (_scan) {
+            case Scan.start:
+              return '\'%$text\'';
+              break;
+            case Scan.end:
+              return '\'$text%\'';
+              break;
+            case Scan.between:
+              return '\'%$text%\'';
+              break;
+          }
+        }
         return '\'$text\'';
       } else if (_value is Field) {
         final field = _value as Field;
@@ -48,14 +68,31 @@ class Condition extends SQLiteEntity {
     return SQLiteStatement.NULL;
   }
 
+  List<Operator> get _noValueOperators {
+    return [
+      Operator.between,
+      Operator.isNull,
+      Operator.notNull,
+      Operator.isEmpty,
+      Operator.notEmpty,
+    ];
+  }
+
+  bool get _isNoValueOperator {
+    return _operator != null && _noValueOperators.contains(_operator);
+  }
+
   bool get hasValue => _value != null;
+
+  bool get isValid => hasValue || _isNoValueOperator;
 
   Condition(
     String _field,
     this._value, {
-    String start,
-    String end,
-    Operator operator = Operator.EQUALS,
+    dynamic start,
+    dynamic end,
+    Operator operator = Operator.equals,
+    Scan scan = Scan.between,
   }) : super(_field) {
     this._start = start;
     this._end = end;
@@ -64,50 +101,176 @@ class Condition extends SQLiteEntity {
     } else {
       this._operator = operator;
     }
+    if (operator == Operator.like) {
+      this._scan = scan;
+    }
   }
 
   Condition.or(this.orList) : super(null);
 
+  factory Condition.notEquals(
+    String field,
+    dynamic value,
+  ) {
+    return Condition(
+      field,
+      value,
+      operator: Operator.notEquals,
+    );
+  }
+
+  factory Condition.greaterThan(
+    String field,
+    dynamic value,
+  ) {
+    return Condition(
+      field,
+      value,
+      operator: Operator.greaterThan,
+    );
+  }
+
+  factory Condition.lessThan(
+    String field,
+    dynamic value,
+  ) {
+    return Condition(
+      field,
+      value,
+      operator: Operator.lessThan,
+    );
+  }
+
+  factory Condition.greaterThanOrEquals(
+    String field,
+    dynamic value,
+  ) {
+    return Condition(
+      field,
+      value,
+      operator: Operator.greaterThanOrEquals,
+    );
+  }
+
+  factory Condition.lessThanOrEquals(
+    String field,
+    dynamic value,
+  ) {
+    return Condition(
+      field,
+      value,
+      operator: Operator.lessThanOrEquals,
+    );
+  }
+
+  factory Condition.between(
+    String field,
+    dynamic start,
+    dynamic end,
+  ) {
+    return Condition(
+      field,
+      null,
+      start: start,
+      end: end,
+      operator: Operator.between,
+    );
+  }
+
+  factory Condition.isNull(String field) {
+    return Condition(
+      field,
+      null,
+      operator: Operator.isNull,
+    );
+  }
+
+  factory Condition.notNull(String field) {
+    return Condition(
+      field,
+      null,
+      operator: Operator.notNull,
+    );
+  }
+
+  factory Condition.isEmpty(String field) {
+    return Condition(
+      field,
+      null,
+      operator: Operator.isEmpty,
+    );
+  }
+
+  factory Condition.notEmpty(String field) {
+    return Condition(
+      field,
+      null,
+      operator: Operator.notEmpty,
+    );
+  }
+
+  factory Condition.like(
+    String field,
+    String value, {
+    Scan scan = Scan.between,
+  }) {
+    return Condition(
+      field,
+      value,
+      operator: Operator.like,
+      scan: scan,
+    );
+  }
+
   String asString() {
     final type = hasValue && _value is Operator ? _value : operator;
     switch (type) {
-      case Operator.EQUALS:
+      case Operator.equals:
         return "$field = $value";
         break;
-      case Operator.NOT_EQUALS:
+      case Operator.notEquals:
         return "$field != $value";
         break;
-      case Operator.GREATER_THAN:
+      case Operator.greaterThan:
         return "$field > $value";
         break;
-      case Operator.LESS_THAN:
+      case Operator.lessThan:
         return "$field < $value";
         break;
-      case Operator.GREATER_THAN_OR_EQUALS:
+      case Operator.greaterThanOrEquals:
         return "$field >= $value";
         break;
-      case Operator.LESS_THAN_OR_EQUALS:
+      case Operator.lessThanOrEquals:
         return "$field <= $value";
         break;
-      case Operator.BETWEEN:
+      case Operator.between:
         return "$field BETWEEN $start AND $end";
         break;
-      case Operator.IS_NULL:
+      case Operator.isNull:
         return "$field IS NULL";
         break;
-      case Operator.NOT_NULL:
+      case Operator.notNull:
         return "$field NOT NULL";
         break;
-      case Operator.IS_EMPTY:
+      case Operator.isEmpty:
         return "$field = ''";
         break;
-      case Operator.NOT_EMPTY:
+      case Operator.notEmpty:
         return "$field != ''";
         break;
-      case Operator.LIKE:
+      case Operator.like:
         return "$field LIKE $value";
         break;
     }
     return null;
+  }
+
+  String _getValue(dynamic input) {
+    if (input != null) {
+      if (input is String) {
+        return '\'${input.toString()}\'';
+      }
+    }
+    return input.toString();
   }
 }

@@ -31,6 +31,10 @@ class Table {
     return null;
   }
 
+  String rawField(String name) {
+    return field(name).field;
+  }
+
   Field field(String name) {
     return Field(name)..setAlias(alias);
   }

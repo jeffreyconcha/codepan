@@ -27,6 +27,7 @@ class PanTextField extends StatefulWidget {
   final TextInputAction textInputAction;
   final EdgeInsetsGeometry margin, padding;
   final FocusNode focusNode, nextFocusNode;
+  final ValueChanged<bool> onFocusChange;
   final ValueChanged<String> onChanged;
   final String text, hint, fontFamily;
   final TextInputType keyboardType;
@@ -62,6 +63,9 @@ class PanTextField extends StatefulWidget {
     this.enableInteractiveSelection = true,
     this.controller,
     this.textInputAction = TextInputAction.done,
+    this.textCapitalization = TextCapitalization.none,
+    this.textAlign = TextAlign.start,
+    this.textAlignVertical,
     this.focusNode,
     this.nextFocusNode,
     this.onFieldSubmitted,
@@ -72,12 +76,10 @@ class PanTextField extends StatefulWidget {
     this.height,
     this.suffixIcon,
     this.iconColor,
-    this.textAlign = TextAlign.start,
-    this.textAlignVertical,
     this.inputFormatters,
     this.keyboardType,
     this.onChanged,
-    this.textCapitalization = TextCapitalization.none,
+    this.onFocusChange,
   }) : super(key: key);
 
   @override
@@ -190,6 +192,7 @@ class _PanTextFieldState extends State<PanTextField> {
             this._borderWidth =
                 hasFocus ? widget.focusedBorderWidth : widget.borderWidth;
           });
+          widget.onFocusChange?.call(hasFocus);
         },
       ),
     );

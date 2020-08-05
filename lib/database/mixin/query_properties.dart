@@ -57,9 +57,9 @@ mixin QueryProperties {
         if (operator != null) {
           buffer.write(condition.asString());
         } else {
-          final orList = condition.orList;
-          if (orList != null && orList.isNotEmpty) {
+          if (condition.hasOrList) {
             final b = StringBuffer();
+            final orList = condition.orList;
             for (final condition in orList) {
               b.write(condition.asString());
               if (condition != orList.last) {
@@ -97,10 +97,15 @@ mixin QueryProperties {
   }
 
   void addCondition(Condition c, {String alias}) {
-    if (c != null && c.hasValue) {
-      c.setAlias(alias);
-      _conditionList ??= [];
-      _conditionList.add(c);
+    if (c != null) {
+      if (c.isValid) {
+        c.setAlias(alias);
+        _conditionList ??= [];
+        _conditionList.add(c);
+      } else if (c.hasOrList) {
+        _conditionList ??= [];
+        _conditionList.add(c);
+      }
     }
   }
 
