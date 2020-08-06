@@ -52,6 +52,7 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
   bool _isLoading = false;
   bool _isPlaying = false;
   bool _isBuffering = false;
+  bool _isCompleted = false;
   double _buffered = 0;
   double _current = 0;
   double _max = 0;
@@ -208,6 +209,7 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
         _setLoading(true);
         await _controller.play();
         _setLoading(false);
+        _isCompleted = false;
       }
       _setPlaying(_value.isPlaying);
     }
@@ -221,7 +223,10 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
     }
     if (value == _max) {
       _setPlaying(false);
-      widget.onCompleted?.call();
+      if (!_isCompleted) {
+        widget.onCompleted?.call();
+        _isCompleted = true;
+      }
     }
     _updateBuffered();
   }
