@@ -147,6 +147,14 @@ class SQLiteBinder {
     return null;
   }
 
+  int mapId(String table, String unique, dynamic value) {
+    if (table != null && unique != null && value != null) {
+      final key = '$table.$unique($value)';
+      return _map[key];
+    }
+    return null;
+  }
+
   void addStatement(final sql) {
     _sqlList.add(sql);
   }

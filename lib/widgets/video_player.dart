@@ -1,5 +1,6 @@
 import 'package:codepan/media/callback.dart';
 import 'package:codepan/resources/dimensions.dart';
+import 'package:codepan/resources/strings.dart';
 import 'package:codepan/transitions/route_transition.dart';
 import 'package:codepan/widgets/loading_indicator.dart';
 import 'package:codepan/widgets/video_controller.dart';
@@ -23,6 +24,7 @@ class PanVideoPlayer extends StatefulWidget {
   final String uri;
   final _PanVideoPlayerState state;
   final OnSaveState onSaveState;
+  final OnError onError;
 
   PanVideoPlayer({
     Key key,
@@ -35,6 +37,7 @@ class PanVideoPlayer extends StatefulWidget {
     this.onProgressChanged,
     this.onCompleted,
     this.onSaveState,
+    this.onError,
   }) : super(key: key);
 
   @override
@@ -173,31 +176,41 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
 
   Future<void> initializeVideo() async {
     if (!_isInitialized) {
-      _setLoading(true);
-      _setControllerVisible(false);
-      await _controller.initialize();
-      _controller.addListener(_listener);
-      setState(() {
-        _max = _value.duration.inMilliseconds.toDouble();
-        _isInitialized = true;
-      });
-      _setLoading(false);
+      try {
+        _setLoading(true);
+        _setControllerVisible(false);
+        await Future.delayed(Duration(milliseconds: 500));
+        await _controller.initialize();
+        _controller.addListener(_listener);
+        setState(() {
+          _max = _value.duration.inMilliseconds.toDouble();
+          _isInitialized = true;
+        });
+        _setLoading(false);
+      } catch (error) {
+        widget.onError?.call(Errors.failedToPlayVideo);
+        _setLoading(false);
+        _setControllerVisible(true);
+        rethrow;
+      }
     }
   }
 
   void _onPlay() async {
     await initializeVideo();
-    if (_current == _max) {
-      await _onSeekProgress(1);
+    if (_isInitialized) {
+      if (_current == _max) {
+        await _onSeekProgress(1);
+      }
+      if (_value.isPlaying) {
+        await _controller.pause();
+      } else {
+        _setLoading(true);
+        await _controller.play();
+        _setLoading(false);
+      }
+      _setPlaying(_value.isPlaying);
     }
-    if (_value.isPlaying) {
-      await _controller.pause();
-    } else {
-      _setLoading(true);
-      await _controller.play();
-      _setLoading(false);
-    }
-    _setPlaying(_value.isPlaying);
   }
 
   void _listener() async {

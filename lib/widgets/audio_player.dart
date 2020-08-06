@@ -3,6 +3,7 @@ import 'package:audioplayer/audioplayer.dart';
 import 'package:codepan/media/callback.dart';
 import 'package:codepan/resources/colors.dart';
 import 'package:codepan/resources/dimensions.dart';
+import 'package:codepan/resources/strings.dart';
 import 'package:codepan/widgets/button.dart';
 import 'package:codepan/widgets/loading_indicator.dart';
 import 'package:codepan/widgets/media_progress_indicator.dart';
@@ -11,6 +12,7 @@ import 'package:flutter/material.dart';
 class PanAudioPlayer extends StatefulWidget {
   final OnProgressChanged onProgressChanged;
   final OnCompleted onCompleted;
+  final OnError onError;
   final String uri;
   final Color color;
   final Color background;
@@ -22,6 +24,7 @@ class PanAudioPlayer extends StatefulWidget {
     this.background = Colors.white,
     this.onProgressChanged,
     this.onCompleted,
+    this.onError,
   }) : super(key: key);
 
   @override
@@ -69,7 +72,11 @@ class _PanAudioPlayerState extends State<PanAudioPlayer> {
           _setPlaying(false);
           break;
       }
-    }, onError: (msg) {});
+    }, onError: (msg) {
+      widget.onError?.call(Errors.failedToPlayAudio);
+      _audio.stop();
+      _setLoading(false);
+    });
     super.initState();
   }
 
