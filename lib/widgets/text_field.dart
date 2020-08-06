@@ -180,17 +180,18 @@ class _PanTextFieldState extends State<PanTextField> {
             height: widget.fontHeight,
           ),
           decoration: InputDecoration(
-              border: InputBorder.none,
-              focusedBorder: InputBorder.none,
-              disabledBorder: InputBorder.none,
-              enabledBorder: InputBorder.none,
-              contentPadding: widget.padding,
-              hintText: widget.hint,
-              hintStyle: TextStyle(
-                  color: widget.hintFontColor,
-                  fontFamily: widget.fontFamily,
-                  fontSize: widget.fontSize),
-              suffixIcon: suffixIcon),
+            border: InputBorder.none,
+            focusedBorder: InputBorder.none,
+            disabledBorder: InputBorder.none,
+            enabledBorder: InputBorder.none,
+            contentPadding: widget.padding,
+            hintText: widget.hint,
+            hintStyle: TextStyle(
+                color: widget.hintFontColor,
+                fontFamily: widget.fontFamily,
+                fontSize: widget.fontSize),
+            suffixIcon: suffixIcon,
+          ),
         ),
         onFocusChange: (hasFocus) {
           setState(() {

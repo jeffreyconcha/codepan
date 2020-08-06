@@ -22,6 +22,14 @@ class Dimension {
     return dp;
   }
 
+  double scale(double dp) {
+    if (context != null) {
+      final data = MediaQuery.of(context);
+      return at(dp) * data.textScaleFactor;
+    }
+    return dp;
+  }
+
   double get statusBarHeight {
     if (context != null) {
       final data = MediaQuery.of(context);
