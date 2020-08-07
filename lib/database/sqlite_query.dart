@@ -108,7 +108,7 @@ class SQLiteQuery with QueryProperties {
 
   void join({
     @required SQLiteQuery query,
-    @required JoinType type,
+    JoinType type = JoinType.INNER,
   }) {
     query._setJoinType(type);
     _joinList ??= [];

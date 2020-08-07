@@ -1,5 +1,6 @@
 import 'package:codepan/database/entities/field.dart';
 import 'package:codepan/database/entities/sqlite_entity.dart';
+import 'package:codepan/database/sqlite_query.dart';
 import 'package:codepan/database/sqlite_statement.dart';
 
 enum Operator {
@@ -15,6 +16,7 @@ enum Operator {
   isEmpty,
   notEmpty,
   like,
+  inside,
 }
 enum Scan {
   start,
@@ -61,6 +63,19 @@ class Condition extends SQLiteEntity {
       } else if (_value is Field) {
         final field = _value as Field;
         return field.field;
+      } else if (_value is SQLiteQuery) {
+        final query = _value as SQLiteQuery;
+        return query.build();
+      } else if (_value is List<dynamic>) {
+        final buffer = StringBuffer();
+        final list = _value as List<dynamic>;
+        for (final v in _value) {
+          buffer.write(v.toString());
+          if (v != list.last) {
+            buffer.write(',');
+          }
+        }
+        return buffer.toString();
       } else {
         return _value.toString();
       }
@@ -222,6 +237,28 @@ class Condition extends SQLiteEntity {
     );
   }
 
+  factory Condition.inQuery(
+    String field,
+    SQLiteQuery query,
+  ) {
+    return Condition(
+      field,
+      query,
+      operator: Operator.inside,
+    );
+  }
+
+  factory Condition.inList(
+    String field,
+    List<dynamic> list,
+  ) {
+    return Condition(
+      field,
+      list,
+      operator: Operator.inside,
+    );
+  }
+
   String asString() {
     final type = hasValue && _value is Operator ? _value : operator;
     switch (type) {
@@ -260,6 +297,9 @@ class Condition extends SQLiteEntity {
         break;
       case Operator.like:
         return "$field LIKE $value";
+        break;
+      case Operator.inside:
+        return "$field IN ($value)";
         break;
     }
     return null;
