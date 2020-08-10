@@ -29,7 +29,7 @@ class PanUtils {
   }
 
   static String formatTime(String input) {
-    final time = DateTime.parse(input);
+    final time = DateTime.parse('0000-00-00 $input');
     final format = DateFormat.jm();
     return format.format(time);
   }
@@ -59,15 +59,36 @@ class PanUtils {
     return nf.format(input);
   }
 
-  static String formatDuration(Duration duration, {bool withHours = false}) {
+  static String formatDuration(
+    Duration duration, {
+    bool isReadable = false,
+  }) {
     String format(int n) => n.toString().padLeft(2, "0");
-    String seconds = format(duration.inSeconds.remainder(60));
-    String minutes = format(duration.inMinutes.remainder(60));
-    if (withHours) {
-      String hours = format(duration.inHours);
-      return '$hours:$minutes:$seconds';
+    int h = duration.inHours.remainder(24);
+    int m = duration.inMinutes.remainder(60);
+    int s = duration.inSeconds.remainder(60);
+    String hs = isReadable ? h > 1 ? ' hrs ' : ' hr ' : ':';
+    String ms = isReadable ? m > 1 ? ' mins ' : ' min ' : ':';
+    String ss = isReadable ? s > 1 ? ' secs' : ' sec' : ':';
+    String hours = isReadable ? '$h' : format(h);
+    String minutes = isReadable ? '$m' : format(m);
+    String seconds = isReadable ? '$s' : format(s);
+    final buffer = StringBuffer();
+    if (h != 0) {
+      buffer.write('$hours');
+      buffer.write(hs);
     }
-    return '$minutes:$seconds';
+    if (!isReadable || m != 0) {
+      buffer.write('$minutes');
+      buffer.write(ms);
+    }
+    if (!isReadable || s != 0) {
+      buffer.write('$seconds');
+      if (isReadable) {
+        buffer.write(ss);
+      }
+    }
+    return buffer.toString();
   }
 
   static String getTimeHistory(String date, String time) {
