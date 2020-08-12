@@ -53,22 +53,7 @@ mixin QueryProperties {
     final buffer = StringBuffer();
     if (hasConditions) {
       for (final condition in conditionList) {
-        final operator = condition.operator;
-        if (operator != null) {
-          buffer.write(condition.asString());
-        } else {
-          if (condition.hasOrList) {
-            final b = StringBuffer();
-            final orList = condition.orList;
-            for (final condition in orList) {
-              b.write(condition.asString());
-              if (condition != orList.last) {
-                b.write(" OR ");
-              }
-            }
-            buffer.write("(${b.toString()})");
-          }
-        }
+        buffer.write(condition.asString());
         if (condition != conditionList.last) {
           buffer.write(" AND ");
         }

@@ -1,5 +1,6 @@
 import 'package:codepan/database/entities/field.dart';
 import 'package:codepan/database/entities/sqlite_entity.dart';
+import 'package:codepan/database/sqlite_exception.dart';
 import 'package:codepan/database/sqlite_query.dart';
 import 'package:codepan/database/sqlite_statement.dart';
 
@@ -27,6 +28,7 @@ enum Scan {
 class Condition extends SQLiteEntity {
   dynamic _value, _start, _end;
   List<Condition> orList;
+  List<Condition> andList;
   Operator _operator;
   Scan _scan;
 
@@ -37,6 +39,8 @@ class Condition extends SQLiteEntity {
   Operator get operator => _operator;
 
   bool get hasOrList => orList?.isNotEmpty ?? false;
+
+  bool get hasAndList => andList?.isNotEmpty ?? false;
 
   String get value {
     if (_value != null) {
@@ -121,7 +125,17 @@ class Condition extends SQLiteEntity {
     }
   }
 
-  Condition.or(this.orList) : super(null);
+  Condition.or(this.orList) : super(null) {
+    if (hasAndList) {
+      throw SQLiteException(SQLiteException.invalidConditionList);
+    }
+  }
+
+  Condition.and(this.andList) : super(null) {
+    if (hasOrList) {
+      throw SQLiteException(SQLiteException.invalidConditionList);
+    }
+  }
 
   factory Condition.notEquals(
     String field,
@@ -261,46 +275,68 @@ class Condition extends SQLiteEntity {
 
   String asString() {
     final type = hasValue && _value is Operator ? _value : operator;
-    switch (type) {
-      case Operator.equals:
-        return "$field = $value";
-        break;
-      case Operator.notEquals:
-        return "$field != $value";
-        break;
-      case Operator.greaterThan:
-        return "$field > $value";
-        break;
-      case Operator.lessThan:
-        return "$field < $value";
-        break;
-      case Operator.greaterThanOrEquals:
-        return "$field >= $value";
-        break;
-      case Operator.lessThanOrEquals:
-        return "$field <= $value";
-        break;
-      case Operator.between:
-        return "$field BETWEEN $start AND $end";
-        break;
-      case Operator.isNull:
-        return "$field IS NULL";
-        break;
-      case Operator.notNull:
-        return "$field NOT NULL";
-        break;
-      case Operator.isEmpty:
-        return "$field = ''";
-        break;
-      case Operator.notEmpty:
-        return "$field != ''";
-        break;
-      case Operator.like:
-        return "$field LIKE $value";
-        break;
-      case Operator.inside:
-        return "$field IN ($value)";
-        break;
+    if (type != null) {
+      switch (type) {
+        case Operator.equals:
+          return "$field = $value";
+          break;
+        case Operator.notEquals:
+          return "$field != $value";
+          break;
+        case Operator.greaterThan:
+          return "$field > $value";
+          break;
+        case Operator.lessThan:
+          return "$field < $value";
+          break;
+        case Operator.greaterThanOrEquals:
+          return "$field >= $value";
+          break;
+        case Operator.lessThanOrEquals:
+          return "$field <= $value";
+          break;
+        case Operator.between:
+          return "$field BETWEEN $start AND $end";
+          break;
+        case Operator.isNull:
+          return "$field IS NULL";
+          break;
+        case Operator.notNull:
+          return "$field NOT NULL";
+          break;
+        case Operator.isEmpty:
+          return "$field = ''";
+          break;
+        case Operator.notEmpty:
+          return "$field != ''";
+          break;
+        case Operator.like:
+          return "$field LIKE $value";
+          break;
+        case Operator.inside:
+          return "$field IN ($value)";
+          break;
+      }
+    } else {
+      if (hasOrList) {
+        final b = StringBuffer();
+        for (final condition in orList) {
+          b.write(condition.asString());
+          if (condition != orList.last) {
+            b.write(" OR ");
+          }
+        }
+        return '(${b.toString()})';
+      } else if (hasAndList) {
+        final b = StringBuffer();
+        for (final condition in andList) {
+          b.write(condition.asString());
+          if (condition != andList.last) {
+            b.write(" AND ");
+          }
+        }
+        return '(${b.toString()})';
+      }
     }
     return null;
   }

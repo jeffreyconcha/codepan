@@ -59,6 +59,12 @@ class PanUtils {
     return nf.format(input);
   }
 
+  static String formatDouble(String format, double input) {
+    if (input == null) return null;
+    final nf = NumberFormat(format, 'en_US');
+    return nf.format(input);
+  }
+
   static String formatDuration(
     Duration duration, {
     bool isReadable = false,
