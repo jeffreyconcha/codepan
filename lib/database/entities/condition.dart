@@ -137,6 +137,17 @@ class Condition extends SQLiteEntity {
     }
   }
 
+  factory Condition.equals(
+    String field,
+    dynamic value,
+  ) {
+    return Condition(
+      field,
+      value,
+      operator: Operator.equals,
+    );
+  }
+
   factory Condition.notEquals(
     String field,
     dynamic value,
