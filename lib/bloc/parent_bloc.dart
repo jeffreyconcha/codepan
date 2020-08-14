@@ -5,6 +5,8 @@ abstract class ParentBloc<Event, State> extends Bloc<Event, State> {
     Event initialEvent,
     State initialState,
   }) : super(initialState) {
-    this.add(initialEvent);
+    if (initialEvent != null) {
+      this.add(initialEvent);
+    }
   }
 }
