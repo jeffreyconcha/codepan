@@ -13,7 +13,7 @@ class SlideRoute extends PageRouteBuilder {
   SlideRoute({
     this.exit,
     @required this.enter,
-    this.settings,
+    this.settings = const RouteSettings(name: 'slide'),
   }) : super(
           transitionDuration: delay,
           pageBuilder: (context, animation1, animation2) => enter,
@@ -43,7 +43,7 @@ class FadeRoute extends PageRouteBuilder {
 
   FadeRoute({
     @required this.enter,
-    this.settings,
+    this.settings = const RouteSettings(name: 'fade'),
   }) : super(
           transitionDuration: delay,
           pageBuilder: (context, animation1, animation2) => enter,
