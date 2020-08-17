@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:codepan/model/date_time.dart';
+import 'package:connectivity/connectivity.dart';
 import 'package:flutter/foundation.dart';
 import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
@@ -122,5 +123,11 @@ class PanUtils {
   static void printLarge(String text) {
     final pattern = RegExp('.{1,800}'); // 800 is the size of each chunk
     pattern.allMatches(text).forEach((match) => print(match.group(0)));
+  }
+
+  static Future<bool> hasInternet() async {
+    final result = await Connectivity().checkConnectivity();
+    return result == ConnectivityResult.wifi ||
+        result == ConnectivityResult.mobile;
   }
 }
