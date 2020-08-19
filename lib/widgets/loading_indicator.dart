@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:codepan/resources/dimensions.dart';
+import 'package:codepan/widgets/pan_activity_indicator.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -31,9 +32,11 @@ class LoadingIndicator extends StatelessWidget {
             ? CircularProgressIndicator(
                 valueColor: AlwaysStoppedAnimation<Color>(color),
               )
-            : CupertinoActivityIndicator(
+            : PanActivityIndicator(
                 radius: radius ?? d.at(15),
                 animating: true,
+                activeColor: Colors.grey,
+                inactiveColor: Colors.grey.withOpacity(0.5),
               ),
       ),
     );
