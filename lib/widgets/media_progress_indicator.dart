@@ -175,6 +175,8 @@ class RectangularThumb extends SliderComponentShape {
     SliderThemeData sliderTheme,
     TextDirection textDirection,
     double value,
+    double textScaleFactor,
+    Size sizeWithOverflow,
   }) {
     final canvas = context.canvas;
     final rect = Rect.fromCenter(
