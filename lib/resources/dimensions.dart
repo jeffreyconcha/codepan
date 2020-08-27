@@ -1,7 +1,10 @@
 import 'package:flutter/widgets.dart';
 
+const double baseline = 360;
+const double boundary = 480;
+const double maxRatio = 480 / 360;
+
 class Dimension {
-  static const double baseline = 360;
   final BuildContext context;
   final bool isSafeArea;
 
@@ -17,7 +20,8 @@ class Dimension {
       final width = size.width;
       final height = size.height;
       final reference = width < height ? width : height;
-      return dp * (reference / baseline);
+      final ratio = reference <= boundary ? (reference / baseline) : maxRatio;
+      return dp * ratio;
     }
     return dp;
   }
