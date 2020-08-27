@@ -35,7 +35,15 @@ class Dimension {
       final data = MediaQuery.of(context);
       return data.padding.top;
     }
-    return double.infinity;
+    return 0;
+  }
+
+  double get bottomPadding {
+    if (context != null) {
+      final data = MediaQuery.of(context);
+      return data.padding.bottom;
+    }
+    return 0;
   }
 
   double get max {
