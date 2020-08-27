@@ -14,16 +14,9 @@ class Dimension {
   });
 
   double at(double dp) {
-    if (context != null) {
-      final data = MediaQuery.of(context);
-      final size = data.size;
-      final width = size.width;
-      final height = size.height;
-      final reference = width < height ? width : height;
-      final ratio = reference <= boundary ? (reference / baseline) : maxRatio;
-      return dp * ratio;
-    }
-    return dp;
+    final sw = min;
+    final ratio = sw <= boundary ? (sw / baseline) : maxRatio;
+    return dp * ratio;
   }
 
   double scale(double dp) {
@@ -32,6 +25,15 @@ class Dimension {
       return at(dp) * data.textScaleFactor;
     }
     return dp;
+  }
+
+  double viewPortFraction(double fraction) {
+    final sw = min;
+    if (sw > boundary) {
+      final ratio = boundary / sw;
+      return ratio * fraction;
+    }
+    return fraction;
   }
 
   double get statusBarHeight {
