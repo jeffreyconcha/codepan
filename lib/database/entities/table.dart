@@ -1,5 +1,6 @@
 import 'package:codepan/database/sqlite_query.dart';
 import 'package:flutter/foundation.dart';
+
 import 'field.dart';
 
 class Table {

@@ -1,6 +1,7 @@
 import 'package:codepan/database/entities/table.dart' as tb;
 import 'package:codepan/database/mixin/query_properties.dart';
 import 'package:flutter/cupertino.dart';
+
 import 'entities/field.dart';
 
 enum JoinType {

@@ -1,7 +1,6 @@
-import 'package:codepan/config/properties.dart';
-import 'package:flutter/material.dart';
-import 'package:codepan/widgets/text.dart';
 import 'package:codepan/resources/colors.dart';
+import 'package:codepan/widgets/text.dart';
+import 'package:flutter/material.dart';
 
 class PanButton extends StatelessWidget {
   final Color fontColor, background, borderColor, splashColor, highlightColor;

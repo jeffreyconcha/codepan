@@ -1,6 +1,6 @@
+import 'package:codepan/resources/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:codepan/resources/colors.dart';
 
 enum OverflowState {
   expand,
