@@ -1,11 +1,13 @@
 import 'dart:io';
-
 import 'package:codepan/model/date_time.dart';
 import 'package:connectivity/connectivity.dart';
 import 'package:flutter/foundation.dart';
 import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:time_ago_provider/time_ago_provider.dart' as ago;
+
+const urlPattern =
+    r'(https?|http)://([-A-Z0-9.]+)(/[-A-Z0-9+&@#/%=~_|!:,.;]*)?(\?[A-Z0-9+&@#/%=~_|!:‌​,.;]*)?';
 
 class PanUtils {
   static Map<String, String> getDateTime() {
@@ -130,5 +132,13 @@ class PanUtils {
     final result = await Connectivity().checkConnectivity();
     return result == ConnectivityResult.wifi ||
         result == ConnectivityResult.mobile;
+  }
+
+  static bool isValidUrl(String url) {
+    final match = RegExp(
+      urlPattern,
+      caseSensitive: false,
+    ).firstMatch(url);
+    return match != null;
   }
 }
