@@ -123,6 +123,20 @@ class PanUtils {
     }
   }
 
+  static Future<Directory> getDirectory(
+    String folder,
+  ) async {
+    final root = await getApplicationDocumentsDirectory();
+    if (folder != null) {
+      final dir = Directory('${root.path}/$folder');
+      if (!await dir.exists()) {
+        await dir.create();
+      }
+      return dir;
+    }
+    return root;
+  }
+
   static void printLarge(String text) {
     final pattern = RegExp('.{1,800}'); // 800 is the size of each chunk
     pattern.allMatches(text).forEach((match) => print(match.group(0)));
