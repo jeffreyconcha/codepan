@@ -1,7 +1,9 @@
+import 'dart:io';
 import 'package:codepan/media/callback.dart';
 import 'package:codepan/resources/dimensions.dart';
 import 'package:codepan/resources/strings.dart';
 import 'package:codepan/transitions/route_transition.dart';
+import 'package:codepan/utils/codepan_utils.dart';
 import 'package:codepan/widgets/loading_indicator.dart';
 import 'package:codepan/widgets/video_controller.dart';
 import 'package:flutter/cupertino.dart';
@@ -21,14 +23,14 @@ class PanVideoPlayer extends StatefulWidget {
   final Color color;
   final double width;
   final double height;
-  final String uri;
+  final dynamic data;
   final _PanVideoPlayerState state;
   final OnSaveState onSaveState;
   final OnError onError;
 
   PanVideoPlayer({
     Key key,
-    @required this.uri,
+    @required this.data,
     this.color,
     this.width,
     this.height,
@@ -63,12 +65,29 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
 
   double get _aspectRatio => _isInitialized ? _value.aspectRatio : 16 / 9;
 
+  dynamic get data => widget.data;
+
+  String get key {
+    if (data is String) {
+      return data;
+    } else if (data is File) {
+      return (data as File).path;
+    }
+    return null;
+  }
+
   @override
   void initState() {
     if (widget.isFullScreen) {
       _onSaveState(widget.state);
     } else {
-      _controller = VideoPlayerController.network(widget.uri);
+      if (data is String && PanUtils.isValidUrl(data)) {
+        _controller = VideoPlayerController.network(data);
+      } else if (data is File) {
+        _controller = VideoPlayerController.file(data);
+      } else {
+        throw ArgumentError('Data can only be a type of String(url) or File');
+      }
     }
     super.initState();
   }
@@ -93,7 +112,7 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
         ? d.maxHeight
         : widget.height ?? d.maxWidth / _aspectRatio;
     return VisibilityDetector(
-      key: Key(widget.uri),
+      key: Key(key),
       onVisibilityChanged: (info) {
         if (_isInitialized &&
             _isPlaying &&
@@ -307,7 +326,7 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
       FadeRoute(
         enter: WillPopScope(
           child: PanVideoPlayer(
-            uri: widget.uri,
+            data: widget.data,
             color: widget.color,
             isFullScreen: !_isFullscreen,
             state: this,
