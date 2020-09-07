@@ -1,7 +1,7 @@
 import 'dart:async';
-
+import 'dart:io';
 import 'package:audioplayer/audioplayer.dart';
-import 'package:codepan/media/callback.dart';
+import 'package:codepan/media/media.dart';
 import 'package:codepan/resources/colors.dart';
 import 'package:codepan/resources/dimensions.dart';
 import 'package:codepan/resources/strings.dart';
@@ -14,13 +14,13 @@ class PanAudioPlayer extends StatefulWidget {
   final OnProgressChanged onProgressChanged;
   final OnCompleted onCompleted;
   final OnError onError;
-  final String uri;
+  final dynamic data;
   final Color color;
   final Color background;
 
   const PanAudioPlayer({
     Key key,
-    this.uri,
+    this.data,
     this.color,
     this.background = Colors.white,
     this.onProgressChanged,
@@ -40,6 +40,8 @@ class _PanAudioPlayerState extends State<PanAudioPlayer> {
   AudioPlayer _audio;
   double _current = 0;
   double _max = 0;
+
+  dynamic get data => widget.data;
 
   @override
   void initState() {
@@ -148,7 +150,14 @@ class _PanAudioPlayerState extends State<PanAudioPlayer> {
   Future<void> play() async {
     _setLoading(true);
     if (!_isPlaying) {
-      await _audio.play(widget.uri);
+      if (data is String) {
+        await _audio.play(data);
+      } else if (data is File) {
+        final file = data as File;
+        await _audio.play(file.path, isLocal: true);
+      } else {
+        throw ArgumentError(invalidArgument);
+      }
     } else {
       await _audio.pause();
     }

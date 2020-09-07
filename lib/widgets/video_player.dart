@@ -1,9 +1,8 @@
 import 'dart:io';
-import 'package:codepan/media/callback.dart';
+import 'package:codepan/media/media.dart';
 import 'package:codepan/resources/dimensions.dart';
 import 'package:codepan/resources/strings.dart';
 import 'package:codepan/transitions/route_transition.dart';
-import 'package:codepan/utils/codepan_utils.dart';
 import 'package:codepan/widgets/loading_indicator.dart';
 import 'package:codepan/widgets/video_controller.dart';
 import 'package:flutter/cupertino.dart';
@@ -81,12 +80,12 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
     if (widget.isFullScreen) {
       _onSaveState(widget.state);
     } else {
-      if (data is String && PanUtils.isValidUrl(data)) {
+      if (data is String) {
         _controller = VideoPlayerController.network(data);
       } else if (data is File) {
         _controller = VideoPlayerController.file(data);
       } else {
-        throw ArgumentError('Data can only be a type of String(url) or File');
+        throw ArgumentError(invalidArgument);
       }
     }
     super.initState();
