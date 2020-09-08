@@ -8,6 +8,7 @@ import 'package:codepan/resources/strings.dart';
 import 'package:codepan/widgets/button.dart';
 import 'package:codepan/widgets/loading_indicator.dart';
 import 'package:codepan/widgets/media_progress_indicator.dart';
+import 'package:codepan/widgets/placeholder_handler.dart';
 import 'package:flutter/material.dart';
 
 class PanAudioPlayer extends StatefulWidget {
@@ -99,26 +100,26 @@ class _PanAudioPlayerState extends State<PanAudioPlayer> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
-          Container(
+          PlaceholderHandler(
             width: d.at(50),
             height: d.at(50),
-            child: !_isLoading
-                ? PanButton(
-                    radius: d.at(100),
-                    width: d.at(50),
-                    height: d.at(50),
-                    child: Icon(
-                      _isPlaying ? Icons.pause : Icons.play_arrow,
-                      size: d.at(40),
-                      color: PanColors.text,
-                    ),
-                    onPressed: play,
-                  )
-                : LoadingIndicator(
-                    width: d.at(25),
-                    height: d.at(25),
-                    color: widget.color,
-                  ),
+            condition: !_isLoading,
+            child: PanButton(
+              radius: d.at(100),
+              width: d.at(50),
+              height: d.at(50),
+              child: Icon(
+                _isPlaying ? Icons.pause : Icons.play_arrow,
+                size: d.at(40),
+                color: PanColors.text,
+              ),
+              onPressed: play,
+            ),
+            placeholder: LoadingIndicator(
+              width: d.at(25),
+              height: d.at(25),
+              color: widget.color,
+            ),
           ),
           Expanded(
             child: Padding(
@@ -128,7 +129,7 @@ class _PanAudioPlayerState extends State<PanAudioPlayer> {
               child: MediaProgressIndicator(
                 activeColor: widget.color,
                 inactiveColor: widget.color.withOpacity(0.3),
-                bufferedColor: Colors.black,
+                bufferedColor: Colors.transparent,
                 max: _max,
                 current: _current,
                 barHeight: d.at(4),
