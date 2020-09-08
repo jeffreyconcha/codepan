@@ -4,6 +4,7 @@ import 'package:codepan/resources/dimensions.dart';
 import 'package:codepan/resources/strings.dart';
 import 'package:codepan/transitions/route_transition.dart';
 import 'package:codepan/widgets/loading_indicator.dart';
+import 'package:codepan/widgets/placeholder_handler.dart';
 import 'package:codepan/widgets/video_controller.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -26,6 +27,7 @@ class PanVideoPlayer extends StatefulWidget {
   final _PanVideoPlayerState state;
   final OnSaveState onSaveState;
   final OnError onError;
+  final bool showBuffer;
 
   PanVideoPlayer({
     Key key,
@@ -33,12 +35,13 @@ class PanVideoPlayer extends StatefulWidget {
     this.color,
     this.width,
     this.height,
-    this.isFullScreen = false,
     this.state,
     this.onProgressChanged,
     this.onCompleted,
     this.onSaveState,
     this.onError,
+    this.isFullScreen = false,
+    this.showBuffer = true,
   }) : super(key: key);
 
   @override
@@ -65,6 +68,8 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
   double get _aspectRatio => _isInitialized ? _value.aspectRatio : 16 / 9;
 
   dynamic get data => widget.data;
+
+  bool get showBuffer => widget.showBuffer;
 
   String get key {
     if (data is String) {
@@ -129,31 +134,31 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
           child: Stack(
             children: <Widget>[
               Center(
-                child: _isInitialized
-                    ? Stack(
-                        children: <Widget>[
-                          Center(
-                            child: AspectRatio(
-                              aspectRatio: _aspectRatio,
-                              child: VideoPlayer(_controller),
-                            ),
-                          ),
-                          Container(
-                            child: _isBuffering
-                                ? LoadingIndicator(
-                                    color: widget.color,
-                                  )
-                                : null,
-                          ),
-                        ],
-                      )
-                    : Container(
-                        child: _isLoading
-                            ? LoadingIndicator(
-                                color: widget.color,
-                              )
-                            : null,
+                child: PlaceholderHandler(
+                  condition: _isInitialized,
+                  child: Stack(
+                    children: <Widget>[
+                      Center(
+                        child: AspectRatio(
+                          aspectRatio: _aspectRatio,
+                          child: VideoPlayer(_controller),
+                        ),
                       ),
+                      PlaceholderHandler(
+                        condition: _isBuffering,
+                        child: LoadingIndicator(
+                          color: widget.color,
+                        ),
+                      ),
+                    ],
+                  ),
+                  placeholder: PlaceholderHandler(
+                    condition: _isLoading,
+                    child: LoadingIndicator(
+                      color: widget.color,
+                    ),
+                  ),
+                ),
               ),
               SizedBox(
                 width: width,
@@ -162,23 +167,22 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
                   child: AnimatedOpacity(
                     duration: Duration(milliseconds: 250),
                     opacity: _isControllerVisible ? 1 : 0,
-                    child: Container(
+                    child: PlaceholderHandler(
                       color: Colors.black.withOpacity(0.2),
-                      child: _isControllerVisible
-                          ? VideoController(
-                              color: widget.color,
-                              isInitialized: _isInitialized,
-                              isLoading: _isLoading,
-                              isFullscreen: _isFullscreen,
-                              isPlaying: _isPlaying,
-                              current: _current,
-                              max: _max,
-                              buffered: _buffered,
-                              onPlay: _onPlay,
-                              onFullScreen: _onFullScreen,
-                              onSeekProgress: _onSeekProgress,
-                            )
-                          : null,
+                      condition: _isControllerVisible,
+                      child: VideoController(
+                        color: widget.color,
+                        isInitialized: _isInitialized,
+                        isLoading: _isLoading,
+                        isFullscreen: _isFullscreen,
+                        isPlaying: _isPlaying,
+                        current: _current,
+                        max: _max,
+                        buffered: showBuffer ? _buffered : 0,
+                        onPlay: _onPlay,
+                        onFullScreen: _onFullScreen,
+                        onSeekProgress: _onSeekProgress,
+                      ),
                     ),
                   ),
                   onTap: () {
