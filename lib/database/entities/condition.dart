@@ -18,6 +18,7 @@ enum Operator {
   notEmpty,
   like,
   inside,
+  notInside,
 }
 enum Scan {
   start,
@@ -273,6 +274,17 @@ class Condition extends SQLiteEntity {
     );
   }
 
+  factory Condition.notInQuery(
+    String field,
+    SQLiteQuery query,
+  ) {
+    return Condition(
+      field,
+      query,
+      operator: Operator.notInside,
+    );
+  }
+
   factory Condition.inList(
     String field,
     List<dynamic> list,
@@ -281,6 +293,17 @@ class Condition extends SQLiteEntity {
       field,
       list,
       operator: Operator.inside,
+    );
+  }
+
+  factory Condition.notInList(
+    String field,
+    List<dynamic> list,
+  ) {
+    return Condition(
+      field,
+      list,
+      operator: Operator.notInside,
     );
   }
 
@@ -326,6 +349,9 @@ class Condition extends SQLiteEntity {
           break;
         case Operator.inside:
           return "$field IN ($value)";
+          break;
+        case Operator.notInside:
+          return "$field NOT IN ($value)";
           break;
       }
     } else {
