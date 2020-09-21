@@ -1,4 +1,6 @@
 import 'dart:io';
+import 'dart:isolate';
+import 'dart:ui';
 import 'package:codepan/model/date_time.dart';
 import 'package:connectivity/connectivity.dart';
 import 'package:flutter/foundation.dart';
@@ -154,5 +156,13 @@ class PanUtils {
       caseSensitive: false,
     ).firstMatch(url);
     return match != null;
+  }
+
+  static void bindIsolatePort(SendPort sp, String name) {
+    final result = IsolateNameServer.registerPortWithName(sp, name);
+    if (!result) {
+      IsolateNameServer.removePortNameMapping(name);
+      bindIsolatePort(sp, name);
+    }
   }
 }
