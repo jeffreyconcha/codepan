@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:flutter/foundation.dart';
 
 class Debouncer {
@@ -16,5 +15,11 @@ class Debouncer {
       Duration(milliseconds: milliseconds),
       action,
     );
+  }
+
+  void cancel() {
+    if (_timer != null) {
+      _timer.cancel();
+    }
   }
 }

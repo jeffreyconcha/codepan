@@ -3,6 +3,7 @@ import 'package:codepan/media/media.dart';
 import 'package:codepan/resources/dimensions.dart';
 import 'package:codepan/resources/strings.dart';
 import 'package:codepan/transitions/route_transition.dart';
+import 'package:codepan/utils/debouncer.dart';
 import 'package:codepan/widgets/loading_indicator.dart';
 import 'package:codepan/widgets/placeholder_handler.dart';
 import 'package:codepan/widgets/video_controller.dart';
@@ -15,6 +16,8 @@ import 'package:visibility_detector/visibility_detector.dart';
 typedef OnSaveState = void Function(
   _PanVideoPlayerState state,
 );
+
+const int delay = 5000;
 
 class PanVideoPlayer extends StatefulWidget {
   final OnProgressChanged onProgressChanged;
@@ -57,6 +60,7 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
   bool _isPlaying = false;
   bool _isBuffering = false;
   bool _isCompleted = false;
+  Debouncer _debouncer;
   double _buffered = 0;
   double _current = 0;
   double _max = 0;
@@ -92,6 +96,7 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
       } else {
         throw ArgumentError(invalidArgument);
       }
+      _debouncer = Debouncer(milliseconds: delay);
     }
     super.initState();
   }
@@ -187,6 +192,13 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
                   ),
                   onTap: () {
                     _setControllerVisible(!_isControllerVisible);
+                    if (_isControllerVisible) {
+                      _debouncer.run(() {
+                        _setControllerVisible(false);
+                      });
+                    } else {
+                      _debouncer.cancel();
+                    }
                   },
                 ),
               ),
@@ -365,6 +377,7 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
     _isBuffering = state._isBuffering;
     _current = state._current;
     _buffered = state._buffered;
+    _debouncer = state._debouncer;
     _max = state._max;
     if (_isInitialized) {
       _controller.addListener(_listener);
