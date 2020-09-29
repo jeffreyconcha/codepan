@@ -193,9 +193,7 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
                   onTap: () {
                     _setControllerVisible(!_isControllerVisible);
                     if (_isControllerVisible) {
-                      _debouncer.run(() {
-                        _setControllerVisible(false);
-                      });
+                      _autoHideController();
                     } else {
                       _debouncer.cancel();
                     }
@@ -275,6 +273,7 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
     );
     _setCurrent(milliseconds);
     _setLoading(false);
+    _autoHideController();
   }
 
   void _setCurrent(double current) {
@@ -329,6 +328,7 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
       _exitFullScreen();
       Navigator.of(context).pop();
     }
+    _autoHideController();
   }
 
   void _enterFullScreen() async {
@@ -382,5 +382,11 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
     if (_isInitialized) {
       _controller.addListener(_listener);
     }
+  }
+
+  void _autoHideController() {
+    _debouncer?.run(() {
+      _setControllerVisible(false);
+    });
   }
 }
