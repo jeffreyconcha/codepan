@@ -244,6 +244,11 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
         _isCompleted = false;
       }
       _setPlaying(_value.isPlaying);
+      if (_value.isPlaying) {
+        _autoHideController();
+      } else {
+        _debouncer.cancel();
+      }
     }
   }
 
