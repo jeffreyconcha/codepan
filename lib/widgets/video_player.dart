@@ -123,6 +123,7 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
     final height = _isFullscreen
         ? d.maxHeight
         : widget.height ?? d.maxWidth / _aspectRatio;
+    print(widget.thumbnailUrl);
     return VisibilityDetector(
       key: Key(key),
       onVisibilityChanged: (info) {
