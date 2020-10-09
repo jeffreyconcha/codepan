@@ -123,7 +123,7 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
     final height = _isFullscreen
         ? d.maxHeight
         : widget.height ?? d.maxWidth / _aspectRatio;
-    print(widget.thumbnailUrl);
+    print('DEPANOT ${widget.thumbnailUrl}');
     return VisibilityDetector(
       key: Key(key),
       onVisibilityChanged: (info) {
@@ -163,16 +163,12 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
                   ),
                   placeholder: Stack(
                     children: [
-                      SizedBox(
-                        width: width,
-                        height: height,
-                        child: CachedNetworkImage(
-                          imageUrl: widget.thumbnailUrl ?? '',
-                          fit: BoxFit.fitWidth,
-                          placeholder: (ctx, url) {
-                            return Container(color: Colors.red);
-                          },
-                        ),
+                      CachedNetworkImage(
+                        imageUrl: widget.thumbnailUrl ?? '',
+                        fit: BoxFit.fitWidth,
+                        placeholder: (ctx, url) {
+                          return Container(color: Colors.red);
+                        },
                       ),
                       PlaceholderHandler(
                         condition: _isLoading,
