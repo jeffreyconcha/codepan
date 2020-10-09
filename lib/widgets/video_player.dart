@@ -165,11 +165,6 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
                       CachedNetworkImage(
                         imageUrl: widget.thumbnailUrl,
                         fit: BoxFit.fitWidth,
-                        placeholder: (context, url) {
-                          return Container(
-                            color: Colors.black,
-                          );
-                        },
                       ),
                       PlaceholderHandler(
                         condition: _isLoading,
