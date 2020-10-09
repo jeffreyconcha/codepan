@@ -74,17 +74,17 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
 
   double get _aspectRatio => _isInitialized ? _value.aspectRatio : 16 / 9;
 
-  dynamic get data => widget.data;
+  dynamic get _data => widget.data;
 
-  bool get showBuffer => widget.showBuffer;
+  bool get _showBuffer => widget.showBuffer;
 
-  String get thumbnailUrl => widget.thumbnailUrl;
+  String get _thumbnailUrl => widget.thumbnailUrl;
 
   String get key {
-    if (data is String) {
-      return data;
-    } else if (data is File) {
-      return (data as File).path;
+    if (_data is String) {
+      return _data;
+    } else if (_data is File) {
+      return (_data as File).path;
     }
     return null;
   }
@@ -94,10 +94,10 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
     if (widget.isFullScreen) {
       _onSaveState(widget.state);
     } else {
-      if (data is String) {
-        _controller = VideoPlayerController.network(data);
-      } else if (data is File) {
-        _controller = VideoPlayerController.file(data);
+      if (_data is String) {
+        _controller = VideoPlayerController.network(_data);
+      } else if (_data is File) {
+        _controller = VideoPlayerController.file(_data);
       } else {
         throw ArgumentError(invalidArgument);
       }
@@ -165,7 +165,7 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
                   placeholder: Stack(
                     children: [
                       CachedNetworkImage(
-                        imageUrl: thumbnailUrl ?? '',
+                        imageUrl: _thumbnailUrl ?? '',
                         fit: _isFullscreen ? BoxFit.fitHeight : BoxFit.fitWidth,
                         placeholder: (ctx, url) {
                           return Container(color: Colors.red);
@@ -199,7 +199,7 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
                         isPlaying: _isPlaying,
                         current: _current,
                         max: _max,
-                        buffered: showBuffer ? _buffered : 0,
+                        buffered: _showBuffer ? _buffered : 0,
                         onPlay: _onPlay,
                         onFullScreen: _onFullScreen,
                         onSeekProgress: _onSeekProgress,
@@ -343,6 +343,7 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
   }
 
   void _onFullScreen() async {
+    _debouncer.cancel();
     if (!_isFullscreen) {
       _enterFullScreen();
     } else {
