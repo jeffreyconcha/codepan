@@ -164,7 +164,7 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
                   placeholder: Stack(
                     children: [
                       CachedNetworkImage(
-                        imageUrl: widget.thumbnailUrl ?? '',
+                        imageUrl: 'https://i.vimeocdn.com/video/856044301_640x360.jpg?r=pad',
                         fit: BoxFit.fitWidth,
                         placeholder: (ctx, url) {
                           return Container(color: Colors.red);
