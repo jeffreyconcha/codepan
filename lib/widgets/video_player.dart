@@ -78,6 +78,8 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
 
   bool get showBuffer => widget.showBuffer;
 
+  String get thumbnailUrl => widget.thumbnailUrl;
+
   String get key {
     if (data is String) {
       return data;
@@ -123,7 +125,6 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
     final height = _isFullscreen
         ? d.maxHeight
         : widget.height ?? d.maxWidth / _aspectRatio;
-    print('DEPANOT ${widget.thumbnailUrl}');
     return VisibilityDetector(
       key: Key(key),
       onVisibilityChanged: (info) {
@@ -164,8 +165,8 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
                   placeholder: Stack(
                     children: [
                       CachedNetworkImage(
-                        imageUrl: 'https://i.vimeocdn.com/video/856044301_640x360.jpg?r=pad',
-                        fit: BoxFit.fitWidth,
+                        imageUrl: thumbnailUrl ?? '',
+                        fit: _isFullscreen ? BoxFit.fitHeight : BoxFit.fitWidth,
                         placeholder: (ctx, url) {
                           return Container(color: Colors.red);
                         },
