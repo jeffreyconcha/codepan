@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:codepan/media/media.dart';
 import 'package:codepan/resources/dimensions.dart';
 import 'package:codepan/resources/strings.dart';
@@ -31,6 +32,7 @@ class PanVideoPlayer extends StatefulWidget {
   final OnSaveState onSaveState;
   final OnError onError;
   final bool showBuffer;
+  final String thumbnailUrl;
 
   PanVideoPlayer({
     Key key,
@@ -45,6 +47,7 @@ class PanVideoPlayer extends StatefulWidget {
     this.onError,
     this.isFullScreen = false,
     this.showBuffer = true,
+    this.thumbnailUrl,
   }) : super(key: key);
 
   @override
@@ -157,11 +160,24 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
                       ),
                     ],
                   ),
-                  placeholder: PlaceholderHandler(
-                    condition: _isLoading,
-                    child: LoadingIndicator(
-                      color: widget.color,
-                    ),
+                  placeholder: Stack(
+                    children: [
+                      CachedNetworkImage(
+                        imageUrl: widget.thumbnailUrl,
+                        fit: BoxFit.fitWidth,
+                        placeholder: (context, url) {
+                          return Container(
+                            color: Colors.black,
+                          );
+                        },
+                      ),
+                      PlaceholderHandler(
+                        condition: _isLoading,
+                        child: LoadingIndicator(
+                          color: widget.color,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ),
