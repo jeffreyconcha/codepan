@@ -91,7 +91,7 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
 
   @override
   void initState() {
-    if (widget.isFullScreen) {
+    if (_isFullscreen) {
       _onSaveState(widget.state);
     } else {
       if (_data is String) {
@@ -109,12 +109,13 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
   @override
   void dispose() {
     _controller?.removeListener(_listener);
-    if (!widget.isFullScreen) {
+    if (!_isFullscreen) {
       _controller?.dispose();
     }
     if (widget.onSaveState != null) {
       widget.onSaveState(this);
     }
+    _debouncer?.cancel();
     super.dispose();
   }
 
@@ -165,11 +166,10 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
                   placeholder: Stack(
                     children: [
                       CachedNetworkImage(
+                        width: width,
+                        height: height,
                         imageUrl: _thumbnailUrl ?? '',
-                        fit: _isFullscreen ? BoxFit.fitHeight : BoxFit.fitWidth,
-                        placeholder: (ctx, url) {
-                          return Container(color: Colors.red);
-                        },
+                        fit: BoxFit.contain,
                       ),
                       PlaceholderHandler(
                         condition: _isLoading,
@@ -211,7 +211,7 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
                     if (_isControllerVisible) {
                       _autoHideController();
                     } else {
-                      _debouncer.cancel();
+                      _debouncer?.cancel();
                     }
                   },
                 ),
@@ -263,7 +263,7 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
       if (_value.isPlaying) {
         _autoHideController();
       } else {
-        _debouncer.cancel();
+        _debouncer?.cancel();
       }
     }
   }
@@ -343,7 +343,7 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
   }
 
   void _onFullScreen() async {
-    _debouncer.cancel();
+    _debouncer?.cancel();
     if (!_isFullscreen) {
       _enterFullScreen();
     } else {
@@ -366,8 +366,9 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
             data: widget.data,
             color: widget.color,
             isFullScreen: !_isFullscreen,
-            state: this,
             onSaveState: !_isInitialized ? _onSaveState : null,
+            thumbnailUrl: _thumbnailUrl,
+            state: this,
           ),
           onWillPop: () async {
             _exitFullScreen();
