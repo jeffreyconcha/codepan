@@ -163,9 +163,16 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
                   ),
                   placeholder: Stack(
                     children: [
-                      CachedNetworkImage(
-                        imageUrl: widget.thumbnailUrl ?? '',
-                        fit: BoxFit.fitWidth,
+                      SizedBox(
+                        width: width,
+                        height: height,
+                        child: CachedNetworkImage(
+                          imageUrl: widget.thumbnailUrl ?? '',
+                          fit: BoxFit.fitWidth,
+                          placeholder: (ctx, url) {
+                            return Container(color: Colors.red);
+                          },
+                        ),
                       ),
                       PlaceholderHandler(
                         condition: _isLoading,
