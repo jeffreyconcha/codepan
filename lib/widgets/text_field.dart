@@ -92,16 +92,21 @@ class PanTextField extends StatefulWidget {
 }
 
 class _PanTextFieldState extends State<PanTextField> {
-  bool _obscureText;
-  Color _borderColor;
-  double _borderWidth;
+  bool _obscureText, _hasFocus;
+
+  Color get borderColor => widget.borderColor;
+
+  double get borderWidth => widget.borderWidth;
+
+  Color get focusedBorderColor => widget.focusedBorderColor;
+
+  double get focusedBorderWidth => widget.focusedBorderWidth;
 
   @override
   void initState() {
     super.initState();
     _obscureText = widget.isPassword;
-    _borderColor = widget.borderColor;
-    _borderWidth = widget.borderWidth;
+    _hasFocus = false;
   }
 
   @override
@@ -112,8 +117,11 @@ class _PanTextFieldState extends State<PanTextField> {
   @override
   Widget build(BuildContext context) {
     var border;
-    if (_borderWidth != null && _borderColor != null) {
-      final side = BorderSide(color: _borderColor, width: _borderWidth);
+    if (borderWidth != null && borderColor != null) {
+      final side = BorderSide(
+        color: _hasFocus ? focusedBorderColor : borderColor,
+        width: _hasFocus ? focusedBorderWidth : borderWidth,
+      );
       border = widget.bottomBorderOnly
           ? Border(bottom: side)
           : Border.fromBorderSide(side);
@@ -187,18 +195,16 @@ class _PanTextFieldState extends State<PanTextField> {
             contentPadding: widget.padding,
             hintText: widget.hint,
             hintStyle: TextStyle(
-                color: widget.hintFontColor,
-                fontFamily: widget.fontFamily,
-                fontSize: widget.fontSize),
+              color: widget.hintFontColor,
+              fontFamily: widget.fontFamily,
+              fontSize: widget.fontSize,
+            ),
             suffixIcon: suffixIcon,
           ),
         ),
         onFocusChange: (hasFocus) {
           setState(() {
-            this._borderColor =
-                hasFocus ? widget.focusedBorderColor : widget.borderColor;
-            this._borderWidth =
-                hasFocus ? widget.focusedBorderWidth : widget.borderWidth;
+            _hasFocus = hasFocus;
           });
           widget.onFocusChange?.call(hasFocus);
         },
