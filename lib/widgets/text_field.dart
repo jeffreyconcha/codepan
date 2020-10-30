@@ -9,18 +9,21 @@ class PanTextField extends StatefulWidget {
       borderColor,
       focusedBorderColor,
       hintFontColor,
-      iconColor;
+      iconColor,
+      cursorColor;
   final double width,
       height,
       fontSize,
       fontHeight,
       radius,
+      cursorHeight,
       borderWidth,
       focusedBorderWidth;
   final bool enabled,
       autofocus,
       enableInteractiveSelection,
       isPassword,
+      showCursor,
       bottomBorderOnly;
   final List<TextInputFormatter> inputFormatters;
   final int maxLines, minLines, maxLength;
@@ -85,6 +88,9 @@ class PanTextField extends StatefulWidget {
     this.keyboardType,
     this.onChanged,
     this.onFocusChange,
+    this.cursorHeight,
+    this.cursorColor,
+    this.showCursor = true,
   }) : super(key: key);
 
   @override
@@ -170,6 +176,9 @@ class _PanTextFieldState extends State<PanTextField> {
           obscureText: _obscureText,
           textInputAction: widget.textInputAction,
           focusNode: widget.focusNode,
+          cursorHeight: widget.cursorHeight,
+          cursorColor: widget.cursorColor,
+          showCursor: widget.showCursor,
           onFieldSubmitted: (value) {
             if (widget.nextFocusNode != null) {
               FocusScope.of(context).requestFocus(widget.nextFocusNode);
