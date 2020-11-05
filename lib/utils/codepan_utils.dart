@@ -79,9 +79,21 @@ class PanUtils {
     int h = duration.inHours.remainder(24);
     int m = duration.inMinutes.remainder(60);
     int s = duration.inSeconds.remainder(60);
-    String hs = isReadable ? h > 1 ? ' hrs ' : ' hr ' : ':';
-    String ms = isReadable ? m > 1 ? ' mins ' : ' min ' : ':';
-    String ss = isReadable ? s > 1 ? ' secs' : ' sec' : ':';
+    String hs = isReadable
+        ? h > 1
+            ? ' hrs '
+            : ' hr '
+        : ':';
+    String ms = isReadable
+        ? m > 1
+            ? ' mins '
+            : ' min '
+        : ':';
+    String ss = isReadable
+        ? s > 1
+            ? ' secs'
+            : ' sec'
+        : ':';
     String hours = isReadable ? '$h' : format(h);
     String minutes = isReadable ? '$m' : format(m);
     String seconds = isReadable ? '$s' : format(s);
