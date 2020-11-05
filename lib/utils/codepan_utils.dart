@@ -177,4 +177,12 @@ class PanUtils {
       bindIsolatePort(sp, name);
     }
   }
+
+  static int parseInt(dynamic input) {
+    return input is int ? input : int.tryParse(input.toString());
+  }
+
+  static double parseDouble(dynamic input) {
+    return input is double ? input : double.tryParse(input.toString());
+  }
 }
