@@ -79,15 +79,7 @@ class Field extends SQLiteEntity {
   }) : super(_field) {
     if (value != null) {
       this._constraint = Constraint.DEFAULT;
-      if (value is int || value is bool) {
-        this._type = DataType.INTEGER;
-      } else if (value is double) {
-        this._type = DataType.REAL;
-      } else if (value is String) {
-        this._type = DataType.TEXT;
-      } else {
-        this._type = DataType.BLOB;
-      }
+      this._type = _getDataType(value);
     } else {
       this._constraint = constraint;
       this._type = type;
@@ -120,6 +112,14 @@ class Field extends SQLiteEntity {
   }) : super(field) {
     this._constraint = Constraint.UNIQUE;
     this._type = type;
+  }
+
+  Field.asDefault(
+    String field, {
+    @required dynamic value,
+  }) : super(field) {
+    this._constraint = Constraint.DEFAULT;
+    this._type = _getDataType(value);
   }
 
   Field.asDate(
@@ -197,5 +197,17 @@ class Field extends SQLiteEntity {
       }
     }
     return buffer.toString();
+  }
+
+  DataType _getDataType(dynamic value) {
+    if (value is int || value is bool) {
+      return DataType.INTEGER;
+    } else if (value is double) {
+      return DataType.REAL;
+    } else if (value is String) {
+      return DataType.TEXT;
+    } else {
+      return DataType.BLOB;
+    }
   }
 }
