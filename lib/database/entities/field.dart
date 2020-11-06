@@ -53,6 +53,8 @@ class Field extends SQLiteEntity {
 
   bool get isForeignKey => _constraint == Constraint.FOREIGN_KEY;
 
+  bool get isUnique => _constraint == Constraint.UNIQUE;
+
   String get dataType => hasDataType ? _type.toString().split('.').last : null;
 
   String get defaultValue {
