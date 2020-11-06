@@ -7,12 +7,12 @@ import 'package:codepan/database/sqlite_exception.dart';
 import 'package:codepan/database/sqlite_query.dart';
 
 class SQLiteStatement with QueryProperties {
-  static const String ID = 'id';
-  static const String TABLE_SUFFIX = '_tb';
-  static const String INDEX_SUFFIX = '_idx';
-  static const String NULL = 'NULL';
-  static const int TRUE = 1;
-  static const int FALSE = 0;
+  static const String id = 'id';
+  static const String tableSuffix = '_tb';
+  static const String indexSuffix = '_idx';
+  static const String nullValue = 'NULL';
+  static const int trueValue = 1;
+  static const int falseValue = 0;
   List<FieldValue> _fieldValueList;
 
   SQLiteStatement();
@@ -75,7 +75,7 @@ class SQLiteStatement with QueryProperties {
     final buffer = StringBuffer();
     if (hasFieldValues) {
       for (final fv in fieldValueList) {
-        final value = fv.value != null ? fv.value : NULL;
+        final value = fv.value != null ? fv.value : nullValue;
         buffer.write('${fv.field} = $value');
         if (fv != fieldValueList.last) {
           buffer.write(', ');
@@ -123,7 +123,7 @@ class SQLiteStatement with QueryProperties {
 
   String update(String table, dynamic id) {
     if (!hasFieldValues) throw SQLiteException(SQLiteException.noFieldValues);
-    return 'UPDATE $table SET $fieldValues WHERE $ID = ${id.toString()}';
+    return 'UPDATE $table SET $fieldValues WHERE ${SQLiteStatement.id} = ${id.toString()}';
   }
 
   String updateWithConditions(String table) {
@@ -133,7 +133,7 @@ class SQLiteStatement with QueryProperties {
   }
 
   String delete(String table, dynamic id) {
-    return 'DELETE FROM $table WHERE $ID = ${id.toString()}';
+    return 'DELETE FROM $table WHERE ${SQLiteStatement.id} = ${id.toString()}';
   }
 
   String deleteWithConditions(String table) {

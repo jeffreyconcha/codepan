@@ -50,12 +50,12 @@ class SQLiteBinder {
     if (!_map.containsKey(table)) {
       final query = SQLiteQuery(
         select: [
-          SQLiteStatement.ID,
+          SQLiteStatement.id,
         ],
         from: table,
         orderBy: [
           Field.asOrder(
-            field: SQLiteStatement.ID,
+            field: SQLiteStatement.id,
             order: Order.DESC,
           )
         ],
@@ -72,7 +72,7 @@ class SQLiteBinder {
     dynamic unique,
   }) async {
     await _registerLastId(table);
-    final pk = SQLiteStatement.ID;
+    final pk = SQLiteStatement.id;
     final map = stmt.map;
     if (unique != null) {
       if (unique is String && unique != pk) {
@@ -80,7 +80,7 @@ class SQLiteBinder {
         final key = '$table.$unique($value)';
         final query = SQLiteQuery(
           select: [
-            SQLiteStatement.ID,
+            SQLiteStatement.id,
           ],
           from: table,
           where: {
@@ -102,7 +102,7 @@ class SQLiteBinder {
         final key = '$table.${buffer.toString()}';
         final query = SQLiteQuery(
           select: [
-            SQLiteStatement.ID,
+            SQLiteStatement.id,
           ],
           from: table,
           where: conditions,
@@ -133,7 +133,7 @@ class SQLiteBinder {
   }
 
   int _generateId(Map<String, dynamic> map, String table) {
-    final id = map[SQLiteStatement.ID];
+    final id = map[SQLiteStatement.id];
     if (id != null) {
       return id as int;
     } else {
@@ -161,7 +161,7 @@ class SQLiteBinder {
 
   Future<int> insert(String table, SQLiteStatement stmt,
       [dynamic unique]) async {
-    final pk = SQLiteStatement.ID;
+    final pk = SQLiteStatement.id;
     final map = stmt.map;
     final field = map[pk] != null ? pk : unique;
     addStatement(stmt.insert(table, unique: field));

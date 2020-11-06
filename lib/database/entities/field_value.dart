@@ -8,22 +8,22 @@ class FieldValue extends SQLiteEntity {
     if (_value != null) {
       if (_value is bool) {
         return _value
-            ? SQLiteStatement.TRUE.toString()
-            : SQLiteStatement.FALSE.toString();
+            ? SQLiteStatement.trueValue.toString()
+            : SQLiteStatement.falseValue.toString();
       } else if (_value is String) {
         return "'${_value.replaceAll("'", "''")}'";
       } else {
         return _value.toString();
       }
     } else {
-      return SQLiteStatement.NULL;
+      return SQLiteStatement.nullValue;
     }
   }
 
   dynamic get rawValue {
     if (_value != null) {
       if (_value is bool) {
-        return _value ? SQLiteStatement.TRUE : SQLiteStatement.FALSE;
+        return _value ? SQLiteStatement.trueValue : SQLiteStatement.falseValue;
       }
       return _value;
     }

@@ -88,7 +88,7 @@ class Field extends SQLiteEntity {
     this._inUniqueGroup = inUniqueGroup;
   }
 
-  Field.asPrimaryKey([String field = SQLiteStatement.ID]) : super(field) {
+  Field.asPrimaryKey([String field = SQLiteStatement.id]) : super(field) {
     this._constraint = Constraint.PRIMARY_KEY;
     this._type = DataType.INTEGER;
   }
@@ -148,7 +148,7 @@ class Field extends SQLiteEntity {
             buffer.write(' PRIMARY KEY NOT NULL');
             break;
           case Constraint.FOREIGN_KEY:
-            buffer.write(' REFERENCES ${table.name}(${SQLiteStatement.ID})');
+            buffer.write(' REFERENCES ${table.name}(${SQLiteStatement.id})');
             break;
           case Constraint.UNIQUE:
             buffer.write(' UNIQUE');

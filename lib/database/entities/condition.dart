@@ -47,8 +47,8 @@ class Condition extends SQLiteEntity {
     if (_value != null) {
       if (_value is bool) {
         return _value
-            ? SQLiteStatement.TRUE.toString()
-            : SQLiteStatement.FALSE.toString();
+            ? SQLiteStatement.trueValue.toString()
+            : SQLiteStatement.falseValue.toString();
       } else if (_value is String) {
         final text = _value as String;
         if (_operator == Operator.like && _scan != null) {
@@ -85,7 +85,7 @@ class Condition extends SQLiteEntity {
         return _value.toString();
       }
     }
-    return SQLiteStatement.NULL;
+    return SQLiteStatement.nullValue;
   }
 
   List<Operator> get _noValueOperators {
