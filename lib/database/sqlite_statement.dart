@@ -10,6 +10,7 @@ class SQLiteStatement with QueryProperties {
   static const String id = 'id';
   static const String tableSuffix = '_tb';
   static const String indexSuffix = '_idx';
+  static const String triggerSuffix = '_trg';
   static const String nullValue = 'NULL';
   static const int trueValue = 1;
   static const int falseValue = 0;
@@ -147,6 +148,26 @@ class SQLiteStatement with QueryProperties {
 
   String createIndex(String idx, String table) {
     return 'CREATE INDEX IF NOT EXISTS $idx ON $table ($fields)';
+  }
+
+  String createTimeTrigger(String trg, String table) {
+    if (hasFields) {
+      for (final f in fieldList) {
+        if (f.withDateTrigger) {
+          final fv = FieldValue(f.field, Value.dateNow);
+          addFieldValue(fv);
+        } else if (f.withTimeTrigger) {
+          final fv = FieldValue(f.field, Value.timeNow);
+          addFieldValue(fv);
+        }
+        addCondition(Condition.isNull(f.field));
+      }
+    }
+    return '''CREATE TRIGGER IF NOT EXISTS $trg 
+      AFTER INSERT ON $table 
+      BEGIN
+        UPDATE $table SET $fieldValues WHERE ${SQLiteStatement.id} = NEW.id AND $conditions;
+      END''';
   }
 
   String dropTable(String table) {

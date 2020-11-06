@@ -1,6 +1,11 @@
 import 'package:codepan/database/entities/sqlite_entity.dart';
 import 'package:codepan/database/sqlite_statement.dart';
 
+enum Value {
+  dateNow,
+  timeNow,
+}
+
 class FieldValue extends SQLiteEntity {
   final dynamic _value;
 
@@ -12,6 +17,12 @@ class FieldValue extends SQLiteEntity {
             : SQLiteStatement.falseValue.toString();
       } else if (_value is String) {
         return "'${_value.replaceAll("'", "''")}'";
+      } else if (_value is Value) {
+        if (_value == Value.dateNow) {
+          return 'date(\'now\', \'localtime\')';
+        } else {
+          return 'time(\'now\', \'localtime\')';
+        }
       } else {
         return _value.toString();
       }

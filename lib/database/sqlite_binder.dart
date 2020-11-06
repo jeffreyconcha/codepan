@@ -198,6 +198,11 @@ class SQLiteBinder {
     addStatement(sql);
   }
 
+  void createTimeTrigger(String trg, String table, SQLiteStatement stmt) {
+    final sql = stmt.createTimeTrigger(trg, table);
+    addStatement(sql);
+  }
+
   void dropTable(String table) {
     final stmt = SQLiteStatement();
     final sql = stmt.dropTable(table);

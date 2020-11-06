@@ -18,14 +18,12 @@ enum DataType {
 }
 
 class Field extends SQLiteEntity {
+  bool _collate, _isCount, _inUniqueGroup, _withDateTrigger, _withTimeTrigger;
   Constraint _constraint;
   DataType _type;
   dynamic _value;
   Table _table;
   Order _order;
-  bool _collate;
-  bool _isCount;
-  bool _inUniqueGroup;
 
   Constraint get constraint => _constraint;
 
@@ -49,6 +47,12 @@ class Field extends SQLiteEntity {
 
   bool get isOrder => _order != null;
 
+  bool get withDateTrigger => _withDateTrigger ?? false;
+
+  bool get withTimeTrigger => _withTimeTrigger ?? false;
+
+  bool get isForeignKey => _constraint == Constraint.FOREIGN_KEY;
+
   String get dataType => hasDataType ? _type.toString().split('.').last : null;
 
   String get defaultValue {
@@ -68,6 +72,8 @@ class Field extends SQLiteEntity {
     Constraint constraint,
     dynamic value,
     bool inUniqueGroup = false,
+    bool withDateTrigger = false,
+    bool withTimeTrigger = false,
   }) : super(_field) {
     if (value != null) {
       this._constraint = Constraint.DEFAULT;
@@ -86,6 +92,8 @@ class Field extends SQLiteEntity {
     }
     this._value = value;
     this._inUniqueGroup = inUniqueGroup;
+    this._withDateTrigger = withDateTrigger;
+    this._withTimeTrigger = withTimeTrigger;
   }
 
   Field.asPrimaryKey([String field = SQLiteStatement.id]) : super(field) {
@@ -110,6 +118,22 @@ class Field extends SQLiteEntity {
   }) : super(field) {
     this._constraint = Constraint.UNIQUE;
     this._type = type;
+  }
+
+  Field.asDate(
+    String field, {
+    bool withTrigger = false,
+  }) : super(field) {
+    this._type = DataType.TEXT;
+    this._withDateTrigger = withTrigger;
+  }
+
+  Field.asTime(
+    String field, {
+    bool withTrigger = false,
+  }) : super(field) {
+    this._type = DataType.TEXT;
+    this._withTimeTrigger = withTrigger;
   }
 
   Field.asUniqueGroup(
