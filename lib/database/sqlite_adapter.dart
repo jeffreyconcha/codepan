@@ -1,5 +1,5 @@
 import 'dart:async';
-
+import 'package:codepan/database/schema.dart';
 import 'package:codepan/database/sqlite_exception.dart';
 import 'package:flutter/foundation.dart';
 import 'package:path/path.dart';
@@ -17,6 +17,7 @@ class SQLiteAdapter implements DatabaseExecutor {
   final OnDatabaseUpgrade onUpgrade;
   final OnDatabaseCreate onCreate;
   final String name, password;
+  final DatabaseSchema schema;
   final int version;
   bool _inTransaction = false;
   Database _db;
@@ -37,6 +38,7 @@ class SQLiteAdapter implements DatabaseExecutor {
     this.onCreate,
     this.onUpgrade,
     this.onDowngrade,
+    this.schema,
   });
 
   /// Always use await when opening a database

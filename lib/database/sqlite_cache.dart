@@ -16,6 +16,7 @@ class SQLiteCache {
           name: name,
           password: password,
           version: version,
+          schema: initializer.schema,
           onCreate: (db, version) async {
             await initializer?.onCreate(db, version);
           },
