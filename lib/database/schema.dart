@@ -2,9 +2,9 @@ import 'entities/table.dart';
 import 'sqlite_statement.dart';
 
 abstract class DatabaseSchema<T> {
-  final String tableSuffix = '_tb';
-  final String indexSuffix = '_idx';
-  final String triggerSuffix = '_trg';
+  static const String tableSuffix = '_tb';
+  static const String indexSuffix = '_idx';
+  static const String triggerSuffix = '_trg';
 
   List<T> get entities;
 
@@ -76,7 +76,6 @@ abstract class DatabaseSchema<T> {
   }
 
   Table at(T entity) {
-    final name = tableName(entity);
-    return Table(name);
+    return Table(tableName(entity));
   }
 }

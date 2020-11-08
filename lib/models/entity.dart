@@ -1,15 +1,15 @@
 import 'package:codepan/database/schema.dart';
 
-abstract class Entity {
-  const Entity();
+abstract class EntityData {
+  const EntityData();
 
   dynamic get entity;
 
-  DatabaseSchema get schema;
+  DatabaseSchema get schemaInstance;
 
-  String get table => schema.tableName(entity);
+  String get table => schemaInstance.tableName(entity);
 
-  String get unique => schema.unique(entity);
+  String get unique => schemaInstance.unique(entity);
 
-  List<String> get uniqueGroup => schema.uniqueGroup(entity);
+  List<String> get uniqueGroup => schemaInstance.uniqueGroup(entity);
 }

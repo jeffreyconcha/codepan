@@ -1,7 +1,7 @@
 import 'package:codepan/models/entity.dart';
 import 'package:flutter/foundation.dart';
 
-abstract class TransactionData extends Entity
+abstract class TransactionData extends EntityData
     implements Comparable<TransactionData> {
   final String dateCreated, timeCreated, dateUpdated, timeUpdated;
   final bool isDeleted;
