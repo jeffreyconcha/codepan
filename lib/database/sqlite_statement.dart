@@ -8,9 +8,6 @@ import 'package:codepan/database/sqlite_query.dart';
 
 class SQLiteStatement with QueryProperties {
   static const String id = 'id';
-  static const String tableSuffix = '_tb';
-  static const String indexSuffix = '_idx';
-  static const String triggerSuffix = '_trg';
   static const String nullValue = 'NULL';
   static const int trueValue = 1;
   static const int falseValue = 0;
