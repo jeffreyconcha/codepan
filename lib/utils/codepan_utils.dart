@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'dart:isolate';
 import 'dart:ui';
-import 'package:codepan/model/date_time.dart';
+import 'package:codepan/models/date_time.dart';
 import 'package:connectivity/connectivity.dart';
 import 'package:flutter/foundation.dart';
 import 'package:intl/intl.dart';

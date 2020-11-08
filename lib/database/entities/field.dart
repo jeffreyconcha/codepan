@@ -5,16 +5,16 @@ import 'package:codepan/database/sqlite_statement.dart';
 import 'package:flutter/foundation.dart';
 
 enum Constraint {
-  PRIMARY_KEY,
-  FOREIGN_KEY,
-  DEFAULT,
-  UNIQUE,
+  primaryKey,
+  foreignKey,
+  defaultField,
+  unique,
 }
 enum DataType {
-  INTEGER,
-  TEXT,
-  REAL,
-  BLOB,
+  integer,
+  text,
+  real,
+  blob,
 }
 
 class Field extends SQLiteEntity {
@@ -51,9 +51,9 @@ class Field extends SQLiteEntity {
 
   bool get withTimeTrigger => _withTimeTrigger ?? false;
 
-  bool get isForeignKey => _constraint == Constraint.FOREIGN_KEY;
+  bool get isForeignKey => _constraint == Constraint.foreignKey;
 
-  bool get isUnique => _constraint == Constraint.UNIQUE;
+  bool get isUnique => _constraint == Constraint.unique;
 
   String get dataType => hasDataType ? _type.toString().split('.').last : null;
 
@@ -78,7 +78,7 @@ class Field extends SQLiteEntity {
     bool withTimeTrigger = false,
   }) : super(_field) {
     if (value != null) {
-      this._constraint = Constraint.DEFAULT;
+      this._constraint = Constraint.defaultField;
       this._type = _getDataType(value);
     } else {
       this._constraint = constraint;
@@ -91,8 +91,8 @@ class Field extends SQLiteEntity {
   }
 
   Field.asPrimaryKey([String field = SQLiteStatement.id]) : super(field) {
-    this._constraint = Constraint.PRIMARY_KEY;
-    this._type = DataType.INTEGER;
+    this._constraint = Constraint.primaryKey;
+    this._type = DataType.integer;
   }
 
   Field.asForeignKey(
@@ -100,17 +100,17 @@ class Field extends SQLiteEntity {
     @required Table reference,
     bool inUniqueGroup = false,
   }) : super(field) {
-    this._constraint = Constraint.FOREIGN_KEY;
-    this._type = DataType.INTEGER;
+    this._constraint = Constraint.foreignKey;
+    this._type = DataType.integer;
     this._table = reference;
     this._inUniqueGroup = inUniqueGroup;
   }
 
   Field.asUnique(
     String field, {
-    DataType type = DataType.INTEGER,
+    DataType type = DataType.integer,
   }) : super(field) {
-    this._constraint = Constraint.UNIQUE;
+    this._constraint = Constraint.unique;
     this._type = type;
   }
 
@@ -118,7 +118,7 @@ class Field extends SQLiteEntity {
     String field, {
     @required dynamic value,
   }) : super(field) {
-    this._constraint = Constraint.DEFAULT;
+    this._constraint = Constraint.defaultField;
     this._type = _getDataType(value);
   }
 
@@ -126,7 +126,7 @@ class Field extends SQLiteEntity {
     String field, {
     bool withTrigger = false,
   }) : super(field) {
-    this._type = DataType.TEXT;
+    this._type = DataType.text;
     this._withDateTrigger = withTrigger;
   }
 
@@ -134,19 +134,19 @@ class Field extends SQLiteEntity {
     String field, {
     bool withTrigger = false,
   }) : super(field) {
-    this._type = DataType.TEXT;
+    this._type = DataType.text;
     this._withTimeTrigger = withTrigger;
   }
 
   Field.asUniqueGroup(
     String field, {
     Table reference,
-    DataType type = DataType.INTEGER,
+    DataType type = DataType.integer,
   }) : super(field) {
     this._type = type;
     this._inUniqueGroup = true;
     if (reference != null) {
-      this._constraint = Constraint.FOREIGN_KEY;
+      this._constraint = Constraint.foreignKey;
       this._table = reference;
     }
   }
@@ -170,16 +170,16 @@ class Field extends SQLiteEntity {
       buffer.write('$field $dataType');
       if (hasConstraint) {
         switch (constraint) {
-          case Constraint.PRIMARY_KEY:
+          case Constraint.primaryKey:
             buffer.write(' PRIMARY KEY NOT NULL');
             break;
-          case Constraint.FOREIGN_KEY:
+          case Constraint.foreignKey:
             buffer.write(' REFERENCES ${table.name}(${SQLiteStatement.id})');
             break;
-          case Constraint.UNIQUE:
+          case Constraint.unique:
             buffer.write(' UNIQUE');
             break;
-          case Constraint.DEFAULT:
+          case Constraint.defaultField:
             buffer.write(' DEFAULT $defaultValue');
             break;
         }
@@ -201,13 +201,13 @@ class Field extends SQLiteEntity {
 
   DataType _getDataType(dynamic value) {
     if (value is int || value is bool) {
-      return DataType.INTEGER;
+      return DataType.integer;
     } else if (value is double) {
-      return DataType.REAL;
+      return DataType.real;
     } else if (value is String) {
-      return DataType.TEXT;
+      return DataType.text;
     } else {
-      return DataType.BLOB;
+      return DataType.blob;
     }
   }
 }
