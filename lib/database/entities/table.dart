@@ -1,3 +1,4 @@
+import 'package:codepan/database/schema.dart';
 import 'package:codepan/database/sqlite_query.dart';
 import 'package:flutter/foundation.dart';
 import 'field.dart';
@@ -10,7 +11,7 @@ class Table {
       final int max = 3;
       final buffer = StringBuffer();
       final vowels = RegExp(r'[aeiuo]');
-      final raw = name.replaceAll('_tb', '');
+      final raw = name.replaceAll(DatabaseSchema.tableSuffix, '');
       List<String> list = raw.split('_');
       for (final word in list) {
         final lower = word.toLowerCase();

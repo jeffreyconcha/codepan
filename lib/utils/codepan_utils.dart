@@ -185,4 +185,16 @@ class PanUtils {
   static double parseDouble(dynamic input) {
     return input is double ? input : double.tryParse(input.toString());
   }
+
+  static String camelToUnderscore(String text) {
+    final buffer = StringBuffer();
+    text?.runes?.forEach((code) {
+      final character = String.fromCharCode(code);
+      if (character == character.toUpperCase()) {
+        buffer.write('_');
+      }
+      buffer.write(character.toLowerCase());
+    });
+    return buffer.toString();
+  }
 }

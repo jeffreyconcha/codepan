@@ -1,3 +1,4 @@
+import 'package:codepan/utils/codepan_utils.dart';
 import 'entities/table.dart';
 import 'sqlite_statement.dart';
 
@@ -32,30 +33,6 @@ abstract class DatabaseSchema<T> {
     return query;
   }
 
-  String tableName(T tb) {
-    if (tb != null) {
-      final value = tb.toString().split('.').last;
-      return '${value.toLowerCase()}$tableSuffix';
-    }
-    return null;
-  }
-
-  String indexName(T entity) {
-    if (entity != null) {
-      final value = entity.toString().split('.').last;
-      return '${value.toLowerCase()}$indexSuffix';
-    }
-    return null;
-  }
-
-  String triggerName(T entity) {
-    if (entity != null) {
-      final value = entity.toString().split('.').last;
-      return '${value.toLowerCase()}$triggerSuffix';
-    }
-    return null;
-  }
-
   String unique(T entity) {
     for (final field in fields(entity).fieldList) {
       if (field.isUnique) {
@@ -75,7 +52,19 @@ abstract class DatabaseSchema<T> {
     return list;
   }
 
-  Table at(T entity) {
-    return Table(tableName(entity));
+  String tableName(T entity) => _name(entity, tableSuffix);
+
+  String indexName(T entity) => _name(entity, indexSuffix);
+
+  String triggerName(T entity) => _name(entity, triggerSuffix);
+
+  Table at(T entity) => Table(tableName(entity));
+
+  String _name(T entity, String suffix) {
+    if (entity != null) {
+      final value = entity.toString().split('.').last;
+      return '${PanUtils.camelToUnderscore(value)}$suffix';
+    }
+    return null;
   }
 }
