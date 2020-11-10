@@ -161,7 +161,7 @@ class SQLiteBinder {
     _sqlList.add(sql);
   }
 
-  Future<TransactionData> insertRaw({@required TransactionData data}) async {
+  Future<TransactionData> optInsert({@required TransactionData data}) async {
     final transaction = data.copyWith(
       id: await insertData(data: data),
     );
