@@ -5,6 +5,7 @@ import 'package:codepan/database/entities/sqlite_entity.dart';
 import 'package:codepan/database/mixin/query_properties.dart';
 import 'package:codepan/database/sqlite_exception.dart';
 import 'package:codepan/database/sqlite_query.dart';
+import 'package:codepan/models/entity.dart';
 
 class SQLiteStatement with QueryProperties {
   static const String id = 'id';

@@ -1,3 +1,4 @@
+import 'package:codepan/database/sqlite_statement.dart';
 import 'package:codepan/models/entity.dart';
 import 'package:flutter/foundation.dart';
 
@@ -37,6 +38,10 @@ abstract class TransactionData extends EntityData
       return value == null;
     });
     return filtered;
+  }
+
+  SQLiteStatement toStatement() {
+    return SQLiteStatement.fromMap(toMap());
   }
 
   Map<String, dynamic> toMap() => filtered();
