@@ -161,14 +161,14 @@ class SQLiteBinder {
     _sqlList.add(sql);
   }
 
-  Future<TransactionData> save({@required TransactionData data}) async {
+  Future<TransactionData> insertRaw({@required TransactionData data}) async {
     final transaction = data.copyWith(
-      id: await insertData(data),
+      id: await insertData(data: data),
     );
     return transaction;
   }
 
-  Future<int> insertData(TransactionData data) {
+  Future<int> insertData({@required TransactionData data}) {
     return insert(
       data.table,
       data.toStatement(),
@@ -183,6 +183,10 @@ class SQLiteBinder {
     final field = map[pk] != null ? pk : unique;
     addStatement(stmt.insert(table, unique: field));
     return await _mapId(table, stmt, unique: field);
+  }
+
+  void updateData({@required TransactionData data}) {
+    update(data.table, data.toStatement(), data.id);
   }
 
   void update(String table, SQLiteStatement stmt, dynamic id) {
