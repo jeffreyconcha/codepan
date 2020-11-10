@@ -2,6 +2,8 @@ import 'package:codepan/database/entities/field.dart';
 import 'package:codepan/database/sqlite_adapter.dart';
 import 'package:codepan/database/sqlite_query.dart';
 import 'package:codepan/database/sqlite_statement.dart';
+import 'package:codepan/models/transaction.dart';
+import 'package:flutter/foundation.dart';
 
 class SQLiteBinder {
   final SQLiteAdapter db;
@@ -157,6 +159,21 @@ class SQLiteBinder {
 
   void addStatement(final sql) {
     _sqlList.add(sql);
+  }
+
+  Future<TransactionData> save({@required TransactionData data}) async {
+    final transaction = data.copyWith(
+      id: await insertData(data),
+    );
+    return transaction;
+  }
+
+  Future<int> insertData(TransactionData data) {
+    return insert(
+      data.table,
+      data.toStatement(),
+      data.unique ?? data.uniqueGroup,
+    );
   }
 
   Future<int> insert(String table, SQLiteStatement stmt,
