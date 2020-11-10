@@ -4,14 +4,12 @@ class PanImage extends StatelessWidget {
   final EdgeInsetsGeometry margin, padding;
   final double width, height;
   final Alignment alignment;
-  final String jpg;
-  final String png;
+  final String image;
   final BoxFit fit;
 
   const PanImage({
     Key key,
-    this.png,
-    this.jpg,
+    @required this.image,
     this.width,
     this.height,
     this.fit,
@@ -22,7 +20,7 @@ class PanImage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final asset = png != null ? '$png.png' : '$jpg.jpg';
+    final asset = !image.contains('.') ? '$image.png' : image;
     return Container(
       width: width,
       height: height,
