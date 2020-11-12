@@ -31,9 +31,11 @@ extension MapUtils on Map<String, dynamic> {
   }
 
   String getKey(String key) {
-    final prefix = this[prefixKey];
-    if (prefix != null) {
-      return '$prefix.$key';
+    if (this.containsKey(prefixKey)) {
+      final prefix = this[prefixKey];
+      if (prefix != null) {
+        return '$prefix.$key';
+      }
     }
     return key;
   }
