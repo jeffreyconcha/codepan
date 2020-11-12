@@ -22,6 +22,10 @@ extension MapUtils on Map<String, dynamic> {
     return this[getKey(key)];
   }
 
+  bool hasKey(String key) {
+    return this.containsKey(getKey(key));
+  }
+
   void setPrefix(String prefix) {
     this[prefixKey] = prefix;
   }
