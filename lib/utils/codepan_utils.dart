@@ -211,7 +211,7 @@ class PanUtils {
         return false;
       }
     }
-    return null;
+    return false;
   }
 
   static String camelToUnderscore(String text) {
