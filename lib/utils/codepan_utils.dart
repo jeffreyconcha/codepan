@@ -10,6 +10,16 @@ import 'package:time_ago_provider/time_ago_provider.dart' as ago;
 
 const urlPattern =
     r'(https?|http)://([-A-Z0-9.]+)(/[-A-Z0-9+&@#/%=~_|!:,.;]*)?(\?[A-Z0-9+&@#/%=~_|!:‌​,.;]*)?';
+const trueValues = <String>[
+  'true',
+  'yes',
+  'on',
+];
+const falseValues = <String>[
+  'false',
+  'no',
+  'off',
+];
 
 class PanUtils {
   static Map<String, String> getDateTime() {
@@ -184,6 +194,22 @@ class PanUtils {
 
   static double parseDouble(dynamic input) {
     return input is double ? input : double.tryParse(input.toString());
+  }
+
+  static bool parseBool(dynamic input) {
+    if (input is bool) {
+      return input;
+    } else if (input is int) {
+      final binary = parseInt(input);
+      return binary == 1;
+    } else if (input is String) {
+      if (trueValues.contains(input)) {
+        return true;
+      } else if (falseValues.contains(input)) {
+        return false;
+      }
+    }
+    return null;
   }
 
   static String camelToUnderscore(String text) {
