@@ -199,6 +199,14 @@ class SQLiteBinder {
     addStatement(sql);
   }
 
+  void updateFromStatement({
+    @required String table,
+    @required SQLiteStatement stmt,
+  }) {
+    final sql = stmt.updateFromStatement(table);
+    addStatement(sql);
+  }
+
   void delete(String table, dynamic id) {
     final sql = SQLiteStatement().delete(table, id);
     addStatement(sql);

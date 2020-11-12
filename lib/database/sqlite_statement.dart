@@ -131,6 +131,16 @@ class SQLiteStatement with QueryProperties {
     return 'UPDATE $table SET $fieldValues WHERE $conditions';
   }
 
+  String updateFromStatement(String table) {
+    final buffer = StringBuffer();
+    if (!hasFieldValues) throw SQLiteException(SQLiteException.noFieldValues);
+    buffer.write('UPDATE $table SET $fieldValues');
+    if (hasConditions) {
+      buffer.write(' WHERE $conditions');
+    }
+    return buffer.toString();
+  }
+
   String delete(String table, dynamic id) {
     return 'DELETE FROM $table WHERE ${SQLiteStatement.id} = ${id.toString()}';
   }
