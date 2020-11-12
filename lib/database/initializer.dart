@@ -2,6 +2,7 @@ import 'package:codepan/database/schema.dart';
 import 'package:codepan/database/sqlite_adapter.dart';
 import 'package:codepan/database/sqlite_binder.dart';
 import 'package:codepan/database/sqlite_exception.dart';
+import 'package:codepan/database/sqlite_statement.dart';
 import 'package:flutter/foundation.dart';
 
 abstract class DatabaseInitializer {
@@ -73,7 +74,7 @@ class DefaultDatabaseInitializer extends DatabaseInitializer {
   Future<void> _createTables(SQLiteBinder binder) async {
     for (final tb in schema.entities) {
       final table = schema.tableName(tb);
-      final stmt = schema.fields(tb);
+      final stmt = SQLiteStatement.fromList(schema.fields(tb));
       if (stmt.hasFields) {
         binder.createTable(table, stmt);
       }
@@ -84,7 +85,7 @@ class DefaultDatabaseInitializer extends DatabaseInitializer {
   Future<void> _createIndices(SQLiteBinder binder) async {
     for (final tb in schema.entities) {
       final table = schema.tableName(tb);
-      final stmt = schema.indices(tb);
+      final stmt = SQLiteStatement.fromList(schema.indices(tb));
       if (stmt.hasFields) {
         binder.createTable(table, stmt);
         final idx = schema.indexName(tb);
@@ -97,7 +98,7 @@ class DefaultDatabaseInitializer extends DatabaseInitializer {
   Future<void> _createTimeTriggers(SQLiteBinder binder) async {
     for (final tb in schema.entities) {
       final table = schema.tableName(tb);
-      final stmt = schema.triggers(tb);
+      final stmt = SQLiteStatement.fromList(schema.triggers(tb));
       if (stmt.hasFields) {
         binder.createTable(table, stmt);
         final trg = schema.triggerName(tb);
@@ -111,7 +112,7 @@ class DefaultDatabaseInitializer extends DatabaseInitializer {
     final db = binder.db;
     for (final tb in schema.entities) {
       final table = schema.tableName(tb);
-      final stmt = schema.fields(tb);
+      final stmt = SQLiteStatement.fromList(schema.fields(tb));
       if (stmt.hasFields) {
         final fieldList = stmt.fieldList;
         final columnList = await db.getColumnList(table);
@@ -132,7 +133,7 @@ class DefaultDatabaseInitializer extends DatabaseInitializer {
     final db = binder.db;
     for (final tb in schema.entities) {
       String table = schema.tableName(tb);
-      final stmt = schema.indices(tb);
+      final stmt = SQLiteStatement.fromList(schema.indices(tb));
       if (stmt.hasFields) {
         final idx = schema.indexName(tb);
         final int count = await db.getIndexColumnCount(idx);

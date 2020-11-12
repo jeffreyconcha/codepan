@@ -1,6 +1,6 @@
+import 'package:codepan/database/entities/field.dart';
 import 'package:codepan/utils/codepan_utils.dart';
 import 'entities/table.dart';
-import 'sqlite_statement.dart';
 
 abstract class DatabaseSchema<T> {
   static const String tableSuffix = '_tb';
@@ -11,30 +11,30 @@ abstract class DatabaseSchema<T> {
 
   const DatabaseSchema();
 
-  SQLiteStatement fields(T entity);
+  List<Field> fields(T entity);
 
-  SQLiteStatement indices(T entity) {
-    final query = SQLiteStatement();
-    for (final field in fields(entity).fieldList) {
+  List<Field> indices(T entity) {
+    final indices = <Field>[];
+    for (final field in fields(entity)) {
       if (field.isForeignKey || field.isIndex) {
-        query.add(field);
+        indices.add(field);
       }
     }
-    return query;
+    return indices;
   }
 
-  SQLiteStatement triggers(T entity) {
-    final query = SQLiteStatement();
-    for (final field in fields(entity).fieldList) {
+  List<Field> triggers(T entity) {
+    final triggers = <Field>[];
+    for (final field in fields(entity)) {
       if (field.withDateTrigger || field.withTimeTrigger) {
-        query.add(field);
+        triggers.add(field);
       }
     }
-    return query;
+    return triggers;
   }
 
   String unique(T entity) {
-    for (final field in fields(entity).fieldList) {
+    for (final field in fields(entity)) {
       if (field.isUnique) {
         return field.field;
       }
@@ -44,7 +44,7 @@ abstract class DatabaseSchema<T> {
 
   List<String> uniqueGroup(T entity) {
     final list = <String>[];
-    for (final field in fields(entity).fieldList) {
+    for (final field in fields(entity)) {
       if (field.inUniqueGroup) {
         list.add(field.field);
       }
