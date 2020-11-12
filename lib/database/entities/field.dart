@@ -160,6 +160,16 @@ class Field extends SQLiteEntity {
     }
   }
 
+  Field.asIndex(
+    String field, {
+    DataType type = DataType.integer,
+    Constraint constraint,
+  }) : super(field) {
+    this._type = type;
+    this._isIndex = true;
+    this._constraint = constraint;
+  }
+
   Field.asOrder({
     @required String field,
     Order order = Order.ASC,
