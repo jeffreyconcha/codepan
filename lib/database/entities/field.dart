@@ -18,7 +18,12 @@ enum DataType {
 }
 
 class Field extends SQLiteEntity {
-  bool _collate, _isCount, _inUniqueGroup, _withDateTrigger, _withTimeTrigger;
+  bool _collate,
+      _isCount,
+      _inUniqueGroup,
+      _withDateTrigger,
+      _withTimeTrigger,
+      _isIndex;
   Constraint _constraint;
   DataType _type;
   dynamic _value;
@@ -51,6 +56,8 @@ class Field extends SQLiteEntity {
 
   bool get withTimeTrigger => _withTimeTrigger ?? false;
 
+  bool get isIndex => _isIndex ?? false;
+
   bool get isForeignKey => _constraint == Constraint.foreignKey;
 
   bool get isUnique => _constraint == Constraint.unique;
@@ -76,6 +83,7 @@ class Field extends SQLiteEntity {
     bool inUniqueGroup = false,
     bool withDateTrigger = false,
     bool withTimeTrigger = false,
+    bool isIndex = false,
   }) : super(_field) {
     if (value != null) {
       this._constraint = Constraint.defaultField;
@@ -88,6 +96,7 @@ class Field extends SQLiteEntity {
     this._inUniqueGroup = inUniqueGroup;
     this._withDateTrigger = withDateTrigger;
     this._withTimeTrigger = withTimeTrigger;
+    this._isIndex = isIndex;
   }
 
   Field.asPrimaryKey([String field = SQLiteStatement.id]) : super(field) {

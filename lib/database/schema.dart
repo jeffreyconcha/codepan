@@ -16,7 +16,7 @@ abstract class DatabaseSchema<T> {
   SQLiteStatement indices(T entity) {
     final query = SQLiteStatement();
     for (final field in fields(entity).fieldList) {
-      if (field.isForeignKey) {
+      if (field.isForeignKey || field.isIndex) {
         query.add(field);
       }
     }
