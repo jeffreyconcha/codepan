@@ -69,4 +69,35 @@ abstract class DatabaseSchema<T> {
     }
     return null;
   }
+
+  TableSchema of(T entity) {
+    return TableSchema<T>(this, entity);
+  }
+}
+
+class TableSchema<T> {
+  final T entity;
+  final DatabaseSchema schema;
+
+  const TableSchema(this.schema, this.entity);
+
+  List<Field> get fields => schema?.fields(entity);
+
+  List<Field> get indices => schema?.indices(entity);
+
+  List<Field> get triggers => schema?.triggers(entity);
+
+  Table get table => schema?.at(entity);
+
+  String get alias => table?.alias;
+
+  String get tableName => schema?.tableName(entity);
+
+  String get indexName => schema?.indexName(entity);
+
+  String get triggerName => schema?.triggerName(entity);
+
+  String get unique => schema?.unique(entity);
+
+  List<String> get uniqueGroup => schema?.uniqueGroup(entity);
 }

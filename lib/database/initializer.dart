@@ -73,10 +73,10 @@ class DefaultDatabaseInitializer extends DatabaseInitializer {
 
   Future<void> _createTables(SQLiteBinder binder) async {
     for (final tb in schema.entities) {
-      final table = schema.tableName(tb);
-      final stmt = SQLiteStatement.fromList(schema.fields(tb));
+      final entity = schema.of(tb);
+      final stmt = SQLiteStatement.fromList(entity.fields);
       if (stmt.hasFields) {
-        binder.createTable(table, stmt);
+        binder.createTable(entity.tableName, stmt);
       }
     }
     await binder.apply();
@@ -84,11 +84,12 @@ class DefaultDatabaseInitializer extends DatabaseInitializer {
 
   Future<void> _createIndices(SQLiteBinder binder) async {
     for (final tb in schema.entities) {
-      final table = schema.tableName(tb);
-      final stmt = SQLiteStatement.fromList(schema.indices(tb));
+      final entity = schema.of(tb);
+      final table = entity.tableName;
+      final stmt = SQLiteStatement.fromList(entity.indices);
       if (stmt.hasFields) {
         binder.createTable(table, stmt);
-        final idx = schema.indexName(tb);
+        final idx = entity.indexName;
         binder.createIndex(idx, table, stmt);
       }
     }
@@ -97,11 +98,12 @@ class DefaultDatabaseInitializer extends DatabaseInitializer {
 
   Future<void> _createTimeTriggers(SQLiteBinder binder) async {
     for (final tb in schema.entities) {
-      final table = schema.tableName(tb);
-      final stmt = SQLiteStatement.fromList(schema.triggers(tb));
+      final entity = schema.of(tb);
+      final table = entity.tableName;
+      final stmt = SQLiteStatement.fromList(entity.triggers);
       if (stmt.hasFields) {
         binder.createTable(table, stmt);
-        final trg = schema.triggerName(tb);
+        final trg = entity.triggerName;
         binder.createTimeTrigger(trg, table, stmt);
       }
     }
@@ -111,8 +113,9 @@ class DefaultDatabaseInitializer extends DatabaseInitializer {
   Future<void> _updateTables(SQLiteBinder binder) async {
     final db = binder.db;
     for (final tb in schema.entities) {
-      final table = schema.tableName(tb);
-      final stmt = SQLiteStatement.fromList(schema.fields(tb));
+      final entity = schema.of(tb);
+      final table = entity.tableName;
+      final stmt = SQLiteStatement.fromList(entity.fields);
       if (stmt.hasFields) {
         final fieldList = stmt.fieldList;
         final columnList = await db.getColumnList(table);
@@ -132,10 +135,11 @@ class DefaultDatabaseInitializer extends DatabaseInitializer {
   Future<void> _updateIndices(SQLiteBinder binder) async {
     final db = binder.db;
     for (final tb in schema.entities) {
-      String table = schema.tableName(tb);
-      final stmt = SQLiteStatement.fromList(schema.indices(tb));
+      final entity = schema.of(tb);
+      final table = entity.tableName;
+      final stmt = SQLiteStatement.fromList(entity.indices);
       if (stmt.hasFields) {
-        final idx = schema.indexName(tb);
+        final idx = entity.indexName;
         final int count = await db.getIndexColumnCount(idx);
         if (stmt.fieldList.length > count) {
           binder.dropIndex(idx);
