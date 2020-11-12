@@ -58,6 +58,8 @@ abstract class DatabaseSchema<T> {
 
   String triggerName(T entity) => _name(entity, triggerSuffix);
 
+  String alias(T entity) => at(entity).alias;
+
   Table at(T entity) => Table(tableName(entity));
 
   String _name(T entity, String suffix) {
