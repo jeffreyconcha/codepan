@@ -34,6 +34,14 @@ class PanUtils {
     };
   }
 
+  static DateTimeData now() {
+    final now = getDateTime();
+    return DateTimeData(
+      date: now['date'],
+      time: now['time'],
+    );
+  }
+
   static String getFormattedDateTime() {
     final now = DateTime.now();
     final format = DateFormat.yMMMMd('en_US').add_jm();
