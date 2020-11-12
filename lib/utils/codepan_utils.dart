@@ -14,11 +14,13 @@ const trueValues = <String>[
   'true',
   'yes',
   'on',
+  '1',
 ];
 const falseValues = <String>[
   'false',
   'no',
   'off',
+  '0',
 ];
 
 class PanUtils {
