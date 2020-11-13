@@ -1,9 +1,12 @@
 import 'package:codepan/database/entities/field.dart';
+import 'package:codepan/database/schema.dart';
 import 'package:codepan/database/sqlite_adapter.dart';
 import 'package:codepan/database/sqlite_query.dart';
 import 'package:codepan/database/sqlite_statement.dart';
 import 'package:codepan/models/transaction.dart';
 import 'package:flutter/foundation.dart';
+
+const tag = 'DATABASE BINDER';
 
 class SQLiteBinder {
   final SQLiteAdapter db;
@@ -15,8 +18,73 @@ class SQLiteBinder {
   Future<void> beginTransaction() async {
     if (!db.inTransaction) {
       await db.beginTransaction();
+      debugPrint('$tag: BEGIN TRANSACTION');
     }
     _sqlList = [];
+  }
+
+  Future<void> prepare(List<TableSchema> schemaList) async {
+    _map ??= {};
+    for (final schema in schemaList) {
+      final unique = schema.unique;
+      final uniqueGroup = schema.uniqueGroup;
+      final table = schema.tableName;
+      final alias = schema.alias;
+      final primaryKey = SQLiteStatement.id;
+      if (unique != null) {
+        final query = SQLiteQuery(
+          select: [
+            primaryKey,
+            unique,
+          ],
+          from: schema.table,
+          orderBy: [
+            Field.asOrder(
+              field: primaryKey,
+              order: Order.ASC,
+            ),
+          ],
+        );
+        final records = await db.read(query.build());
+        for (final record in records) {
+          final uniqueValue = record['$alias.$unique'];
+          final key = '$table.$unique($uniqueValue)';
+          _map[key] = record['$alias.$primaryKey'];
+        }
+        final last = records?.last;
+        if (last != null) {
+          _map[table] = last['$alias.$primaryKey'];
+        }
+      } else if (uniqueGroup.isNotEmpty) {
+        final query = SQLiteQuery(
+          select: uniqueGroup..add(primaryKey),
+          from: schema.table,
+          orderBy: [
+            Field.asOrder(
+              field: primaryKey,
+              order: Order.ASC,
+            ),
+          ],
+        );
+        final records = await db.read(query.build());
+        for (final record in records) {
+          final buffer = StringBuffer();
+          for (final unique in uniqueGroup) {
+            final uniqueValue = record['$alias.$unique'];
+            buffer.write('$unique($uniqueValue)');
+            if (unique != uniqueGroup.last) {
+              buffer.write('.');
+            }
+          }
+          final key = '$table.${buffer.toString()}';
+          _map[key] = record['$alias.$primaryKey'];
+        }
+        final last = records?.last;
+        if (last != null) {
+          _map[table] = last['$alias.$primaryKey'];
+        }
+      }
+    }
   }
 
   Future<bool> apply() async {
@@ -29,13 +97,17 @@ class SQLiteBinder {
 
   Future<bool> finish() async {
     bool result = false;
+    _map?.clear();
     try {
+      debugPrint('$tag: EXECUTION START');
       for (final sql in _sqlList) {
         await db.execute(sql);
       }
+      debugPrint('$tag: EXECUTION END');
       if (db.inTransaction) {
         await db.endTransaction();
       }
+      debugPrint('$tag: TRANSACTION SUCCESSFUL');
       result = true;
     } catch (error) {
       if (db.inTransaction) {
@@ -50,14 +122,15 @@ class SQLiteBinder {
   Future<void> _registerLastId(String table) async {
     _map ??= {};
     if (!_map.containsKey(table)) {
+      final primaryKey = SQLiteStatement.id;
       final query = SQLiteQuery(
         select: [
-          SQLiteStatement.id,
+          primaryKey,
         ],
         from: table,
         orderBy: [
           Field.asOrder(
-            field: SQLiteStatement.id,
+            field: primaryKey,
             order: Order.DESC,
           )
         ],
@@ -74,15 +147,15 @@ class SQLiteBinder {
     dynamic unique,
   }) async {
     await _registerLastId(table);
-    final pk = SQLiteStatement.id;
+    final primaryKey = SQLiteStatement.id;
     final map = stmt.map;
     if (unique != null) {
-      if (unique is String && unique != pk) {
+      if (unique is String && unique != primaryKey) {
         final value = map[unique];
         final key = '$table.$unique($value)';
         final query = SQLiteQuery(
           select: [
-            SQLiteStatement.id,
+            primaryKey,
           ],
           from: table,
           where: {
@@ -104,7 +177,7 @@ class SQLiteBinder {
         final key = '$table.${buffer.toString()}';
         final query = SQLiteQuery(
           select: [
-            SQLiteStatement.id,
+            primaryKey,
           ],
           from: table,
           where: conditions,
@@ -149,14 +222,6 @@ class SQLiteBinder {
     return null;
   }
 
-  int mapId(String table, String unique, dynamic value) {
-    if (table != null && unique != null && value != null) {
-      final key = '$table.$unique($value)';
-      return _map[key];
-    }
-    return null;
-  }
-
   void addStatement(final sql) {
     _sqlList.add(sql);
   }
@@ -178,9 +243,9 @@ class SQLiteBinder {
 
   Future<int> insert(String table, SQLiteStatement stmt,
       [dynamic unique]) async {
-    final pk = SQLiteStatement.id;
+    final primaryKey = SQLiteStatement.id;
     final map = stmt.map;
-    final field = map[pk] != null ? pk : unique;
+    final field = map[primaryKey] != null ? primaryKey : unique;
     addStatement(stmt.insert(table, unique: field));
     return await _mapId(table, stmt, unique: field);
   }
