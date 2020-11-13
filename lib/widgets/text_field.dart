@@ -202,6 +202,7 @@ class _PanTextFieldState extends State<PanTextField> {
             disabledBorder: InputBorder.none,
             enabledBorder: InputBorder.none,
             contentPadding: widget.padding,
+            isDense: true,
             hintText: widget.hint,
             hintStyle: TextStyle(
               color: widget.hintFontColor,
