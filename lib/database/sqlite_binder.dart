@@ -4,24 +4,35 @@ import 'package:codepan/database/sqlite_adapter.dart';
 import 'package:codepan/database/sqlite_query.dart';
 import 'package:codepan/database/sqlite_statement.dart';
 import 'package:codepan/models/transaction.dart';
+import 'package:codepan/utils/codepan_utils.dart';
 import 'package:flutter/foundation.dart';
 import 'package:sqflite_sqlcipher/sqflite.dart';
 
 const tag = 'DATABASE BINDER';
+const primaryKey = SQLiteStatement.id;
 
 class SQLiteBinder {
   final SQLiteAdapter db;
   Map<String, int> _map;
+  bool _showLog;
+  DateTime _time;
   Batch _batch;
 
   SQLiteBinder(this.db);
 
-  Future<void> beginTransaction({List<TableSchema> prepare}) async {
+  Future<void> beginTransaction({
+    List<TableSchema> prepare,
+    bool showLog = false,
+  }) async {
     if (prepare?.isNotEmpty ?? false) {
       await _prepare(prepare);
     }
-    _batch = db.batch();
-    debugPrint('$tag: BEGIN TRANSACTION');
+    this._batch = db.batch();
+    this._showLog = showLog;
+    if (_showLog) {
+      _time = DateTime.now();
+      debugPrint('$tag: BEGIN TRANSACTION');
+    }
   }
 
   Future<void> _prepare(List<TableSchema> schemaList) async {
@@ -31,7 +42,6 @@ class SQLiteBinder {
       final uniqueGroup = schema.uniqueGroup;
       final table = schema.tableName;
       final alias = schema.alias;
-      final primaryKey = SQLiteStatement.id;
       if (unique != null) {
         final query = SQLiteQuery(
           select: [
@@ -103,7 +113,12 @@ class SQLiteBinder {
     }
     try {
       await _batch.commit(noResult: true);
-      debugPrint('$tag: TRANSACTION SUCCESSFUL');
+      if (_showLog) {
+        final duration = DateTime.now().difference(_time);
+        final formatted = PanUtils.formatDuration(duration, isReadable: true);
+        debugPrint('$tag: TRANSACTION SUCCESSFUL');
+        debugPrint('$tag: FINISHED AT $formatted');
+      }
       result = true;
     } catch (error) {
       debugPrint(error.toString());
@@ -115,7 +130,6 @@ class SQLiteBinder {
   Future<void> _registerLastId(String table) async {
     _map ??= {};
     if (!_map.containsKey(table)) {
-      final primaryKey = SQLiteStatement.id;
       final query = SQLiteQuery(
         select: [
           primaryKey,
@@ -140,7 +154,6 @@ class SQLiteBinder {
     dynamic unique,
   }) async {
     await _registerLastId(table);
-    final primaryKey = SQLiteStatement.id;
     final map = stmt.map;
     if (unique != null) {
       if (unique is String && unique != primaryKey) {
@@ -226,21 +239,28 @@ class SQLiteBinder {
     return transaction;
   }
 
-  Future<int> insertData({@required TransactionData data}) {
+  Future<int> insertData({
+    @required TransactionData data,
+    bool ignoreId = false,
+  }) {
     return insert(
       data.table,
       data.toStatement(),
-      data.unique ?? data.uniqueGroup,
+      unique: data.unique ?? data.uniqueGroup,
+      ignoreId: ignoreId,
     );
   }
 
-  Future<int> insert(String table, SQLiteStatement stmt,
-      [dynamic unique]) async {
-    final primaryKey = SQLiteStatement.id;
+  Future<int> insert(
+    String table,
+    SQLiteStatement stmt, {
+    dynamic unique,
+    bool ignoreId = false,
+  }) async {
     final map = stmt.map;
     final field = map[primaryKey] != null ? primaryKey : unique;
     addStatement(stmt.insert(table, unique: field));
-    return await _mapId(table, stmt, unique: field);
+    return ignoreId ? null : await _mapId(table, stmt, unique: field);
   }
 
   void updateData({@required TransactionData data}) {
