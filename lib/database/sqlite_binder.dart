@@ -5,25 +5,25 @@ import 'package:codepan/database/sqlite_query.dart';
 import 'package:codepan/database/sqlite_statement.dart';
 import 'package:codepan/models/transaction.dart';
 import 'package:flutter/foundation.dart';
+import 'package:sqflite_sqlcipher/sqflite.dart';
 
 const tag = 'DATABASE BINDER';
 
 class SQLiteBinder {
   final SQLiteAdapter db;
   Map<String, int> _map;
-  List<String> _sqlList;
+  Batch _batch;
 
   SQLiteBinder(this.db);
 
-  Future<void> beginTransaction() async {
-    if (!db.inTransaction) {
-      await db.beginTransaction();
-      debugPrint('$tag: BEGIN TRANSACTION');
+  Future<void> beginTransaction({List<TableSchema> prepare}) async {
+    if (prepare?.isNotEmpty ?? false) {
+      await _prepare(prepare);
     }
-    _sqlList = [];
+    _batch = db.batch();
   }
 
-  Future<void> prepare(List<TableSchema> schemaList) async {
+  Future<void> _prepare(List<TableSchema> schemaList) async {
     _map ??= {};
     for (final schema in schemaList) {
       final unique = schema.unique;
@@ -99,20 +99,10 @@ class SQLiteBinder {
     bool result = false;
     _map?.clear();
     try {
-      debugPrint('$tag: EXECUTION START');
-      for (final sql in _sqlList) {
-        await db.execute(sql);
-      }
-      debugPrint('$tag: EXECUTION END');
-      if (db.inTransaction) {
-        await db.endTransaction();
-      }
+      await _batch.commit(noResult: true);
       debugPrint('$tag: TRANSACTION SUCCESSFUL');
       result = true;
     } catch (error) {
-      if (db.inTransaction) {
-        await db.rollback();
-      }
       print(error.toString());
       rethrow;
     }
@@ -223,7 +213,7 @@ class SQLiteBinder {
   }
 
   void addStatement(final sql) {
-    _sqlList.add(sql);
+    _batch.execute(sql);
   }
 
   Future<TransactionData> insertForId({@required TransactionData data}) async {
