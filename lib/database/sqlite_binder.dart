@@ -21,6 +21,7 @@ class SQLiteBinder {
       await _prepare(prepare);
     }
     _batch = db.batch();
+    debugPrint('$tag: BEGIN TRANSACTION');
   }
 
   Future<void> _prepare(List<TableSchema> schemaList) async {
@@ -88,22 +89,24 @@ class SQLiteBinder {
   }
 
   Future<bool> apply() async {
-    final result = await finish();
+    final result = await finish(clearMap: false);
     if (result) {
       await beginTransaction();
     }
     return result;
   }
 
-  Future<bool> finish() async {
+  Future<bool> finish({bool clearMap = true}) async {
     bool result = false;
-    _map?.clear();
+    if (clearMap) {
+      _map?.clear();
+    }
     try {
       await _batch.commit(noResult: true);
       debugPrint('$tag: TRANSACTION SUCCESSFUL');
       result = true;
     } catch (error) {
-      print(error.toString());
+      debugPrint(error.toString());
       rethrow;
     }
     return result;
