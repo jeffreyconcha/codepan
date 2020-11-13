@@ -3,8 +3,9 @@ import 'package:codepan/database/sqlite_query.dart';
 import 'package:flutter/foundation.dart';
 import 'field.dart';
 
-class Table {
+class Table<T> {
   final String name;
+  final T entity;
 
   String get alias {
     if (name != null) {
@@ -52,5 +53,5 @@ class Table {
     )..setAlias(alias);
   }
 
-  Table(this.name);
+  Table(this.name, [this.entity]);
 }

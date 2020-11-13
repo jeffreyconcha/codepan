@@ -22,6 +22,7 @@ dependencies:
   connectivity: '>=0.4.8+6 <2.0.0'
   pull_to_refresh: ^1.6.0
   cached_network_image: ^2.2.0+1
+  html_unescape: ^1.0.2
 
 dev_dependencies:
   flutter_test:

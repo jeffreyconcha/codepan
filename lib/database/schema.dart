@@ -52,6 +52,17 @@ abstract class DatabaseSchema<T> {
     return list;
   }
 
+  List<TableSchema> references(T entity) {
+    final references = <TableSchema>[];
+    for (final field in fields(entity)) {
+      if (field.isForeignKey) {
+        final table = field.table;
+        references.add(of(table.entity));
+      }
+    }
+    return references;
+  }
+
   String tableName(T entity) => _name(entity, tableSuffix);
 
   String indexName(T entity) => _name(entity, indexSuffix);
@@ -60,7 +71,11 @@ abstract class DatabaseSchema<T> {
 
   String alias(T entity) => at(entity).alias;
 
-  Table at(T entity) => Table(tableName(entity));
+  Table at(T entity) => Table(tableName(entity), entity);
+
+  TableSchema of(T entity) {
+    return TableSchema<T>(this, entity);
+  }
 
   String _name(T entity, String suffix) {
     if (entity != null) {
@@ -68,10 +83,6 @@ abstract class DatabaseSchema<T> {
       return '${PanUtils.camelToUnderscore(value)}$suffix';
     }
     return null;
-  }
-
-  TableSchema of(T entity) {
-    return TableSchema<T>(this, entity);
   }
 }
 
@@ -100,4 +111,6 @@ class TableSchema<T> {
   String get unique => schema?.unique(entity);
 
   List<String> get uniqueGroup => schema?.uniqueGroup(entity);
+
+  List<TableSchema> get references => schema?.references(entity);
 }

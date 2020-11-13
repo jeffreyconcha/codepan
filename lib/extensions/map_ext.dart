@@ -1,4 +1,5 @@
 import 'package:codepan/utils/codepan_utils.dart';
+import 'package:html_unescape/html_unescape.dart';
 
 const prefixKey = '\$prefix';
 
@@ -19,7 +20,12 @@ extension MapUtils on Map<String, dynamic> {
   }
 
   dynamic get(String key) {
-    return this[getKey(key)];
+    final value = this[getKey(key)];
+    if (value is String) {
+      final unescape = HtmlUnescape();
+      return unescape.convert(value);
+    }
+    return value;
   }
 
   bool hasKey(String key) {
