@@ -99,6 +99,13 @@ class Field extends SQLiteEntity {
     this._isIndex = isIndex;
   }
 
+  Field.asColumn(
+    String field, {
+    @required DataType type,
+  }) : super(field) {
+    this._type = type;
+  }
+
   Field.asPrimaryKey([String field = SQLiteStatement.id]) : super(field) {
     this._constraint = Constraint.primaryKey;
     this._type = DataType.integer;
