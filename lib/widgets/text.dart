@@ -26,6 +26,7 @@ class PanText extends StatelessWidget {
   final List<Shadow> shadows;
   final OverflowState overflowState;
   final List<InlineSpan> children;
+  final BoxConstraints constraints;
   final bool isRequired;
   final int maxLines;
 
@@ -57,6 +58,7 @@ class PanText extends StatelessWidget {
     this.overflowState = OverflowState.initial,
     this.isRequired = false,
     this.children,
+    this.constraints,
   }) : super(key: key);
 
   @override
@@ -142,6 +144,7 @@ class PanText extends StatelessWidget {
               color: background,
               borderRadius: BorderRadius.circular(radius),
             ),
+            constraints: constraints,
           )
         : Container();
   }

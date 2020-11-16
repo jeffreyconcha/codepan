@@ -4,6 +4,7 @@ import 'dart:ui';
 import 'package:codepan/models/date_time.dart';
 import 'package:connectivity/connectivity.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:time_ago_provider/time_ago_provider.dart' as ago;
@@ -232,5 +233,24 @@ class PanUtils {
       buffer.write(character.toLowerCase());
     });
     return buffer.toString();
+  }
+
+  static RelativeRect getWidgetPosition(GlobalKey key) {
+    final context = key.currentContext;
+    final RenderBox bar = context.findRenderObject();
+    final RenderBox overlay = Overlay.of(context).context.findRenderObject();
+    return RelativeRect.fromRect(
+      Rect.fromPoints(
+        bar.localToGlobal(
+          bar.size.bottomRight(Offset.zero),
+          ancestor: overlay,
+        ),
+        bar.localToGlobal(
+          bar.size.bottomRight(Offset.zero),
+          ancestor: overlay,
+        ),
+      ),
+      Offset.zero & overlay.size,
+    );
   }
 }

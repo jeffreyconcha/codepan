@@ -73,6 +73,7 @@ class _CircularWaveState extends State<CircularWave>
   @override
   Widget build(BuildContext context) {
     return Material(
+      color: Colors.transparent,
       child: CustomPaint(
         size: Size.fromRadius(radius),
         painter: CircularWavePainter(

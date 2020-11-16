@@ -3,17 +3,18 @@ import 'package:codepan/widgets/text.dart';
 import 'package:flutter/material.dart';
 
 class PanButton extends StatelessWidget {
-  final Color fontColor, background, borderColor, splashColor, highlightColor;
   final double fontSize, fontHeight, radius, borderWidth, width, height;
+  final Color fontColor, background, borderColor, splashColor, highlightColor;
   final EdgeInsetsGeometry margin, padding;
+  final BoxConstraints constraints;
   final String text, fontFamily;
   final VoidCallback onPressed;
   final FontWeight fontWeight;
   final FontStyle fontStyle;
   final Alignment alignment;
   final FocusNode focusNode;
-  final Widget child;
   final TextAlign textAlign;
+  final Widget child;
 
   const PanButton({
     Key key,
@@ -39,6 +40,7 @@ class PanButton extends StatelessWidget {
     this.focusNode,
     this.highlightColor,
     this.splashColor,
+    this.constraints,
   }) : super(key: key);
 
   @override
@@ -58,6 +60,7 @@ class PanButton extends StatelessWidget {
       width: width,
       height: height,
       margin: margin,
+      constraints: constraints,
       child: SizedBox(
         width: width,
         height: height,
