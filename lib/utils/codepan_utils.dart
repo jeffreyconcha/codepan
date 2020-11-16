@@ -254,11 +254,11 @@ class PanUtils {
     );
   }
 
-  static int getPercentage(int progress, int max) {
+  static String getPercentage(int progress, int max) {
     final percentage = ((progress / max) * 100);
     if (!percentage.isNaN && !percentage.isInfinite) {
-      return percentage.round();
+      return '${percentage.round()}%';
     }
-    return 0;
+    return '0%';
   }
 }
