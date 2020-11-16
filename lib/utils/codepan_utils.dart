@@ -253,4 +253,12 @@ class PanUtils {
       Offset.zero & overlay.size,
     );
   }
+
+  static int getPercentage(int progress, int max) {
+    final percentage = ((progress / max) * 100);
+    if (!percentage.isNaN && !percentage.isInfinite) {
+      return percentage.round();
+    }
+    return 0;
+  }
 }
