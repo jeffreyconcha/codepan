@@ -36,13 +36,13 @@ class PanTextField extends StatefulWidget {
   final FocusNode focusNode, nextFocusNode;
   final ValueChanged<bool> onFocusChange;
   final ValueChanged<String> onChanged;
+  final Widget prefixIcon, suffixIcon;
   final String text, hint, fontFamily;
   final TextInputType keyboardType;
   final FontWeight fontWeight;
   final TextAlign textAlign;
   final FontStyle fontStyle;
   final Alignment alignment;
-  final Widget suffixIcon;
 
   const PanTextField({
     Key key,
@@ -82,6 +82,7 @@ class PanTextField extends StatefulWidget {
     this.maxLength,
     this.width,
     this.height,
+    this.prefixIcon,
     this.suffixIcon,
     this.iconColor,
     this.inputFormatters,
@@ -210,6 +211,7 @@ class _PanTextFieldState extends State<PanTextField> {
               fontSize: widget.fontSize,
             ),
             suffixIcon: suffixIcon,
+            prefixIcon: widget.prefixIcon,
           ),
         ),
         onFocusChange: (hasFocus) {

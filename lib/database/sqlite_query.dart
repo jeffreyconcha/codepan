@@ -46,7 +46,7 @@ class SQLiteQuery with QueryProperties {
 
   /// table - Can only be a type String or Table
   SQLiteQuery({
-    List<dynamic> select,
+    @required List<dynamic> select,
     @required dynamic from,
     dynamic where,
     List<dynamic> orderBy,

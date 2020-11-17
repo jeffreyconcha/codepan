@@ -10,4 +10,30 @@ extension StringUtils on String {
     }
     return this;
   }
+
+  String complete(dynamic input) {
+    final buffer = StringBuffer();
+    final identifier = '\$';
+    final separator = ' ';
+    final list = <String>[];
+    if (input is String) {
+      list.add(input);
+    } else if (input is List<String>) {
+      list.addAll(input);
+    }
+    final iterator = list.iterator;
+    final words = this.split(separator);
+    for (int i = 0; i < words.length; i++) {
+      final word = words[i];
+      if (word.contains(identifier) && iterator.moveNext()) {
+        buffer.write(iterator.current);
+      } else {
+        buffer.write(word);
+      }
+      if (i < words.length - 1) {
+        buffer.write(separator);
+      }
+    }
+    return buffer.toString();
+  }
 }
