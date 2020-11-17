@@ -1,7 +1,7 @@
 import 'dart:isolate';
 import 'package:codepan/utils/codepan_utils.dart';
 
-typedef IsolateImplementation = void Function(SendPort sp);
+typedef IsolateImplementation = void Function(SendPort msp);
 
 abstract class IsolateHandler {
   final String name;
