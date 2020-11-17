@@ -13,7 +13,7 @@ abstract class IsolateHandler {
 
   IsolateHandler(this.name);
 
-  Future<void> initialize() async {
+  Future<void> start() async {
     this._mrp = ReceivePort();
     this._isolate = await Isolate.spawn(
       implementation,
