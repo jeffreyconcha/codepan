@@ -1,4 +1,5 @@
 import 'dart:isolate';
+import 'dart:ui';
 import 'package:codepan/utils/codepan_utils.dart';
 
 typedef IsolateImplementation = void Function(SendPort msp);
@@ -34,6 +35,8 @@ abstract class IsolateHandler {
     if (data is SendPort) {
       this._isp = data;
     } else {
+      final sp = IsolateNameServer.lookupPortByName(name);
+      sp.send(data);
       receiveFromIsolate(data);
     }
   }
