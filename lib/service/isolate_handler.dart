@@ -6,7 +6,7 @@ typedef IsolateImplementation = void Function(SendPort sp);
 abstract class IsolateHandler {
   final String name;
   Isolate _isolate;
-  ReceivePort _irp;
+  ReceivePort _mrp;
   SendPort _isp;
 
   IsolateImplementation get implementation;
@@ -14,12 +14,12 @@ abstract class IsolateHandler {
   IsolateHandler(this.name);
 
   Future<void> initialize() async {
-    this._irp = ReceivePort();
+    this._mrp = ReceivePort();
     this._isolate = await Isolate.spawn(
       implementation,
-      _irp.sendPort,
+      _mrp.sendPort,
     );
-    _irp.listen(_listener);
+    _mrp.listen(_listener);
   }
 
   void stop() {
