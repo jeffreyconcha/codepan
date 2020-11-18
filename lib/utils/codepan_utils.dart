@@ -36,14 +36,20 @@ class PanUtils {
   }
 
   static DateTimeData now() {
-    final now = getDateTime();
+    final now = DateTime.now();
+    return formatDateTime(now);
+  }
+
+  static DateTimeData formatDateTime(DateTime input) {
+    final date = DateFormat('yyyy-MM-dd');
+    final time = DateFormat('HH:mm:ss');
     return DateTimeData(
-      date: now['date'],
-      time: now['time'],
+      date: date.format(input),
+      time: time.format(input),
     );
   }
 
-  static String getFormattedDateTime() {
+  static String getFormattedDateAndTime() {
     final now = DateTime.now();
     final format = DateFormat.yMMMMd('en_US').add_jm();
     return format.format(now);
@@ -61,7 +67,7 @@ class PanUtils {
     return format.format(time);
   }
 
-  static String formatDateTime(String date, String time) {
+  static String formatDateAndTime(String date, String time) {
     final dt = DateTime.parse('$date $time');
     final format = DateFormat.yMMMMd('en_US').add_jm();
     return format.format(dt);
