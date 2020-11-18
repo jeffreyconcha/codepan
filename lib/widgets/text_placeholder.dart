@@ -4,6 +4,7 @@ import 'package:codepan/widgets/placeholder_handler.dart';
 import 'package:flutter/material.dart';
 
 class TextPlaceholder extends StatefulWidget {
+  final double titleHeight, lineHeight;
   final int noOfParagraph, noOfLines;
   final bool withTitle, equalWidth;
   final Color color;
@@ -14,6 +15,8 @@ class TextPlaceholder extends StatefulWidget {
     this.noOfParagraph = 1,
     this.withTitle = true,
     this.equalWidth = false,
+    this.titleHeight,
+    this.lineHeight,
     this.color = PanColors.grey,
   }) : super(key: key);
 
@@ -83,7 +86,7 @@ class _TextPlaceholderState extends State<TextPlaceholder>
                           condition: widget.withTitle,
                           child: Container(
                             width: constraints.maxWidth * 0.75,
-                            height: d.at(25),
+                            height: widget.titleHeight ?? d.at(25),
                             color: _tween.evaluate(animation),
                             margin: EdgeInsets.symmetric(
                               vertical: d.at(10),
@@ -99,7 +102,7 @@ class _TextPlaceholderState extends State<TextPlaceholder>
                                 : constraints.maxWidth;
                             return Container(
                               width: width,
-                              height: d.at(17),
+                              height: widget.lineHeight ?? d.at(17),
                               color: _tween.evaluate(animation),
                               margin: EdgeInsets.only(top: d.at(10)),
                             );
