@@ -1,16 +1,19 @@
 import 'package:codepan/resources/colors.dart';
 import 'package:codepan/resources/dimensions.dart';
+import 'package:codepan/widgets/placeholder_handler.dart';
 import 'package:flutter/material.dart';
 
 class TextPlaceholder extends StatefulWidget {
-  final int noOfParagraph;
-  final int noOfLines;
+  final int noOfParagraph, noOfLines;
+  final bool withTitle, equalWidth;
   final Color color;
 
   const TextPlaceholder({
     Key key,
     @required this.noOfLines,
-    @required this.noOfParagraph,
+    this.noOfParagraph = 1,
+    this.withTitle = true,
+    this.equalWidth = false,
     this.color = PanColors.grey,
   }) : super(key: key);
 
@@ -68,7 +71,7 @@ class _TextPlaceholderState extends State<TextPlaceholder>
             return Container(
               alignment: Alignment.centerLeft,
               child: Column(
-                children: List.generate(widget.noOfParagraph ?? 0, (index) {
+                children: List.generate(widget.noOfParagraph, (index) {
                   return Container(
                     margin: EdgeInsets.only(
                       bottom: d.at(30),
@@ -76,20 +79,22 @@ class _TextPlaceholderState extends State<TextPlaceholder>
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
-                        Container(
-                          width: constraints.maxWidth * 0.75,
-                          height: d.at(25),
-                          color: _tween.evaluate(animation),
-                          margin: EdgeInsets.only(top: d.at(10)),
-                        ),
-                        SizedBox(
-                          height: d.at(10),
+                        PlaceholderHandler(
+                          condition: widget.withTitle,
+                          child: Container(
+                            width: constraints.maxWidth * 0.75,
+                            height: d.at(25),
+                            color: _tween.evaluate(animation),
+                            margin: EdgeInsets.symmetric(
+                              vertical: d.at(10),
+                            ),
+                          ),
                         ),
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children:
                               List.generate(widget.noOfLines ?? 0, (index) {
-                            final width = index % 2 != 0
+                            final width = !widget.equalWidth && index % 2 != 0
                                 ? constraints.maxWidth * 0.9
                                 : constraints.maxWidth;
                             return Container(
