@@ -24,7 +24,7 @@ enum ScrollBehaviour {
 class PageBuilder<E extends ParentEvent, B extends ParentBloc<E, S>,
     S extends ParentState> extends StatelessWidget {
   final Color background, statusBarColor;
-  final WidgetBlocBuilder child, topLayer;
+  final WidgetBlocBuilder builder, layer;
   final ScrollBehaviour behaviour;
   final Brightness brightness;
   final BlocObserver observer;
@@ -32,10 +32,10 @@ class PageBuilder<E extends ParentEvent, B extends ParentBloc<E, S>,
 
   const PageBuilder({
     Key key,
-    @required this.child,
+    @required this.builder,
     @required this.creator,
     @required this.observer,
-    this.topLayer,
+    this.layer,
     this.background,
     this.statusBarColor = Colors.transparent,
     this.brightness = Brightness.dark,
@@ -59,9 +59,9 @@ class PageBuilder<E extends ParentEvent, B extends ParentBloc<E, S>,
           ),
         ),
         body: _PageBody<E, B, S>(
-          child: child,
+          builder: builder,
           maxHeight: d.max,
-          topLayer: topLayer,
+          layer: layer,
           behaviour: behaviour,
           observer: observer,
         ),
@@ -72,18 +72,18 @@ class PageBuilder<E extends ParentEvent, B extends ParentBloc<E, S>,
 
 class _PageBody<E extends ParentEvent, B extends ParentBloc<E, S>,
     S extends ParentState> extends StatelessWidget {
-  final WidgetBlocBuilder child, topLayer;
+  final WidgetBlocBuilder builder, layer;
   final BlocObserver observer;
   final ScrollBehaviour behaviour;
   final double maxHeight;
 
   const _PageBody({
     Key key,
-    @required this.child,
+    @required this.builder,
     @required this.maxHeight,
     @required this.behaviour,
     @required this.observer,
-    this.topLayer,
+    this.layer,
   }) : super(key: key);
 
   @override
@@ -96,8 +96,8 @@ class _PageBody<E extends ParentEvent, B extends ParentBloc<E, S>,
             case ScrollBehaviour.none:
               return Stack(
                 children: [
-                  child.call(context, state),
-                  topLayer?.call(context, state),
+                  builder.call(context, state),
+                  layer?.call(context, state),
                 ],
               );
               break;
@@ -105,11 +105,11 @@ class _PageBody<E extends ParentEvent, B extends ParentBloc<E, S>,
               return SingleChildScrollView(
                 child: Stack(
                   children: [
-                    child.call(context, state),
+                    builder.call(context, state),
                     SafeArea(
                       child: Container(
                         height: maxHeight,
-                        child: topLayer?.call(context, state),
+                        child: layer?.call(context, state),
                       ),
                     ),
                   ],
