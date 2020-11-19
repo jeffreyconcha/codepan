@@ -16,7 +16,7 @@ typedef BlocObserver = void Function(
 typedef BlocCreator = ParentBloc Function(
   BuildContext context,
 );
-enum ScrollBehaviour {
+enum PageScrollBehaviour {
   whole,
   none,
 }
@@ -25,7 +25,7 @@ class PageBlocBuilder<E extends ParentEvent, B extends ParentBloc<E, S>,
     S extends ParentState> extends StatelessWidget {
   final Color background, statusBarColor;
   final WidgetBlocBuilder builder, layer;
-  final ScrollBehaviour behaviour;
+  final PageScrollBehaviour behaviour;
   final Brightness brightness;
   final BlocObserver observer;
   final BlocCreator creator;
@@ -39,7 +39,7 @@ class PageBlocBuilder<E extends ParentEvent, B extends ParentBloc<E, S>,
     this.background,
     this.statusBarColor = Colors.transparent,
     this.brightness = Brightness.dark,
-    this.behaviour = ScrollBehaviour.whole,
+    this.behaviour = PageScrollBehaviour.whole,
   }) : super(key: key);
 
   @override
@@ -73,8 +73,8 @@ class PageBlocBuilder<E extends ParentEvent, B extends ParentBloc<E, S>,
 class _PageBody<E extends ParentEvent, B extends ParentBloc<E, S>,
     S extends ParentState> extends StatelessWidget {
   final WidgetBlocBuilder builder, layer;
+  final PageScrollBehaviour behaviour;
   final BlocObserver observer;
-  final ScrollBehaviour behaviour;
   final double maxHeight;
 
   const _PageBody({
@@ -93,11 +93,13 @@ class _PageBody<E extends ParentEvent, B extends ParentBloc<E, S>,
       child: BlocBuilder<B, S>(
         builder: (context, state) {
           switch (behaviour) {
-            case ScrollBehaviour.none:
+            case PageScrollBehaviour.none:
               return Stack(
                 children: [
                   builder.call(context, state),
-                  layer?.call(context, state),
+                  Container(
+                    child: layer?.call(context, state),
+                  ),
                 ],
               );
               break;
