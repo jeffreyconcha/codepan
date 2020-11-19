@@ -21,7 +21,7 @@ enum ScrollBehaviour {
   none,
 }
 
-class PageBuilder<E extends ParentEvent, B extends ParentBloc<E, S>,
+class PageBlocBuilder<E extends ParentEvent, B extends ParentBloc<E, S>,
     S extends ParentState> extends StatelessWidget {
   final Color background, statusBarColor;
   final WidgetBlocBuilder builder, layer;
@@ -30,7 +30,7 @@ class PageBuilder<E extends ParentEvent, B extends ParentBloc<E, S>,
   final BlocObserver observer;
   final BlocCreator creator;
 
-  const PageBuilder({
+  const PageBlocBuilder({
     Key key,
     @required this.builder,
     @required this.creator,
