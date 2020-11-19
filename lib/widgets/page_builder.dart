@@ -4,11 +4,17 @@ import 'package:codepan/bloc/parent_state.dart';
 import 'package:codepan/resources/dimensions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:provider/provider.dart';
 
-typedef WidgetBuilder = Widget Function(
+typedef WidgetBlocBuilder = Widget Function(
   BuildContext context,
   ParentState state,
+);
+typedef BlocObserver = void Function(
+  BuildContext context,
+  ParentState state,
+);
+typedef BlocCreator = ParentBloc Function(
+  BuildContext context,
 );
 enum ScrollBehaviour {
   whole,
@@ -18,20 +24,22 @@ enum ScrollBehaviour {
 class PageBuilder<E extends ParentEvent, B extends ParentBloc<E, S>,
     S extends ParentState> extends StatelessWidget {
   final Color background, statusBarColor;
-  final WidgetBuilder child, topLayer;
-  final Brightness brightness;
+  final WidgetBlocBuilder child, topLayer;
   final ScrollBehaviour behaviour;
-  final Create<B> create;
+  final Brightness brightness;
+  final BlocObserver observer;
+  final BlocCreator creator;
 
   const PageBuilder({
     Key key,
     @required this.child,
-    @required this.topLayer,
+    @required this.creator,
+    @required this.observer,
+    this.topLayer,
     this.background,
     this.statusBarColor = Colors.transparent,
     this.brightness = Brightness.dark,
     this.behaviour = ScrollBehaviour.whole,
-    this.create,
   }) : super(key: key);
 
   @override
@@ -39,7 +47,7 @@ class PageBuilder<E extends ParentEvent, B extends ParentBloc<E, S>,
     final d = Dimension.of(context, isSafeArea: true);
     final t = Theme.of(context);
     return BlocProvider<B>(
-      create: create,
+      create: creator,
       child: Scaffold(
         backgroundColor: background ?? t.backgroundColor,
         appBar: PreferredSize(
@@ -55,6 +63,7 @@ class PageBuilder<E extends ParentEvent, B extends ParentBloc<E, S>,
           maxHeight: d.max,
           topLayer: topLayer,
           behaviour: behaviour,
+          observer: observer,
         ),
       ),
     );
@@ -63,7 +72,8 @@ class PageBuilder<E extends ParentEvent, B extends ParentBloc<E, S>,
 
 class _PageBody<E extends ParentEvent, B extends ParentBloc<E, S>,
     S extends ParentState> extends StatelessWidget {
-  final WidgetBuilder child, topLayer;
+  final WidgetBlocBuilder child, topLayer;
+  final BlocObserver observer;
   final ScrollBehaviour behaviour;
   final double maxHeight;
 
@@ -72,39 +82,43 @@ class _PageBody<E extends ParentEvent, B extends ParentBloc<E, S>,
     @required this.child,
     @required this.maxHeight,
     @required this.behaviour,
+    @required this.observer,
     this.topLayer,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<B, S>(
-      builder: (context, state) {
-        switch (behaviour) {
-          case ScrollBehaviour.none:
-            return Stack(
-              children: [
-                child.call(context, state),
-                topLayer?.call(context, state),
-              ],
-            );
-            break;
-          default:
-            return SingleChildScrollView(
-              child: Stack(
+    return BlocListener<B, S>(
+      listener: observer,
+      child: BlocBuilder<B, S>(
+        builder: (context, state) {
+          switch (behaviour) {
+            case ScrollBehaviour.none:
+              return Stack(
                 children: [
                   child.call(context, state),
-                  SafeArea(
-                    child: Container(
-                      height: maxHeight,
-                      child: topLayer?.call(context, state),
-                    ),
-                  ),
+                  topLayer?.call(context, state),
                 ],
-              ),
-            );
-            break;
-        }
-      },
+              );
+              break;
+            default:
+              return SingleChildScrollView(
+                child: Stack(
+                  children: [
+                    child.call(context, state),
+                    SafeArea(
+                      child: Container(
+                        height: maxHeight,
+                        child: topLayer?.call(context, state),
+                      ),
+                    ),
+                  ],
+                ),
+              );
+              break;
+          }
+        },
+      ),
     );
   }
 }
