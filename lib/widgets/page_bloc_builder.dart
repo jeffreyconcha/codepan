@@ -32,9 +32,9 @@ class PageBlocBuilder<E extends ParentEvent, B extends ParentBloc<E, S>,
 
   const PageBlocBuilder({
     Key key,
-    @required this.builder,
     @required this.creator,
     @required this.observer,
+    @required this.builder,
     this.layer,
     this.background,
     this.statusBarColor = Colors.transparent,
@@ -80,10 +80,10 @@ class _PageBody<E extends ParentEvent, B extends ParentBloc<E, S>,
 
   const _PageBody({
     Key key,
+    @required this.observer,
     @required this.builder,
     @required this.maxHeight,
     @required this.behaviour,
-    @required this.observer,
     this.layer,
   }) : super(key: key);
 
