@@ -38,7 +38,7 @@ class PageBlocBuilder<E extends ParentEvent, B extends ParentBloc<E, S>,
     this.layer,
     this.background,
     this.statusBarColor = Colors.transparent,
-    this.brightness = Brightness.dark,
+    this.brightness,
     this.behaviour = PageScrollBehaviour.whole,
   }) : super(key: key);
 
@@ -46,6 +46,7 @@ class PageBlocBuilder<E extends ParentEvent, B extends ParentBloc<E, S>,
   Widget build(BuildContext context) {
     final d = Dimension.of(context, isSafeArea: true);
     final t = Theme.of(context);
+    final a = t.appBarTheme;
     return BlocProvider<B>(
       create: creator,
       child: Scaffold(
@@ -54,7 +55,7 @@ class PageBlocBuilder<E extends ParentEvent, B extends ParentBloc<E, S>,
           preferredSize: Size.fromHeight(0),
           child: AppBar(
             elevation: 0,
-            brightness: brightness,
+            brightness: brightness ?? a.brightness,
             backgroundColor: statusBarColor,
           ),
         ),

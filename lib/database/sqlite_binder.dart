@@ -233,22 +233,28 @@ class SQLiteBinder {
   }
 
   Future<TransactionData> insertForId({@required TransactionData data}) async {
-    final transaction = data.copyWith(
-      id: await insertData(data: data),
-    );
-    return transaction;
+    if (data != null) {
+      final transaction = data.copyWith(
+        id: await insertData(data: data),
+      );
+      return transaction;
+    }
+    return null;
   }
 
   Future<int> insertData({
     @required TransactionData data,
     bool ignoreId = false,
   }) {
-    return insert(
-      data.table,
-      data.toStatement(),
-      unique: data.unique ?? data.uniqueGroup,
-      ignoreId: ignoreId,
-    );
+    if (data != null) {
+      return insert(
+        data.table,
+        data.toStatement(),
+        unique: data.unique ?? data.uniqueGroup,
+        ignoreId: ignoreId,
+      );
+    }
+    return null;
   }
 
   Future<int> insert(
