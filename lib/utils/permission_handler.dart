@@ -10,9 +10,7 @@ abstract class StateWithPermission<T extends StatefulWidget> extends State<T>
 
   List<Permission> get permissions;
 
-  void onGranted();
-
-  void onDenied();
+  void onPermissionResult(bool isGranted);
 
   void onPermanentlyDenied(
     Permission permission,
@@ -29,8 +27,8 @@ abstract class StateWithPermission<T extends StatefulWidget> extends State<T>
 
   @override
   void dispose() {
-    WidgetsBinding.instance.removeObserver(this);
     super.dispose();
+    WidgetsBinding.instance.removeObserver(this);
   }
 
   @override
@@ -91,13 +89,7 @@ abstract class StateWithPermission<T extends StatefulWidget> extends State<T>
         }
       }
     }
-    if (hasDenied) {
-      onDenied();
-    } else {
-      if (!_hasPermanentlyDenied) {
-        _isGranted = true;
-        onGranted();
-      }
-    }
+    _isGranted = !hasDenied && !_hasPermanentlyDenied;
+    onPermissionResult(_isGranted);
   }
 }
