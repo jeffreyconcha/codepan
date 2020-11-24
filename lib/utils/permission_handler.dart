@@ -5,44 +5,32 @@ import 'package:permission_handler/permission_handler.dart';
 
 abstract class StateWithPermission<T extends StatefulWidget> extends State<T>
     with WidgetsBindingObserver {
+  bool _hasPermanentlyDenied = false;
+  bool _isGranted = false;
+
   List<Permission> get permissions;
 
-  BuildContext _context;
+  void onGranted();
 
-  BuildContext get ctx => _context ?? context;
-
-  void onGranted(
-    BuildContext context,
-    Permission permission,
-  );
-
-  void onDenied(
-    BuildContext context,
-    Permission permission,
-  );
+  void onDenied();
 
   void onPermanentlyDenied(
-    BuildContext context,
     Permission permission,
     String title,
     String message,
   );
 
-  void onBuild(BuildContext context) {
-    this._context = context;
-  }
-
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
-    _checkPermissions();
+    _checkPermissions(request: true);
   }
 
   @override
   void dispose() {
-    super.dispose();
     WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
   }
 
   @override
@@ -50,7 +38,13 @@ abstract class StateWithPermission<T extends StatefulWidget> extends State<T>
   void didChangeAppLifecycleState(AppLifecycleState state) {
     switch (state) {
       case AppLifecycleState.resumed:
-        _checkPermissions();
+        if (_isGranted) {
+          _checkPermissions(request: true);
+        } else {
+          if (_hasPermanentlyDenied) {
+            _checkPermissions(request: false);
+          }
+        }
         break;
       default:
         break;
@@ -61,39 +55,48 @@ abstract class StateWithPermission<T extends StatefulWidget> extends State<T>
     return AppSettings.openAppSettings();
   }
 
-  void _checkPermissions() async {
+  void _checkPermissions({@required bool request}) async {
+    _hasPermanentlyDenied = false;
+    bool hasDenied = false;
     for (final permission in permissions) {
-      if (!await permission.isGranted) {
-        final status = await permission.request();
-        if (status.isGranted) {
-          onGranted(ctx, permission);
-        } else {
+      final isGranted = request
+          ? await permission.request().isGranted
+          : await permission.isGranted;
+      if (!isGranted) {
+        if (await permission.isPermanentlyDenied) {
           String message;
-          if (status.isPermanentlyDenied) {
-            switch (permission) {
-              case Permission.camera:
-                message = PermissionInfo.camera;
-                break;
-              default:
-                switch (permission) {
-                  case Permission.locationAlways:
-                    message = PermissionInfo.location;
-                    break;
-                  default:
-                    break;
-                }
-                break;
-            }
-            onPermanentlyDenied(
-              ctx,
-              permission,
-              PermissionInfo.title,
-              message,
-            );
-          } else {
-            onDenied(ctx, permission);
+          switch (permission) {
+            case Permission.camera:
+              message = PermissionInfo.camera;
+              break;
+            default:
+              switch (permission) {
+                case Permission.locationAlways:
+                  message = PermissionInfo.location;
+                  break;
+                default:
+                  break;
+              }
+              break;
           }
+          onPermanentlyDenied(
+            permission,
+            PermissionInfo.title,
+            message,
+          );
+          _hasPermanentlyDenied = true;
+          break;
+        } else {
+          hasDenied = true;
         }
+      }
+    }
+    if (hasDenied) {
+      onDenied();
+    } else {
+      if (!_hasPermanentlyDenied) {
+        _isGranted = true;
+        onGranted();
       }
     }
   }

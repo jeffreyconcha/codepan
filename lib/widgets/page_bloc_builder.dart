@@ -2,7 +2,6 @@ import 'package:codepan/bloc/parent_bloc.dart';
 import 'package:codepan/bloc/parent_event.dart';
 import 'package:codepan/bloc/parent_state.dart';
 import 'package:codepan/resources/dimensions.dart';
-import 'package:codepan/utils/permission_handler.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -26,7 +25,6 @@ class PageBlocBuilder<E extends ParentEvent, B extends ParentBloc<E, S>,
     S extends ParentState> extends StatelessWidget {
   final Color background, statusBarColor;
   final WidgetBlocBuilder builder, layer;
-  final StateWithPermission permission;
   final PageScrollBehaviour behaviour;
   final Brightness brightness;
   final BlocObserver observer;
@@ -42,7 +40,6 @@ class PageBlocBuilder<E extends ParentEvent, B extends ParentBloc<E, S>,
     this.statusBarColor = Colors.transparent,
     this.brightness,
     this.behaviour = PageScrollBehaviour.whole,
-    this.permission,
   }) : super(key: key);
 
   @override
@@ -77,7 +74,6 @@ class PageBlocBuilder<E extends ParentEvent, B extends ParentBloc<E, S>,
 class _PageBody<E extends ParentEvent, B extends ParentBloc<E, S>,
     S extends ParentState> extends StatelessWidget {
   final WidgetBlocBuilder builder, layer;
-  final StateWithPermission permission;
   final PageScrollBehaviour behaviour;
   final BlocObserver observer;
   final double maxHeight;
@@ -89,7 +85,6 @@ class _PageBody<E extends ParentEvent, B extends ParentBloc<E, S>,
     @required this.maxHeight,
     @required this.behaviour,
     this.layer,
-    this.permission,
   }) : super(key: key);
 
   @override
@@ -98,7 +93,6 @@ class _PageBody<E extends ParentEvent, B extends ParentBloc<E, S>,
       listener: observer,
       child: BlocBuilder<B, S>(
         builder: (context, state) {
-          permission?.onBuild(context);
           switch (behaviour) {
             case PageScrollBehaviour.none:
               return Stack(
