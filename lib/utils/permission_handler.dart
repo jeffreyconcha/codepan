@@ -7,15 +7,30 @@ abstract class StateWithPermission<T extends StatefulWidget> extends State<T>
     with WidgetsBindingObserver {
   List<Permission> get permissions;
 
-  void onGranted(Permission permission);
+  BuildContext _context;
 
-  void onDenied(Permission permission);
+  BuildContext get ctx => _context ?? context;
+
+  void onGranted(
+    BuildContext context,
+    Permission permission,
+  );
+
+  void onDenied(
+    BuildContext context,
+    Permission permission,
+  );
 
   void onPermanentlyDenied(
+    BuildContext context,
     Permission permission,
     String title,
     String message,
   );
+
+  void onBuild(BuildContext context) {
+    this._context = context;
+  }
 
   @override
   void initState() {
@@ -31,6 +46,7 @@ abstract class StateWithPermission<T extends StatefulWidget> extends State<T>
   }
 
   @override
+  @mustCallSuper
   void didChangeAppLifecycleState(AppLifecycleState state) {
     switch (state) {
       case AppLifecycleState.resumed:
@@ -41,39 +57,42 @@ abstract class StateWithPermission<T extends StatefulWidget> extends State<T>
     }
   }
 
-  Future<void> openAppSettings() {
+  Future<void> goToSettings() {
     return AppSettings.openAppSettings();
   }
 
   void _checkPermissions() async {
     for (final permission in permissions) {
-      final status = await permission.request();
-      if (status.isGranted) {
-        onGranted(permission);
-      } else {
-        String message;
-        if (status.isPermanentlyDenied) {
-          switch (permission) {
-            case Permission.camera:
-              message = PermissionInfo.camera;
-              break;
-            default:
-              switch (permission) {
-                case Permission.locationAlways:
-                  message = PermissionInfo.location;
-                  break;
-                default:
-                  break;
-              }
-              break;
-          }
-          onPermanentlyDenied(
-            permission,
-            PermissionInfo.title,
-            message,
-          );
+      if (!await permission.isGranted) {
+        final status = await permission.request();
+        if (status.isGranted) {
+          onGranted(ctx, permission);
         } else {
-          onDenied(permission);
+          String message;
+          if (status.isPermanentlyDenied) {
+            switch (permission) {
+              case Permission.camera:
+                message = PermissionInfo.camera;
+                break;
+              default:
+                switch (permission) {
+                  case Permission.locationAlways:
+                    message = PermissionInfo.location;
+                    break;
+                  default:
+                    break;
+                }
+                break;
+            }
+            onPermanentlyDenied(
+              ctx,
+              permission,
+              PermissionInfo.title,
+              message,
+            );
+          } else {
+            onDenied(ctx, permission);
+          }
         }
       }
     }
