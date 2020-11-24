@@ -13,6 +13,15 @@ class Dimension {
     this.isSafeArea = false,
   });
 
+  double get deviceRatio {
+    if (context != null) {
+      final data = MediaQuery.of(context);
+      final size = data.size;
+      return size.width / size.height;
+    }
+    return null;
+  }
+
   double at(double dp) {
     final sw = min;
     final ratio = sw <= boundary ? (sw / baseline) : maxRatio;
