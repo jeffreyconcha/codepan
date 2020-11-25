@@ -89,7 +89,8 @@ abstract class StateWithPermission<T extends StatefulWidget> extends State<T>
         }
       }
     }
-    _isGranted = !hasDenied && !_hasPermanentlyDenied;
-    onPermissionResult(_isGranted);
+    if (!_hasPermanentlyDenied) {
+      onPermissionResult(!hasDenied);
+    }
   }
 }
