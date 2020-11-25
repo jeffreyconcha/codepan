@@ -3,8 +3,10 @@ import 'dart:isolate';
 import 'dart:ui';
 import 'package:codepan/models/date_time.dart';
 import 'package:connectivity/connectivity.dart';
+import 'package:exif/exif.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:image/image.dart' as img;
 import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:time_ago_provider/time_ago_provider.dart' as ago;
@@ -266,5 +268,40 @@ class PanUtils {
       return '${percentage.round()}%';
     }
     return '0%';
+  }
+
+  static Future<File> fixExifRotation(File file) async {
+    List<int> imageBytes = await file.readAsBytes();
+    final original = img.decodeImage(imageBytes);
+    final height = original.height;
+    final width = original.width;
+    if (height < width) {
+      final exifData = await readExifFromBytes(imageBytes);
+      final orientation = exifData['Image Orientation'].values.last;
+      img.Image fixedImage;
+      print(exifData['Image Orientation'].values);
+      switch (orientation) {
+        case 3:
+        case 4:
+          fixedImage = img.copyRotate(original, -180);
+          break;
+        case 5:
+        case 6:
+          fixedImage = img.copyRotate(original, -90);
+          break;
+        case 7:
+        case 8:
+          fixedImage = img.copyRotate(original, -270);
+          break;
+        default:
+          fixedImage = img.copyRotate(original, 0);
+          break;
+      }
+      final fixedFile = await file.writeAsBytes(
+        img.encodeJpg(fixedImage),
+      );
+      return fixedFile;
+    }
+    return file;
   }
 }
