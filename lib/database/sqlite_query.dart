@@ -117,20 +117,28 @@ class SQLiteQuery with QueryProperties {
     _joinList.add(query);
   }
 
-  void joinAll({
-    @required TableSchema referencesOf,
+  void joinAllReferencesOf({
+    @required TableSchema schema,
     JoinType type = JoinType.INNER,
   }) {
-    final main = referencesOf.table;
-    final schemas = referencesOf.references;
-    if (schemas?.isNotEmpty ?? false) {
-      for (final schema in schemas) {
+    joinAll(
+      references: schema.references,
+      type: type,
+    );
+  }
+
+  void joinAll({
+    @required List<TableSchema> references,
+    JoinType type = JoinType.INNER,
+  }) {
+    if (references?.isNotEmpty ?? false) {
+      for (final reference in references) {
         join(
           query: SQLiteQuery(
-            select: schema.fields,
-            from: schema.table,
+            select: reference.fields,
+            from: reference.table,
             where: {
-              'id': main.field(schema.asForeignKey),
+              'id': table.field(reference.asForeignKey),
             },
           ),
           type: type,
