@@ -1,11 +1,10 @@
-import 'package:codepan/database/entities/condition.dart';
-import 'package:codepan/database/entities/field.dart';
-import 'package:codepan/database/entities/field_value.dart';
-import 'package:codepan/database/entities/sqlite_entity.dart';
 import 'package:codepan/database/mixin/query_properties.dart';
+import 'package:codepan/database/models/condition.dart';
+import 'package:codepan/database/models/field.dart';
+import 'package:codepan/database/models/field_value.dart';
+import 'package:codepan/database/models/sqlite_model.dart';
 import 'package:codepan/database/sqlite_exception.dart';
 import 'package:codepan/database/sqlite_query.dart';
-import 'package:codepan/models/entity.dart';
 
 class SQLiteStatement with QueryProperties {
   static const String id = 'id';
@@ -217,7 +216,7 @@ class SQLiteStatement with QueryProperties {
     }
   }
 
-  void add(SQLiteEntity entity) {
+  void add(SQLiteModel entity) {
     if (entity != null) {
       if (entity is FieldValue) {
         addFieldValue(entity);

@@ -28,6 +28,7 @@ dependencies:
   app_settings: ^4.0.4
   exif: ^1.0.3
   image: ^2.1.19
+  inflection2: ^0.4.3
 
 dev_dependencies:
   flutter_test:

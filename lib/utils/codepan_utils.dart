@@ -231,7 +231,7 @@ class PanUtils {
     return false;
   }
 
-  static String camelToUnderscore(String text) {
+  static String camelToSnake(String text) {
     final buffer = StringBuffer();
     text?.runes?.forEach((code) {
       final character = String.fromCharCode(code);

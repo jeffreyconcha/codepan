@@ -1,11 +1,16 @@
+import 'package:codepan/database/models/field.dart';
 import 'package:codepan/database/schema.dart';
 import 'package:codepan/database/sqlite_query.dart';
+import 'package:codepan/database/sqlite_statement.dart';
+import 'package:codepan/extensions/string_ext.dart';
 import 'package:flutter/foundation.dart';
-import 'field.dart';
+import 'package:inflection2/inflection2.dart';
 
 class Table<T> {
   final String name;
   final T entity;
+
+  bool get hasEntity => entity != null;
 
   String get alias {
     if (name != null) {
@@ -54,4 +59,25 @@ class Table<T> {
   }
 
   Table(this.name, [this.entity]);
+
+  String asForeignKey() {
+    if (entity != null) {
+      final buffer = StringBuffer();
+      final name = entity.toString().split('.').last;
+      final snake = SNAKE_CASE.convert(name);
+      final words = snake.split('_');
+      for (int i = 0; i < words.length; i++) {
+        final word = words[i];
+        if (i < words.length - 1) {
+          buffer.write('${word.capitalize()}');
+        } else {
+          final singular = SINGULAR.convert(word);
+          buffer.write('${singular.capitalize()}');
+          buffer.write('${SQLiteStatement.id.capitalize()}');
+        }
+      }
+      return buffer.toString().decapitalize();
+    }
+    return null;
+  }
 }

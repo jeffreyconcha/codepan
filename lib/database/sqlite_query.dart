@@ -1,8 +1,8 @@
-import 'package:codepan/database/entities/table.dart' as tb;
 import 'package:codepan/database/mixin/query_properties.dart';
+import 'package:codepan/database/models/field.dart';
+import 'package:codepan/database/models/table.dart' as tb;
+import 'package:codepan/database/schema.dart';
 import 'package:flutter/cupertino.dart';
-
-import 'entities/field.dart';
 
 enum JoinType {
   LEFT,
@@ -52,6 +52,7 @@ class SQLiteQuery with QueryProperties {
     List<dynamic> orderBy,
     List<dynamic> groupBy,
     bool randomOrder = false,
+    bool joinAllReference = false,
     int limit,
   }) {
     if (from is tb.Table) {
@@ -114,6 +115,28 @@ class SQLiteQuery with QueryProperties {
     query._setJoinType(type);
     _joinList ??= [];
     _joinList.add(query);
+  }
+
+  void joinAll({
+    @required TableSchema referencesOf,
+    JoinType type = JoinType.INNER,
+  }) {
+    final main = referencesOf.table;
+    final schemas = referencesOf.references;
+    if (schemas?.isNotEmpty ?? false) {
+      for (final schema in schemas) {
+        join(
+          query: SQLiteQuery(
+            select: schema.fields,
+            from: schema.table,
+            where: {
+              'id': main.field(schema.asForeignKey),
+            },
+          ),
+          type: type,
+        );
+      }
+    }
   }
 
   Field field(String name) {

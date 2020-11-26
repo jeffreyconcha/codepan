@@ -84,14 +84,16 @@ class _TextPlaceholderState extends State<TextPlaceholder>
                       children: <Widget>[
                         PlaceholderHandler(
                           condition: widget.withTitle,
-                          child: Container(
-                            width: constraints.maxWidth * 0.75,
-                            height: widget.titleHeight ?? d.at(25),
-                            color: _tween.evaluate(animation),
-                            margin: EdgeInsets.symmetric(
-                              vertical: d.at(10),
-                            ),
-                          ),
+                          childBuilder: (context) {
+                            return Container(
+                              width: constraints.maxWidth * 0.75,
+                              height: widget.titleHeight ?? d.at(25),
+                              color: _tween.evaluate(animation),
+                              margin: EdgeInsets.symmetric(
+                                vertical: d.at(10),
+                              ),
+                            );
+                          },
                         ),
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,

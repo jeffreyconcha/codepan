@@ -104,22 +104,26 @@ class _PanAudioPlayerState extends State<PanAudioPlayer> {
             width: d.at(50),
             height: d.at(50),
             condition: !_isLoading,
-            child: PanButton(
-              radius: d.at(100),
-              width: d.at(50),
-              height: d.at(50),
-              child: Icon(
-                _isPlaying ? Icons.pause : Icons.play_arrow,
-                size: d.at(40),
-                color: PanColors.text,
-              ),
-              onPressed: play,
-            ),
-            placeholder: LoadingIndicator(
-              width: d.at(25),
-              height: d.at(25),
-              color: widget.color,
-            ),
+            childBuilder: (context) {
+              return PanButton(
+                radius: d.at(100),
+                width: d.at(50),
+                height: d.at(50),
+                child: Icon(
+                  _isPlaying ? Icons.pause : Icons.play_arrow,
+                  size: d.at(40),
+                  color: PanColors.text,
+                ),
+                onPressed: play,
+              );
+            },
+            placeholderBuilder: (context) {
+              return LoadingIndicator(
+                width: d.at(25),
+                height: d.at(25),
+                color: widget.color,
+              );
+            },
           ),
           Expanded(
             child: Padding(

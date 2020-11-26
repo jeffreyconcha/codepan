@@ -147,38 +147,46 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
               Center(
                 child: PlaceholderHandler(
                   condition: _isInitialized,
-                  child: Stack(
-                    children: <Widget>[
-                      Center(
-                        child: AspectRatio(
-                          aspectRatio: _aspectRatio,
-                          child: VideoPlayer(_controller),
+                  childBuilder: (context) {
+                    return Stack(
+                      children: <Widget>[
+                        Center(
+                          child: AspectRatio(
+                            aspectRatio: _aspectRatio,
+                            child: VideoPlayer(_controller),
+                          ),
                         ),
-                      ),
-                      PlaceholderHandler(
-                        condition: _isBuffering,
-                        child: LoadingIndicator(
-                          color: widget.color,
+                        PlaceholderHandler(
+                          condition: _isBuffering,
+                          childBuilder: (context) {
+                            return LoadingIndicator(
+                              color: widget.color,
+                            );
+                          },
                         ),
-                      ),
-                    ],
-                  ),
-                  placeholder: Stack(
-                    children: [
-                      CachedNetworkImage(
-                        width: width,
-                        height: height,
-                        imageUrl: _thumbnailUrl ?? '',
-                        fit: BoxFit.contain,
-                      ),
-                      PlaceholderHandler(
-                        condition: _isLoading,
-                        child: LoadingIndicator(
-                          color: widget.color,
+                      ],
+                    );
+                  },
+                  placeholderBuilder: (context) {
+                    return Stack(
+                      children: [
+                        CachedNetworkImage(
+                          width: width,
+                          height: height,
+                          imageUrl: _thumbnailUrl ?? '',
+                          fit: BoxFit.contain,
                         ),
-                      ),
-                    ],
-                  ),
+                        PlaceholderHandler(
+                          condition: _isLoading,
+                          childBuilder: (context) {
+                            return LoadingIndicator(
+                              color: widget.color,
+                            );
+                          },
+                        ),
+                      ],
+                    );
+                  },
                 ),
               ),
               SizedBox(
@@ -191,19 +199,21 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
                     child: PlaceholderHandler(
                       color: Colors.black.withOpacity(0.2),
                       condition: _isControllerVisible,
-                      child: VideoController(
-                        color: widget.color,
-                        isInitialized: _isInitialized,
-                        isLoading: _isLoading,
-                        isFullscreen: _isFullscreen,
-                        isPlaying: _isPlaying,
-                        current: _current,
-                        max: _max,
-                        buffered: _showBuffer ? _buffered : 0,
-                        onPlay: _onPlay,
-                        onFullScreen: _onFullScreen,
-                        onSeekProgress: _onSeekProgress,
-                      ),
+                      childBuilder: (context) {
+                        return VideoController(
+                          color: widget.color,
+                          isInitialized: _isInitialized,
+                          isLoading: _isLoading,
+                          isFullscreen: _isFullscreen,
+                          isPlaying: _isPlaying,
+                          current: _current,
+                          max: _max,
+                          buffered: _showBuffer ? _buffered : 0,
+                          onPlay: _onPlay,
+                          onFullScreen: _onFullScreen,
+                          onSeekProgress: _onSeekProgress,
+                        );
+                      },
                     ),
                   ),
                   onTap: () {

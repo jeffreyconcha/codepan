@@ -33,10 +33,12 @@ class PanHero extends StatelessWidget {
         color: t.backgroundColor,
         child: PlaceholderHandler(
           condition: !flexible,
-          child: child,
-          placeholder: SingleChildScrollView(
-            child: child,
-          ),
+          childBuilder: (context) => child,
+          placeholderBuilder: (context) {
+            return SingleChildScrollView(
+              child: child,
+            );
+          },
         ),
       ),
     );

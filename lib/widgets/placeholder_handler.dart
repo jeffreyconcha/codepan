@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 
-typedef ChildBuilder = Widget Function(BuildContext context);
+typedef WidgetBuilder = Widget Function(BuildContext context);
 
 class PlaceholderHandler extends StatelessWidget {
   final Widget child, placeholder;
   final EdgeInsets margin, padding;
   final double width, height;
-  final ChildBuilder builder;
+  final WidgetBuilder childBuilder, placeholderBuilder;
   final Alignment alignment;
   final bool condition;
   final Color color;
@@ -14,8 +14,9 @@ class PlaceholderHandler extends StatelessWidget {
   const PlaceholderHandler({
     Key key,
     this.child,
-    this.builder,
     this.placeholder,
+    this.childBuilder,
+    this.placeholderBuilder,
     this.condition = false,
     this.margin,
     this.padding,
@@ -34,7 +35,9 @@ class PlaceholderHandler extends StatelessWidget {
       margin: margin,
       padding: padding,
       alignment: alignment,
-      child: condition ? child ?? builder?.call(context) : placeholder,
+      child: condition
+          ? child ?? childBuilder?.call(context)
+          : placeholder ?? placeholderBuilder?.call(context),
     );
   }
 }

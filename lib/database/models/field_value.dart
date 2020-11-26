@@ -1,4 +1,4 @@
-import 'package:codepan/database/entities/sqlite_entity.dart';
+import 'package:codepan/database/models/sqlite_model.dart';
 import 'package:codepan/database/sqlite_statement.dart';
 
 enum Value {
@@ -6,7 +6,7 @@ enum Value {
   timeNow,
 }
 
-class FieldValue extends SQLiteEntity {
+class FieldValue extends SQLiteModel {
   final dynamic _value;
 
   String get value {

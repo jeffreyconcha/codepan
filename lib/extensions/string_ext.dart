@@ -4,6 +4,10 @@ extension StringUtils on String {
     return '${this[0].toUpperCase()}${this.substring(1)}';
   }
 
+  String decapitalize() {
+    return '${this[0].toLowerCase()}${this.substring(1)}';
+  }
+
   String nullify() {
     if (this != null && (this == 'null' || this.isEmpty)) {
       return null;

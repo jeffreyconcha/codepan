@@ -1,5 +1,5 @@
-import 'package:codepan/database/entities/condition.dart';
-import 'package:codepan/database/entities/field.dart';
+import 'package:codepan/database/models/condition.dart';
+import 'package:codepan/database/models/field.dart';
 
 mixin QueryProperties {
   List<Condition> _conditionList;

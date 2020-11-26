@@ -1,5 +1,5 @@
-import 'package:codepan/database/entities/field.dart';
-import 'package:codepan/database/entities/sqlite_entity.dart';
+import 'package:codepan/database/models/field.dart';
+import 'package:codepan/database/models/sqlite_model.dart';
 import 'package:codepan/database/sqlite_exception.dart';
 import 'package:codepan/database/sqlite_query.dart';
 import 'package:codepan/database/sqlite_statement.dart';
@@ -26,7 +26,7 @@ enum Scan {
   between,
 }
 
-class Condition extends SQLiteEntity {
+class Condition extends SQLiteModel {
   dynamic _value, _start, _end;
   List<Condition> orList;
   List<Condition> andList;

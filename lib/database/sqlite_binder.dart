@@ -1,4 +1,4 @@
-import 'package:codepan/database/entities/field.dart';
+import 'package:codepan/database/models/field.dart';
 import 'package:codepan/database/schema.dart';
 import 'package:codepan/database/sqlite_adapter.dart';
 import 'package:codepan/database/sqlite_query.dart';

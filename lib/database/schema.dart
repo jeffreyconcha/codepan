@@ -1,6 +1,6 @@
-import 'package:codepan/database/entities/field.dart';
-import 'package:codepan/utils/codepan_utils.dart';
-import 'entities/table.dart';
+import 'package:codepan/database/models/field.dart';
+import 'package:codepan/database/models/table.dart';
+import 'package:inflection2/inflection2.dart';
 
 abstract class DatabaseSchema<T> {
   static const String tableSuffix = '_tb';
@@ -80,7 +80,7 @@ abstract class DatabaseSchema<T> {
   String _name(T entity, String suffix) {
     if (entity != null) {
       final value = entity.toString().split('.').last;
-      return '${PanUtils.camelToUnderscore(value)}$suffix';
+      return '${SNAKE_CASE.convert(value)}$suffix';
     }
     return null;
   }
@@ -113,4 +113,6 @@ class TableSchema<T> {
   List<String> get uniqueGroup => schema?.uniqueGroup(entity);
 
   List<TableSchema> get references => schema?.references(entity);
+
+  String get asForeignKey => table?.asForeignKey();
 }
