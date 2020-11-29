@@ -11,15 +11,15 @@ import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:time_ago_provider/time_ago_provider.dart' as ago;
 
-const urlPattern =
+const _urlPattern =
     r'(https?|http)://([-A-Z0-9.]+)(/[-A-Z0-9+&@#/%=~_|!:,.;]*)?(\?[A-Z0-9+&@#/%=~_|!:‌​,.;]*)?';
-const trueValues = <String>[
+const _true = <String>[
   'true',
   'yes',
   'on',
   '1',
 ];
-const falseValues = <String>[
+const _false = <String>[
   'false',
   'no',
   'off',
@@ -193,7 +193,7 @@ class PanUtils {
 
   static bool isValidUrl(String url) {
     final match = RegExp(
-      urlPattern,
+      _urlPattern,
       caseSensitive: false,
     ).firstMatch(url);
     return match != null;
@@ -222,9 +222,9 @@ class PanUtils {
       final binary = parseInt(input);
       return binary == 1;
     } else if (input is String) {
-      if (trueValues.contains(input)) {
+      if (_true.contains(input)) {
         return true;
-      } else if (falseValues.contains(input)) {
+      } else if (_false.contains(input)) {
         return false;
       }
     }
