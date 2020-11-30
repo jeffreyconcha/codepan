@@ -57,10 +57,23 @@ abstract class DatabaseSchema<T> {
     for (final field in fields(entity)) {
       if (field.isForeignKey) {
         final table = field.table;
-        references.add(of(table.entity));
+        final schema = of(table.entity);
+        if (!references.contains(schema)) {
+          references.add(schema);
+        }
       }
     }
     return references;
+  }
+
+  List<Field> foreignKeys(T entity) {
+    final foreignKeys = <Field>[];
+    for (final field in fields(entity)) {
+      if (field.isForeignKey) {
+        foreignKeys.add(field);
+      }
+    }
+    return foreignKeys;
   }
 
   String tableName(T entity) => _name(entity, tableSuffix);
@@ -87,32 +100,34 @@ abstract class DatabaseSchema<T> {
 }
 
 class TableSchema<T> {
+  final DatabaseSchema databaseSchema;
   final T entity;
-  final DatabaseSchema schema;
 
-  const TableSchema(this.schema, this.entity);
+  const TableSchema(this.databaseSchema, this.entity);
 
-  List<Field> get fields => schema?.fields(entity);
+  List<Field> get fields => databaseSchema?.fields(entity);
 
-  List<Field> get indices => schema?.indices(entity);
+  List<Field> get indices => databaseSchema?.indices(entity);
 
-  List<Field> get triggers => schema?.triggers(entity);
+  List<Field> get triggers => databaseSchema?.triggers(entity);
 
-  Table get table => schema?.at(entity);
+  Table get table => databaseSchema?.at(entity);
 
   String get alias => table?.alias;
 
-  String get tableName => schema?.tableName(entity);
+  String get tableName => databaseSchema?.tableName(entity);
 
-  String get indexName => schema?.indexName(entity);
+  String get indexName => databaseSchema?.indexName(entity);
 
-  String get triggerName => schema?.triggerName(entity);
+  String get triggerName => databaseSchema?.triggerName(entity);
 
-  String get unique => schema?.unique(entity);
+  String get unique => databaseSchema?.unique(entity);
 
-  List<String> get uniqueGroup => schema?.uniqueGroup(entity);
+  List<String> get uniqueGroup => databaseSchema?.uniqueGroup(entity);
 
-  List<TableSchema> get references => schema?.references(entity);
+  List<TableSchema> get references => databaseSchema?.references(entity);
+
+  List<Field> get foreignKeys => databaseSchema?.foreignKeys(entity);
 
   String get asForeignKey => table?.asForeignKey();
 }

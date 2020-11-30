@@ -1,6 +1,5 @@
 import 'package:codepan/database/models/sqlite_model.dart';
 import 'package:codepan/database/models/table.dart';
-import 'package:codepan/database/sqlite_exception.dart';
 import 'package:codepan/database/sqlite_query.dart';
 import 'package:codepan/database/sqlite_statement.dart';
 import 'package:flutter/foundation.dart';
@@ -117,14 +116,10 @@ class Field extends SQLiteModel {
     @required Table reference,
     bool inUniqueGroup = false,
   }) : super(field) {
-    if (field == reference.asForeignKey()) {
-      this._constraint = Constraint.foreignKey;
-      this._type = DataType.integer;
-      this._table = reference;
-      this._inUniqueGroup = inUniqueGroup;
-    } else {
-      throw SQLiteException(SQLiteException.unknownEntity);
-    }
+    this._constraint = Constraint.foreignKey;
+    this._type = DataType.integer;
+    this._table = reference;
+    this._inUniqueGroup = inUniqueGroup;
   }
 
   Field.asUnique(

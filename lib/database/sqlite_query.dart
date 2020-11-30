@@ -19,6 +19,7 @@ class SQLiteQuery with QueryProperties {
   List<SQLiteQuery> _joinList;
   List<Field> _orderList;
   List<Field> _groupList;
+  TableSchema _schema;
   bool _randomOrder;
   tb.Table _table;
   JoinType _type;
@@ -27,6 +28,8 @@ class SQLiteQuery with QueryProperties {
   JoinType get type => _type;
 
   tb.Table get table => _table;
+
+  TableSchema get schema => _schema;
 
   List<SQLiteQuery> get joinList => _joinList;
 
@@ -44,7 +47,7 @@ class SQLiteQuery with QueryProperties {
 
   bool get hasLimit => _limit != null && _limit != 0;
 
-  /// table - Can only be a type String or Table
+  /// table - Can only be a type of String, Table or TableSchema
   SQLiteQuery({
     @required List<dynamic> select,
     @required dynamic from,
@@ -52,13 +55,15 @@ class SQLiteQuery with QueryProperties {
     List<dynamic> orderBy,
     List<dynamic> groupBy,
     bool randomOrder = false,
-    bool joinAllReference = false,
     int limit,
   }) {
     if (from is tb.Table) {
       this._table = from;
     } else if (from is String) {
       this._table = tb.Table(from);
+    } else if (from is TableSchema) {
+      this._table = from.table;
+      this._schema = from;
     }
     addFields(select, alias: _table.alias);
     addConditions(where, alias: _table.alias);
@@ -66,6 +71,25 @@ class SQLiteQuery with QueryProperties {
     _addGroups(groupBy, alias: _table.alias);
     this._randomOrder = randomOrder;
     this._limit = limit;
+  }
+
+  factory SQLiteQuery.all({
+    @required TableSchema schema,
+    dynamic where,
+    List<dynamic> orderBy,
+    List<dynamic> groupBy,
+    bool randomOrder = false,
+    int limit,
+  }) {
+    return SQLiteQuery(
+      select: schema.fields,
+      from: schema,
+      where: where,
+      orderBy: orderBy,
+      groupBy: groupBy,
+      randomOrder: randomOrder,
+      limit: limit,
+    );
   }
 
   void _addOrders(List<dynamic> input, {String alias}) {
@@ -117,32 +141,38 @@ class SQLiteQuery with QueryProperties {
     _joinList.add(query);
   }
 
-  void joinAllReferencesOf({
-    @required TableSchema schema,
+  void joinAllForeignKeys({
     JoinType type = JoinType.INNER,
   }) {
-    joinAll(
-      references: schema.references,
-      type: type,
-    );
+    if (schema != null) {
+      joinAll(
+        foreignKeys: schema.foreignKeys,
+        type: type,
+      );
+    }
   }
 
   void joinAll({
-    @required List<TableSchema> references,
+    @required List<Field> foreignKeys,
     JoinType type = JoinType.INNER,
   }) {
-    if (references?.isNotEmpty ?? false) {
-      for (final reference in references) {
-        join(
-          query: SQLiteQuery(
-            select: reference.fields,
-            from: reference.table,
-            where: {
-              'id': table.field(reference.asForeignKey),
-            },
-          ),
-          type: type,
-        );
+    if (foreignKeys?.isNotEmpty ?? false) {
+      if (schema != null) {
+        final all = schema.databaseSchema;
+        for (final field in foreignKeys) {
+          final table = field.table;
+          final schema = all.of(table.entity);
+          join(
+            query: SQLiteQuery(
+              select: schema.fields,
+              from: field.table,
+              where: {
+                'id': field.field,
+              },
+            ),
+            type: type,
+          );
+        }
       }
     }
   }
