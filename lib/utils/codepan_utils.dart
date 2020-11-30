@@ -1,7 +1,6 @@
 import 'dart:io';
 import 'dart:isolate';
 import 'dart:ui';
-
 import 'package:codepan/models/date_time.dart';
 import 'package:connectivity/connectivity.dart';
 import 'package:flutter/foundation.dart';
@@ -272,5 +271,9 @@ class PanUtils {
   static bool isEnum(dynamic data) {
     final array = data.toString().split('.');
     return array.length == 2 && array[0] == data.runtimeType.toString();
+  }
+
+  static String enumValue(dynamic data) {
+    return data.toString().split('.').last;
   }
 }

@@ -1,4 +1,6 @@
 // ignore: sdk_version_extension_methods
+import 'package:inflection2/inflection2.dart';
+
 extension StringUtils on String {
   String capitalize() {
     return '${this[0].toUpperCase()}${this.substring(1)}';
@@ -39,5 +41,9 @@ extension StringUtils on String {
       }
     }
     return buffer.toString();
+  }
+
+  String toSnake() {
+    return SNAKE_CASE.convert(this);
   }
 }

@@ -165,9 +165,9 @@ class SQLiteQuery with QueryProperties {
           join(
             query: SQLiteQuery(
               select: schema.fields,
-              from: field.table,
+              from: table,
               where: {
-                'id': field.field,
+                'id': _table.field(field.field),
               },
             ),
             type: type,

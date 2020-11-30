@@ -1,4 +1,6 @@
+import 'package:codepan/extensions/dynamic_ext.dart';
 import 'package:codepan/utils/codepan_utils.dart';
+import 'package:flutter/foundation.dart';
 import 'package:html_unescape/html_unescape.dart';
 
 const prefixKey = '\$prefix';
@@ -17,6 +19,19 @@ extension MapUtils on Map<String, dynamic> {
   bool getBool(String key) {
     final value = this[getKey(key)];
     return PanUtils.parseBool(value);
+  }
+
+  T getEnum<T>({
+    @required String key,
+    @required List<T> values,
+  }) {
+    final value = this[getKey(key)];
+    for (final element in values) {
+      if (value == element.enumValue()) {
+        return element;
+      }
+    }
+    return null;
   }
 
   dynamic get(String key) {

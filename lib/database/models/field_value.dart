@@ -1,5 +1,7 @@
 import 'package:codepan/database/models/sqlite_model.dart';
 import 'package:codepan/database/sqlite_statement.dart';
+import 'package:codepan/utils/codepan_utils.dart';
+import 'package:inflection2/inflection2.dart';
 
 enum Value {
   dateNow,
@@ -23,6 +25,9 @@ class FieldValue extends SQLiteModel {
         } else {
           return 'time(\'now\', \'localtime\')';
         }
+      } else if (PanUtils.isEnum(_value)) {
+        final value = PanUtils.enumValue(_value);
+        return SNAKE_CASE.convert(value);
       } else {
         return _value.toString();
       }
