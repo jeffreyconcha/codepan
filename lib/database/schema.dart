@@ -1,6 +1,7 @@
 import 'package:codepan/database/models/field.dart';
 import 'package:codepan/database/models/table.dart';
-import 'package:inflection2/inflection2.dart';
+import 'package:codepan/extensions/dynamic_ext.dart';
+import 'package:codepan/extensions/string_ext.dart';
 
 abstract class DatabaseSchema<T> {
   static const String tableSuffix = '_tb';
@@ -92,8 +93,7 @@ abstract class DatabaseSchema<T> {
 
   String _name(T entity, String suffix) {
     if (entity != null) {
-      final value = entity.toString().split('.').last;
-      return '${SNAKE_CASE.convert(value)}$suffix';
+      return '${entity.enumValue().toSnake()}$suffix';
     }
     return null;
   }
