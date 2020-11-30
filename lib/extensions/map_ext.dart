@@ -62,6 +62,13 @@ extension MapUtils on Map<String, dynamic> {
     this[prefixKey] = prefix;
   }
 
+  void addPrefix(dynamic additional) {
+    if (this.containsKey(prefixKey) && additional != null) {
+      final prefix = this[prefixKey];
+      this[prefixKey] = '$prefix${additional.toString()}';
+    }
+  }
+
   String getKey(String key) {
     if (this.containsKey(prefixKey)) {
       final prefix = this[prefixKey];
