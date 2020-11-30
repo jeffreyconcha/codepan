@@ -10,6 +10,7 @@ const boolPrefixes = <String>[
   'has',
   'with',
   'did',
+  'can',
 ];
 
 extension MapUtils on Map<String, dynamic> {
