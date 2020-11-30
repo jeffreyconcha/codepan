@@ -58,8 +58,12 @@ extension MapUtils on Map<String, dynamic> {
     return this.containsKey(getKey(key));
   }
 
-  void setPrefix(String prefix) {
-    this[prefixKey] = prefix;
+  void setPrefix(String prefix, {int joinIndex}) {
+    if (joinIndex != null && joinIndex != 0) {
+      this[prefixKey] = '$prefix.$joinIndex';
+    } else {
+      this[prefixKey] = prefix;
+    }
   }
 
   void addPrefix(dynamic additional) {
