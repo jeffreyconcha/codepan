@@ -63,7 +63,10 @@ mixin QueryProperties {
     return buffer.toString();
   }
 
-  void addField(Field f, {Table table}) {
+  void addField(
+    Field f, {
+    Table table,
+  }) {
     if (f != null) {
       f.setTable(table);
       _fieldList ??= [];
@@ -71,7 +74,10 @@ mixin QueryProperties {
     }
   }
 
-  void addFields(List<dynamic> list, {Table table}) {
+  void addFields(
+    List<dynamic> list, {
+    Table table,
+  }) {
     list?.forEach((field) {
       if (field is Field) {
         addField(field, table: table);
@@ -82,7 +88,10 @@ mixin QueryProperties {
     });
   }
 
-  void addCondition(Condition c, {Table table}) {
+  void addCondition(
+    Condition c, {
+    Table table,
+  }) {
     if (c != null) {
       if (c.isValid) {
         c.setTable(table);
@@ -95,7 +104,10 @@ mixin QueryProperties {
     }
   }
 
-  void addConditions(dynamic conditions, {Table table}) {
+  void addConditions(
+    dynamic conditions, {
+    Table table,
+  }) {
     if (conditions is Map<String, dynamic>) {
       conditions?.forEach((key, value) {
         final c = Condition(key, value);
