@@ -27,7 +27,7 @@ class Field extends SQLiteModel {
   Constraint _constraint;
   DataType _type;
   dynamic _value;
-  Table _table;
+  Table _reference;
   Order _order;
 
   Constraint get constraint => _constraint;
@@ -36,7 +36,7 @@ class Field extends SQLiteModel {
 
   DataType get type => _type;
 
-  Table get table => _table;
+  Table get reference => _reference;
 
   Order get order => _order;
 
@@ -118,7 +118,7 @@ class Field extends SQLiteModel {
   }) : super(field) {
     this._constraint = Constraint.foreignKey;
     this._type = DataType.integer;
-    this._table = reference;
+    this._reference = reference;
     this._inUniqueGroup = inUniqueGroup;
   }
 
@@ -163,7 +163,7 @@ class Field extends SQLiteModel {
     this._inUniqueGroup = true;
     if (reference != null) {
       this._constraint = Constraint.foreignKey;
-      this._table = reference;
+      this._reference = reference;
     }
   }
 
@@ -200,7 +200,8 @@ class Field extends SQLiteModel {
             buffer.write(' PRIMARY KEY NOT NULL');
             break;
           case Constraint.foreignKey:
-            buffer.write(' REFERENCES ${table.name}(${SQLiteStatement.id})');
+            buffer
+                .write(' REFERENCES ${reference.name}(${SQLiteStatement.id})');
             break;
           case Constraint.unique:
             buffer.write(' UNIQUE');

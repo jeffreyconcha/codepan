@@ -9,6 +9,7 @@ import 'package:inflection2/inflection2.dart';
 class Table<T> {
   final String name;
   final T entity;
+  int joinIndex;
 
   bool get hasEntity => entity != null;
 
@@ -33,6 +34,9 @@ class Table<T> {
           buffer.write(result);
         }
       }
+      if (joinIndex != null) {
+        buffer.write('$joinIndex');
+      }
       return buffer.toString();
     }
     return null;
@@ -43,7 +47,7 @@ class Table<T> {
   }
 
   Field field(String name) {
-    return Field(name)..setAlias(alias);
+    return Field(name)..setTable(this);
   }
 
   Field order({
@@ -55,10 +59,14 @@ class Table<T> {
       field: field,
       order: order,
       collate: collate,
-    )..setAlias(alias);
+    )..setTable(this);
   }
 
   Table(this.name, [this.entity]);
+
+  void setJoinIndex(int joinIndex) {
+    this.joinIndex = joinIndex;
+  }
 
   String asForeignKey() {
     if (entity != null) {

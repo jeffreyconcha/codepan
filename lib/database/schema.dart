@@ -57,7 +57,7 @@ abstract class DatabaseSchema<T> {
     final references = <TableSchema>[];
     for (final field in fields(entity)) {
       if (field.isForeignKey) {
-        final table = field.table;
+        final table = field.reference;
         final schema = of(table.entity);
         if (!references.contains(schema)) {
           references.add(schema);

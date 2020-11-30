@@ -16,6 +16,7 @@ enum Order {
 }
 
 class SQLiteQuery with QueryProperties {
+  Map<String, int> _tableMap;
   List<SQLiteQuery> _joinList;
   List<Field> _orderList;
   List<Field> _groupList;
@@ -65,10 +66,10 @@ class SQLiteQuery with QueryProperties {
       this._table = from.table;
       this._schema = from;
     }
-    addFields(select, alias: _table.alias);
-    addConditions(where, alias: _table.alias);
-    _addOrders(orderBy, alias: _table.alias);
-    _addGroups(groupBy, alias: _table.alias);
+    addFields(select, table: _table);
+    addConditions(where, table: _table);
+    _addOrders(orderBy, table: _table);
+    _addGroups(groupBy, table: _table);
     this._randomOrder = randomOrder;
     this._limit = limit;
   }
@@ -92,38 +93,38 @@ class SQLiteQuery with QueryProperties {
     );
   }
 
-  void _addOrders(List<dynamic> input, {String alias}) {
+  void _addOrders(List<dynamic> input, {tb.Table table}) {
     input?.forEach((field) {
       if (field is Field) {
-        _addOrder(field, alias: alias);
+        _addOrder(field, table: table);
       } else if (field is String) {
         final f = Field.asOrder(field: field);
-        _addOrder(f, alias: alias);
+        _addOrder(f, table: table);
       }
     });
   }
 
-  void _addOrder(Field f, {String alias}) {
+  void _addOrder(Field f, {tb.Table table}) {
     if (!f.hasAlias) {
-      f.setAlias(alias);
+      f.setTable(table);
     }
     _orderList ??= [];
     _orderList.add(f);
   }
 
-  void _addGroups(List<dynamic> input, {String alias}) {
+  void _addGroups(List<dynamic> input, {tb.Table table}) {
     input?.forEach((field) {
       if (field is Field) {
-        _addGroup(field, alias: alias);
+        _addGroup(field, table: table);
       } else if (field is String) {
         final f = Field(field);
-        _addGroup(f, alias: alias);
+        _addGroup(f, table: table);
       }
     });
   }
 
-  void _addGroup(Field f, {String alias}) {
-    f.setAlias(alias);
+  void _addGroup(Field f, {tb.Table table}) {
+    f.setTable(table);
     _groupList ??= [];
     _groupList.add(f);
   }
@@ -138,6 +139,16 @@ class SQLiteQuery with QueryProperties {
   }) {
     query._setJoinType(type);
     _joinList ??= [];
+    final table = query.table;
+    if (tableExists(table)) {
+      _tableMap ??= {};
+      final index = _tableMap[table.name];
+      if (index != null) {
+        table.setJoinIndex(index + 1);
+      } else {
+        table.setJoinIndex(1);
+      }
+    }
     _joinList.add(query);
   }
 
@@ -160,7 +171,7 @@ class SQLiteQuery with QueryProperties {
       if (schema != null) {
         final all = schema.databaseSchema;
         for (final field in foreignKeys) {
-          final table = field.table;
+          final table = field.reference;
           final schema = all.of(table.entity);
           join(
             query: SQLiteQuery(
@@ -175,6 +186,15 @@ class SQLiteQuery with QueryProperties {
         }
       }
     }
+  }
+
+  bool tableExists(tb.Table table) {
+    for (final query in _joinList) {
+      if (table.name == query.table.name) {
+        return true;
+      }
+    }
+    return false;
   }
 
   Field field(String name) {

@@ -1,5 +1,6 @@
 import 'package:codepan/database/models/condition.dart';
 import 'package:codepan/database/models/field.dart';
+import 'package:codepan/database/models/table.dart';
 
 mixin QueryProperties {
   List<Condition> _conditionList;
@@ -62,29 +63,29 @@ mixin QueryProperties {
     return buffer.toString();
   }
 
-  void addField(Field f, {String alias}) {
+  void addField(Field f, {Table table}) {
     if (f != null) {
-      f.setAlias(alias);
+      f.setTable(table);
       _fieldList ??= [];
       _fieldList.add(f);
     }
   }
 
-  void addFields(List<dynamic> list, {String alias}) {
+  void addFields(List<dynamic> list, {Table table}) {
     list?.forEach((field) {
       if (field is Field) {
-        addField(field, alias: alias);
+        addField(field, table: table);
       } else if (field is String) {
         final f = Field(field);
-        addField(f, alias: alias);
+        addField(f, table: table);
       }
     });
   }
 
-  void addCondition(Condition c, {String alias}) {
+  void addCondition(Condition c, {Table table}) {
     if (c != null) {
       if (c.isValid) {
-        c.setAlias(alias);
+        c.setTable(table);
         _conditionList ??= [];
         _conditionList.add(c);
       } else if (c.hasOrList) {
@@ -94,15 +95,15 @@ mixin QueryProperties {
     }
   }
 
-  void addConditions(dynamic conditions, {String alias}) {
+  void addConditions(dynamic conditions, {Table table}) {
     if (conditions is Map<String, dynamic>) {
       conditions?.forEach((key, value) {
         final c = Condition(key, value);
-        addCondition(c, alias: alias);
+        addCondition(c, table: table);
       });
     } else if (conditions is List<Condition>) {
       conditions.forEach((condition) {
-        addCondition(condition, alias: alias);
+        addCondition(condition, table: table);
       });
     }
   }
