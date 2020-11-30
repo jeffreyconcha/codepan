@@ -1,9 +1,16 @@
 import 'package:codepan/extensions/dynamic_ext.dart';
+import 'package:codepan/extensions/string_ext.dart';
 import 'package:codepan/utils/codepan_utils.dart';
 import 'package:flutter/foundation.dart';
 import 'package:html_unescape/html_unescape.dart';
 
 const prefixKey = '\$prefix';
+const boolPrefixes = <String>[
+  'is',
+  'has',
+  'with',
+  'did',
+];
 
 extension MapUtils on Map<String, dynamic> {
   int getInt(String key) {
@@ -36,7 +43,10 @@ extension MapUtils on Map<String, dynamic> {
 
   dynamic get(String key) {
     final value = this[getKey(key)];
-    if (value is String) {
+    final split = key.toSnake().split('_');
+    if (boolPrefixes.contains(split.first)) {
+      return PanUtils.parseBool(value);
+    } else if (value is String) {
       final unescape = HtmlUnescape();
       return unescape.convert(value);
     }
