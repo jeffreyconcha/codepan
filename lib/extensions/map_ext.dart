@@ -60,10 +60,10 @@ extension MapUtils on Map<String, dynamic> {
 
   void setPrefix(
     String prefix, {
-    int joinIndex,
+    int index,
   }) {
-    if (joinIndex != null && joinIndex != 0) {
-      this[prefixKey] = '$prefix.$joinIndex';
+    if (index != null && index != 0) {
+      this[prefixKey] = '$prefix.$index';
     } else {
       this[prefixKey] = prefix;
     }
