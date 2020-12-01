@@ -1,10 +1,19 @@
+import 'package:codepan/utils/codepan_utils.dart';
 import 'package:flutter/foundation.dart';
 
 class DateTimeData {
   final String date;
   final String time;
 
-  bool isNewMinute() {
+  String get displayDate => PanUtils.formatDate(date);
+
+  String get displayTime => PanUtils.formatTime(time);
+
+  String get dayOfTheWeek => PanUtils.getDayOfTheWeek(date, time);
+
+  String get history => PanUtils.getTimeHistory(date, time);
+
+  bool get isNewMinute {
     final array = time.split(':');
     if (array[2] == '00') {
       return true;

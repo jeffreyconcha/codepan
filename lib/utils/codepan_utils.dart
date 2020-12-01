@@ -148,6 +148,12 @@ class PanUtils {
     return ago.format(value);
   }
 
+  static String getDayOfTheWeek(String date, String time) {
+    final dt = DateTime.parse('$date $time');
+    final format = DateFormat.EEEE('en_US');
+    return format.format(dt);
+  }
+
   static Future<File> getFile({
     String folder,
     @required String fileName,
@@ -275,5 +281,12 @@ class PanUtils {
 
   static String enumValue(dynamic data) {
     return data.toString().split('.').last;
+  }
+
+  static popAllRoutes(BuildContext context) {
+    final navigator = Navigator.of(context);
+    while (navigator.canPop()) {
+      navigator.pop();
+    }
   }
 }
