@@ -28,30 +28,35 @@ class PanScrollView extends StatelessWidget {
     final isVertical = scrollDirection == Axis.vertical;
     return LayoutBuilder(
       builder: (context, constraints) {
-        return SmartRefresher(
-          enablePullDown: enablePullDown,
-          controller: refreshController,
-          header: header,
-          onRefresh: onRefresh,
-          child: SingleChildScrollView(
-            padding: padding,
-            scrollDirection: scrollDirection,
-            controller: scrollController,
-            child: ConstrainedBox(
-              constraints: BoxConstraints(
-                minHeight: isVertical ? constraints.maxHeight : 0,
-                minWidth: !isVertical ? constraints.maxWidth : 0,
-              ),
-              child: isVertical
-                  ? IntrinsicHeight(
-                      child: child,
-                    )
-                  : IntrinsicWidth(
-                      child: child,
-                    ),
+        final scrollview = SingleChildScrollView(
+          padding: padding,
+          scrollDirection: scrollDirection,
+          controller: scrollController,
+          child: ConstrainedBox(
+            constraints: BoxConstraints(
+              minHeight: isVertical ? constraints.maxHeight : 0,
+              minWidth: !isVertical ? constraints.maxWidth : 0,
             ),
+            child: isVertical
+                ? IntrinsicHeight(
+                    child: child,
+                  )
+                : IntrinsicWidth(
+                    child: child,
+                  ),
           ),
         );
+        if (refreshController != null) {
+          return SmartRefresher(
+            enablePullDown: enablePullDown,
+            controller: refreshController,
+            header: header,
+            onRefresh: onRefresh,
+            child: scrollview,
+          );
+        } else {
+          return child;
+        }
       },
     );
   }
