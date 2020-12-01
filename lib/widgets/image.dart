@@ -1,9 +1,9 @@
 import 'package:flutter/widgets.dart';
 
 class PanImage extends StatelessWidget {
+  final Alignment alignment;
   final EdgeInsetsGeometry margin, padding;
   final double width, height;
-  final Alignment alignment;
   final String image;
   final BoxFit fit;
 
@@ -26,12 +26,12 @@ class PanImage extends StatelessWidget {
       height: height,
       margin: margin,
       padding: padding,
-      alignment: alignment ?? Alignment.center,
       child: Image.asset(
         'assets/images/$asset',
         fit: fit,
         width: width,
         height: height,
+        alignment: alignment ?? Alignment.center,
       ),
     );
   }
