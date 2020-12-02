@@ -102,8 +102,10 @@ class Field extends SQLiteModel {
   Field.asColumn(
     String field, {
     @required DataType type,
+    bool inUniqueGroup = false,
   }) : super(field) {
     this._type = type;
+    this._inUniqueGroup = inUniqueGroup;
   }
 
   Field.asPrimaryKey([String field = SQLiteStatement.id]) : super(field) {
@@ -114,12 +116,12 @@ class Field extends SQLiteModel {
   Field.asForeignKey(
     String field, {
     @required Table reference,
-    bool inUniqueGroup = false,
+    bool unique = false,
   }) : super(field) {
     this._constraint = Constraint.foreignKey;
     this._type = DataType.integer;
     this._reference = reference;
-    this._inUniqueGroup = inUniqueGroup;
+    this._inUniqueGroup = unique;
   }
 
   Field.asUnique(
@@ -133,27 +135,34 @@ class Field extends SQLiteModel {
   Field.asDefault(
     String field, {
     @required dynamic value,
+    bool inUniqueGroup = false,
   }) : super(field) {
     this._constraint = Constraint.defaultField;
     this._type = _getDataType(value);
+    this._inUniqueGroup = inUniqueGroup;
   }
 
   Field.asDate(
     String field, {
     bool withTrigger = false,
+    bool inUniqueGroup = false,
   }) : super(field) {
     this._type = DataType.text;
     this._withDateTrigger = withTrigger;
+    this._inUniqueGroup = inUniqueGroup;
   }
 
   Field.asTime(
     String field, {
     bool withTrigger = false,
+    bool inUniqueGroup = false,
   }) : super(field) {
     this._type = DataType.text;
     this._withTimeTrigger = withTrigger;
+    this._inUniqueGroup = inUniqueGroup;
   }
 
+  @deprecated
   Field.asUniqueGroup(
     String field, {
     Table reference,
@@ -188,6 +197,10 @@ class Field extends SQLiteModel {
 
   Field.asCount(String field) : super(field) {
     this._isCount = true;
+  }
+
+  void unique() {
+    this._inUniqueGroup = true;
   }
 
   String asString() {
