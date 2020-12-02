@@ -199,8 +199,8 @@ class Field extends SQLiteModel {
     this._isCount = true;
   }
 
-  /// Short for "<b>Unique Group</b>" \n
-  /// Call this method if you want this field to be included in unique group.\n
+  /// Short for "<b>Unique Group</b>" <br/>
+  /// Call this method if you want this field to be included in unique group.<br/>
   /// Will only be applied to non-unique constraint.
   void ug() {
     if (constraint != Constraint.unique) {
