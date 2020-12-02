@@ -232,10 +232,16 @@ class SQLiteBinder {
     _batch.execute(sql);
   }
 
-  Future<TransactionData> insertForId({@required TransactionData data}) async {
+  Future<TransactionData> insertForId({
+    @required TransactionData data,
+    dynamic unique,
+  }) async {
     if (data != null) {
       final transaction = data.copyWith(
-        id: await insertData(data: data),
+        id: await insertData(
+          data: data,
+          unique: unique,
+        ),
       );
       return transaction;
     }
@@ -245,12 +251,13 @@ class SQLiteBinder {
   Future<int> insertData({
     @required TransactionData data,
     bool ignoreId = false,
+    dynamic unique,
   }) {
     if (data != null) {
       return insert(
         data.table,
         data.toStatement(),
-        unique: data.unique ?? data.uniqueGroup,
+        unique: unique ?? data.unique ?? data.uniqueGroup,
         ignoreId: ignoreId,
       );
     }
