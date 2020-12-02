@@ -115,13 +115,13 @@ class Field extends SQLiteModel {
 
   Field.asForeignKey(
     String field, {
-    @required Table reference,
-    bool unique = false,
+    @required Table at,
+    bool inUniqueGroup = false,
   }) : super(field) {
     this._constraint = Constraint.foreignKey;
     this._type = DataType.integer;
-    this._reference = reference;
-    this._inUniqueGroup = unique;
+    this._reference = at;
+    this._inUniqueGroup = inUniqueGroup;
   }
 
   Field.asUnique(
@@ -165,14 +165,14 @@ class Field extends SQLiteModel {
   @deprecated
   Field.asUniqueGroup(
     String field, {
-    Table reference,
+    Table at,
     DataType type = DataType.integer,
   }) : super(field) {
     this._type = type;
     this._inUniqueGroup = true;
-    if (reference != null) {
+    if (at != null) {
       this._constraint = Constraint.foreignKey;
-      this._reference = reference;
+      this._reference = at;
     }
   }
 
@@ -199,8 +199,13 @@ class Field extends SQLiteModel {
     this._isCount = true;
   }
 
-  void unique() {
-    this._inUniqueGroup = true;
+  /// Short for "<b>Unique Group</b>" \n
+  /// Call this method if you want to make this field to be included in unique group.\n
+  /// Will only be applied to non-unique constraint.
+  void ug() {
+    if (constraint != Constraint.unique) {
+      this._inUniqueGroup = true;
+    }
   }
 
   String asString() {
