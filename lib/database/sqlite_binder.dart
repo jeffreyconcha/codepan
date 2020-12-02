@@ -5,8 +5,14 @@ import 'package:codepan/database/sqlite_query.dart';
 import 'package:codepan/database/sqlite_statement.dart';
 import 'package:codepan/models/transaction.dart';
 import 'package:codepan/utils/codepan_utils.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:sqflite_sqlcipher/sqflite.dart';
+
+enum UpdatePriority {
+  unique,
+  uniqueGroup,
+}
 
 const tag = 'DATABASE BINDER';
 const primaryKey = SQLiteStatement.id;
@@ -234,13 +240,13 @@ class SQLiteBinder {
 
   Future<TransactionData> insertForId({
     @required TransactionData data,
-    dynamic unique,
+    UpdatePriority priority = UpdatePriority.unique,
   }) async {
     if (data != null) {
       final transaction = data.copyWith(
         id: await insertData(
           data: data,
-          unique: unique,
+          priority: priority,
         ),
       );
       return transaction;
@@ -250,14 +256,23 @@ class SQLiteBinder {
 
   Future<int> insertData({
     @required TransactionData data,
+    UpdatePriority priority = UpdatePriority.unique,
     bool ignoreId = false,
-    dynamic unique,
   }) {
     if (data != null) {
+      dynamic unique;
+      switch (priority) {
+        case UpdatePriority.unique:
+          unique = data.unique ?? data.uniqueGroup;
+          break;
+        case UpdatePriority.uniqueGroup:
+          unique = data.uniqueGroup ?? data.unique;
+          break;
+      }
       return insert(
         data.table,
         data.toStatement(),
-        unique: unique ?? data.unique ?? data.uniqueGroup,
+        unique: unique,
         ignoreId: ignoreId,
       );
     }
