@@ -43,11 +43,11 @@ class SQLiteBinder {
       }
       this._batch = db.batch();
       this._showLog = showLog;
-      db.setBinder(this);
       if (_showLog) {
         _time = DateTime.now();
         debugPrint('$tag: BEGIN TRANSACTION');
       }
+      db.setBinder(this);
     }
   }
 
