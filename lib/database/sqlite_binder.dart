@@ -19,8 +19,9 @@ const primaryKey = SQLiteStatement.id;
 
 class SQLiteBinder {
   final SQLiteAdapter db;
-  bool _showLog, _chain;
   Map<String, int> _map;
+  bool _showLog = false;
+  bool _chain = false;
   DateTime _time;
   Batch _batch;
 

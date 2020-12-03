@@ -12,9 +12,17 @@ abstract class DatabaseInitializer {
 
   Future<void> onCreate(SQLiteAdapter db, int version);
 
-  Future<void> onUpgrade(SQLiteAdapter db, int ov, int nv);
+  Future<void> onUpgrade(
+    SQLiteAdapter db,
+    int oldVersion,
+    int newVersion,
+  );
 
-  Future<void> onDowngrade(SQLiteAdapter db, int ov, int nv);
+  Future<void> onDowngrade(
+    SQLiteAdapter db,
+    int oldVersion,
+    int newVersion,
+  );
 }
 
 class DefaultDatabaseInitializer extends DatabaseInitializer {
@@ -22,7 +30,7 @@ class DefaultDatabaseInitializer extends DatabaseInitializer {
 
   @override
   Future<void> onCreate(SQLiteAdapter db, int version) async {
-    final binder = new SQLiteBinder(db);
+    final binder = SQLiteBinder(db);
     try {
       await binder.beginTransaction();
       await _createTables(binder);
@@ -36,8 +44,12 @@ class DefaultDatabaseInitializer extends DatabaseInitializer {
   }
 
   @override
-  Future<void> onDowngrade(SQLiteAdapter db, int ov, int nv) async {
-    final binder = new SQLiteBinder(db);
+  Future<void> onDowngrade(
+    SQLiteAdapter db,
+    int oldVersion,
+    int newVersion,
+  ) async {
+    final binder = SQLiteBinder(db);
     try {
       await binder.beginTransaction();
       await _createTables(binder);
@@ -47,15 +59,19 @@ class DefaultDatabaseInitializer extends DatabaseInitializer {
       await _createTimeTriggers(binder);
       await binder.finish();
     } catch (error) {
-      await db.instance.setVersion(ov);
+      await db.instance.setVersion(oldVersion);
       final message = "${SQLiteException.initializationFailed}\n$error";
       throw SQLiteException(message);
     }
   }
 
   @override
-  Future<void> onUpgrade(SQLiteAdapter db, int ov, int nv) async {
-    final binder = new SQLiteBinder(db);
+  Future<void> onUpgrade(
+    SQLiteAdapter db,
+    int oldVersion,
+    int newVersion,
+  ) async {
+    final binder = SQLiteBinder(db);
     try {
       await binder.beginTransaction();
       await _createTables(binder);
@@ -65,7 +81,7 @@ class DefaultDatabaseInitializer extends DatabaseInitializer {
       await _createTimeTriggers(binder);
       await binder.finish();
     } catch (error) {
-      await db.instance.setVersion(ov);
+      await db.instance.setVersion(oldVersion);
       final message = "${SQLiteException.initializationFailed}\n$error";
       throw SQLiteException(message);
     }

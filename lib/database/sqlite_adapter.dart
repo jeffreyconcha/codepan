@@ -7,15 +7,18 @@ import 'package:path/path.dart';
 import 'package:sqflite_sqlcipher/sqflite.dart';
 
 typedef OnDatabaseCreate = FutureOr<void> Function(
-    SQLiteAdapter db, int version);
-typedef OnDatabaseUpgrade = FutureOr<void> Function(
-    SQLiteAdapter db, int ov, int nv);
-typedef OnDatabaseDowngrade = FutureOr<void> Function(
-    SQLiteAdapter db, int ov, int nv);
+  SQLiteAdapter db,
+  int version,
+);
+typedef OnDatabaseVersionChange = FutureOr<void> Function(
+  SQLiteAdapter db,
+  int oldVersion,
+  int newVersion,
+);
 
 class SQLiteAdapter implements DatabaseExecutor {
-  final OnDatabaseDowngrade onDowngrade;
-  final OnDatabaseUpgrade onUpgrade;
+  final OnDatabaseVersionChange onDowngrade;
+  final OnDatabaseVersionChange onUpgrade;
   final OnDatabaseCreate onCreate;
   final String name, password;
   final DatabaseSchema schema;
@@ -31,7 +34,7 @@ class SQLiteAdapter implements DatabaseExecutor {
     return _db;
   }
 
-  bool get inTransaction => _binder != null && _inTransaction;
+  bool get inTransaction => _binder != null && _inTransaction ?? false;
 
   SQLiteBinder get binder => _binder;
 
@@ -48,7 +51,7 @@ class SQLiteAdapter implements DatabaseExecutor {
   /// Always use await when opening a database
   Future<void> openConnection() async {
     if (_db == null || !_db.isOpen) {
-      int old;
+      int _oldVersion;
       bool isCreated = false;
       bool isUpgraded = false;
       bool isDowngraded = false;
@@ -58,26 +61,26 @@ class SQLiteAdapter implements DatabaseExecutor {
         path,
         version: version,
         password: password,
-        onCreate: (db, nv) {
-          isCreated = onCreate != null;
+        onCreate: (db, version) {
+          isCreated = true;
         },
-        onUpgrade: (db, ov, nv) {
-          isUpgraded = onUpgrade != null;
-          old = ov;
+        onUpgrade: (db, oldVersion, newVersion) {
+          isUpgraded = true;
+          _oldVersion = oldVersion;
         },
-        onDowngrade: (db, ov, nv) {
-          isDowngraded = onDowngrade != null;
-          old = ov;
+        onDowngrade: (db, oldVersion, newVersion) {
+          isDowngraded = true;
+          _oldVersion = oldVersion;
         },
       );
       if (isCreated) {
-        onCreate(this, version);
+        onCreate?.call(this, version);
       }
       if (isUpgraded) {
-        onUpgrade(this, old, version);
+        onUpgrade?.call(this, _oldVersion, version);
       }
       if (isDowngraded) {
-        onDowngrade(this, old, version);
+        onDowngrade?.call(this, _oldVersion, version);
       }
     }
   }
