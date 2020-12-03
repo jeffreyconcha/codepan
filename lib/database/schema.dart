@@ -1,7 +1,6 @@
 import 'package:codepan/database/models/field.dart';
 import 'package:codepan/database/models/table.dart';
-import 'package:codepan/extensions/dynamic_ext.dart';
-import 'package:codepan/extensions/string_ext.dart';
+import 'package:codepan/extensions/extensions.dart';
 
 abstract class DatabaseSchema<T> {
   static const String tableSuffix = '_tb';

@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'dart:isolate';
 import 'dart:ui';
+import 'package:codepan/extensions/extensions.dart';
 import 'package:codepan/models/date_time.dart';
 import 'package:connectivity/connectivity.dart';
 import 'package:flutter/foundation.dart';
@@ -11,18 +12,6 @@ import 'package:time_ago_provider/time_ago_provider.dart' as ago;
 
 const _urlPattern =
     r'(https?|http)://([-A-Z0-9.]+)(/[-A-Z0-9+&@#/%=~_|!:,.;]*)?(\?[A-Z0-9+&@#/%=~_|!:‌​,.;]*)?';
-const _true = <String>[
-  'true',
-  'yes',
-  'on',
-  '1',
-];
-const _false = <String>[
-  'false',
-  'no',
-  'off',
-  '0',
-];
 
 class PanUtils {
   static Map<String, String> getDateTime() {
@@ -224,13 +213,9 @@ class PanUtils {
       return input;
     } else if (input is int) {
       final binary = parseInt(input);
-      return binary == 1;
+      return binary.toBool();
     } else if (input is String) {
-      if (_true.contains(input)) {
-        return true;
-      } else if (_false.contains(input)) {
-        return false;
-      }
+      return input.toBool();
     }
     return false;
   }

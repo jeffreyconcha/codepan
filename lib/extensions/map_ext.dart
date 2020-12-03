@@ -1,5 +1,4 @@
-import 'package:codepan/extensions/dynamic_ext.dart';
-import 'package:codepan/extensions/string_ext.dart';
+import 'package:codepan/extensions/extensions.dart';
 import 'package:codepan/utils/codepan_utils.dart';
 import 'package:flutter/foundation.dart';
 import 'package:html_unescape/html_unescape.dart';

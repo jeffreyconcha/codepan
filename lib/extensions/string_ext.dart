@@ -1,6 +1,19 @@
 // ignore: sdk_version_extension_methods
 import 'package:inflection2/inflection2.dart';
 
+const _true = <String>[
+  'true',
+  'yes',
+  'on',
+  '1',
+];
+const _false = <String>[
+  'false',
+  'no',
+  'off',
+  '0',
+];
+
 extension StringUtils on String {
   String capitalize() {
     return '${this[0].toUpperCase()}${this.substring(1)}';
@@ -45,5 +58,14 @@ extension StringUtils on String {
 
   String toSnake() {
     return SNAKE_CASE.convert(this);
+  }
+
+  bool toBool() {
+    if (_true.contains(this)) {
+      return true;
+    } else if (_false.contains(this)) {
+      return false;
+    }
+    return null;
   }
 }
