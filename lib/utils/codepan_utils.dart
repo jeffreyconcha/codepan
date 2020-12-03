@@ -267,11 +267,4 @@ class PanUtils {
   static String enumValue(dynamic data) {
     return data.toString().split('.').last;
   }
-
-  static popAllRoutes(BuildContext context) {
-    final navigator = Navigator.of(context);
-    while (navigator.canPop()) {
-      navigator.pop();
-    }
-  }
 }
