@@ -9,6 +9,10 @@ extension BuildContextUtils on BuildContext {
     }
   }
 
+  void pop() {
+    Navigator.of(this).pop();
+  }
+
   void push({@required Widget page}) {
     Navigator.of(this).push(
       CupertinoPageRoute(
@@ -17,6 +21,10 @@ extension BuildContextUtils on BuildContext {
         },
       ),
     );
+  }
+
+  void pushReplacement(Route route) {
+    Navigator.of(this).pushReplacement(route);
   }
 
   void hideKeyboard() {
