@@ -49,7 +49,7 @@ abstract class DatabaseSchema<T> {
         list.add(field.field);
       }
     }
-    return list;
+    return list.isNotEmpty ? list : null;
   }
 
   List<TableSchema> references(T entity) {

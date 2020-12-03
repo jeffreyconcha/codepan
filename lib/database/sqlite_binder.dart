@@ -19,25 +19,35 @@ const primaryKey = SQLiteStatement.id;
 
 class SQLiteBinder {
   final SQLiteAdapter db;
+  bool _showLog, _chain;
   Map<String, int> _map;
-  bool _showLog;
   DateTime _time;
   Batch _batch;
 
   SQLiteBinder(this.db);
 
+  factory SQLiteBinder.chain(SQLiteAdapter db) {
+    if (db.inTransaction) {
+      return db.binder..chain();
+    }
+    return SQLiteBinder(db);
+  }
+
   Future<void> beginTransaction({
     List<TableSchema> prepare,
     bool showLog = false,
   }) async {
-    if (prepare?.isNotEmpty ?? false) {
-      await _prepare(prepare);
-    }
-    this._batch = db.batch();
-    this._showLog = showLog;
-    if (_showLog) {
-      _time = DateTime.now();
-      debugPrint('$tag: BEGIN TRANSACTION');
+    if (!db.inTransaction) {
+      if (prepare?.isNotEmpty ?? false) {
+        await _prepare(prepare);
+      }
+      this._batch = db.batch();
+      this._showLog = showLog;
+      db.setBinder(this);
+      if (_showLog) {
+        _time = DateTime.now();
+        debugPrint('$tag: BEGIN TRANSACTION');
+      }
     }
   }
 
@@ -112,25 +122,37 @@ class SQLiteBinder {
     return result;
   }
 
-  Future<bool> finish({bool clearMap = true}) async {
-    bool result = false;
-    if (clearMap) {
-      _map?.clear();
-    }
-    try {
-      await _batch.commit(noResult: true);
-      if (_showLog) {
-        final duration = DateTime.now().difference(_time);
-        final formatted = PanUtils.formatDuration(duration, isReadable: true);
-        debugPrint('$tag: TRANSACTION SUCCESSFUL');
-        debugPrint('$tag: FINISHED AT $formatted');
+  Future<bool> finish({
+    bool clearMap = true,
+  }) async {
+    if (!_chain) {
+      bool result = false;
+      if (clearMap) {
+        _map?.clear();
       }
-      result = true;
-    } catch (error) {
-      debugPrint(error.toString());
-      rethrow;
+      try {
+        await _batch.commit(noResult: true);
+        if (_showLog) {
+          final duration = DateTime.now().difference(_time);
+          final formatted = PanUtils.formatDuration(duration, isReadable: true);
+          debugPrint('$tag: TRANSACTION SUCCESSFUL');
+          debugPrint('$tag: FINISHED AT $formatted');
+        }
+        db.removeBinder();
+        result = true;
+      } catch (error) {
+        debugPrint(error.toString());
+        rethrow;
+      }
+      return result;
+    } else {
+      chain(false);
+      return true;
     }
-    return result;
+  }
+
+  void chain([bool chain = true]) {
+    _chain = chain;
   }
 
   Future<void> _registerLastId(String table) async {

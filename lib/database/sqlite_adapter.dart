@@ -1,6 +1,6 @@
 import 'dart:async';
-
 import 'package:codepan/database/schema.dart';
+import 'package:codepan/database/sqlite_binder.dart';
 import 'package:codepan/database/sqlite_exception.dart';
 import 'package:flutter/foundation.dart';
 import 'package:path/path.dart';
@@ -21,6 +21,7 @@ class SQLiteAdapter implements DatabaseExecutor {
   final DatabaseSchema schema;
   final int version;
   bool _inTransaction = false;
+  SQLiteBinder _binder;
   Database _db;
 
   Database get instance {
@@ -30,7 +31,9 @@ class SQLiteAdapter implements DatabaseExecutor {
     return _db;
   }
 
-  bool get inTransaction => this._inTransaction;
+  bool get inTransaction => _binder != null && _inTransaction;
+
+  SQLiteBinder get binder => _binder;
 
   SQLiteAdapter({
     @required this.name,
@@ -147,19 +150,14 @@ class SQLiteAdapter implements DatabaseExecutor {
     print('$name at version: $version');
   }
 
-  Future<void> beginTransaction() {
+  void setBinder(SQLiteBinder binder) {
+    _binder = binder;
     _inTransaction = true;
-    return instance.execute('BEGIN EXCLUSIVE');
   }
 
-  Future<void> endTransaction() {
+  void removeBinder() {
     _inTransaction = false;
-    return instance.execute('END TRANSACTION');
-  }
-
-  Future<void> rollback() {
-    _inTransaction = false;
-    return instance.execute('ROLLBACK');
+    _binder = null;
   }
 
   @override

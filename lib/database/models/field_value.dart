@@ -27,7 +27,7 @@ class FieldValue extends SQLiteModel {
         }
       } else if (PanUtils.isEnum(_value)) {
         final value = PanUtils.enumValue(_value);
-        return SNAKE_CASE.convert(value);
+        return '\'${SNAKE_CASE.convert(value)}\'';
       } else {
         return _value.toString();
       }
