@@ -84,4 +84,8 @@ extension MapUtils on Map<String, dynamic> {
     }
     return key;
   }
+
+  Map<String, dynamic> copy() {
+    return Map.of(this);
+  }
 }

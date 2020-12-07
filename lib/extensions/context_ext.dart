@@ -1,5 +1,7 @@
+import 'package:codepan/bloc/parent_bloc.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 extension BuildContextUtils on BuildContext {
   void popAllRoutes() {
@@ -29,5 +31,9 @@ extension BuildContextUtils on BuildContext {
 
   void hideKeyboard() {
     FocusScope.of(this).unfocus();
+  }
+
+  T blocOf<T extends ParentBloc>() {
+    return BlocProvider.of<T>(this);
   }
 }
