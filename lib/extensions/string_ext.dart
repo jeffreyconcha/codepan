@@ -61,6 +61,12 @@ extension StringUtils on String {
   }
 
   String toPast() {
+    final dash = '-';
+    if(this.contains(dash)) {
+      final first = this.split(dash).first;
+      final past = PAST.convert(first);
+      return this.replaceAll(first, past);
+    }
     return PAST.convert(this);
   }
 
