@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
 
-typedef WidgetBuilder = Widget Function(BuildContext context);
-
 class PlaceholderHandler extends StatelessWidget {
+  final WidgetBuilder childBuilder, placeholderBuilder;
   final Widget child, placeholder;
   final EdgeInsets margin, padding;
   final double width, height;
-  final WidgetBuilder childBuilder, placeholderBuilder;
   final Alignment alignment;
   final bool condition;
   final Color color;

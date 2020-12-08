@@ -60,6 +60,14 @@ extension StringUtils on String {
     return SNAKE_CASE.convert(this);
   }
 
+  String toPast() {
+    return PAST.convert(this);
+  }
+
+  String toSingular() {
+    return SINGULAR.convert(this);
+  }
+
   bool toBool() {
     if (_true.contains(this)) {
       return true;

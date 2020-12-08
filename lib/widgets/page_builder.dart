@@ -59,7 +59,7 @@ class PageBlocBuilder<E extends ParentEvent, B extends ParentBloc<E, S>,
             backgroundColor: statusBarColor,
           ),
         ),
-        body: _PageBody<E, B, S>(
+        body: _PageBlocBody<E, B, S>(
           builder: builder,
           maxHeight: d.max,
           layer: layer,
@@ -71,14 +71,14 @@ class PageBlocBuilder<E extends ParentEvent, B extends ParentBloc<E, S>,
   }
 }
 
-class _PageBody<E extends ParentEvent, B extends ParentBloc<E, S>,
+class _PageBlocBody<E extends ParentEvent, B extends ParentBloc<E, S>,
     S extends ParentState> extends StatelessWidget {
   final WidgetBlocBuilder builder, layer;
   final PageScrollBehaviour behaviour;
   final BlocObserver observer;
   final double maxHeight;
 
-  const _PageBody({
+  const _PageBlocBody({
     Key key,
     @required this.observer,
     @required this.builder,
@@ -123,5 +123,91 @@ class _PageBody<E extends ParentEvent, B extends ParentBloc<E, S>,
         },
       ),
     );
+  }
+}
+
+class PageBuilder extends StatelessWidget {
+  final Color background, statusBarColor;
+  final WidgetBuilder builder, layer;
+  final PageScrollBehaviour behaviour;
+  final Brightness brightness;
+
+  const PageBuilder({
+    Key key,
+    this.background,
+    this.statusBarColor,
+    this.builder,
+    this.layer,
+    this.behaviour,
+    this.brightness,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    final d = Dimension.of(context, isSafeArea: true);
+    final t = Theme.of(context);
+    final a = t.appBarTheme;
+    return Scaffold(
+      backgroundColor: background ?? t.backgroundColor,
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(0),
+        child: AppBar(
+          elevation: 0,
+          brightness: brightness ?? a.brightness,
+          backgroundColor: statusBarColor,
+        ),
+      ),
+      body: _PageBody(
+        builder: builder,
+        maxHeight: d.max,
+        layer: layer,
+        behaviour: behaviour,
+      ),
+    );
+  }
+}
+
+class _PageBody extends StatelessWidget {
+  final WidgetBuilder builder, layer;
+  final PageScrollBehaviour behaviour;
+  final double maxHeight;
+
+  const _PageBody({
+    Key key,
+    this.builder,
+    this.layer,
+    this.behaviour,
+    this.maxHeight,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    switch (behaviour) {
+      case PageScrollBehaviour.none:
+        return Stack(
+          children: [
+            builder.call(context),
+            Container(
+              child: layer?.call(context),
+            ),
+          ],
+        );
+        break;
+      default:
+        return SingleChildScrollView(
+          child: Stack(
+            children: [
+              builder.call(context),
+              SafeArea(
+                child: Container(
+                  height: maxHeight,
+                  child: layer?.call(context),
+                ),
+              ),
+            ],
+          ),
+        );
+        break;
+    }
   }
 }
