@@ -89,30 +89,31 @@ class PanUtils {
 
   static String formatDuration(
     Duration duration, {
+    bool withSeconds = true,
     bool isReadable = false,
   }) {
     String format(int n) => n.toString().padLeft(2, "0");
-    int h = duration.inHours.remainder(24);
-    int m = duration.inMinutes.remainder(60);
-    int s = duration.inSeconds.remainder(60);
-    String hs = isReadable
+    final h = duration.inHours.remainder(24);
+    final m = duration.inMinutes.remainder(60);
+    final s = duration.inSeconds.remainder(60);
+    final hs = isReadable
         ? h > 1
             ? ' hrs '
             : ' hr '
         : ':';
-    String ms = isReadable
+    final ms = isReadable
         ? m > 1
             ? ' mins '
             : ' min '
         : ':';
-    String ss = isReadable
+    final ss = isReadable
         ? s > 1
             ? ' secs'
             : ' sec'
         : ':';
-    String hours = isReadable ? '$h' : format(h);
-    String minutes = isReadable ? '$m' : format(m);
-    String seconds = isReadable ? '$s' : format(s);
+    final hours = isReadable ? '$h' : format(h);
+    final minutes = isReadable ? '$m' : format(m);
+    final seconds = isReadable ? '$s' : format(s);
     final buffer = StringBuffer();
     if (h != 0) {
       buffer.write('$hours');
@@ -122,7 +123,7 @@ class PanUtils {
       buffer.write('$minutes');
       buffer.write(ms);
     }
-    if (!isReadable || s != 0) {
+    if (!isReadable || withSeconds || duration.inSeconds < 60) {
       buffer.write('$seconds');
       if (isReadable) {
         buffer.write(ss);
