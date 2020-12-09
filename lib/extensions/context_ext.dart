@@ -1,4 +1,5 @@
 import 'package:codepan/bloc/parent_bloc.dart';
+import 'package:codepan/transitions/route_transition.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -25,8 +26,12 @@ extension BuildContextUtils on BuildContext {
     );
   }
 
-  void pushReplacement(Route route) {
-    Navigator.of(this).pushReplacement(route);
+  void replace({@required Widget page}) {
+    Navigator.of(this).pushReplacement(
+      FadeRoute(
+        enter: page,
+      ),
+    );
   }
 
   void hideKeyboard() {
