@@ -13,9 +13,33 @@ const _false = <String>[
   'off',
   '0',
 ];
+const _lower = <String>[
+  'of',
+  'and',
+  'or',
+  'is',
+  'are',
+];
 
 extension StringUtils on String {
   String capitalize() {
+    final space = ' ';
+    if (this.contains(space)) {
+      final buffer = StringBuffer();
+      final words = this.split(space);
+      for (int i = 0; i < words.length; i++) {
+        final word = words[i];
+        if (_lower.contains(word)) {
+          buffer.write(word);
+        } else {
+          buffer.write('${word[0].toUpperCase()}${word.substring(1)}');
+        }
+        if (i < words.length - 1) {
+          buffer.write(space);
+        }
+      }
+      return buffer.toString();
+    }
     return '${this[0].toUpperCase()}${this.substring(1)}';
   }
 
@@ -62,7 +86,7 @@ extension StringUtils on String {
 
   String toPast() {
     final dash = '-';
-    if(this.contains(dash)) {
+    if (this.contains(dash)) {
       final first = this.split(dash).first;
       final past = PAST.convert(first);
       return this.replaceAll(first, past);

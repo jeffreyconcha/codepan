@@ -92,7 +92,7 @@ abstract class DatabaseSchema<T> {
 
   String _name(T entity, String suffix) {
     if (entity != null) {
-      return '${entity.enumValue().toSnake()}$suffix';
+      return '${entity.enumValue.toSnake()}$suffix';
     }
     return null;
   }

@@ -34,7 +34,7 @@ extension MapUtils on Map<String, dynamic> {
   }) {
     final value = this[getKey(key)];
     for (final element in values) {
-      if (value == element.enumValue()) {
+      if (value == element.enumValue) {
         return element;
       }
     }

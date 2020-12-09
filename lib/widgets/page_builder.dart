@@ -26,6 +26,7 @@ class PageBlocBuilder<E extends ParentEvent, B extends ParentBloc<E, S>,
   final Color background, statusBarColor;
   final WidgetBlocBuilder builder, layer;
   final PageScrollBehaviour behaviour;
+  final Widget bottomNavigationBar;
   final Brightness brightness;
   final BlocObserver observer;
   final BlocCreator creator;
@@ -37,9 +38,10 @@ class PageBlocBuilder<E extends ParentEvent, B extends ParentBloc<E, S>,
     @required this.builder,
     this.layer,
     this.background,
-    this.statusBarColor = Colors.transparent,
     this.brightness,
+    this.statusBarColor = Colors.transparent,
     this.behaviour = PageScrollBehaviour.whole,
+    this.bottomNavigationBar,
   }) : super(key: key);
 
   @override
@@ -47,18 +49,22 @@ class PageBlocBuilder<E extends ParentEvent, B extends ParentBloc<E, S>,
     final d = Dimension.of(context, isSafeArea: true);
     final t = Theme.of(context);
     final a = t.appBarTheme;
+    PreferredSize appBar;
+    if (bottomNavigationBar == null) {
+      appBar = PreferredSize(
+        preferredSize: Size.fromHeight(0),
+        child: AppBar(
+          elevation: 0,
+          brightness: brightness ?? a.brightness,
+          backgroundColor: statusBarColor,
+        ),
+      );
+    }
     return BlocProvider<B>(
       create: creator,
       child: Scaffold(
         backgroundColor: background ?? t.backgroundColor,
-        appBar: PreferredSize(
-          preferredSize: Size.fromHeight(0),
-          child: AppBar(
-            elevation: 0,
-            brightness: brightness ?? a.brightness,
-            backgroundColor: statusBarColor,
-          ),
-        ),
+        appBar: appBar,
         body: _PageBlocBody<E, B, S>(
           builder: builder,
           maxHeight: d.max,
@@ -130,16 +136,18 @@ class PageBuilder extends StatelessWidget {
   final Color background, statusBarColor;
   final WidgetBuilder builder, layer;
   final PageScrollBehaviour behaviour;
+  final Widget bottomNavigationBar;
   final Brightness brightness;
 
   const PageBuilder({
     Key key,
     this.background,
-    this.statusBarColor,
     this.builder,
     this.layer,
-    this.behaviour,
     this.brightness,
+    this.bottomNavigationBar,
+    this.statusBarColor = Colors.transparent,
+    this.behaviour = PageScrollBehaviour.whole,
   }) : super(key: key);
 
   @override
@@ -147,22 +155,27 @@ class PageBuilder extends StatelessWidget {
     final d = Dimension.of(context, isSafeArea: true);
     final t = Theme.of(context);
     final a = t.appBarTheme;
-    return Scaffold(
-      backgroundColor: background ?? t.backgroundColor,
-      appBar: PreferredSize(
+    PreferredSize appBar;
+    if (bottomNavigationBar == null) {
+      appBar = PreferredSize(
         preferredSize: Size.fromHeight(0),
         child: AppBar(
           elevation: 0,
           brightness: brightness ?? a.brightness,
           backgroundColor: statusBarColor,
         ),
-      ),
+      );
+    }
+    return Scaffold(
+      backgroundColor: background ?? t.backgroundColor,
+      appBar: appBar,
       body: _PageBody(
         builder: builder,
         maxHeight: d.max,
         layer: layer,
         behaviour: behaviour,
       ),
+      bottomNavigationBar: bottomNavigationBar,
     );
   }
 }

@@ -1,11 +1,12 @@
 import 'package:codepan/utils/codepan_utils.dart';
+import 'string_ext.dart';
 
 extension DynamicUtils on dynamic {
-  bool isEnum() {
-    return PanUtils.isEnum(this);
-  }
+  bool get isEnum => PanUtils.isEnum(this);
 
-  String enumValue() {
-    return PanUtils.enumValue(this);
+  String get enumValue => PanUtils.enumValue(this);
+
+  String toCapitalizedWords() {
+    return enumValue.toSnake().replaceAll('_', ' ').capitalize();
   }
 }
