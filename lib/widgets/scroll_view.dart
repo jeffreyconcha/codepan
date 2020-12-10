@@ -55,7 +55,7 @@ class PanScrollView extends StatelessWidget {
             child: scrollview,
           );
         } else {
-          return child;
+          return scrollview;
         }
       },
     );

@@ -19,6 +19,7 @@ const _lower = <String>[
   'or',
   'is',
   'are',
+  'a',
 ];
 
 extension StringUtils on String {
