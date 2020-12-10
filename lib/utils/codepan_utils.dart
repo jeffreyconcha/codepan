@@ -99,13 +99,13 @@ class PanUtils {
     final s = duration.inSeconds.remainder(60);
     final hs = isReadable
         ? h > 1
-            ? ' hrs'
-            : ' hr'
+            ? ' hrs '
+            : ' hr '
         : ':';
     final ms = isReadable
         ? m > 1
-            ? ' mins'
-            : ' min'
+            ? ' mins '
+            : ' min '
         : ':';
     final ss = isReadable
         ? s > 1
@@ -121,16 +121,16 @@ class PanUtils {
       buffer.write(!isAbbreviated ? hs : 'h');
     }
     if (!isReadable || m != 0) {
-      buffer.write(' $minutes');
+      buffer.write('$minutes');
       buffer.write(!isAbbreviated ? ms : 'm');
     }
     if (!isReadable || (withSeconds && s != 0) || duration.inSeconds < 60) {
-      buffer.write(' $seconds');
+      buffer.write('$seconds');
       if (isReadable) {
         buffer.write(!isAbbreviated ? ss : 's');
       }
     }
-    return buffer.toString();
+    return buffer.toString().trim();
   }
 
   static String getTimeHistory(String date, String time) {
