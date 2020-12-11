@@ -1,4 +1,5 @@
 import 'package:codepan/resources/colors.dart';
+import 'package:codepan/widgets/placeholder_handler.dart';
 import 'package:codepan/widgets/text.dart';
 import 'package:flutter/material.dart';
 
@@ -45,17 +46,6 @@ class PanButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var child = this.child != null
-        ? this.child
-        : PanText(
-            text: text ?? '',
-            fontSize: fontSize,
-            fontColor: fontColor,
-            fontWeight: fontWeight,
-            fontFamily: fontFamily,
-            textAlign: textAlign,
-            alignment: alignment,
-          );
     return Container(
       width: width,
       height: height,
@@ -72,10 +62,26 @@ class PanButton extends StatelessWidget {
             side: BorderSide(color: borderColor, width: borderWidth),
           ),
           padding: padding,
-          child: child,
           onPressed: onPressed,
           splashColor: splashColor,
           highlightColor: highlightColor,
+          child: PlaceholderHandler(
+            condition: child != null,
+            childBuilder: (context) {
+              return child;
+            },
+            placeholderBuilder: (context) {
+              return PanText(
+                text: text ?? '',
+                fontSize: fontSize,
+                fontColor: fontColor,
+                fontWeight: fontWeight,
+                fontFamily: fontFamily,
+                textAlign: textAlign,
+                alignment: alignment,
+              );
+            },
+          ),
         ),
       ),
     );

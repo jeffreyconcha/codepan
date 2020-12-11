@@ -1,4 +1,5 @@
 import 'package:codepan/resources/colors.dart';
+import 'package:codepan/widgets/placeholder_handler.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
@@ -16,17 +17,18 @@ class PanText extends StatelessWidget {
   final EdgeInsetsGeometry margin, padding;
   final OnTextOverflow onTextOverflow;
   final TextDirection textDirection;
+  final OverflowState overflowState;
+  final BoxConstraints constraints;
   final TextDecoration decoration;
+  final List<InlineSpan> children;
   final String text, fontFamily;
   final FontWeight fontWeight;
   final TextOverflow overflow;
+  final List<Shadow> shadows;
   final FontStyle fontStyle;
   final Alignment alignment;
   final TextAlign textAlign;
-  final List<Shadow> shadows;
-  final OverflowState overflowState;
-  final List<InlineSpan> children;
-  final BoxConstraints constraints;
+  final SpannableText spannable;
   final bool isRequired;
   final int maxLines;
 
@@ -59,6 +61,7 @@ class PanText extends StatelessWidget {
     this.isRequired = false,
     this.children,
     this.constraints,
+    this.spannable,
   }) : super(key: key);
 
   @override
@@ -73,24 +76,30 @@ class PanText extends StatelessWidget {
       decoration: decoration,
       shadows: shadows,
     );
-    final required = TextSpan(
-      text: '*',
-      style: TextStyle(
-        color: Colors.red,
-      ),
-    );
     List<InlineSpan> spanList;
+    if (spannable != null) {
+      spanList = [];
+      spanList.addAll(
+        _toSpannable(spannable),
+      );
+    }
+    if (children != null) {
+      spanList ??= [];
+      spanList.addAll(children);
+    }
     if (isRequired) {
-      if (children != null) {
-        children.add(required);
-      } else {
-        spanList = [required];
-      }
-    } else {
-      spanList = children;
+      spanList ??= [];
+      spanList.add(
+        TextSpan(
+          text: '*',
+          style: TextStyle(
+            color: Colors.red,
+          ),
+        ),
+      );
     }
     final span = TextSpan(
-      text: text ?? '',
+      text: spannable != null ? null : text ?? '',
       style: style,
       children: spanList,
     );
@@ -105,47 +114,114 @@ class PanText extends StatelessWidget {
       textAlign: textAlign,
       textDirection: textDirection,
     );
-    final child = onTextOverflow != null
-        ? LayoutBuilder(
-            builder: (ctx, c) {
-              final painter = TextPainter(
-                maxLines: maxLines,
-                textAlign: textAlign,
-                textDirection: textDirection,
-                text: span,
-              );
-              painter.layout(maxWidth: c.maxWidth);
-              var overflowWidget;
-              if (painter.didExceedMaxLines ||
-                  overflowState == OverflowState.expand) {
-                final lines = painter.computeLineMetrics();
-                overflowWidget = onTextOverflow.call(lines.length);
-              }
-              return Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: <Widget>[
-                  rich,
-                  Container(child: overflowWidget),
-                ],
-              );
-            },
-          )
-        : rich;
-    return (text != null && text.isNotEmpty) || children != null
-        ? Container(
-            width: width,
-            height: height,
-            margin: margin,
-            padding: padding,
-            alignment: alignment,
-            child: child,
-            decoration: BoxDecoration(
-              color: background,
-              borderRadius: BorderRadius.circular(radius),
-            ),
-            constraints: constraints,
-          )
-        : Container();
+    return PlaceholderHandler(
+      condition: (text != null && text.isNotEmpty) || children != null,
+      child: Container(
+        width: width,
+        height: height,
+        margin: margin,
+        padding: padding,
+        alignment: alignment,
+        child: PlaceholderHandler(
+          condition: onTextOverflow != null,
+          childBuilder: (context) {
+            return LayoutBuilder(
+              builder: (context, constraints) {
+                final painter = TextPainter(
+                  maxLines: maxLines,
+                  textAlign: textAlign,
+                  textDirection: textDirection,
+                  text: span,
+                );
+                painter.layout(maxWidth: constraints.maxWidth);
+                var overflowWidget;
+                if (painter.didExceedMaxLines ||
+                    overflowState == OverflowState.expand) {
+                  final lines = painter.computeLineMetrics();
+                  overflowWidget = onTextOverflow.call(lines.length);
+                }
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    rich,
+                    Container(
+                      child: overflowWidget,
+                    ),
+                  ],
+                );
+              },
+            );
+          },
+          placeholderBuilder: (context) {
+            return rich;
+          },
+        ),
+        decoration: BoxDecoration(
+          color: background,
+          borderRadius: BorderRadius.circular(radius),
+        ),
+        constraints: constraints,
+      ),
+    );
   }
+
+  List<InlineSpan> _toSpannable(SpannableText spannable) {
+    final list = <InlineSpan>[];
+    int index = 0;
+    int start = 0;
+    int matchCount = 0;
+    final standard = '\$';
+    String _text = text;
+    for (final identifier in spannable.identifiers) {
+      _text = _text.replaceAll(identifier, standard);
+    }
+    final clean = _text?.replaceAll(standard, '');
+    final buffer = StringBuffer();
+    _text?.runes?.forEach((code) {
+      final character = String.fromCharCode(code);
+      if (character == standard) {
+        matchCount++;
+        if (matchCount.isOdd) {
+          start = index - matchCount + 1;
+          list.add(
+            TextSpan(
+              text: buffer.toString(),
+            ),
+          );
+        } else {
+          final end = index - matchCount + 1;
+          list.add(
+            TextSpan(
+              text: clean.substring(start, end),
+              style: spannable.style,
+            ),
+          );
+        }
+        buffer.clear();
+      } else {
+        buffer.write(character);
+      }
+      index++;
+    });
+    final remaining = buffer.toString();
+    if (remaining.isNotEmpty) {
+      list.add(
+        TextSpan(
+          text: buffer.toString(),
+        ),
+      );
+    }
+    return list;
+  }
+}
+
+class SpannableText {
+  final List<String> identifiers;
+  final TextStyle style;
+
+  const SpannableText({
+    @required this.identifiers,
+    @required this.style,
+  });
 }

@@ -118,11 +118,11 @@ class PanUtils {
     final buffer = StringBuffer();
     if (h != 0) {
       buffer.write('$hours');
-      buffer.write(!isAbbreviated ? hs : 'h');
+      buffer.write(!isAbbreviated ? hs : 'h ');
     }
     if (!isReadable || m != 0) {
       buffer.write('$minutes');
-      buffer.write(!isAbbreviated ? ms : 'm');
+      buffer.write(!isAbbreviated ? ms : 'm ');
     }
     if (!isReadable || (withSeconds && s != 0) || duration.inSeconds < 60) {
       buffer.write('$seconds');

@@ -13,4 +13,9 @@ extension DurationUtils on Duration {
       isAbbreviated: isAbbreviated,
     );
   }
+
+  Duration difference(Duration other) {
+    final difference = this.inMilliseconds - other.inMilliseconds;
+    return Duration(milliseconds: difference);
+  }
 }
