@@ -10,8 +10,18 @@ import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:time_ago_provider/time_ago_provider.dart' as ago;
 
+typedef PrintCaughtError = void Function(
+  dynamic error,
+  StackTrace stacktrace,
+);
+
 const _urlPattern =
     r'(https?|http)://([-A-Z0-9.]+)(/[-A-Z0-9+&@#/%=~_|!:,.;]*)?(\?[A-Z0-9+&@#/%=~_|!:‌​,.;]*)?';
+const PrintCaughtError printError = _printError;
+
+void _printError(dynamic error, StackTrace stacktrace) {
+  debugPrint('${error?.toString()}: ${stacktrace?.toString()}');
+}
 
 class PanUtils {
   static Map<String, String> getDateTime() {

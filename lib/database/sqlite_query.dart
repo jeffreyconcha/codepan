@@ -81,6 +81,7 @@ class SQLiteQuery with QueryProperties {
     List<dynamic> groupBy,
     bool randomOrder = false,
     int limit,
+    JoinType type = JoinType.INNER,
   }) {
     return SQLiteQuery(
       select: schema.fields,
@@ -90,7 +91,7 @@ class SQLiteQuery with QueryProperties {
       groupBy: groupBy,
       randomOrder: randomOrder,
       limit: limit,
-    );
+    )..joinAllForeignKeys(type: type);
   }
 
   void _addOrders(List<dynamic> input, {tb.Table table}) {

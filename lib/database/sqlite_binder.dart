@@ -141,8 +141,8 @@ class SQLiteBinder {
         }
         db.removeBinder();
         result = true;
-      } catch (error) {
-        debugPrint(error.toString());
+      } catch (error, stacktrace) {
+        printError(error, stacktrace);
         rethrow;
       }
       return result;
