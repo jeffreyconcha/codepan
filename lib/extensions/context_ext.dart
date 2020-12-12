@@ -34,6 +34,14 @@ extension BuildContextUtils on BuildContext {
     );
   }
 
+  void fadeIn({@required Widget page}) {
+    Navigator.of(this).push(
+      FadeRoute(
+        enter: page,
+      ),
+    );
+  }
+
   void hideKeyboard() {
     FocusScope.of(this).unfocus();
   }
