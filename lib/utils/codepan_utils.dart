@@ -6,6 +6,7 @@ import 'package:codepan/models/date_time.dart';
 import 'package:connectivity/connectivity.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:inflection2/inflection2.dart';
 import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:time_ago_provider/time_ago_provider.dart' as ago;
@@ -278,5 +279,15 @@ class PanUtils {
 
   static String enumValue(dynamic data) {
     return data.toString().split('.').last;
+  }
+
+  static String toPast(String word) {
+    final dash = '-';
+    if (word.contains(dash)) {
+      final first = word.split(dash).first;
+      final past = PAST.convert(first);
+      return word.replaceAll(first, past);
+    }
+    return PAST.convert(word);
   }
 }

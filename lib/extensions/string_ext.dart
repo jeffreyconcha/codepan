@@ -1,9 +1,10 @@
 // ignore: sdk_version_extension_methods
+import 'package:codepan/utils/codepan_utils.dart';
 import 'package:inflection2/inflection2.dart';
 
 const _true = <String>['true', 'yes', 'on', '1'];
 const _false = <String>['false', 'no', 'off', '0'];
-const _lower = <String>['of', 'and', 'or', 'is', 'are', 'a', 'with', 'my'];
+const _lower = <String>['of', 'and', 'or', 'is', 'are', 'a', 'with'];
 
 extension StringUtils on String {
   String capitalize() {
@@ -69,13 +70,25 @@ extension StringUtils on String {
   }
 
   String toPast() {
-    final dash = '-';
-    if (this.contains(dash)) {
-      final first = this.split(dash).first;
-      final past = PAST.convert(first);
-      return this.replaceAll(first, past);
+    final space = ' ';
+    if (this.contains(space)) {
+      final words = this.split(space);
+      final buffer = StringBuffer();
+      final length = words.length;
+      for (int i = 0; i < length; i++) {
+        final word = words[i];
+        if (i == 0) {
+          buffer.write(PanUtils.toPast(word));
+        } else {
+          buffer.write(word);
+        }
+        if (i < length - 1) {
+          buffer.write(space);
+        }
+      }
+      return buffer.toString();
     }
-    return PAST.convert(this);
+    return PanUtils.toPast(this);
   }
 
   String toSingular() {
