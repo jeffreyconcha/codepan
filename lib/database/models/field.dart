@@ -176,6 +176,16 @@ class Field extends SQLiteModel {
     }
   }
 
+  /// Shorthand for instantiating foreign keys. <br/><br/>
+  /// Note: Must only be used in queries.
+  Field.asReference({
+    @required String field,
+    @required Table reference,
+  }) : super(field) {
+    this._constraint = Constraint.foreignKey;
+    this._reference = reference;
+  }
+
   Field.asIndex(
     String field, {
     DataType type = DataType.integer,
