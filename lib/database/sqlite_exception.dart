@@ -12,8 +12,9 @@ class SQLiteException extends DatabaseException {
   static const String invalidConditionList =
       'Cannot combine OR and AND conditions.';
   static const String unknownEntity = 'Unknown entity.';
-  static const String invalidForeignKeyName =
-      'Invalid foreign key name, please follow the proper convention.';
+  static const String noSchemaFoundInQuery =
+      'No table schema found. Please provide an instance of \"TableSchema\" to the '
+      'main query to join tables using foreign keys.';
 
   SQLiteException(String message) : super(message);
 

@@ -58,10 +58,10 @@ extension MapUtils on Map<String, dynamic> {
     return this.containsKey(_key);
   }
 
-  bool hasKeyAndValue(String key) {
+  bool hasKeyWithValue(String key) {
     final _key = getKey(key);
     if (this.containsKey(_key)) {
-      return this.get(_key) != null;
+      return this[_key] != null;
     }
     return false;
   }

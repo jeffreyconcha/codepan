@@ -2,6 +2,7 @@ import 'package:codepan/database/mixin/query_properties.dart';
 import 'package:codepan/database/models/field.dart';
 import 'package:codepan/database/models/table.dart' as tb;
 import 'package:codepan/database/schema.dart';
+import 'package:codepan/database/sqlite_exception.dart';
 import 'package:flutter/cupertino.dart';
 
 enum JoinType {
@@ -157,14 +158,16 @@ class SQLiteQuery with QueryProperties {
     JoinType type = JoinType.INNER,
   }) {
     if (schema != null) {
-      joinAll(
+      joinForeignKeys(
         foreignKeys: schema.foreignKeys,
         type: type,
       );
+    } else {
+      throw SQLiteException(SQLiteException.noSchemaFoundInQuery);
     }
   }
 
-  void joinAll({
+  void joinForeignKeys({
     @required List<Field> foreignKeys,
     JoinType type = JoinType.INNER,
   }) {
@@ -185,6 +188,8 @@ class SQLiteQuery with QueryProperties {
             type: type,
           );
         }
+      } else {
+        throw SQLiteException(SQLiteException.noSchemaFoundInQuery);
       }
     }
   }
