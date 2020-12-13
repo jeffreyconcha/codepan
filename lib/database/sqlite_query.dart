@@ -3,7 +3,7 @@ import 'package:codepan/database/models/field.dart';
 import 'package:codepan/database/models/table.dart' as tb;
 import 'package:codepan/database/schema.dart';
 import 'package:codepan/database/sqlite_exception.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 
 enum JoinType {
   left,
