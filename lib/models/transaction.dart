@@ -17,6 +17,9 @@ abstract class TransactionData extends EntityData
     this.isDeleted,
   });
 
+  @override
+  List<Object> get props => [id];
+
   @protected
   Map<String, dynamic> get map {
     final map = <String, dynamic>{

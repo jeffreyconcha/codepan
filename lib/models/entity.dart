@@ -1,6 +1,7 @@
 import 'package:codepan/database/schema.dart';
+import 'package:equatable/equatable.dart';
 
-abstract class EntityData {
+abstract class EntityData extends Equatable {
   const EntityData();
 
   TableSchema get schemaInstance;
