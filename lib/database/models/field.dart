@@ -1,4 +1,5 @@
 import 'package:codepan/database/models/sqlite_model.dart';
+import 'package:codepan/extensions/dynamic_ext.dart';
 import 'package:codepan/database/models/table.dart';
 import 'package:codepan/database/sqlite_query.dart';
 import 'package:codepan/database/sqlite_statement.dart';
@@ -245,7 +246,8 @@ class Field extends SQLiteModel {
         if (collate) {
           buffer.write(' COLLATE NOCASE');
         }
-        final direction = order.toString().split('.').last;
+        final value = order.enumValue;
+        final direction = value.replaceAll('ending', '').toUpperCase();
         buffer.write(' $direction');
       } else if (isCount) {
         buffer.write('COUNT($field)');
