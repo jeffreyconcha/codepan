@@ -1,4 +1,5 @@
 import 'package:codepan/database/sqlite_statement.dart';
+import 'package:codepan/models/date_time.dart';
 import 'package:codepan/models/entity.dart';
 import 'package:flutter/foundation.dart';
 
@@ -41,6 +42,26 @@ abstract class TransactionData extends EntityData
       return value == null;
     });
     return filtered;
+  }
+
+  DateTimeData get createdAt {
+    if (dateCreated != null && timeCreated != null) {
+      return DateTimeData(
+        date: dateCreated,
+        time: timeCreated,
+      );
+    }
+    return null;
+  }
+
+  DateTimeData get updatedAt {
+    if (dateUpdated != null && timeUpdated != null) {
+      return DateTimeData(
+        date: dateUpdated,
+        time: timeUpdated,
+      );
+    }
+    return null;
   }
 
   SQLiteStatement toStatement() {
