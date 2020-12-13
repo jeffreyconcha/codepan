@@ -7,10 +7,12 @@ class DateTimeData extends Equatable {
   final String time;
 
   @override
-  List<Object> get props => [
-        date,
-        time,
-      ];
+  List<Object> get props {
+    return [
+      date,
+      time,
+    ];
+  }
 
   String get displayDate => PanUtils.formatDate(date);
 
