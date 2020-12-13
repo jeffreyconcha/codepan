@@ -54,7 +54,16 @@ extension MapUtils on Map<String, dynamic> {
   }
 
   bool hasKey(String key) {
-    return this.containsKey(getKey(key));
+    final _key = getKey(key);
+    return this.containsKey(_key);
+  }
+
+  bool hasKeyAndValue(String key) {
+    final _key = getKey(key);
+    if (this.containsKey(_key)) {
+      return this.get(_key) != null;
+    }
+    return false;
   }
 
   void setPrefix(
