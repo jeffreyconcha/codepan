@@ -11,17 +11,18 @@ import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:time_ago_provider/time_ago_provider.dart' as ago;
 
-typedef PrintCaughtError = void Function(
-  dynamic error,
-  StackTrace stacktrace,
-);
-
 const _urlPattern =
     r'(https?|http)://([-A-Z0-9.]+)(/[-A-Z0-9+&@#/%=~_|!:,.;]*)?(\?[A-Z0-9+&@#/%=~_|!:‌​,.;]*)?';
-const PrintCaughtError printError = _printError;
+const printError = _printError;
+const printLarge = _printLarge;
 
 void _printError(dynamic error, StackTrace stacktrace) {
   debugPrint('${error?.toString()}: ${stacktrace?.toString()}');
+}
+
+void _printLarge(String text) {
+  final pattern = RegExp('.{1,800}'); // 800 is the size of each chunk
+  pattern.allMatches(text).forEach((match) => print(match.group(0)));
 }
 
 class PanUtils {
@@ -150,10 +151,32 @@ class PanUtils {
     return ago.format(value);
   }
 
-  static String getDayOfTheWeek(String date, String time) {
+  static String getDayOfTheWeek(
+    String date,
+    String time, {
+    bool isAbbreviated = false,
+  }) {
     final dt = DateTime.parse('$date $time');
-    final format = DateFormat.EEEE('en_US');
+    return isAbbreviated
+        ? DateFormat.E('en_US').format(dt)
+        : DateFormat.EEEE('en_US').format(dt);
+  }
+
+  static String getDayOfTheMonth(String date, String time) {
+    final dt = DateTime.parse('$date $time');
+    final format = DateFormat.d('en_US');
     return format.format(dt);
+  }
+
+  static String getMonthInYear(
+    String date,
+    String time, {
+    bool isAbbreviated = false,
+  }) {
+    final dt = DateTime.parse('$date $time');
+    return isAbbreviated
+        ? DateFormat.MMM('en_US').format(dt)
+        : DateFormat.MMMM('en_US').format(dt);
   }
 
   static Future<File> getFile({
@@ -184,11 +207,6 @@ class PanUtils {
       return dir;
     }
     return root;
-  }
-
-  static void printLarge(String text) {
-    final pattern = RegExp('.{1,800}'); // 800 is the size of each chunk
-    pattern.allMatches(text).forEach((match) => print(match.group(0)));
   }
 
   static Future<bool> hasInternet() async {
