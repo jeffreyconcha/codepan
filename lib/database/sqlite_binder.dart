@@ -69,7 +69,7 @@ class SQLiteBinder {
           orderBy: [
             Field.asOrder(
               field: primaryKey,
-              order: Order.ASC,
+              order: Order.ascending,
             ),
           ],
         );
@@ -90,7 +90,7 @@ class SQLiteBinder {
           orderBy: [
             Field.asOrder(
               field: primaryKey,
-              order: Order.ASC,
+              order: Order.ascending,
             ),
           ],
         );
@@ -167,7 +167,7 @@ class SQLiteBinder {
         orderBy: [
           Field.asOrder(
             field: primaryKey,
-            order: Order.DESC,
+            order: Order.descending,
           )
         ],
         limit: 1,

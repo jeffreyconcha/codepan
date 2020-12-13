@@ -6,14 +6,14 @@ import 'package:codepan/database/sqlite_exception.dart';
 import 'package:flutter/cupertino.dart';
 
 enum JoinType {
-  LEFT,
-  RIGHT,
-  INNER,
-  OUTER,
+  left,
+  right,
+  inner,
+  outer,
 }
 enum Order {
-  ASC,
-  DESC,
+  ascending,
+  descending,
 }
 
 class SQLiteQuery with QueryProperties {
@@ -82,7 +82,7 @@ class SQLiteQuery with QueryProperties {
     List<dynamic> groupBy,
     bool randomOrder = false,
     int limit,
-    JoinType type = JoinType.INNER,
+    JoinType type = JoinType.inner,
   }) {
     return SQLiteQuery(
       select: schema.fields,
@@ -137,7 +137,7 @@ class SQLiteQuery with QueryProperties {
 
   void join({
     @required SQLiteQuery query,
-    JoinType type = JoinType.INNER,
+    JoinType type = JoinType.inner,
   }) {
     query._setJoinType(type);
     _joinList ??= [];
@@ -155,7 +155,7 @@ class SQLiteQuery with QueryProperties {
   }
 
   void joinAllForeignKeys({
-    JoinType type = JoinType.INNER,
+    JoinType type = JoinType.inner,
   }) {
     if (schema != null) {
       joinForeignKeys(
@@ -169,7 +169,7 @@ class SQLiteQuery with QueryProperties {
 
   void joinForeignKeys({
     @required List<Field> foreignKeys,
-    JoinType type = JoinType.INNER,
+    JoinType type = JoinType.inner,
   }) {
     if (foreignKeys?.isNotEmpty ?? false) {
       if (schema != null) {

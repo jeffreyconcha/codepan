@@ -198,7 +198,7 @@ class Field extends SQLiteModel {
 
   Field.asOrder({
     @required String field,
-    Order order = Order.ASC,
+    Order order = Order.ascending,
     bool collate = false,
   }) : super(field) {
     this._order = order;

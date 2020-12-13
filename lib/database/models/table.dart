@@ -52,7 +52,7 @@ class Table<T> {
 
   Field order({
     @required String field,
-    Order order = Order.ASC,
+    Order order = Order.ascending,
     bool collate = false,
   }) {
     return Field.asOrder(
