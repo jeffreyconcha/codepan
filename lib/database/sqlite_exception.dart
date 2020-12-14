@@ -3,7 +3,7 @@ import 'package:sqflite_sqlcipher/sqflite.dart';
 class SQLiteException extends DatabaseException {
   static const String databaseNotOpened = 'Database is not open, '
       'client did not call await openDatabase().';
-  static const String invalidSqliteEntity = 'Invalid argument, please pass an '
+  static const String invalidSQLiteEntity = 'Invalid argument, please pass an '
       'instance of SQLiteEntity';
   static const String noFieldValues = 'No fields and values added in query';
   static const String noConditions = 'No conditions added in query.';
@@ -15,6 +15,8 @@ class SQLiteException extends DatabaseException {
   static const String noSchemaFoundInQuery =
       'No table schema found. Please provide an instance of \"TableSchema\" to the '
       'main query to join tables using foreign keys.';
+  static const String invalidTableType =
+      'Invalid table type, table can only be a type of String, Table or TableSchema.';
 
   SQLiteException(String message) : super(message);
 

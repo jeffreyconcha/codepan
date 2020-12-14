@@ -1,11 +1,12 @@
 import 'package:codepan/database/models/field.dart';
+import 'package:codepan/database/models/table.dart' as tb;
 import 'package:codepan/database/schema.dart';
 import 'package:codepan/database/sqlite_adapter.dart';
+import 'package:codepan/database/sqlite_exception.dart';
 import 'package:codepan/database/sqlite_query.dart';
 import 'package:codepan/database/sqlite_statement.dart';
 import 'package:codepan/models/transaction.dart';
 import 'package:codepan/utils/codepan_utils.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:sqflite_sqlcipher/sqflite.dart';
 
@@ -314,26 +315,49 @@ class SQLiteBinder {
     return ignoreId ? null : await _mapId(table, stmt, unique: field);
   }
 
-  void updateData({@required TransactionData data}) {
-    update(data.table, data.toStatement(), data.id);
+  void updateData({
+    @required TransactionData data,
+  }) {
+    updateRecord(data.table, data.toStatement(), data.id);
   }
 
-  void update(String table, SQLiteStatement stmt, dynamic id) {
+  void updateRecord(
+    String table,
+    SQLiteStatement stmt,
+    dynamic id,
+  ) {
     final sql = stmt.update(table, id);
     addStatement(sql);
   }
 
-  void updateWithConditions(String table, SQLiteStatement stmt) {
+  @deprecated
+  void updateWithConditions(
+    String table,
+    SQLiteStatement stmt,
+  ) {
     final sql = stmt.updateWithConditions(table);
     addStatement(sql);
   }
 
-  void updateFromStatement({
-    @required String table,
+  /// table - Can only be a type of String, Table or TableSchema.
+  void update({
+    @required dynamic table,
     @required SQLiteStatement stmt,
   }) {
-    final sql = stmt.updateFromStatement(table);
-    addStatement(sql);
+    String name;
+    if (table is String) {
+      name = table;
+    } else if (table is tb.Table) {
+      name = table.name;
+    } else if (table is TableSchema) {
+      name = table.tableName;
+    } else {
+      throw SQLiteException(SQLiteException.invalidTableType);
+    }
+    if (name != null) {
+      final sql = stmt.updateFromStatement(name);
+      addStatement(sql);
+    }
   }
 
   void delete(String table, dynamic id) {

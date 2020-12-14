@@ -1,4 +1,3 @@
-// ignore: sdk_version_extension_methods
 import 'package:codepan/utils/codepan_utils.dart';
 import 'package:inflection2/inflection2.dart';
 

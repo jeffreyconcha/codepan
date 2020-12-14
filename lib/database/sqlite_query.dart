@@ -49,7 +49,10 @@ class SQLiteQuery with QueryProperties {
 
   bool get hasLimit => _limit != null && _limit != 0;
 
-  /// table - Can only be a type of String, Table or TableSchema
+  /// select - Can only be a list of String or Field.
+  /// table - Can only be a type of String, Table or TableSchema.
+  /// orderBy - Can only be a list of String or Field.
+  /// groupBy - Can only be a list of String or Field.
   SQLiteQuery({
     @required List<dynamic> select,
     @required dynamic from,
@@ -66,13 +69,17 @@ class SQLiteQuery with QueryProperties {
     } else if (from is TableSchema) {
       this._table = from.table;
       this._schema = from;
+    } else {
+      throw SQLiteException(SQLiteException.invalidTableType);
     }
-    addFields(select, table: _table);
-    addConditions(where, table: _table);
-    _addOrders(orderBy, table: _table);
-    _addGroups(groupBy, table: _table);
-    this._randomOrder = randomOrder;
-    this._limit = limit;
+    if (_table != null) {
+      addFields(select, table: _table);
+      addConditions(where, table: _table);
+      _addOrders(orderBy, table: _table);
+      _addGroups(groupBy, table: _table);
+      this._randomOrder = randomOrder;
+      this._limit = limit;
+    }
   }
 
   factory SQLiteQuery.all({

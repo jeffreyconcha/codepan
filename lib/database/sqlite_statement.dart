@@ -226,7 +226,7 @@ class SQLiteStatement with QueryProperties {
         addField(entity);
       }
     } else {
-      throw SQLiteException(SQLiteException.invalidSqliteEntity);
+      throw SQLiteException(SQLiteException.invalidSQLiteEntity);
     }
   }
 }
