@@ -3,7 +3,8 @@ import 'package:inflection2/inflection2.dart';
 
 const _true = <String>['true', 'yes', 'on', '1'];
 const _false = <String>['false', 'no', 'off', '0'];
-const _lower = <String>['of', 'and', 'or', 'is', 'are', 'a', 'with'];
+const _loweredTitle = <String>['of', 'and', 'or', 'is', 'are', 'a', 'with'];
+const _punctuations = <String>[',', '.', '?', '!', ';', ':'];
 
 extension StringUtils on String {
   String capitalize() {
@@ -13,7 +14,7 @@ extension StringUtils on String {
       final words = this.split(space);
       for (int i = 0; i < words.length; i++) {
         final word = words[i];
-        if (_lower.contains(word) && i != 0) {
+        if (_loweredTitle.contains(word) && i != 0) {
           buffer.write(word);
         } else {
           buffer.write('${word[0].toUpperCase()}${word.substring(1)}');
@@ -38,9 +39,12 @@ extension StringUtils on String {
     return this;
   }
 
-  String complete(dynamic input) {
+  String complete(
+    dynamic input, {
+    String identifier,
+  }) {
     final buffer = StringBuffer();
-    final identifier = '\$';
+    final id = identifier ?? '\$';
     final separator = ' ';
     final list = <String>[];
     if (input is String) {
@@ -52,8 +56,13 @@ extension StringUtils on String {
     final words = this.split(separator);
     for (int i = 0; i < words.length; i++) {
       final word = words[i];
-      if (word.contains(identifier) && iterator.moveNext()) {
+      if (word.contains(id) && iterator.moveNext()) {
         buffer.write(iterator.current);
+        final code = word.runes.last;
+        final last = String.fromCharCode(code);
+        if (_punctuations.contains(last)) {
+          buffer.write(last);
+        }
       } else {
         buffer.write(word);
       }
