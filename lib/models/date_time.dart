@@ -57,6 +57,10 @@ class DateTimeData extends Equatable {
     this.time = '00:00:00',
   });
 
+  factory DateTimeData.format(DateTime input) {
+    return PanUtils.formatDateTime(input);
+  }
+
   Map<String, String> toMap() {
     return {
       'date': date,
