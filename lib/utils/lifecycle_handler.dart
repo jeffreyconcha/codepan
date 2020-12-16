@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 
 abstract class StateWithLifecycle<T extends StatefulWidget> extends State<T>
-    with WidgetsBindingObserver {
+    with WidgetsBindingObserver
+    implements LifeCycle {
   @override
   void initState() {
     super.initState();
@@ -25,7 +26,7 @@ abstract class StateWithLifecycle<T extends StatefulWidget> extends State<T>
         onPause();
         break;
       case AppLifecycleState.inactive:
-        onNotActive();
+        onInactive();
         break;
       case AppLifecycleState.detached:
         onDetach();
@@ -33,11 +34,33 @@ abstract class StateWithLifecycle<T extends StatefulWidget> extends State<T>
     }
   }
 
-  void onResume() => debugPrint('resumed');
+  @override
+  void onResume() {
+    debugPrint('resumed');
+  }
 
-  void onPause() => debugPrint('paused');
+  @override
+  void onPause() {
+    debugPrint('paused');
+  }
 
-  void onDetach() => debugPrint('inactive');
+  @override
+  void onDetach() {
+    debugPrint('inactive');
+  }
 
-  void onNotActive() => debugPrint('detached');
+  @override
+  void onInactive() {
+    debugPrint('detached');
+  }
+}
+
+abstract class LifeCycle {
+  void onResume();
+
+  void onPause();
+
+  void onDetach();
+
+  void onInactive();
 }

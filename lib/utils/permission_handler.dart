@@ -2,9 +2,10 @@ import 'package:app_settings/app_settings.dart';
 import 'package:codepan/resources/strings.dart';
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:codepan/utils/lifecycle_handler.dart';
 
-abstract class StateWithPermission<T extends StatefulWidget> extends State<T>
-    with WidgetsBindingObserver {
+abstract class StateWithPermission<T extends StatefulWidget>
+    extends StateWithLifecycle<T> with WidgetsBindingObserver {
   bool _hasPermanentlyDenied = false;
   bool _isGranted = false;
 
@@ -21,31 +22,23 @@ abstract class StateWithPermission<T extends StatefulWidget> extends State<T>
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addObserver(this);
     _checkPermissions(request: true);
   }
 
   @override
   void dispose() {
     super.dispose();
-    WidgetsBinding.instance.removeObserver(this);
   }
 
   @override
   @mustCallSuper
-  void didChangeAppLifecycleState(AppLifecycleState state) {
-    switch (state) {
-      case AppLifecycleState.resumed:
-        if (_isGranted) {
-          _checkPermissions(request: true);
-        } else {
-          if (_hasPermanentlyDenied) {
-            _checkPermissions(request: false);
-          }
-        }
-        break;
-      default:
-        break;
+  void onResume() {
+    if (_isGranted) {
+      _checkPermissions(request: true);
+    } else {
+      if (_hasPermanentlyDenied) {
+        _checkPermissions(request: false);
+      }
     }
   }
 
