@@ -72,6 +72,7 @@ class PageBlocBuilder<E extends ParentEvent, B extends ParentBloc<E, S>,
           behaviour: behaviour,
           observer: observer,
         ),
+        bottomNavigationBar: bottomNavigationBar,
       ),
     );
   }
