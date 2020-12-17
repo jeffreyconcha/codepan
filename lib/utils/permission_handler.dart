@@ -1,8 +1,8 @@
 import 'package:app_settings/app_settings.dart';
 import 'package:codepan/resources/strings.dart';
+import 'package:codepan/utils/lifecycle_handler.dart';
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:codepan/utils/lifecycle_handler.dart';
 
 abstract class StateWithPermission<T extends StatefulWidget>
     extends StateWithLifecycle<T> with WidgetsBindingObserver {

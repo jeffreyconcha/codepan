@@ -50,12 +50,6 @@ class PanUtils {
     );
   }
 
-  static String getFormattedDateAndTime() {
-    final now = DateTime.now();
-    final format = DateFormat.yMMMMd('en_US').add_jm();
-    return format.format(now);
-  }
-
   static String formatDate(String input) {
     final date = DateTime.parse(input);
     final format = DateFormat.yMMMMd('en_US');
@@ -99,6 +93,7 @@ class PanUtils {
     return nf.format(input);
   }
 
+  @deprecated
   static String formatDuration(
     Duration duration, {
     bool withSeconds = true,

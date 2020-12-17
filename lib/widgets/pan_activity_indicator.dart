@@ -1,7 +1,6 @@
 library nuts_activity_indicator;
 
 import 'dart:math' as math;
-
 import 'package:flutter/widgets.dart';
 
 /// A highly customizable activity indicator (spinner)

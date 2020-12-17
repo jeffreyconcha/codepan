@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'package:codepan/database/models/table.dart';
 import 'package:codepan/database/schema.dart';
 import 'package:codepan/database/sqlite_binder.dart';
 import 'package:codepan/database/sqlite_exception.dart';
