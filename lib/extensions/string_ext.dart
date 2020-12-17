@@ -3,7 +3,7 @@ import 'package:inflection2/inflection2.dart';
 
 const _true = <String>['true', 'yes', 'on', '1'];
 const _false = <String>['false', 'no', 'off', '0'];
-const _loweredTitle = <String>['of', 'and', 'or', 'is', 'are', 'a', 'with'];
+const _loweredInTitle = <String>['of', 'and', 'or', 'is', 'are', 'a', 'with'];
 const _punctuations = <String>[',', '.', '?', '!', ';', ':'];
 
 extension StringUtils on String {
@@ -14,7 +14,7 @@ extension StringUtils on String {
       final words = this.split(space);
       for (int i = 0; i < words.length; i++) {
         final word = words[i];
-        if (_loweredTitle.contains(word) && i != 0) {
+        if (_loweredInTitle.contains(word) && i != 0) {
           buffer.write(word);
         } else {
           buffer.write('${word[0].toUpperCase()}${word.substring(1)}');
