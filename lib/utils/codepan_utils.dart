@@ -357,7 +357,6 @@ class PanUtils {
         break;
     }
     final rotated = i.copyRotate(image, rotation);
-    print('${rotated.width} x ${rotated.height}');
     final rendered = await painter.renderImage(
       width: rotated.width,
       height: rotated.height,
