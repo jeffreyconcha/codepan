@@ -127,18 +127,6 @@ class PanUtils {
     return false;
   }
 
-  static String camelToSnake(String text) {
-    final buffer = StringBuffer();
-    text?.runes?.forEach((code) {
-      final character = String.fromCharCode(code);
-      if (character == character.toUpperCase()) {
-        buffer.write('_');
-      }
-      buffer.write(character.toLowerCase());
-    });
-    return buffer.toString();
-  }
-
   static String getPercentage(int progress, int max) {
     final percentage = ((progress / max) * 100);
     if (!percentage.isNaN && !percentage.isInfinite) {
