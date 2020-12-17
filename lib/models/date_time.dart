@@ -1,7 +1,11 @@
-import 'package:codepan/utils/codepan_utils.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/foundation.dart';
 import 'package:intl/intl.dart';
+import 'package:time_ago_provider/time_ago_provider.dart' as ago;
+
+const String locale = 'en_US';
+const String dateFormat = 'yyyy-MM-dd';
+const String timeFormat = 'HH:mm:ss';
 
 class DateTimeData extends Equatable {
   final String date;
@@ -15,42 +19,32 @@ class DateTimeData extends Equatable {
     ];
   }
 
-  String get displayDate => PanUtils.formatDate(date);
+  String get display => DateFormat.yMMMMd(locale).add_jm().format(value);
 
-  String get displayTime => PanUtils.formatTime(time);
+  String get displayDate => DateFormat.yMMMMd(locale).format(value);
 
-  String get dayOfTheWeek => PanUtils.getDayOfTheWeek(date, time);
+  String get displayTime => DateFormat.jm(locale).format(value);
 
-  String get dayOfTheMonth => PanUtils.getDayOfTheMonth(date, time);
+  String get dayOfTheWeek => DateFormat.EEEE(locale).format(value);
 
-  String get monthInYear => PanUtils.getMonthInYear(date, time);
+  String get dayOfTheMonth => DateFormat.d(locale).format(value);
 
-  String get history => PanUtils.getTimeHistory(date, time);
+  String get monthInYear => DateFormat.MMMM(locale).format(value);
+
+  String get abbreviatedWeekday => DateFormat.E(locale).format(value);
+
+  String get abbreviatedMonth => DateFormat.MMM(locale).format(value);
+
+  String get history => ago.format(value);
 
   DateTime get value => DateTime.parse('$date $time');
 
-  String get abbreviatedWeekday {
-    return PanUtils.getDayOfTheWeek(
-      date,
-      time,
-      isAbbreviated: true,
-    );
-  }
-
-  String get abbreviatedMonth {
-    return PanUtils.getMonthInYear(
-      date,
-      time,
-      isAbbreviated: true,
-    );
-  }
-
   bool get isNewMinute {
-    final array = time.split(':');
-    if (array[2] == '00') {
-      return true;
+    if (time != null) {
+      final split = time.split(':');
+      return split.last == '00';
     }
-    return false;
+    return null;
   }
 
   const DateTimeData({
@@ -59,8 +53,8 @@ class DateTimeData extends Equatable {
   });
 
   factory DateTimeData.format(DateTime input) {
-    final date = DateFormat('yyyy-MM-dd');
-    final time = DateFormat('HH:mm:ss');
+    final date = DateFormat(dateFormat);
+    final time = DateFormat(timeFormat);
     return DateTimeData(
       date: date.format(input),
       time: time.format(input),
@@ -82,14 +76,12 @@ class DateTimeData extends Equatable {
     return date == other?.date && time == other?.time;
   }
 
-  bool isGreaterThan(DateTimeData other) {
-    final duration = difference(other);
-    return !duration.isNegative && !isEqual(other);
+  bool isAfter(DateTimeData other) {
+    return value.isAfter(other.value);
   }
 
-  bool isLessThan(DateTimeData other) {
-    final duration = difference(other);
-    return duration.isNegative;
+  bool isBefore(DateTimeData other) {
+    return value.isBefore(other.value);
   }
 
   DateTimeData add(Duration duration) {
