@@ -1,6 +1,7 @@
 import 'package:codepan/utils/codepan_utils.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/foundation.dart';
+import 'package:intl/intl.dart';
 
 class DateTimeData extends Equatable {
   final String date;
@@ -58,7 +59,12 @@ class DateTimeData extends Equatable {
   });
 
   factory DateTimeData.format(DateTime input) {
-    return PanUtils.formatDateTime(input);
+    final date = DateFormat('yyyy-MM-dd');
+    final time = DateFormat('HH:mm:ss');
+    return DateTimeData(
+      date: date.format(input),
+      time: time.format(input),
+    );
   }
 
   Map<String, String> toMap() {
@@ -88,6 +94,6 @@ class DateTimeData extends Equatable {
 
   DateTimeData add(Duration duration) {
     final sum = value.add(duration);
-    return PanUtils.formatDateTime(sum);
+    return DateTimeData.format(sum);
   }
 }

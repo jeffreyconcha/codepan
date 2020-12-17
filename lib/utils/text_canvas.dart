@@ -3,10 +3,11 @@ import 'package:flutter/material.dart';
 
 class TextCanvas extends CustomPainter {
   final ui.TextDirection textDirection;
+  final double textScaleFactor;
   final TextAlign textAlign;
   final TextStyle style;
-  final String text;
   final Offset offset;
+  final String text;
   TextPainter _painter;
 
   TextCanvas({
@@ -15,6 +16,7 @@ class TextCanvas extends CustomPainter {
     this.textAlign = TextAlign.left,
     this.textDirection = ui.TextDirection.ltr,
     this.offset = const Offset(0, 0),
+    this.textScaleFactor,
   }) {
     _painter = TextPainter(
       text: TextSpan(
@@ -23,6 +25,7 @@ class TextCanvas extends CustomPainter {
       ),
       textDirection: textDirection,
       textAlign: textAlign,
+      textScaleFactor: textScaleFactor,
     );
   }
 

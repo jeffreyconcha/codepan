@@ -1,14 +1,11 @@
 import 'dart:io';
 import 'dart:isolate';
-import 'dart:typed_data';
 import 'dart:ui';
 import 'package:codepan/extensions/extensions.dart';
 import 'package:codepan/models/date_time.dart';
 import 'package:connectivity/connectivity.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_native_image/flutter_native_image.dart';
-import 'package:image/image.dart' as i;
 import 'package:inflection2/inflection2.dart';
 import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
@@ -29,21 +26,21 @@ void _printLarge(String text) {
 }
 
 class PanUtils {
+  @deprecated
   static Map<String, String> getDateTime() {
-    final now = DateTime.now();
-    final date = DateFormat('yyyy-MM-dd');
-    final time = DateFormat('HH:mm:ss');
+    final now = PanUtils.now();
     return {
-      'date': date.format(now),
-      'time': time.format(now),
+      'date': now.date,
+      'time': now.time,
     };
   }
 
   static DateTimeData now() {
     final now = DateTime.now();
-    return formatDateTime(now);
+    return DateTimeData.format(now);
   }
 
+  @deprecated
   static DateTimeData formatDateTime(DateTime input) {
     final date = DateFormat('yyyy-MM-dd');
     final time = DateFormat('HH:mm:ss');
@@ -310,65 +307,5 @@ class PanUtils {
       return word.replaceAll(first, past);
     }
     return PAST.convert(word);
-  }
-
-  static Future<File> cropImage({
-    @required File file,
-    @required double preferredWidth,
-    @required double preferredHeight,
-  }) async {
-    final image = i.decodeImage(file.readAsBytesSync());
-    final preferredRatio = preferredWidth / preferredHeight;
-    final imageRatio = image.height / image.width;
-    File cropped;
-    if (preferredRatio < imageRatio) {
-      final width = image.width;
-      final height = (width * preferredRatio).toInt();
-      final originX = 0;
-      final originY = (image.height - height) ~/ 2;
-      cropped = await FlutterNativeImage.cropImage(
-          file.path, originX, originY, width, height);
-    } else {
-      final height = image.height;
-      final width = height ~/ preferredRatio;
-      final originY = 0;
-      final originX = (image.width - width) ~/ 2;
-      cropped = await FlutterNativeImage.cropImage(
-          file.path, originX, originY, width, height);
-    }
-    return cropped;
-  }
-
-  static Future<File> stampImage({
-    @required File file,
-    @required CustomPainter painter,
-  }) async {
-    final properties = await FlutterNativeImage.getImageProperties(file.path);
-    final image = i.decodeImage(file.readAsBytesSync());
-    double rotation = 0;
-    switch (properties.orientation) {
-      case ImageOrientation.rotate90:
-        rotation = 90;
-        break;
-      case ImageOrientation.rotate270:
-        rotation = 270;
-        break;
-      default:
-        break;
-    }
-    final rotated = i.copyRotate(image, rotation);
-    final rendered = await painter.renderImage(
-      width: rotated.width,
-      height: rotated.height,
-    );
-    final byte = await rendered.toByteData(
-      format: ImageByteFormat.png,
-    );
-    final stamp = i.decodeImage(byte.buffer.asUint8List());
-    final stamped = i.drawImage(rotated, stamp);
-    final original = i.copyRotate(stamped, -rotation);
-    final encoded = i.encodeJpg(original);
-    final data = Uint8List.fromList(encoded);
-    return await file.writeAsBytes(data);
   }
 }
