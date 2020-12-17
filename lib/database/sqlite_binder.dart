@@ -303,16 +303,18 @@ class SQLiteBinder {
     return null;
   }
 
+  /// table - Can only be a type of String, Table or TableSchema.
   Future<int> insert(
-    String table,
+    dynamic table,
     SQLiteStatement stmt, {
     dynamic unique,
     bool ignoreId = false,
   }) async {
     final map = stmt.map;
+    final name = _getTableName(table);
     final field = map[primaryKey] != null ? primaryKey : unique;
-    addStatement(stmt.insert(table, unique: field));
-    return ignoreId ? null : await _mapId(table, stmt, unique: field);
+    addStatement(stmt.insert(name, unique: field));
+    return ignoreId ? null : await _mapId(name, stmt, unique: field);
   }
 
   void updateData({
@@ -321,12 +323,14 @@ class SQLiteBinder {
     updateRecord(data.table, data.toStatement(), data.id);
   }
 
+  /// table - Can only be a type of String, Table or TableSchema.
   void updateRecord(
-    String table,
+    dynamic table,
     SQLiteStatement stmt,
     dynamic id,
   ) {
-    final sql = stmt.update(table, id);
+    final name = _getTableName(table);
+    final sql = stmt.update(name, id);
     addStatement(sql);
   }
 
@@ -344,19 +348,20 @@ class SQLiteBinder {
     @required dynamic table,
     @required SQLiteStatement stmt,
   }) {
-    String name;
+    final name = _getTableName(table);
+    final sql = stmt.updateFromStatement(name);
+    addStatement(sql);
+  }
+
+  String _getTableName(dynamic table) {
     if (table is String) {
-      name = table;
+      return table;
     } else if (table is tb.Table) {
-      name = table.name;
+      return table.name;
     } else if (table is TableSchema) {
-      name = table.tableName;
+      return table.tableName;
     } else {
       throw SQLiteException(SQLiteException.invalidTableType);
-    }
-    if (name != null) {
-      final sql = stmt.updateFromStatement(name);
-      addStatement(sql);
     }
   }
 
