@@ -9,7 +9,6 @@ import 'package:flutter/material.dart';
 import 'package:inflection2/inflection2.dart';
 import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:time_ago_provider/time_ago_provider.dart' as ago;
 
 const _urlPattern =
     r'(https?|http)://([-A-Z0-9.]+)(/[-A-Z0-9+&@#/%=~_|!:,.;]*)?(\?[A-Z0-9+&@#/%=~_|!:‌​,.;]*)?';
@@ -26,46 +25,9 @@ void _printLarge(String text) {
 }
 
 class PanUtils {
-  @deprecated
-  static Map<String, String> getDateTime() {
-    final now = PanUtils.now();
-    return {
-      'date': now.date,
-      'time': now.time,
-    };
-  }
-
   static DateTimeData now() {
     final now = DateTime.now();
     return DateTimeData.format(now);
-  }
-
-  @deprecated
-  static DateTimeData formatDateTime(DateTime input) {
-    final date = DateFormat('yyyy-MM-dd');
-    final time = DateFormat('HH:mm:ss');
-    return DateTimeData(
-      date: date.format(input),
-      time: time.format(input),
-    );
-  }
-
-  static String formatDate(String input) {
-    final date = DateTime.parse(input);
-    final format = DateFormat.yMMMMd('en_US');
-    return format.format(date);
-  }
-
-  static String formatTime(String input) {
-    final time = DateTime.parse('0000-00-00 $input');
-    final format = DateFormat.jm();
-    return format.format(time);
-  }
-
-  static String formatDateAndTime(String date, String time) {
-    final dt = DateTime.parse('$date $time');
-    final format = DateFormat.yMMMMd('en_US').add_jm();
-    return format.format(dt);
   }
 
   static DateTimeData splitDateTime(String input, {String pattern = ' '}) {
@@ -91,87 +53,6 @@ class PanUtils {
     if (input == null) return null;
     final nf = NumberFormat(format, 'en_US');
     return nf.format(input);
-  }
-
-  @deprecated
-  static String formatDuration(
-    Duration duration, {
-    bool withSeconds = true,
-    bool isReadable = false,
-    bool isAbbreviated = false,
-  }) {
-    String format(int n) => n.toString().padLeft(2, "0");
-    final h = duration.inHours.remainder(24);
-    final m = duration.inMinutes.remainder(60);
-    final s = duration.inSeconds.remainder(60);
-    final hs = isReadable
-        ? h > 1
-            ? ' hrs '
-            : ' hr '
-        : ':';
-    final ms = isReadable
-        ? m > 1
-            ? ' mins '
-            : ' min '
-        : ':';
-    final ss = isReadable
-        ? s > 1
-            ? ' secs'
-            : ' sec'
-        : ':';
-    final hours = isReadable ? '$h' : format(h);
-    final minutes = isReadable ? '$m' : format(m);
-    final seconds = isReadable ? '$s' : format(s);
-    final buffer = StringBuffer();
-    if (h != 0) {
-      buffer.write('$hours');
-      buffer.write(!isAbbreviated ? hs : 'h ');
-    }
-    if (!isReadable || m != 0) {
-      buffer.write('$minutes');
-      buffer.write(!isAbbreviated ? ms : 'm ');
-    }
-    if (!isReadable || (withSeconds && s != 0) || duration.inSeconds < 60) {
-      buffer.write('$seconds');
-      if (isReadable) {
-        buffer.write(!isAbbreviated ? ss : 's');
-      }
-    }
-    return buffer.toString().trim();
-  }
-
-  static String getTimeHistory(String date, String time) {
-    final format = DateFormat('yyyy-MM-dd HH:mm:ss');
-    final value = format.parse('$date $time');
-    return ago.format(value);
-  }
-
-  static String getDayOfTheWeek(
-    String date,
-    String time, {
-    bool isAbbreviated = false,
-  }) {
-    final dt = DateTime.parse('$date $time');
-    return isAbbreviated
-        ? DateFormat.E('en_US').format(dt)
-        : DateFormat.EEEE('en_US').format(dt);
-  }
-
-  static String getDayOfTheMonth(String date, String time) {
-    final dt = DateTime.parse('$date $time');
-    final format = DateFormat.d('en_US');
-    return format.format(dt);
-  }
-
-  static String getMonthInYear(
-    String date,
-    String time, {
-    bool isAbbreviated = false,
-  }) {
-    final dt = DateTime.parse('$date $time');
-    return isAbbreviated
-        ? DateFormat.MMM('en_US').format(dt)
-        : DateFormat.MMMM('en_US').format(dt);
   }
 
   static Future<File> getFile({

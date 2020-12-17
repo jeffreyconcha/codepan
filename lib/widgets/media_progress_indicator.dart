@@ -1,4 +1,5 @@
 import 'package:codepan/resources/dimensions.dart';
+import 'package:codepan/extensions/duration_ext.dart';
 import 'package:codepan/utils/codepan_utils.dart';
 import 'package:codepan/widgets/text.dart';
 import 'package:flutter/material.dart';
@@ -18,15 +19,15 @@ class MediaProgressIndicator extends StatelessWidget {
   final bool withShadow;
 
   String get currentTime {
-    return PanUtils.formatDuration(Duration(
+    return Duration(
       milliseconds: current.toInt(),
-    ));
+    ).format();
   }
 
   String get maxTime {
-    return PanUtils.formatDuration(Duration(
+    return Duration(
       milliseconds: max.toInt(),
-    ));
+    ).format();
   }
 
   const MediaProgressIndicator({

@@ -1,4 +1,5 @@
 import 'package:codepan/database/models/field.dart';
+import 'package:codepan/extensions/duration_ext.dart';
 import 'package:codepan/database/models/table.dart' as tb;
 import 'package:codepan/database/schema.dart';
 import 'package:codepan/database/sqlite_adapter.dart';
@@ -136,7 +137,7 @@ class SQLiteBinder {
         await _batch.commit(noResult: true);
         if (_showLog) {
           final duration = DateTime.now().difference(_time);
-          final formatted = PanUtils.formatDuration(duration, isReadable: true);
+          final formatted = duration.format(isReadable: true);
           debugPrint('$tag: TRANSACTION SUCCESSFUL');
           debugPrint('$tag: FINISHED AT $formatted');
         }

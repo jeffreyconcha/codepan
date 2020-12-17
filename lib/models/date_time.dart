@@ -48,7 +48,7 @@ class DateTimeData extends Equatable {
   }
 
   const DateTimeData({
-    @required this.date,
+    this.date = '0000-00-00',
     this.time = '00:00:00',
   });
 
