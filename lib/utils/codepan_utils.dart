@@ -139,25 +139,6 @@ class PanUtils {
     return buffer.toString();
   }
 
-  static RelativeRect getWidgetPosition(GlobalKey key) {
-    final context = key.currentContext;
-    final RenderBox bar = context.findRenderObject();
-    final RenderBox overlay = Overlay.of(context).context.findRenderObject();
-    return RelativeRect.fromRect(
-      Rect.fromPoints(
-        bar.localToGlobal(
-          bar.size.bottomRight(Offset.zero),
-          ancestor: overlay,
-        ),
-        bar.localToGlobal(
-          bar.size.bottomRight(Offset.zero),
-          ancestor: overlay,
-        ),
-      ),
-      Offset.zero & overlay.size,
-    );
-  }
-
   static String getPercentage(int progress, int max) {
     final percentage = ((progress / max) * 100);
     if (!percentage.isNaN && !percentage.isInfinite) {
