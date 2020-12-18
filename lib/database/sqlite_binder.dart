@@ -1,11 +1,11 @@
 import 'package:codepan/database/models/field.dart';
-import 'package:codepan/extensions/duration_ext.dart';
 import 'package:codepan/database/models/table.dart' as tb;
 import 'package:codepan/database/schema.dart';
 import 'package:codepan/database/sqlite_adapter.dart';
 import 'package:codepan/database/sqlite_exception.dart';
 import 'package:codepan/database/sqlite_query.dart';
 import 'package:codepan/database/sqlite_statement.dart';
+import 'package:codepan/extensions/duration.dart';
 import 'package:codepan/models/transaction.dart';
 import 'package:codepan/utils/codepan_utils.dart';
 import 'package:flutter/foundation.dart';

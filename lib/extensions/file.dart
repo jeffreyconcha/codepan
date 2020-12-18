@@ -2,7 +2,7 @@ import 'dart:io';
 import 'dart:math' as m;
 import 'dart:typed_data';
 import 'dart:ui';
-import 'package:codepan/extensions/painter_ext.dart';
+import 'package:codepan/extensions/painter.dart';
 import 'package:codepan/resources/dimensions.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';

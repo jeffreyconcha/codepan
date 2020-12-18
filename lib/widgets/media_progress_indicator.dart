@@ -1,6 +1,5 @@
+import 'package:codepan/extensions/duration.dart';
 import 'package:codepan/resources/dimensions.dart';
-import 'package:codepan/extensions/duration_ext.dart';
-import 'package:codepan/utils/codepan_utils.dart';
 import 'package:codepan/widgets/text.dart';
 import 'package:flutter/material.dart';
 

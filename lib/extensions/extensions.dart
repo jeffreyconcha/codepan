@@ -1,8 +1,8 @@
-export 'context_ext.dart';
-export 'duration_ext.dart';
-export 'dynamic_ext.dart';
-export 'file_ext.dart';
-export 'int_ext.dart';
-export 'map_ext.dart';
-export 'painter_ext.dart';
-export 'string_ext.dart';
+export 'context.dart';
+export 'duration.dart';
+export 'dynamic.dart';
+export 'file.dart';
+export 'int.dart';
+export 'map.dart';
+export 'painter.dart';
+export 'string.dart';

@@ -1,5 +1,5 @@
 import 'package:codepan/utils/codepan_utils.dart';
-import 'string_ext.dart';
+import 'string.dart';
 
 extension DynamicUtils on dynamic {
   bool get isEnum => PanUtils.isEnum(this);

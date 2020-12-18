@@ -2,7 +2,7 @@ import 'package:codepan/database/models/sqlite_model.dart';
 import 'package:codepan/database/models/table.dart';
 import 'package:codepan/database/sqlite_query.dart';
 import 'package:codepan/database/sqlite_statement.dart';
-import 'package:codepan/extensions/dynamic_ext.dart';
+import 'package:codepan/extensions/dynamic.dart';
 import 'package:flutter/foundation.dart';
 
 enum Constraint {

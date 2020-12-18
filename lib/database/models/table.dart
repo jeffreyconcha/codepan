@@ -2,7 +2,7 @@ import 'package:codepan/database/models/field.dart';
 import 'package:codepan/database/schema.dart';
 import 'package:codepan/database/sqlite_query.dart';
 import 'package:codepan/database/sqlite_statement.dart';
-import 'package:codepan/extensions/string_ext.dart';
+import 'package:codepan/extensions/string.dart';
 import 'package:flutter/foundation.dart';
 import 'package:inflection2/inflection2.dart';
 

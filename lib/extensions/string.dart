@@ -111,4 +111,9 @@ extension StringUtils on String {
     }
     return null;
   }
+
+  int count(String text) {
+    final split = this.split(text);
+    return split.length - 1;
+  }
 }
