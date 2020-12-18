@@ -27,7 +27,7 @@ void _printLarge(String text) {
 class PanUtils {
   static DateTimeData now() {
     final now = DateTime.now();
-    return DateTimeData.format(now);
+    return DateTimeData.from(now);
   }
 
   static DateTimeData splitDateTime(String input, {String pattern = ' '}) {

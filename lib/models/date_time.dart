@@ -1,11 +1,10 @@
 import 'package:equatable/equatable.dart';
-import 'package:flutter/foundation.dart';
 import 'package:intl/intl.dart';
 import 'package:time_ago_provider/time_ago_provider.dart' as ago;
 
-const String locale = 'en_US';
 const String dateFormat = 'yyyy-MM-dd';
 const String timeFormat = 'HH:mm:ss';
+const String locale = 'en_US';
 
 class DateTimeData extends Equatable {
   final String date;
@@ -52,13 +51,18 @@ class DateTimeData extends Equatable {
     this.time = '00:00:00',
   });
 
-  factory DateTimeData.format(DateTime input) {
+  factory DateTimeData.from(DateTime input) {
     final date = DateFormat(dateFormat);
     final time = DateFormat(timeFormat);
     return DateTimeData(
       date: date.format(input),
       time: time.format(input),
     );
+  }
+
+  factory DateTimeData.parse(String input) {
+    final value = DateTime.parse(input);
+    return DateTimeData.from(value);
   }
 
   Map<String, String> toMap() {
@@ -86,6 +90,6 @@ class DateTimeData extends Equatable {
 
   DateTimeData add(Duration duration) {
     final sum = value.add(duration);
-    return DateTimeData.format(sum);
+    return DateTimeData.from(sum);
   }
 }
