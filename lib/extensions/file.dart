@@ -36,6 +36,8 @@ extension FileUtils on File {
       final height = (width * preferredRatio).toInt();
       final originX = 0;
       final originY = (min - height) ~/ 2;
+      print('$width x $height');
+      print('$originX x $originY');
       cropped = await FlutterNativeImage.cropImage(
           this.path, originX, originY, width, height);
     } else {
