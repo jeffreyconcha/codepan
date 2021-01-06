@@ -70,7 +70,7 @@ extension FileUtils on File {
     );
     final stamp = i.decodeImage(byte.buffer.asUint8List());
     final stamped = i.drawImage(rotated, stamp);
-    final original = i.copyRotate(stamped, -rotation);
+    final original = i.copyRotate(stamped, 360 - rotation);
     final encoded = i.encodeJpg(original);
     final data = Uint8List.fromList(encoded);
     return await this.writeAsBytes(data);
