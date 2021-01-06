@@ -29,10 +29,9 @@ extension FileUtils on File {
     final preferredRatio = preferredWidth / preferredHeight;
     final min = m.min(image.width, image.height);
     final max = m.max(image.width, image.height);
-    final imageRatio = min / max;
     final rotation = await getImageRotation();
     File cropped;
-    if (preferredRatio < imageRatio) {
+    if (rotation == 90 || rotation == 270) {
       final width = max;
       final height = (width * preferredRatio).toInt();
       final originX = 0;
@@ -87,6 +86,9 @@ extension FileUtils on File {
     switch (properties.orientation) {
       case ImageOrientation.rotate90:
         return 90;
+        break;
+      case ImageOrientation.rotate180:
+        return 180;
         break;
       case ImageOrientation.rotate270:
         return 270;
