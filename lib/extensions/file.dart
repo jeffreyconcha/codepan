@@ -29,25 +29,41 @@ extension FileUtils on File {
     final preferredRatio = preferredWidth / preferredHeight;
     final min = m.min(image.width, image.height);
     final max = m.max(image.width, image.height);
+    final imageRatio = min / max;
     final rotation = await getImageRotation();
     File cropped;
-    if (rotation == 90 || rotation == 270) {
-      final width = max;
-      final height = (width * preferredRatio).toInt();
-      final originX = 0;
-      final originY = (min - height) ~/ 2;
-      print('rotation: $rotation');
-      print('${image.width} x ${image.height}');
-      print('$originX x $originY');
-      cropped = await FlutterNativeImage.cropImage(
-          this.path, originX, originY, width, height);
+    if (rotation == 0 || rotation == 180) {
+      if (preferredRatio < imageRatio) {
+        final height = max;
+        final width = (height * preferredRatio).toInt();
+        final originY = 0;
+        final originX = (min - width) ~/ 2;
+        cropped = await FlutterNativeImage.cropImage(
+            this.path, originX, originY, width, height);
+      } else {
+        final width = min;
+        final height = width ~/ preferredRatio;
+        final originX = 0;
+        final originY = (max - height) ~/ 2;
+        cropped = await FlutterNativeImage.cropImage(
+            this.path, originX, originY, width, height);
+      }
     } else {
-      final height = min;
-      final width = height ~/ preferredRatio;
-      final originY = 0;
-      final originX = (max - width) ~/ 2;
-      cropped = await FlutterNativeImage.cropImage(
-          this.path, originX, originY, width, height);
+      if (preferredRatio < imageRatio) {
+        final width = max;
+        final height = (width * preferredRatio).toInt();
+        final originX = 0;
+        final originY = (min - height) ~/ 2;
+        cropped = await FlutterNativeImage.cropImage(
+            this.path, originX, originY, width, height);
+      } else {
+        final height = min;
+        final width = height ~/ preferredRatio;
+        final originY = 0;
+        final originX = (max - width) ~/ 2;
+        cropped = await FlutterNativeImage.cropImage(
+            this.path, originX, originY, width, height);
+      }
     }
     return cropped;
   }
