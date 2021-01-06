@@ -27,20 +27,22 @@ extension FileUtils on File {
   }) async {
     final image = i.decodeImage(this.readAsBytesSync());
     final preferredRatio = preferredWidth / preferredHeight;
-    final imageRatio = image.height / image.width;
+    final min = m.min(image.width, image.height);
+    final max = m.max(image.width, image.height);
+    final imageRatio = min / max;
     File cropped;
     if (preferredRatio < imageRatio) {
-      final width = image.width;
+      final width = min;
       final height = (width * preferredRatio).toInt();
       final originX = 0;
-      final originY = (image.height - height) ~/ 2;
+      final originY = (max - height) ~/ 2;
       cropped = await FlutterNativeImage.cropImage(
           this.path, originX, originY, width, height);
     } else {
-      final height = image.height;
+      final height = max;
       final width = height ~/ preferredRatio;
       final originY = 0;
-      final originX = (image.width - width) ~/ 2;
+      final originX = (min - width) ~/ 2;
       cropped = await FlutterNativeImage.cropImage(
           this.path, originX, originY, width, height);
     }
