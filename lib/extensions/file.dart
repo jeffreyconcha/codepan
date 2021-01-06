@@ -30,13 +30,15 @@ extension FileUtils on File {
     final min = m.min(image.width, image.height);
     final max = m.max(image.width, image.height);
     final imageRatio = min / max;
+    final rotation = await getImageRotation();
     File cropped;
     if (preferredRatio < imageRatio) {
       final width = max;
       final height = (width * preferredRatio).toInt();
       final originX = 0;
       final originY = (min - height) ~/ 2;
-      print('$width x $height');
+      print('rotation: $rotation');
+      print('${image.width} x ${image.height}');
       print('$originX x $originY');
       cropped = await FlutterNativeImage.cropImage(
           this.path, originX, originY, width, height);
