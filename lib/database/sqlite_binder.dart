@@ -1,3 +1,4 @@
+import 'package:codepan/database/models/condition.dart';
 import 'package:codepan/database/models/field.dart';
 import 'package:codepan/database/models/table.dart' as tb;
 import 'package:codepan/database/schema.dart';
@@ -195,9 +196,10 @@ class SQLiteBinder {
             primaryKey,
           ],
           from: table,
-          where: {
-            unique: value,
-          },
+          where: [
+            Condition.notNull(value),
+            Condition.equals(unique, value),
+          ],
         );
         return _getId(stmt, query, key, table);
       } else if (unique is List<String>) {
