@@ -197,7 +197,7 @@ class SQLiteBinder {
           ],
           from: table,
           where: [
-            Condition.notNull(value),
+            Condition.notNull(unique),
             Condition.equals(unique, value),
           ],
         );
