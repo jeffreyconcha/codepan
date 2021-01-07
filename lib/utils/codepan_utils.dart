@@ -59,27 +59,16 @@ class PanUtils {
     String folder,
     @required String fileName,
   }) async {
-    try {
-      final root = await getApplicationDocumentsDirectory();
-      if (folder != null) {
-        final dir = Directory('${root.path}/$folder');
-        if (!await dir.exists()) {
-          await dir.create();
-        }
-        final file = File('${dir.path}/$fileName');
-        if (await file.exists()) {
-          return file;
-        }
-      } else {
-        final file = File('${root.path}/$fileName');
-        if (await file.exists()) {
-          return file;
-        }
+    final root = await getApplicationDocumentsDirectory();
+    if (folder != null) {
+      final dir = Directory('${root.path}/$folder');
+      if (!await dir.exists()) {
+        await dir.create();
       }
-    } catch (error, stacktrace) {
-      printError(error, stacktrace);
+      return File('${dir.path}/$fileName');
+    } else {
+      return File('${root.path}/$fileName');
     }
-    return null;
   }
 
   static Future<Directory> getDirectory(
