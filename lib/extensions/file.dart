@@ -29,10 +29,10 @@ extension FileUtils on File {
     final preferredRatio = preferredWidth / preferredHeight;
     final min = m.min(image.width, image.height);
     final max = m.max(image.width, image.height);
+    final isPortrait = image.height > image.width;
     final imageRatio = min / max;
-    final rotation = await getImageRotation();
     File cropped;
-    if (rotation == 0 || rotation == 180) {
+    if (isPortrait) {
       if (preferredRatio < imageRatio) {
         final height = max;
         final width = (height * preferredRatio).toInt();
