@@ -122,6 +122,7 @@ class SQLiteAdapter implements DatabaseExecutor {
       where: {
         SQLiteStatement.id: id,
       },
+      type: JoinType.left,
     );
     return await getRecord(query.build());
   }

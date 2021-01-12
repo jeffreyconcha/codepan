@@ -203,11 +203,14 @@ class SQLiteBinder {
         );
         return _getId(stmt, query, key, table);
       } else if (unique is List<String>) {
-        final conditions = <String, dynamic>{};
+        final conditions = <Condition>[];
         final buffer = StringBuffer();
         for (final field in unique) {
           final value = map[field];
-          conditions[field] = value;
+          conditions.addAll([
+            Condition.notNull(field),
+            Condition.equals(field, value),
+          ]);
           buffer.write('$field($value)');
           if (field != unique.last) {
             buffer.write('.');
