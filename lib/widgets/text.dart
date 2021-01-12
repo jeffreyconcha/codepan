@@ -12,23 +12,24 @@ enum OverflowState {
 typedef OnTextOverflow = Widget Function(int lines);
 
 class PanText extends StatelessWidget {
-  final double width, height, fontSize, fontHeight, radius, borderWidth;
-  final Color fontColor, background, borderColor;
+  final double width, height, fontSize, fontHeight, radius;
   final EdgeInsetsGeometry margin, padding;
   final OnTextOverflow onTextOverflow;
+  final Color fontColor, background;
   final TextDirection textDirection;
   final OverflowState overflowState;
   final BoxConstraints constraints;
   final TextDecoration decoration;
   final List<InlineSpan> children;
   final String text, fontFamily;
+  final SpannableText spannable;
   final FontWeight fontWeight;
   final TextOverflow overflow;
   final List<Shadow> shadows;
   final FontStyle fontStyle;
   final Alignment alignment;
   final TextAlign textAlign;
-  final SpannableText spannable;
+  final BoxBorder border;
   final bool isRequired;
   final int maxLines;
 
@@ -50,8 +51,7 @@ class PanText extends StatelessWidget {
     this.radius = 0,
     this.margin,
     this.padding,
-    this.borderWidth,
-    this.borderColor,
+    this.border,
     this.width,
     this.height,
     this.maxLines,
@@ -160,6 +160,7 @@ class PanText extends StatelessWidget {
         decoration: BoxDecoration(
           color: background,
           borderRadius: BorderRadius.circular(radius),
+          border: border,
         ),
         constraints: constraints,
       ),

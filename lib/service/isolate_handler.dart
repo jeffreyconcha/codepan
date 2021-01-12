@@ -36,7 +36,7 @@ abstract class IsolateHandler {
       this._isp = data;
     } else {
       final sp = IsolateNameServer.lookupPortByName(name);
-      sp.send(data);
+      sp?.send(data);
       receiveFromIsolate(data);
     }
   }
