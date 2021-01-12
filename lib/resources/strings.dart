@@ -5,8 +5,25 @@ class Errors {
 
 class PermissionInfo {
   static const String title = 'Permission Denied';
-  static const String camera =
-      'Please allow this app to access the camera. Go to settings and enable the camera permission.';
-  static const String location =
-      'Please allow this app to access the location. Go to settings and enable the location permission.';
+  static const String message =
+      'Please allow this app to access the \$type. Go to settings and enable the required permission.';
+}
+
+class PermissionName {
+  static const String camera = 'Camera';
+  static const String location = 'Location';
+  static const String locationAlways = 'Location Always';
+  static const String locationWhenInUse = 'Location When in Use';
+  static const String storage = 'Storage';
+  static const String calendar = 'Calendar';
+  static const String contacts = 'Contacts';
+  static const String mediaLibrary = 'Media Library';
+  static const String microphone = 'Microphone';
+  static const String phone = 'Phone';
+  static const String photos = 'Photos';
+  static const String reminders = 'Reminders';
+  static const String sensors = 'Sensors';
+  static const String sms = 'SMS';
+  static const String speech = 'Speech';
+  static const String notification = 'Notification';
 }

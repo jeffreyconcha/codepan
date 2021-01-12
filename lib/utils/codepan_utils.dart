@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 import 'dart:isolate';
 import 'dart:ui';
@@ -14,6 +15,12 @@ const _urlPattern =
     r'(https?|http)://([-A-Z0-9.]+)(/[-A-Z0-9+&@#/%=~_|!:,.;]*)?(\?[A-Z0-9+&@#/%=~_|!:‌​,.;]*)?';
 const printError = _printError;
 const printLarge = _printLarge;
+const printPost = _printPost;
+
+void _printPost(String url, Map<String, dynamic> params) {
+  final encoder = JsonEncoder.withIndent('  ');
+  debugPrint('$url\n${encoder.convert(params)}');
+}
 
 void _printError(dynamic error, StackTrace stacktrace) {
   debugPrint('${error?.toString()}: ${stacktrace?.toString()}');

@@ -1,4 +1,5 @@
 import 'package:app_settings/app_settings.dart';
+import 'package:codepan/extensions/string.dart';
 import 'package:codepan/resources/strings.dart';
 import 'package:codepan/utils/lifecycle_handler.dart';
 import 'package:flutter/material.dart';
@@ -55,15 +56,57 @@ abstract class StateWithPermission<T extends StatefulWidget>
           : await permission.isGranted;
       if (!isGranted) {
         if (await permission.isPermanentlyDenied) {
-          String message;
+          String name;
           switch (permission) {
             case Permission.camera:
-              message = PermissionInfo.camera;
+              name = PermissionName.camera;
+              break;
+            case Permission.storage:
+              name = PermissionName.storage;
+              break;
+            case Permission.calendar:
+              name = PermissionName.calendar;
+              break;
+            case Permission.contacts:
+              name = PermissionName.contacts;
+              break;
+            case Permission.mediaLibrary:
+              name = PermissionName.mediaLibrary;
+              break;
+            case Permission.microphone:
+              name = PermissionName.microphone;
+              break;
+            case Permission.photos:
+              name = PermissionName.photos;
+              break;
+            case Permission.reminders:
+              name = PermissionName.reminders;
+              break;
+            case Permission.sensors:
+              name = PermissionName.sensors;
+              break;
+            case Permission.sms:
+              name = PermissionName.sms;
+              break;
+            case Permission.speech:
+              name = PermissionName.speech;
+              break;
+            case Permission.notification:
+              name = PermissionName.notification;
               break;
             default:
               switch (permission) {
                 case Permission.locationAlways:
-                  message = PermissionInfo.location;
+                  name = PermissionName.locationAlways;
+                  break;
+                case Permission.locationWhenInUse:
+                  name = PermissionName.locationWhenInUse;
+                  break;
+                case Permission.location:
+                  name = PermissionName.location;
+                  break;
+                case Permission.phone:
+                  name = PermissionName.phone;
                   break;
                 default:
                   break;
@@ -73,7 +116,7 @@ abstract class StateWithPermission<T extends StatefulWidget>
           onPermanentlyDenied(
             permission,
             PermissionInfo.title,
-            message,
+            PermissionInfo.message.complete('\"$name\"'),
           );
           _hasPermanentlyDenied = true;
           break;
