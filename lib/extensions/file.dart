@@ -119,4 +119,16 @@ extension FileUtils on File {
     final rotation = await getImageRotation();
     return i.copyRotate(image, rotation);
   }
+
+  Future<Uint8List> get jpegData async {
+    final image = await getRotatedImage();
+    final encoded = i.encodeJpg(image);
+    return Uint8List.fromList(encoded);
+  }
+
+  Future<Uint8List> get pngData async {
+    final image = await getRotatedImage();
+    final encoded = i.encodePng(image);
+    return Uint8List.fromList(encoded);
+  }
 }
