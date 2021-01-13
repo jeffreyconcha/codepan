@@ -34,6 +34,7 @@ extension FileUtils on File {
     File cropped;
     print('is portrait: $isPortrait');
     print('original size: $min x $max');
+    print('orientation: ${image.exif.orientation}');
     if (isPortrait) {
       if (preferredRatio < imageRatio) {
         final height = max;
