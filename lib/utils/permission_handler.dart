@@ -35,6 +35,8 @@ abstract class StateWithPermission<T extends StatefulWidget>
   @override
   @mustCallSuper
   void onResume() {
+    super.onResume();
+    print('call me maybe');
     if (_isGranted) {
       _checkPermissions(request: true);
     } else {
