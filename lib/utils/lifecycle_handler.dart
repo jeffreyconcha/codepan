@@ -46,12 +46,12 @@ abstract class StateWithLifecycle<T extends StatefulWidget> extends State<T>
 
   @override
   void onDetach() {
-    debugPrint('inactive');
+    debugPrint('detached');
   }
 
   @override
   void onInactive() {
-    debugPrint('detached');
+    debugPrint('inactive');
   }
 }
 

@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:app_settings/app_settings.dart';
+import 'package:codepan/extensions/context.dart';
 import 'package:codepan/extensions/string.dart';
 import 'package:codepan/resources/strings.dart';
 import 'package:codepan/utils/lifecycle_handler.dart';
@@ -8,14 +9,15 @@ import 'package:permission_handler/permission_handler.dart';
 
 abstract class StateWithPermission<T extends StatefulWidget>
     extends StateWithLifecycle<T> {
-  bool _hasPermanentlyDenied = false;
+  bool _isPermanentlyDenied = false;
   bool _isGranted = false;
+  bool _hasDialog = false;
 
   List<Permission> get permissions;
 
   void onPermissionResult(bool isGranted);
 
-  void onPermanentlyDenied(
+  bool onPermanentlyDenied(
     Permission permission,
     String title,
     String message,
@@ -36,13 +38,21 @@ abstract class StateWithPermission<T extends StatefulWidget>
   @mustCallSuper
   void onResume() {
     super.onResume();
-    print('call me maybe');
     if (_isGranted) {
       _checkPermissions(request: true);
     } else {
-      if (_hasPermanentlyDenied) {
+      if (_isPermanentlyDenied) {
         _checkPermissions(request: false);
       }
+    }
+  }
+
+  @override
+  @mustCallSuper
+  void onInactive() {
+    super.onInactive();
+    if (_hasDialog && _isPermanentlyDenied) {
+      context.pop();
     }
   }
 
@@ -51,7 +61,7 @@ abstract class StateWithPermission<T extends StatefulWidget>
   }
 
   void _checkPermissions({@required bool request}) async {
-    _hasPermanentlyDenied = false;
+    _isPermanentlyDenied = false;
     bool hasDenied = false;
     for (final permission in permissions) {
       _isGranted = request
@@ -117,19 +127,19 @@ abstract class StateWithPermission<T extends StatefulWidget>
               }
               break;
           }
-          onPermanentlyDenied(
+          _hasDialog = onPermanentlyDenied(
             permission,
             PermissionInfo.title,
             PermissionInfo.message.complete('\"$name\"'),
           );
-          _hasPermanentlyDenied = true;
+          _isPermanentlyDenied = true;
           break;
         } else {
           hasDenied = true;
         }
       }
     }
-    if (!_hasPermanentlyDenied) {
+    if (!_isPermanentlyDenied) {
       onPermissionResult(!hasDenied);
     }
   }
