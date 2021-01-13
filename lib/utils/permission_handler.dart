@@ -56,6 +56,10 @@ abstract class StateWithPermission<T extends StatefulWidget>
     }
   }
 
+  void onDialogDetach() {
+    _hasDialog = false;
+  }
+
   Future<void> goToSettings() {
     return AppSettings.openAppSettings();
   }
