@@ -17,6 +17,9 @@ abstract class StateWithPermission<T extends StatefulWidget>
 
   void onPermissionResult(bool isGranted);
 
+  /// Return [bool] value of true when prompting using a dialog <br/>
+  /// [onDialogDetach] - Callback function to notify the permission
+  /// handler that the dialog has been detached.
   bool onPermanentlyDenied(
     Permission permission,
     String title,
