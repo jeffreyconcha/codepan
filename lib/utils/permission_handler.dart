@@ -52,10 +52,11 @@ abstract class StateWithPermission<T extends StatefulWidget>
     _hasPermanentlyDenied = false;
     bool hasDenied = false;
     for (final permission in permissions) {
-      final isGranted = request
+      _isGranted = request
           ? await permission.request().isGranted
           : await permission.isGranted;
-      if (!isGranted) {
+      debugPrint('Permission(${permission.value}) isGranted: $_isGranted');
+      if (!_isGranted) {
         if (await permission.isPermanentlyDenied || Platform.isIOS) {
           String name;
           switch (permission) {
