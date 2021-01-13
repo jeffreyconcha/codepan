@@ -21,6 +21,7 @@ abstract class StateWithPermission<T extends StatefulWidget>
     Permission permission,
     String title,
     String message,
+    VoidCallback onDialogDetach,
   );
 
   @override
@@ -54,10 +55,6 @@ abstract class StateWithPermission<T extends StatefulWidget>
     if (_hasDialog && _isPermanentlyDenied) {
       context.pop();
     }
-  }
-
-  void onDialogDetach() {
-    _hasDialog = false;
   }
 
   Future<void> goToSettings() {
@@ -135,6 +132,7 @@ abstract class StateWithPermission<T extends StatefulWidget>
             permission,
             PermissionInfo.title,
             PermissionInfo.message.complete('\"$name\"'),
+            () => _hasDialog = false,
           );
           _isPermanentlyDenied = true;
           break;
