@@ -29,38 +29,14 @@ extension FileUtils on File {
     final preferredRatio = preferredWidth / preferredHeight;
     final min = m.min(image.width, image.height);
     final max = m.max(image.width, image.height);
-    final isPortrait = image.height > image.width;
     final imageRatio = min / max;
     File cropped;
-    print('is portrait: $isPortrait');
-    print('original size: ${image.width} x ${image.height}');
-    final properties = await FlutterNativeImage.getImageProperties(path);
-    print('native: ${properties.width} x ${properties.height}');
-    if (isPortrait) {
-      if (preferredRatio < imageRatio) {
-        final height = max;
-        final width = (height * preferredRatio).toInt();
-        final originY = 0;
-        final originX = (min - width) ~/ 2;
-        print('output 1: $width x $height @$originX,$originY');
-        cropped = await FlutterNativeImage.cropImage(
-            this.path, originX, originY, width, height);
-      } else {
-        final width = min;
-        final height = width ~/ preferredRatio;
-        final originX = 0;
-        final originY = (max - height) ~/ 2;
-        print('output 2: $width x $height @$originX,$originY');
-        cropped = await FlutterNativeImage.cropImage(
-            this.path, originX, originY, width, height);
-      }
-    } else {
+    if (await isLandscape()) {
       if (preferredRatio < imageRatio) {
         final width = max;
         final height = (width * preferredRatio).toInt();
         final originX = 0;
         final originY = (min - height) ~/ 2;
-        print('output 3: $width x $height @$originX,$originY');
         cropped = await FlutterNativeImage.cropImage(
             this.path, originX, originY, width, height);
       } else {
@@ -68,7 +44,22 @@ extension FileUtils on File {
         final width = height ~/ preferredRatio;
         final originY = 0;
         final originX = (max - width) ~/ 2;
-        print('output 4: $width x $height @$originX,$originY');
+        cropped = await FlutterNativeImage.cropImage(
+            this.path, originX, originY, width, height);
+      }
+    } else {
+      if (preferredRatio < imageRatio) {
+        final height = max;
+        final width = (height * preferredRatio).toInt();
+        final originY = 0;
+        final originX = (min - width) ~/ 2;
+        cropped = await FlutterNativeImage.cropImage(
+            this.path, originX, originY, width, height);
+      } else {
+        final width = min;
+        final height = width ~/ preferredRatio;
+        final originX = 0;
+        final originY = (max - height) ~/ 2;
         cropped = await FlutterNativeImage.cropImage(
             this.path, originX, originY, width, height);
       }
@@ -103,6 +94,11 @@ extension FileUtils on File {
     final encoded = i.encodeJpg(original);
     final data = Uint8List.fromList(encoded);
     return await this.writeAsBytes(data);
+  }
+
+  Future<bool> isLandscape() async {
+    final properties = await FlutterNativeImage.getImageProperties(path);
+    return properties.width > properties.height;
   }
 
   Future<int> getImageRotation() async {
