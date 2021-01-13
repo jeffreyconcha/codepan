@@ -32,12 +32,15 @@ extension FileUtils on File {
     final isPortrait = image.height > image.width;
     final imageRatio = min / max;
     File cropped;
+    print('is portrait: $isPortrait');
+    print('original size: $min x $max');
     if (isPortrait) {
       if (preferredRatio < imageRatio) {
         final height = max;
         final width = (height * preferredRatio).toInt();
         final originY = 0;
         final originX = (min - width) ~/ 2;
+        print('output 1: $width x $height @$originX,$originY');
         cropped = await FlutterNativeImage.cropImage(
             this.path, originX, originY, width, height);
       } else {
@@ -45,6 +48,7 @@ extension FileUtils on File {
         final height = width ~/ preferredRatio;
         final originX = 0;
         final originY = (max - height) ~/ 2;
+        print('output 2: $width x $height @$originX,$originY');
         cropped = await FlutterNativeImage.cropImage(
             this.path, originX, originY, width, height);
       }
@@ -54,6 +58,7 @@ extension FileUtils on File {
         final height = (width * preferredRatio).toInt();
         final originX = 0;
         final originY = (min - height) ~/ 2;
+        print('output 3: $width x $height @$originX,$originY');
         cropped = await FlutterNativeImage.cropImage(
             this.path, originX, originY, width, height);
       } else {
@@ -61,6 +66,7 @@ extension FileUtils on File {
         final width = height ~/ preferredRatio;
         final originY = 0;
         final originX = (max - width) ~/ 2;
+        print('output 4: $width x $height @$originX,$originY');
         cropped = await FlutterNativeImage.cropImage(
             this.path, originX, originY, width, height);
       }
