@@ -33,7 +33,7 @@ extension FileUtils on File {
     final imageRatio = min / max;
     File cropped;
     print('is portrait: $isPortrait');
-    print('original size: $min x $max');
+    print('original size: ${image.width} x ${image.height}');
     final properties = await FlutterNativeImage.getImageProperties(path);
     print('native: ${properties.width} x ${properties.height}');
     if (isPortrait) {
