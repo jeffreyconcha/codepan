@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 abstract class StateWithPermission<T extends StatefulWidget>
-    extends StateWithLifecycle<T> with WidgetsBindingObserver {
+    extends StateWithLifecycle<T> {
   bool _hasPermanentlyDenied = false;
   bool _isGranted = false;
 
