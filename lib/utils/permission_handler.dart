@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:app_settings/app_settings.dart';
 import 'package:codepan/extensions/string.dart';
 import 'package:codepan/resources/strings.dart';
@@ -55,7 +56,7 @@ abstract class StateWithPermission<T extends StatefulWidget>
           ? await permission.request().isGranted
           : await permission.isGranted;
       if (!isGranted) {
-        if (await permission.isPermanentlyDenied) {
+        if (await permission.isPermanentlyDenied || Platform.isIOS) {
           String name;
           switch (permission) {
             case Permission.camera:
