@@ -1,4 +1,5 @@
 import 'package:codepan/utils/codepan_utils.dart';
+import 'package:flutter/foundation.dart';
 import 'package:inflection2/inflection2.dart';
 
 const _true = <String>['true', 'yes', 'on', '1'];
@@ -112,8 +113,27 @@ extension StringUtils on String {
     return null;
   }
 
-  int count(String text) {
-    final split = this.split(text);
+  int count(String separator) {
+    final split = this.split(separator);
     return split.length - 1;
+  }
+
+  String hideCharAt({
+    @required int index,
+    @required int count,
+    String replacement = '*',
+  }) {
+    if (index + count <= this.length) {
+      int _index = index;
+      final buffer = StringBuffer();
+      buffer.write(this.substring(0, _index));
+      for (int i = 0; i < count; i++) {
+        buffer.write(replacement);
+        _index++;
+      }
+      buffer.write(this.substring(_index, this.length));
+      return buffer.toString();
+    }
+    throw Exception('Invalid parameters, length is only ${this.length}.');
   }
 }
