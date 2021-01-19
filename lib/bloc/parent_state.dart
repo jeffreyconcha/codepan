@@ -6,3 +6,7 @@ abstract class ParentState<Event extends ParentEvent> extends Equatable {
 
   Event mirrorToEvent();
 }
+
+abstract class StateOrigin<Event extends ParentEvent> {
+  Type get origin;
+}
