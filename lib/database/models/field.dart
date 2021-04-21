@@ -3,7 +3,6 @@ import 'package:codepan/database/models/table.dart';
 import 'package:codepan/database/sqlite_query.dart';
 import 'package:codepan/database/sqlite_statement.dart';
 import 'package:codepan/extensions/dynamic.dart';
-import 'package:flutter/foundation.dart';
 
 enum Constraint {
   primaryKey,

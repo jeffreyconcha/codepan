@@ -1,5 +1,3 @@
-import 'package:permission_handler/permission_handler.dart';
-
 class Errors {
   static const String failedToPlayVideo = 'Failed to play video.';
   static const String failedToPlayAudio = 'Failed to play audio';

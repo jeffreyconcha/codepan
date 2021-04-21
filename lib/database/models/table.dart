@@ -3,7 +3,6 @@ import 'package:codepan/database/schema.dart';
 import 'package:codepan/database/sqlite_query.dart';
 import 'package:codepan/database/sqlite_statement.dart';
 import 'package:codepan/extensions/string.dart';
-import 'package:flutter/foundation.dart';
 import 'package:inflection3/inflection3.dart';
 
 class Table<T> {

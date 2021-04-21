@@ -1,5 +1,4 @@
 import 'package:codepan/utils/codepan_utils.dart';
-import 'package:flutter/foundation.dart';
 import 'package:inflection3/inflection3.dart';
 
 const _true = <String>['true', 'yes', 'on', '1'];
