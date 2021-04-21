@@ -3,30 +3,30 @@ import 'package:codepan/database/models/field.dart';
 import 'package:codepan/database/models/table.dart';
 
 mixin QueryProperties {
-  List<Condition> _conditionList;
-  List<Field> _fieldList;
+  List<Condition>? _conditionList;
+  List<Field>? _fieldList;
 
-  List<Condition> get conditionList => _conditionList;
+  List<Condition>? get conditionList => _conditionList;
 
-  List<Field> get fieldList => _fieldList;
+  List<Field>? get fieldList => _fieldList;
 
-  bool get hasFields => _fieldList != null && fieldList.isNotEmpty;
+  bool get hasFields => _fieldList != null && fieldList!.isNotEmpty;
 
-  bool get hasConditions => _conditionList != null && _conditionList.isNotEmpty;
+  bool get hasConditions => _conditionList != null && _conditionList!.isNotEmpty;
 
   void clearFieldList() {
-    if (hasFields) _fieldList.clear();
+    if (hasFields) _fieldList!.clear();
   }
 
   void clearConditionList() {
-    if (hasConditions) _conditionList.clear();
+    if (hasConditions) _conditionList!.clear();
   }
 
   String get fields => getFields(fieldList);
 
   String get fieldsWithAlias => getFields(fieldList, withAlias: true);
 
-  String getFields(List<Field> fieldList, {bool withAlias = false}) {
+  String getFields(List<Field>? fieldList, {bool withAlias = false}) {
     final buffer = StringBuffer();
     if (fieldList != null) {
       for (final field in fieldList) {
@@ -53,9 +53,9 @@ mixin QueryProperties {
   String get conditions {
     final buffer = StringBuffer();
     if (hasConditions) {
-      for (final condition in conditionList) {
+      for (final condition in conditionList!) {
         buffer.write(condition.asString());
-        if (condition != conditionList.last) {
+        if (condition != conditionList!.last) {
           buffer.write(" AND ");
         }
       }
@@ -65,18 +65,16 @@ mixin QueryProperties {
 
   void addField(
     Field f, {
-    Table table,
+    Table? table,
   }) {
-    if (f != null) {
-      f.setTable(table);
-      _fieldList ??= [];
-      _fieldList.add(f);
-    }
+    f.setTable(table);
+    _fieldList ??= [];
+    _fieldList!.add(f);
   }
 
   void addFields(
-    List<dynamic> list, {
-    Table table,
+    List<dynamic>? list, {
+    Table? table,
   }) {
     list?.forEach((field) {
       if (field is Field) {
@@ -90,26 +88,24 @@ mixin QueryProperties {
 
   void addCondition(
     Condition c, {
-    Table table,
+    Table? table,
   }) {
-    if (c != null) {
-      if (c.isValid) {
-        c.setTable(table);
-        _conditionList ??= [];
-        _conditionList.add(c);
-      } else if (c.hasOrList) {
-        _conditionList ??= [];
-        _conditionList.add(c);
-      }
+    if (c.isValid) {
+      c.setTable(table);
+      _conditionList ??= [];
+      _conditionList!.add(c);
+    } else if (c.hasOrList) {
+      _conditionList ??= [];
+      _conditionList!.add(c);
     }
   }
 
   void addConditions(
     dynamic conditions, {
-    Table table,
+    Table? table,
   }) {
     if (conditions is Map<String, dynamic>) {
-      conditions?.forEach((key, value) {
+      conditions.forEach((key, value) {
         final c = Condition(key, value);
         addCondition(c, table: table);
       });
@@ -120,10 +116,10 @@ mixin QueryProperties {
     }
   }
 
-  String getCommandFields(List<Field> fieldList) {
+  String getCommandFields(List<Field>? fieldList) {
     final buffer = StringBuffer();
     if (fieldList != null) {
-      final uniqueList = <String>[];
+      final uniqueList = <String?>[];
       for (final field in fieldList) {
         buffer.write(field.asString());
         if (field != fieldList.last) {

@@ -19,33 +19,33 @@ enum DataType {
 }
 
 class Field extends SQLiteModel {
-  bool _collate,
+  bool? _collate,
       _isCount,
       _inUniqueGroup,
       _withDateTrigger,
       _withTimeTrigger,
       _isIndex;
-  Constraint _constraint;
-  DataType _type;
+  Constraint? _constraint;
+  DataType? _type;
   dynamic _value;
-  Table _reference;
-  Order _order;
+  Table? _reference;
+  Order? _order;
 
-  Constraint get constraint => _constraint;
+  Constraint? get constraint => _constraint;
 
   dynamic get value => _value;
 
-  DataType get type => _type;
+  DataType? get type => _type;
 
-  Table get reference => _reference;
+  Table? get reference => _reference;
 
-  Order get order => _order;
+  Order? get order => _order;
 
   bool get inUniqueGroup => _inUniqueGroup ?? false;
 
   bool get isCount => _isCount ?? false;
 
-  bool get collate => _collate;
+  bool? get collate => _collate;
 
   bool get hasConstraint => _constraint != null;
 
@@ -63,9 +63,9 @@ class Field extends SQLiteModel {
 
   bool get isUnique => _constraint == Constraint.unique;
 
-  String get dataType => hasDataType ? _type.toString().split('.').last : null;
+  String? get dataType => hasDataType ? _type.toString().split('.').last : null;
 
-  String get defaultValue {
+  String? get defaultValue {
     if (_value != null) {
       if (_value is bool) {
         return _value ? '1' : '0';
@@ -77,9 +77,9 @@ class Field extends SQLiteModel {
   }
 
   Field(
-    String _field, {
-    DataType type,
-    Constraint constraint,
+    String? _field, {
+    DataType? type,
+    Constraint? constraint,
     dynamic value,
     bool inUniqueGroup = false,
     bool withDateTrigger = false,
@@ -102,7 +102,7 @@ class Field extends SQLiteModel {
 
   Field.asColumn(
     String field, {
-    @required DataType type,
+    required DataType type,
     bool inUniqueGroup = false,
   }) : super(field) {
     this._type = type;
@@ -116,7 +116,7 @@ class Field extends SQLiteModel {
 
   Field.asForeignKey(
     String field, {
-    @required Table at,
+    required Table at,
     bool inUniqueGroup = false,
   }) : super(field) {
     this._constraint = Constraint.foreignKey;
@@ -135,7 +135,7 @@ class Field extends SQLiteModel {
 
   Field.asDefault(
     String field, {
-    @required dynamic value,
+    required dynamic value,
     bool inUniqueGroup = false,
   }) : super(field) {
     this._constraint = Constraint.defaultField;
@@ -166,7 +166,7 @@ class Field extends SQLiteModel {
   @deprecated
   Field.asUniqueGroup(
     String field, {
-    Table at,
+    Table? at,
     DataType type = DataType.integer,
   }) : super(field) {
     this._type = type;
@@ -180,8 +180,8 @@ class Field extends SQLiteModel {
   /// Shorthand for instantiating foreign keys. <br/><br/>
   /// Note: Must only be used in queries.
   Field.asReference({
-    @required String field,
-    @required Table reference,
+    required String field,
+    required Table reference,
   }) : super(field) {
     this._constraint = Constraint.foreignKey;
     this._reference = reference;
@@ -190,7 +190,7 @@ class Field extends SQLiteModel {
   Field.asIndex(
     String field, {
     DataType type = DataType.integer,
-    Constraint constraint,
+    Constraint? constraint,
   }) : super(field) {
     this._type = type;
     this._isIndex = true;
@@ -198,7 +198,7 @@ class Field extends SQLiteModel {
   }
 
   Field.asOrder({
-    @required String field,
+    required String field,
     Order order = Order.ascending,
     bool collate = false,
   }) : super(field) {
@@ -230,7 +230,7 @@ class Field extends SQLiteModel {
             break;
           case Constraint.foreignKey:
             buffer
-                .write(' REFERENCES ${reference.name}(${SQLiteStatement.id})');
+                .write(' REFERENCES ${reference!.name}(${SQLiteStatement.id})');
             break;
           case Constraint.unique:
             buffer.write(' UNIQUE');
@@ -243,7 +243,7 @@ class Field extends SQLiteModel {
     } else {
       if (isOrder) {
         buffer.write('$field');
-        if (collate) {
+        if (collate!) {
           buffer.write(' COLLATE NOCASE');
         }
         final value = order.enumValue;

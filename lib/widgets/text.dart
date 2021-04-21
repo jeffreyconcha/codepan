@@ -12,29 +12,29 @@ enum OverflowState {
 typedef OnTextOverflow = Widget Function(int lines);
 
 class PanText extends StatelessWidget {
-  final double width, height, fontSize, fontHeight, radius;
-  final EdgeInsetsGeometry margin, padding;
-  final OnTextOverflow onTextOverflow;
-  final Color fontColor, background;
+  final double? width, height, fontSize, fontHeight, radius;
+  final EdgeInsetsGeometry? margin, padding;
+  final OnTextOverflow? onTextOverflow;
+  final Color? fontColor, background;
   final TextDirection textDirection;
   final OverflowState overflowState;
-  final BoxConstraints constraints;
-  final TextDecoration decoration;
-  final List<InlineSpan> children;
-  final String text, fontFamily;
-  final SpannableText spannable;
+  final BoxConstraints? constraints;
+  final TextDecoration? decoration;
+  final List<InlineSpan>? children;
+  final String? text, fontFamily;
+  final SpannableText? spannable;
   final FontWeight fontWeight;
-  final TextOverflow overflow;
-  final List<Shadow> shadows;
+  final TextOverflow? overflow;
+  final List<Shadow>? shadows;
   final FontStyle fontStyle;
   final Alignment alignment;
   final TextAlign textAlign;
-  final BoxBorder border;
+  final BoxBorder? border;
   final bool isRequired;
-  final int maxLines;
+  final int? maxLines;
 
   const PanText({
-    Key key,
+    Key? key,
     this.text,
     this.fontSize,
     this.fontHeight,
@@ -76,16 +76,16 @@ class PanText extends StatelessWidget {
       decoration: decoration,
       shadows: shadows,
     );
-    List<InlineSpan> spanList;
+    List<InlineSpan>? spanList;
     if (spannable != null) {
       spanList = [];
       spanList.addAll(
-        _toSpannable(spannable),
+        _toSpannable(spannable!),
       );
     }
     if (children != null) {
       spanList ??= [];
-      spanList.addAll(children);
+      spanList.addAll(children!);
     }
     if (isRequired) {
       spanList ??= [];
@@ -115,7 +115,7 @@ class PanText extends StatelessWidget {
       textDirection: textDirection,
     );
     return PlaceholderHandler(
-      condition: (text != null && text.isNotEmpty) || children != null,
+      condition: (text != null && text!.isNotEmpty) || children != null,
       child: Container(
         width: width,
         height: height,
@@ -138,7 +138,7 @@ class PanText extends StatelessWidget {
                 if (painter.didExceedMaxLines ||
                     overflowState == OverflowState.expand) {
                   final lines = painter.computeLineMetrics();
-                  overflowWidget = onTextOverflow.call(lines.length);
+                  overflowWidget = onTextOverflow!.call(lines.length);
                 }
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -159,7 +159,7 @@ class PanText extends StatelessWidget {
         ),
         decoration: BoxDecoration(
           color: background,
-          borderRadius: BorderRadius.circular(radius),
+          borderRadius: BorderRadius.circular(radius!),
           border: border,
         ),
         constraints: constraints,
@@ -173,9 +173,9 @@ class PanText extends StatelessWidget {
     int start = 0;
     int matchCount = 0;
     final standard = '\$';
-    String _text = text;
+    String? _text = text;
     for (final identifier in spannable.identifiers) {
-      _text = _text.replaceAll(identifier, standard);
+      _text = _text!.replaceAll(identifier, standard);
     }
     final clean = _text?.replaceAll(standard, '');
     final buffer = StringBuffer();
@@ -194,7 +194,7 @@ class PanText extends StatelessWidget {
           final end = index - matchCount + 1;
           list.add(
             TextSpan(
-              text: clean.substring(start, end),
+              text: clean!.substring(start, end),
               style: spannable.style,
             ),
           );
@@ -222,7 +222,7 @@ class SpannableText {
   final TextStyle style;
 
   const SpannableText({
-    @required this.identifiers,
-    @required this.style,
+    required this.identifiers,
+    required this.style,
   });
 }

@@ -4,14 +4,14 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 
 class PanTextField extends StatefulWidget {
-  final Color fontColor,
+  final Color? fontColor,
       background,
       borderColor,
       focusedBorderColor,
       hintFontColor,
       iconColor,
       cursorColor;
-  final double width,
+  final double? width,
       height,
       fontSize,
       fontHeight,
@@ -25,27 +25,27 @@ class PanTextField extends StatefulWidget {
       isPassword,
       showCursor,
       bottomBorderOnly;
-  final List<TextInputFormatter> inputFormatters;
-  final int maxLines, minLines, maxLength;
-  final ValueChanged<String> onFieldSubmitted;
+  final List<TextInputFormatter>? inputFormatters;
+  final int? maxLines, minLines, maxLength;
+  final ValueChanged<String>? onFieldSubmitted;
   final TextCapitalization textCapitalization;
-  final TextAlignVertical textAlignVertical;
-  final TextEditingController controller;
+  final TextAlignVertical? textAlignVertical;
+  final TextEditingController? controller;
   final TextInputAction textInputAction;
-  final EdgeInsetsGeometry margin, padding;
-  final FocusNode focusNode, nextFocusNode;
-  final ValueChanged<bool> onFocusChange;
-  final ValueChanged<String> onChanged;
-  final Widget prefixIcon, suffixIcon;
-  final String text, hint, fontFamily;
-  final TextInputType keyboardType;
+  final EdgeInsetsGeometry? margin, padding;
+  final FocusNode? focusNode, nextFocusNode;
+  final ValueChanged<bool>? onFocusChange;
+  final ValueChanged<String>? onChanged;
+  final Widget? prefixIcon, suffixIcon;
+  final String? text, hint, fontFamily;
+  final TextInputType? keyboardType;
   final FontWeight fontWeight;
   final TextAlign textAlign;
   final FontStyle fontStyle;
   final Alignment alignment;
 
   const PanTextField({
-    Key key,
+    Key? key,
     this.text,
     this.fontSize,
     this.fontHeight,
@@ -99,21 +99,21 @@ class PanTextField extends StatefulWidget {
 }
 
 class _PanTextFieldState extends State<PanTextField> {
-  bool _obscureText, _hasFocus;
+  bool _obscureText = false;
+  bool _hasFocus = false;
 
-  Color get borderColor => widget.borderColor;
+  Color? get borderColor => widget.borderColor;
 
-  double get borderWidth => widget.borderWidth;
+  double? get borderWidth => widget.borderWidth;
 
-  Color get focusedBorderColor => widget.focusedBorderColor;
+  Color? get focusedBorderColor => widget.focusedBorderColor;
 
-  double get focusedBorderWidth => widget.focusedBorderWidth;
+  double? get focusedBorderWidth => widget.focusedBorderWidth;
 
   @override
   void initState() {
     super.initState();
     _obscureText = widget.isPassword;
-    _hasFocus = false;
   }
 
   @override
@@ -126,15 +126,15 @@ class _PanTextFieldState extends State<PanTextField> {
     var border;
     if (borderWidth != null && borderColor != null) {
       final side = BorderSide(
-        color: _hasFocus ? focusedBorderColor : borderColor,
-        width: _hasFocus ? focusedBorderWidth : borderWidth,
+        color: _hasFocus ? focusedBorderColor! : borderColor!,
+        width: _hasFocus ? focusedBorderWidth! : borderWidth!,
       );
       border = widget.bottomBorderOnly
           ? Border(bottom: side)
           : Border.fromBorderSide(side);
     }
     final borderRadius =
-        widget.radius != null ? BorderRadius.circular(widget.radius) : null;
+        widget.radius != null ? BorderRadius.circular(widget.radius!) : null;
     var suffixIcon;
     if (widget.isPassword) {
       suffixIcon = IconButton(
@@ -184,7 +184,7 @@ class _PanTextFieldState extends State<PanTextField> {
             if (widget.nextFocusNode != null) {
               FocusScope.of(context).requestFocus(widget.nextFocusNode);
             }
-            widget.onFieldSubmitted(value);
+            widget.onFieldSubmitted!(value);
           },
           maxLines: widget.isPassword ? 1 : widget.maxLength,
           minLines: widget.minLines,

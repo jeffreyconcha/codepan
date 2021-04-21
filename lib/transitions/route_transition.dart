@@ -6,13 +6,13 @@ const delay = Duration(milliseconds: 250);
 typedef OnScreenTransition = Future<Widget> Function();
 
 class SlideRoute extends PageRouteBuilder {
-  final Widget exit;
+  final Widget? exit;
   final Widget enter;
   final RouteSettings settings;
 
   SlideRoute({
     this.exit,
-    @required this.enter,
+    required this.enter,
     this.settings = const RouteSettings(name: 'slide'),
   }) : super(
           transitionDuration: delay,
@@ -42,7 +42,7 @@ class FadeRoute extends PageRouteBuilder {
   final RouteSettings settings;
 
   FadeRoute({
-    @required this.enter,
+    required this.enter,
     this.settings = const RouteSettings(name: 'fade'),
   }) : super(
           transitionDuration: delay,

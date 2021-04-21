@@ -11,7 +11,7 @@ class SQLiteStatement with QueryProperties {
   static const String nullValue = 'NULL';
   static const int trueValue = 1;
   static const int falseValue = 0;
-  List<FieldValue> _fieldValueList;
+  List<FieldValue>? _fieldValueList;
 
   SQLiteStatement();
 
@@ -26,8 +26,8 @@ class SQLiteStatement with QueryProperties {
   }
 
   SQLiteStatement.from({
-    List<dynamic> fields,
-    Map<String, dynamic> fieldsAndValues,
+    List<dynamic>? fields,
+    Map<String, dynamic>? fieldsAndValues,
     dynamic conditions,
   }) {
     addFields(fields);
@@ -35,33 +35,33 @@ class SQLiteStatement with QueryProperties {
     addFieldsAndValues(fieldsAndValues);
   }
 
-  void addFieldsAndValues(Map<String, dynamic> map) {
+  void addFieldsAndValues(Map<String, dynamic>? map) {
     map?.forEach((key, value) {
       final fv = FieldValue(key, value);
       addFieldValue(fv);
     });
   }
 
-  List<FieldValue> get fieldValueList => _fieldValueList;
+  List<FieldValue>? get fieldValueList => _fieldValueList;
 
   bool get hasFieldValues =>
-      _fieldValueList != null && _fieldValueList.isNotEmpty;
+      _fieldValueList != null && _fieldValueList!.isNotEmpty;
 
   SQLiteStatement clearAll() {
-    if (hasFieldValues) _fieldValueList.clear();
+    if (hasFieldValues) _fieldValueList!.clear();
     clearConditionList();
     clearFieldList();
     return this;
   }
 
   void clearFieldValueList() {
-    if (hasFieldValues) _fieldValueList.clear();
+    if (hasFieldValues) _fieldValueList!.clear();
   }
 
-  Map<String, dynamic> get map {
+  Map<String?, dynamic>? get map {
     if (hasFieldValues) {
-      final map = Map<String, dynamic>();
-      for (final fv in fieldValueList) {
+      final map = Map<String?, dynamic>();
+      for (final fv in fieldValueList!) {
         map[fv.field] = fv.rawValue;
       }
       return map;
@@ -72,10 +72,9 @@ class SQLiteStatement with QueryProperties {
   String get fieldValues {
     final buffer = StringBuffer();
     if (hasFieldValues) {
-      for (final fv in fieldValueList) {
-        final value = fv.value != null ? fv.value : nullValue;
-        buffer.write('${fv.field} = $value');
-        if (fv != fieldValueList.last) {
+      for (final fv in fieldValueList!) {
+        buffer.write('${fv.field} = ${fv.value}');
+        if (fv != fieldValueList!.last) {
           buffer.write(', ');
         }
       }
@@ -83,15 +82,15 @@ class SQLiteStatement with QueryProperties {
     return buffer.toString();
   }
 
-  String insert(String table, {dynamic unique}) {
+  String insert(String? table, {dynamic unique}) {
     final buffer = StringBuffer();
     if (!hasFieldValues) throw SQLiteException(SQLiteException.noFieldValues);
     final f = StringBuffer();
     final v = StringBuffer();
-    for (final fv in fieldValueList) {
+    for (final fv in fieldValueList!) {
       f.write(fv.field);
       v.write(fv.value);
-      if (fv != fieldValueList.last) {
+      if (fv != fieldValueList!.last) {
         f.write(', ');
         v.write(', ');
       }
@@ -119,7 +118,7 @@ class SQLiteStatement with QueryProperties {
     return buffer.toString();
   }
 
-  String update(String table, dynamic id) {
+  String update(String? table, dynamic id) {
     if (!hasFieldValues) throw SQLiteException(SQLiteException.noFieldValues);
     return 'UPDATE $table SET $fieldValues WHERE ${SQLiteStatement.id} = ${id.toString()}';
   }
@@ -130,7 +129,7 @@ class SQLiteStatement with QueryProperties {
     return 'UPDATE $table SET $fieldValues WHERE $conditions';
   }
 
-  String updateFromStatement(String table) {
+  String updateFromStatement(String? table) {
     final buffer = StringBuffer();
     if (!hasFieldValues) throw SQLiteException(SQLiteException.noFieldValues);
     buffer.write('UPDATE $table SET $fieldValues');
@@ -149,7 +148,7 @@ class SQLiteStatement with QueryProperties {
     return 'DELETE FROM $table WHERE $conditions';
   }
 
-  String createTable(String table) {
+  String createTable(String? table) {
     return 'CREATE TABLE IF NOT EXISTS $table (${getCommandFields(fieldList)})';
   }
 
@@ -159,7 +158,7 @@ class SQLiteStatement with QueryProperties {
 
   String createTimeTrigger(String trg, String table) {
     if (hasFields) {
-      for (final f in fieldList) {
+      for (final f in fieldList!) {
         if (f.withDateTrigger) {
           final fv = FieldValue(f.field, Value.dateNow);
           addFieldValue(fv);
@@ -194,10 +193,7 @@ class SQLiteStatement with QueryProperties {
   }
 
   String addColumn(String table, Field field) {
-    if (field != null) {
-      return 'ALTER TABLE $table ADD COLUMN ${field.asString()}';
-    }
-    return null;
+    return 'ALTER TABLE $table ADD COLUMN ${field.asString()}';
   }
 
   String select(String table) {
@@ -210,21 +206,17 @@ class SQLiteStatement with QueryProperties {
   }
 
   void addFieldValue(FieldValue fv) {
-    if (fv != null) {
-      _fieldValueList ??= [];
-      _fieldValueList.add(fv);
-    }
+    _fieldValueList ??= [];
+    _fieldValueList!.add(fv);
   }
 
   void add(SQLiteModel entity) {
-    if (entity != null) {
-      if (entity is FieldValue) {
-        addFieldValue(entity);
-      } else if (entity is Condition) {
-        addCondition(entity);
-      } else {
-        addField(entity);
-      }
+    if (entity is FieldValue) {
+      addFieldValue(entity);
+    } else if (entity is Condition) {
+      addCondition(entity);
+    } else if (entity is Field) {
+      addField(entity);
     } else {
       throw SQLiteException(SQLiteException.invalidSQLiteEntity);
     }

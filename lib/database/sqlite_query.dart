@@ -3,7 +3,6 @@ import 'package:codepan/database/models/field.dart';
 import 'package:codepan/database/models/table.dart' as tb;
 import 'package:codepan/database/schema.dart';
 import 'package:codepan/database/sqlite_exception.dart';
-import 'package:flutter/foundation.dart';
 
 enum JoinType {
   left,
@@ -17,35 +16,35 @@ enum Order {
 }
 
 class SQLiteQuery with QueryProperties {
-  Map<String, int> _tableMap;
-  List<SQLiteQuery> _joinList;
-  List<Field> _orderList;
-  List<Field> _groupList;
-  TableSchema _schema;
-  bool _randomOrder;
-  tb.Table _table;
-  JoinType _type;
-  int _limit;
+  Map<String, int>? _tableMap;
+  List<SQLiteQuery>? _joinList;
+  List<Field>? _orderList;
+  List<Field>? _groupList;
+  TableSchema? _schema;
+  late bool _randomOrder;
+  tb.Table? _table;
+  JoinType? _type;
+  int? _limit;
 
-  JoinType get type => _type;
+  JoinType? get type => _type;
 
-  tb.Table get table => _table;
+  tb.Table? get table => _table;
 
-  TableSchema get schema => _schema;
+  TableSchema? get schema => _schema;
 
-  List<SQLiteQuery> get joinList => _joinList;
+  List<SQLiteQuery>? get joinList => _joinList;
 
-  List<Field> get groupList => _groupList;
+  List<Field>? get groupList => _groupList;
 
-  List<Field> get orderList => _orderList;
+  List<Field>? get orderList => _orderList;
 
-  int get limit => _limit;
+  int? get limit => _limit;
 
-  bool get hasJoin => _joinList != null && _joinList.isNotEmpty;
+  bool get hasJoin => _joinList != null && _joinList!.isNotEmpty;
 
-  bool get hasOrder => _orderList != null && _orderList.isNotEmpty;
+  bool get hasOrder => _orderList != null && _orderList!.isNotEmpty;
 
-  bool get hasGroup => _groupList != null && _groupList.isNotEmpty;
+  bool get hasGroup => _groupList != null && _groupList!.isNotEmpty;
 
   bool get hasLimit => _limit != null && _limit != 0;
 
@@ -54,13 +53,13 @@ class SQLiteQuery with QueryProperties {
   /// orderBy - Can only be a list of String or Field.
   /// groupBy - Can only be a list of String or Field.
   SQLiteQuery({
-    @required List<dynamic> select,
-    @required dynamic from,
+    required List<dynamic>? select,
+    required dynamic from,
     dynamic where,
-    List<dynamic> orderBy,
-    List<dynamic> groupBy,
+    List<dynamic>? orderBy,
+    List<dynamic>? groupBy,
     bool randomOrder = false,
-    int limit,
+    int? limit,
   }) {
     if (from is tb.Table) {
       this._table = from;
@@ -83,12 +82,12 @@ class SQLiteQuery with QueryProperties {
   }
 
   factory SQLiteQuery.all({
-    @required TableSchema schema,
+    required TableSchema schema,
     dynamic where,
-    List<dynamic> orderBy,
-    List<dynamic> groupBy,
+    List<dynamic>? orderBy,
+    List<dynamic>? groupBy,
     bool randomOrder = false,
-    int limit,
+    int? limit,
     JoinType type = JoinType.inner,
   }) {
     return SQLiteQuery(
@@ -102,7 +101,7 @@ class SQLiteQuery with QueryProperties {
     )..joinAllForeignKeys(type: type);
   }
 
-  void _addOrders(List<dynamic> input, {tb.Table table}) {
+  void _addOrders(List<dynamic>? input, {tb.Table? table}) {
     input?.forEach((field) {
       if (field is Field) {
         _addOrder(field, table: table);
@@ -113,15 +112,15 @@ class SQLiteQuery with QueryProperties {
     });
   }
 
-  void _addOrder(Field f, {tb.Table table}) {
+  void _addOrder(Field f, {tb.Table? table}) {
     if (!f.hasAlias) {
       f.setTable(table);
     }
     _orderList ??= [];
-    _orderList.add(f);
+    _orderList!.add(f);
   }
 
-  void _addGroups(List<dynamic> input, {tb.Table table}) {
+  void _addGroups(List<dynamic>? input, {tb.Table? table}) {
     input?.forEach((field) {
       if (field is Field) {
         _addGroup(field, table: table);
@@ -132,10 +131,10 @@ class SQLiteQuery with QueryProperties {
     });
   }
 
-  void _addGroup(Field f, {tb.Table table}) {
+  void _addGroup(Field f, {tb.Table? table}) {
     f.setTable(table);
     _groupList ??= [];
-    _groupList.add(f);
+    _groupList!.add(f);
   }
 
   void _setJoinType(JoinType type) {
@@ -143,7 +142,7 @@ class SQLiteQuery with QueryProperties {
   }
 
   void join({
-    @required SQLiteQuery query,
+    required SQLiteQuery query,
     JoinType type = JoinType.inner,
   }) {
     query._setJoinType(type);
@@ -151,14 +150,14 @@ class SQLiteQuery with QueryProperties {
     final table = query.table;
     if (tableExists(table)) {
       _tableMap ??= {};
-      final index = _tableMap[table.name];
+      final index = _tableMap![table!.name];
       if (index != null) {
         table.setJoinIndex(index + 1);
       } else {
         table.setJoinIndex(1);
       }
     }
-    _joinList.add(query);
+    _joinList!.add(query);
   }
 
   void joinAllForeignKeys({
@@ -166,7 +165,7 @@ class SQLiteQuery with QueryProperties {
   }) {
     if (schema != null) {
       joinForeignKeys(
-        foreignKeys: schema.foreignKeys,
+        foreignKeys: schema!.foreignKeys,
         type: type,
       );
     } else {
@@ -175,21 +174,21 @@ class SQLiteQuery with QueryProperties {
   }
 
   void joinForeignKeys({
-    @required List<Field> foreignKeys,
+    required List<Field> foreignKeys,
     JoinType type = JoinType.inner,
   }) {
-    if (foreignKeys?.isNotEmpty ?? false) {
+    if (foreignKeys.isNotEmpty) {
       if (schema != null) {
-        final all = schema.databaseSchema;
+        final all = schema!.databaseSchema;
         for (final field in foreignKeys) {
-          final table = field.reference;
+          final table = field.reference!;
           final schema = all.of(table.entity);
           join(
             query: SQLiteQuery(
               select: schema.fields,
               from: table,
               where: {
-                'id': _table.field(field.field),
+                'id': _table!.field(field.field),
               },
             ),
             type: type,
@@ -201,9 +200,9 @@ class SQLiteQuery with QueryProperties {
     }
   }
 
-  bool tableExists(tb.Table table) {
-    for (final query in _joinList) {
-      if (table.name == query.table.name) {
+  bool tableExists(tb.Table? table) {
+    for (final query in _joinList!) {
+      if (table!.name == query.table!.name) {
         return true;
       }
     }
@@ -211,7 +210,7 @@ class SQLiteQuery with QueryProperties {
   }
 
   Field field(String name) {
-    return table.field(name);
+    return table!.field(name);
   }
 
   String build() {
@@ -220,22 +219,22 @@ class SQLiteQuery with QueryProperties {
       if (hasJoin) {
         final bf = new StringBuffer();
         final bq = new StringBuffer();
-        for (final q in joinList) {
+        for (final q in joinList!) {
           if (q.hasFields) {
             bf.write(', ${q.fieldsWithAlias}');
           }
-          final tb = q.table;
+          final tb = q.table!;
           final type = q.type.toString().split('.').last;
           bq.write(' $type JOIN ${tb.name} as ${tb.alias} ON ${q.conditions}');
         }
         buffer.write('SELECT $fieldsWithAlias');
         buffer.write(bf.toString());
-        buffer.write(' FROM ${table.name} as ${table.alias}');
+        buffer.write(' FROM ${table!.name} as ${table!.alias}');
         buffer.write(bq.toString());
       } else {
         if (hasFields) {
           buffer.write(
-              'SELECT $fieldsWithAlias FROM ${table.name} as ${table.alias}');
+              'SELECT $fieldsWithAlias FROM ${table!.name} as ${table!.alias}');
         }
       }
       if (hasConditions) {
@@ -256,6 +255,6 @@ class SQLiteQuery with QueryProperties {
       }
       return buffer.toString();
     }
-    return null;
+    throw SQLiteException.noFieldsInQuery;
   }
 }

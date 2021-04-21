@@ -88,7 +88,7 @@ class PanActivityIndicator extends StatefulWidget {
 
   /// Creates a highly customizable activity indicator.
   const PanActivityIndicator({
-    Key key,
+    Key? key,
     this.animating = true,
     this.radius = 10,
     this.startRatio = 0.5,
@@ -106,7 +106,7 @@ class PanActivityIndicator extends StatefulWidget {
 
 class _PanActivityIndicatorState extends State<PanActivityIndicator>
     with SingleTickerProviderStateMixin {
-  AnimationController _animationController;
+  AnimationController? _animationController;
 
   @override
   void initState() {
@@ -116,7 +116,7 @@ class _PanActivityIndicatorState extends State<PanActivityIndicator>
       vsync: this,
     );
     if (widget.animating) {
-      _animationController.repeat();
+      _animationController!.repeat();
     }
   }
 
@@ -125,16 +125,16 @@ class _PanActivityIndicatorState extends State<PanActivityIndicator>
     super.didUpdateWidget(oldWidget);
     if (widget.animating != oldWidget.animating) {
       if (widget.animating) {
-        _animationController.repeat();
+        _animationController!.repeat();
       } else {
-        _animationController.stop();
+        _animationController!.stop();
       }
     }
   }
 
   @override
   void dispose() {
-    _animationController.dispose();
+    _animationController!.dispose();
     super.dispose();
   }
 
@@ -161,9 +161,9 @@ class _PanActivityIndicatorState extends State<PanActivityIndicator>
 
 class _PanActivityIndicatorPainter extends CustomPainter {
   final int _halfTickCount;
-  final Animation<double> animationController;
-  final Color activeColor;
-  final Color inactiveColor;
+  final Animation<double>? animationController;
+  final Color? activeColor;
+  final Color? inactiveColor;
   final double relativeWidth;
   final int tickCount;
   final double radius;
@@ -172,14 +172,14 @@ class _PanActivityIndicatorPainter extends CustomPainter {
   final double endRatio;
 
   _PanActivityIndicatorPainter({
-    this.radius,
-    this.tickCount,
+    required this.radius,
+    required this.tickCount,
     this.animationController,
     this.activeColor,
     this.inactiveColor,
-    this.relativeWidth,
-    this.startRatio,
-    this.endRatio,
+    required this.relativeWidth,
+    required this.startRatio,
+    required this.endRatio,
   })  : _halfTickCount = tickCount ~/ 2,
         _tickRRect = RRect.fromLTRBXY(
           -radius * endRatio,
@@ -197,13 +197,13 @@ class _PanActivityIndicatorPainter extends CustomPainter {
     canvas
       ..save()
       ..translate(size.width / 2, size.height / 2);
-    final activeTick = (tickCount * animationController.value).floor();
+    final activeTick = (tickCount * animationController!.value).floor();
     for (int i = 0; i < tickCount; ++i) {
       paint.color = Color.lerp(
         activeColor,
         inactiveColor,
         ((i + activeTick) % tickCount) / _halfTickCount,
-      );
+      )!;
       canvas
         ..drawRRect(_tickRRect, paint)
         ..rotate(-math.pi * 2 / tickCount);

@@ -64,66 +64,66 @@ abstract class StateWithPermission<T extends StatefulWidget>
     return AppSettings.openAppSettings();
   }
 
-  void _checkPermissions({@required bool request}) async {
+  void _checkPermissions({required bool request}) async {
     _isPermanentlyDenied = false;
     bool hasDenied = false;
     for (final permission in permissions) {
       _isGranted = request
           ? await permission.request().isGranted
           : await permission.isGranted;
-      debugPrint('Permission(${permission.value}) isGranted: $_isGranted');
+      debugPrint('PermissionValue: (${permission.value}) isGranted: $_isGranted');
       if (!_isGranted) {
         if (await permission.isPermanentlyDenied || Platform.isIOS) {
-          String name;
-          switch (permission) {
-            case Permission.camera:
+          String? name;
+          switch (permission.value) {
+            case PermissionValue.camera:
               name = PermissionName.camera;
               break;
-            case Permission.storage:
+            case PermissionValue.storage:
               name = PermissionName.storage;
               break;
-            case Permission.calendar:
+            case PermissionValue.calendar:
               name = PermissionName.calendar;
               break;
-            case Permission.contacts:
+            case PermissionValue.contacts:
               name = PermissionName.contacts;
               break;
-            case Permission.mediaLibrary:
+            case PermissionValue.mediaLibrary:
               name = PermissionName.mediaLibrary;
               break;
-            case Permission.microphone:
+            case PermissionValue.microphone:
               name = PermissionName.microphone;
               break;
-            case Permission.photos:
+            case PermissionValue.photos:
               name = PermissionName.photos;
               break;
-            case Permission.reminders:
+            case PermissionValue.reminders:
               name = PermissionName.reminders;
               break;
-            case Permission.sensors:
+            case PermissionValue.sensors:
               name = PermissionName.sensors;
               break;
-            case Permission.sms:
+            case PermissionValue.sms:
               name = PermissionName.sms;
               break;
-            case Permission.speech:
+            case PermissionValue.speech:
               name = PermissionName.speech;
               break;
-            case Permission.notification:
+            case PermissionValue.notification:
               name = PermissionName.notification;
               break;
             default:
-              switch (permission) {
-                case Permission.locationAlways:
+              switch (permission.value) {
+                case PermissionValue.locationAlways:
                   name = PermissionName.locationAlways;
                   break;
-                case Permission.locationWhenInUse:
+                case PermissionValue.locationWhenInUse:
                   name = PermissionName.locationWhenInUse;
                   break;
-                case Permission.location:
+                case PermissionValue.location:
                   name = PermissionName.location;
                   break;
-                case Permission.phone:
+                case PermissionValue.phone:
                   name = PermissionName.phone;
                   break;
                 default:

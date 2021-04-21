@@ -59,7 +59,7 @@ class DefaultDatabaseInitializer extends DatabaseInitializer {
       await _createTimeTriggers(binder);
       await binder.finish();
     } catch (error) {
-      await db.instance.setVersion(oldVersion);
+      await db.instance!.setVersion(oldVersion);
       final message = "${SQLiteException.initializationFailed}\n$error";
       throw SQLiteException(message);
     }
@@ -81,7 +81,7 @@ class DefaultDatabaseInitializer extends DatabaseInitializer {
       await _createTimeTriggers(binder);
       await binder.finish();
     } catch (error) {
-      await db.instance.setVersion(oldVersion);
+      await db.instance!.setVersion(oldVersion);
       final message = "${SQLiteException.initializationFailed}\n$error";
       throw SQLiteException(message);
     }
@@ -133,7 +133,7 @@ class DefaultDatabaseInitializer extends DatabaseInitializer {
       final table = entity.tableName;
       final stmt = SQLiteStatement.fromList(entity.fields);
       if (stmt.hasFields) {
-        final fieldList = stmt.fieldList;
+        final fieldList = stmt.fieldList!;
         final columnList = await db.getColumnList(table);
         if (fieldList.length > columnList.length) {
           fieldList.forEach((f) {
@@ -157,7 +157,7 @@ class DefaultDatabaseInitializer extends DatabaseInitializer {
       if (stmt.hasFields) {
         final idx = entity.indexName;
         final int count = await db.getIndexColumnCount(idx);
-        if (stmt.fieldList.length > count) {
+        if (stmt.fieldList!.length > count) {
           binder.dropIndex(idx);
           binder.createIndex(idx, table, stmt);
         }

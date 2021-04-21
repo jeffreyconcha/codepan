@@ -33,7 +33,7 @@ abstract class DatabaseSchema<T> {
     return triggers;
   }
 
-  String unique(T entity) {
+  String? unique(T entity) {
     for (final field in fields(entity)) {
       if (field.isUnique) {
         return field.field;
@@ -42,8 +42,8 @@ abstract class DatabaseSchema<T> {
     return null;
   }
 
-  List<String> uniqueGroup(T entity) {
-    final list = <String>[];
+  List<String?>? uniqueGroup(T entity) {
+    final list = <String?>[];
     for (final field in fields(entity)) {
       if (field.inUniqueGroup) {
         list.add(field.field);
@@ -56,7 +56,7 @@ abstract class DatabaseSchema<T> {
     final references = <TableSchema>[];
     for (final field in fields(entity)) {
       if (field.isForeignKey) {
-        final table = field.reference;
+        final table = field.reference!;
         final schema = of(table.entity);
         if (!references.contains(schema)) {
           references.add(schema);
@@ -86,16 +86,12 @@ abstract class DatabaseSchema<T> {
 
   Table at(T entity) => Table(tableName(entity), entity);
 
-  TableSchema of(T entity) {
-    return TableSchema<T>(this, entity);
+  TableSchema of(T? entity) {
+    return TableSchema<T?>(this, entity);
   }
 
-  String _name(T entity, String suffix) {
-    if (entity != null) {
-      return '${entity.enumValue.toSnake()}$suffix';
-    }
-    return null;
-  }
+  String _name(T entity, String suffix) =>
+      '${entity.enumValue.toSnake()}$suffix';
 }
 
 class TableSchema<T> {
@@ -104,29 +100,29 @@ class TableSchema<T> {
 
   const TableSchema(this.databaseSchema, this.entity);
 
-  List<Field> get fields => databaseSchema?.fields(entity);
+  List<Field> get fields => databaseSchema.fields(entity);
 
-  List<Field> get indices => databaseSchema?.indices(entity);
+  List<Field> get indices => databaseSchema.indices(entity);
 
-  List<Field> get triggers => databaseSchema?.triggers(entity);
+  List<Field> get triggers => databaseSchema.triggers(entity);
 
-  Table get table => databaseSchema?.at(entity);
+  Table get table => databaseSchema.at(entity);
 
-  String get alias => table?.alias;
+  String get alias => table.alias;
 
-  String get tableName => databaseSchema?.tableName(entity);
+  String get tableName => databaseSchema.tableName(entity);
 
-  String get indexName => databaseSchema?.indexName(entity);
+  String get indexName => databaseSchema.indexName(entity);
 
-  String get triggerName => databaseSchema?.triggerName(entity);
+  String get triggerName => databaseSchema.triggerName(entity);
 
-  String get unique => databaseSchema?.unique(entity);
+  String? get unique => databaseSchema.unique(entity);
 
-  List<String> get uniqueGroup => databaseSchema?.uniqueGroup(entity);
+  List<String?>? get uniqueGroup => databaseSchema.uniqueGroup(entity);
 
-  List<TableSchema> get references => databaseSchema?.references(entity);
+  List<TableSchema> get references => databaseSchema.references(entity);
 
-  List<Field> get foreignKeys => databaseSchema?.foreignKeys(entity);
+  List<Field> get foreignKeys => databaseSchema.foreignKeys(entity);
 
-  String get asForeignKey => table?.asForeignKey();
+  String? get asForeignKey => table.asForeignKey();
 }

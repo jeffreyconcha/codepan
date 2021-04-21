@@ -5,8 +5,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 abstract class ParentBloc<Event extends ParentEvent, State extends ParentState>
     extends Bloc<Event, State> {
   ParentBloc({
-    Event initialEvent,
-    State initialState,
+    required State initialState,
+    Event? initialEvent,
   }) : super(initialState) {
     if (initialEvent != null) {
       this.add(initialEvent);

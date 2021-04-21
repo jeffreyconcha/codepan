@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'dart:io';
-import 'package:audioplayer/audioplayer.dart';
+import 'package:audioplayers/audioplayers.dart';
 import 'package:codepan/media/media.dart';
 import 'package:codepan/resources/colors.dart';
 import 'package:codepan/resources/dimensions.dart';
@@ -12,15 +12,15 @@ import 'package:codepan/widgets/placeholder_handler.dart';
 import 'package:flutter/material.dart';
 
 class PanAudioPlayer extends StatefulWidget {
-  final OnProgressChanged onProgressChanged;
-  final OnCompleted onCompleted;
-  final OnError onError;
-  final dynamic data;
-  final Color color;
+  final OnProgressChanged? onProgressChanged;
+  final OnCompleted? onCompleted;
   final Color background;
+  final OnError? onError;
+  final dynamic data;
+  final Color? color;
 
   const PanAudioPlayer({
-    Key key,
+    Key? key,
     this.data,
     this.color,
     this.background = Colors.white,
@@ -34,11 +34,11 @@ class PanAudioPlayer extends StatefulWidget {
 }
 
 class _PanAudioPlayerState extends State<PanAudioPlayer> {
-  StreamSubscription _onPlayerStateChanged;
-  StreamSubscription _onPositionChanged;
+  late StreamSubscription _onPlayerStateChanged;
+  late StreamSubscription _onPositionChanged;
   bool _isLoading = false;
   bool _isPlaying = false;
-  AudioPlayer _audio;
+  late AudioPlayer _audio;
   double _current = 0;
   double _max = 0;
 
@@ -55,8 +55,8 @@ class _PanAudioPlayerState extends State<PanAudioPlayer> {
     _onPlayerStateChanged = _audio.onPlayerStateChanged.listen((state) {
       switch (state) {
         case AudioPlayerState.PLAYING:
-          setState(() {
-            _max = _audio.duration.inMilliseconds.roundToDouble();
+          setState(() async {
+            _max = (await _audio.getDuration()).toDouble();
           });
           _setPlaying(true);
           _setLoading(false);
@@ -132,7 +132,7 @@ class _PanAudioPlayerState extends State<PanAudioPlayer> {
               ),
               child: MediaProgressIndicator(
                 activeColor: widget.color,
-                inactiveColor: widget.color.withOpacity(0.3),
+                inactiveColor: widget.color!.withOpacity(0.3),
                 bufferedColor: Colors.transparent,
                 max: _max,
                 current: _current,
@@ -140,8 +140,8 @@ class _PanAudioPlayerState extends State<PanAudioPlayer> {
                 withShadow: false,
                 timerColor: PanColors.text,
                 onSeekProgress: (milliseconds) async {
-                  final seconds = (milliseconds / 1000).roundToDouble();
-                  await _audio.seek(seconds);
+                  final position = Duration(milliseconds: milliseconds.toInt());
+                  await _audio.seek(position);
                   _setCurrent(milliseconds);
                 },
               ),

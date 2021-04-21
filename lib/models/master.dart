@@ -2,16 +2,16 @@ import 'package:codepan/models/transaction.dart';
 import 'package:flutter/foundation.dart';
 
 abstract class MasterData extends TransactionData {
-  final int webId;
-  final String name;
+  final int? webId;
+  final String? name;
 
   const MasterData({
-    int id,
-    String dateCreated,
-    String timeCreated,
-    String dateUpdated,
-    String timeUpdated,
-    bool isDeleted,
+    int? id,
+    String? dateCreated,
+    String? timeCreated,
+    String? dateUpdated,
+    String? timeUpdated,
+    bool? isDeleted,
     this.webId,
     this.name,
   }) : super(
@@ -33,7 +33,7 @@ abstract class MasterData extends TransactionData {
   }
 
   @protected
-  Map<String, dynamic> filtered([Map<String, dynamic> map]) {
+  Map<String, dynamic> filtered([Map<String, dynamic>? map]) {
     final filtered = map ?? <String, dynamic>{};
     filtered.addAll(this.map);
     filtered.removeWhere((key, value) {
@@ -47,13 +47,13 @@ abstract class MasterData extends TransactionData {
 
   @override
   MasterData copyWith({
-    int id,
-    String dateCreated,
-    String timeCreated,
-    String dateUpdated,
-    String timeUpdated,
-    bool isDeleted,
-    int webId,
-    String name,
+    int? id,
+    String? dateCreated,
+    String? timeCreated,
+    String? dateUpdated,
+    String? timeUpdated,
+    bool? isDeleted,
+    int? webId,
+    String? name,
   });
 }

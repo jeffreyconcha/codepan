@@ -4,14 +4,14 @@ import 'package:codepan/widgets/placeholder_handler.dart';
 import 'package:flutter/material.dart';
 
 class TextPlaceholder extends StatefulWidget {
-  final double titleHeight, lineHeight;
+  final double? titleHeight, lineHeight;
   final int noOfParagraph, noOfLines;
   final bool withTitle, equalWidth;
   final Color color;
 
   const TextPlaceholder({
-    Key key,
-    @required this.noOfLines,
+    Key? key,
+    required this.noOfLines,
     this.noOfParagraph = 1,
     this.withTitle = true,
     this.equalWidth = false,
@@ -26,14 +26,14 @@ class TextPlaceholder extends StatefulWidget {
 
 class _TextPlaceholderState extends State<TextPlaceholder>
     with SingleTickerProviderStateMixin {
-  AnimationController _controller;
-  Animatable<Color> _tween;
+  late AnimationController _controller;
+  late Animatable<Color?> _tween;
 
   Color get color => widget.color;
 
   @override
   void initState() {
-    _tween = TweenSequence<Color>([
+    _tween = TweenSequence<Color?>([
       TweenSequenceItem(
         weight: 1.0,
         tween: ColorTween(

@@ -4,21 +4,21 @@ import 'package:codepan/widgets/text.dart';
 import 'package:flutter/material.dart';
 
 class PanButton extends StatelessWidget {
-  final double fontSize, fontHeight, radius, borderWidth, width, height;
-  final Color fontColor, background, borderColor, splashColor, highlightColor;
-  final EdgeInsetsGeometry margin, padding;
-  final BoxConstraints constraints;
-  final String text, fontFamily;
-  final VoidCallback onPressed;
+  final double? fontSize, fontHeight, radius, borderWidth, width, height;
+  final Color? fontColor, background, borderColor, splashColor, highlightColor;
+  final EdgeInsetsGeometry? margin, padding;
+  final BoxConstraints? constraints;
+  final String? text, fontFamily;
+  final VoidCallback? onPressed;
   final FontWeight fontWeight;
   final FontStyle fontStyle;
   final Alignment alignment;
-  final FocusNode focusNode;
+  final FocusNode? focusNode;
   final TextAlign textAlign;
-  final Widget child;
+  final Widget? child;
 
   const PanButton({
-    Key key,
+    Key? key,
     this.text,
     this.fontSize,
     this.fontHeight,
@@ -58,8 +58,8 @@ class PanButton extends StatelessWidget {
           color: background,
           focusNode: focusNode,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(radius),
-            side: BorderSide(color: borderColor, width: borderWidth),
+            borderRadius: BorderRadius.circular(radius!),
+            side: BorderSide(color: borderColor!, width: borderWidth!),
           ),
           padding: padding,
           onPressed: onPressed,
@@ -68,7 +68,7 @@ class PanButton extends StatelessWidget {
           child: PlaceholderHandler(
             condition: child != null,
             childBuilder: (context) {
-              return child;
+              return child!;
             },
             placeholderBuilder: (context) {
               return PanText(

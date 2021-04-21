@@ -2,17 +2,17 @@ import 'package:flutter/cupertino.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 class PanScrollView extends StatelessWidget {
-  final RefreshController refreshController;
-  final ScrollController scrollController;
-  final VoidCallback onRefresh;
-  final bool enablePullDown;
+  final RefreshController? refreshController;
+  final ScrollController? scrollController;
+  final VoidCallback? onRefresh;
+  final bool? enablePullDown;
   final Axis scrollDirection;
-  final EdgeInsets padding;
-  final Widget child;
-  final Widget header;
+  final EdgeInsets? padding;
+  final Widget? child;
+  final Widget? header;
 
   const PanScrollView({
-    Key key,
+    Key? key,
     this.child,
     this.padding,
     this.scrollDirection = Axis.vertical,
@@ -48,10 +48,10 @@ class PanScrollView extends StatelessWidget {
         );
         if (refreshController != null) {
           return SmartRefresher(
-            enablePullDown: enablePullDown,
-            controller: refreshController,
-            header: header,
-            onRefresh: onRefresh,
+            enablePullDown: enablePullDown!,
+            controller: refreshController!,
+            header: header!,
+            onRefresh: onRefresh!,
             child: scrollview,
           );
         } else {

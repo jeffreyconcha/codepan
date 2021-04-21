@@ -6,9 +6,9 @@ typedef IsolateImplementation = void Function(SendPort msp);
 
 abstract class IsolateHandler {
   final String name;
-  Isolate _isolate;
-  ReceivePort _mrp;
-  SendPort _isp;
+  Isolate? _isolate;
+  late ReceivePort _mrp;
+  SendPort? _isp;
 
   IsolateImplementation get implementation;
 

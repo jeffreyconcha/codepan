@@ -5,9 +5,9 @@ extension DurationUtils on Duration {
     bool isAbbreviated = false,
   }) {
     String format(int n) => n.toString().padLeft(2, "0");
-    final h = this.inHours.remainder(24);
-    final m = this.inMinutes.remainder(60);
-    final s = this.inSeconds.remainder(60);
+    final num h = this.inHours.remainder(24);
+    final num m = this.inMinutes.remainder(60);
+    final num s = this.inSeconds.remainder(60);
     final hs = isReadable
         ? h > 1
             ? ' hrs '
@@ -23,9 +23,9 @@ extension DurationUtils on Duration {
             ? ' secs'
             : ' sec'
         : ':';
-    final hours = isReadable ? '$h' : format(h);
-    final minutes = isReadable ? '$m' : format(m);
-    final seconds = isReadable ? '$s' : format(s);
+    final hours = isReadable ? '$h' : format(h as int);
+    final minutes = isReadable ? '$m' : format(m as int);
+    final seconds = isReadable ? '$s' : format(s as int);
     final buffer = StringBuffer();
     if (h != 0) {
       buffer.write('$hours');

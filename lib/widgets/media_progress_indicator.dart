@@ -6,31 +6,31 @@ import 'package:flutter/material.dart';
 typedef OnSeekProgress = void Function(double value);
 
 class MediaProgressIndicator extends StatelessWidget {
-  final OnSeekProgress onSeekProgress;
-  final double buffered;
-  final double current;
-  final double max;
-  final double barHeight;
-  final Color activeColor;
-  final Color inactiveColor;
+  final OnSeekProgress? onSeekProgress;
+  final double? buffered;
+  final double? current;
+  final double? max;
+  final double? barHeight;
+  final Color? activeColor;
+  final Color? inactiveColor;
   final Color bufferedColor;
   final Color timerColor;
   final bool withShadow;
 
   String get currentTime {
     return Duration(
-      milliseconds: current.toInt(),
+      milliseconds: current!.toInt(),
     ).format();
   }
 
   String get maxTime {
     return Duration(
-      milliseconds: max.toInt(),
+      milliseconds: max!.toInt(),
     ).format();
   }
 
   const MediaProgressIndicator({
-    Key key,
+    Key? key,
     this.buffered = 0,
     this.max = 0,
     this.current = 0,
@@ -113,8 +113,8 @@ class MediaProgressIndicator extends StatelessWidget {
                   ),
                 ),
                 child: Slider(
-                  max: max,
-                  value: current,
+                  max: max!,
+                  value: current!,
                   activeColor: activeColor,
                   inactiveColor: Colors.transparent,
                   onChanged: onSeekProgress,
@@ -134,14 +134,14 @@ class TrackShape extends RectangularSliderTrackShape {
 
   @override
   Rect getPreferredRect({
-    @required RenderBox parentBox,
+    required RenderBox parentBox,
     Offset offset = Offset.zero,
-    @required SliderThemeData sliderTheme,
+    required SliderThemeData sliderTheme,
     bool isEnabled = false,
     bool isDiscrete = false,
   }) {
     final size = parentBox.size;
-    final double height = sliderTheme.trackHeight;
+    final double height = sliderTheme.trackHeight!;
     final double top = offset.dy + (size.height - height) / 2;
     final double left = offset.dx;
     final double width = size.width;
@@ -150,8 +150,8 @@ class TrackShape extends RectangularSliderTrackShape {
 }
 
 class RectangularThumb extends SliderComponentShape {
-  final double width;
-  final double height;
+  final double? width;
+  final double? height;
 
   const RectangularThumb({
     this.width,
@@ -167,25 +167,25 @@ class RectangularThumb extends SliderComponentShape {
   void paint(
     PaintingContext context,
     Offset center, {
-    Animation<double> activationAnimation,
-    Animation<double> enableAnimation,
-    bool isDiscrete,
-    TextPainter labelPainter,
-    RenderBox parentBox,
-    SliderThemeData sliderTheme,
-    TextDirection textDirection,
-    double value,
-    double textScaleFactor,
-    Size sizeWithOverflow,
+    Animation<double>? activationAnimation,
+    Animation<double>? enableAnimation,
+    bool? isDiscrete,
+    TextPainter? labelPainter,
+    RenderBox? parentBox,
+    required SliderThemeData sliderTheme,
+    TextDirection? textDirection,
+    double? value,
+    double? textScaleFactor,
+    Size? sizeWithOverflow,
   }) {
     final canvas = context.canvas;
     final rect = Rect.fromCenter(
       center: center,
-      width: width,
-      height: height,
+      width: width!,
+      height: height!,
     );
     final paint = Paint()
-      ..color = sliderTheme.activeTrackColor
+      ..color = sliderTheme.activeTrackColor!
       ..style = PaintingStyle.fill;
     canvas.drawRect(rect, paint);
   }

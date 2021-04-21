@@ -13,7 +13,7 @@ class Dimension {
     this.isSafeArea = false,
   });
 
-  double get deviceRatio {
+  double? get deviceRatio {
     if (context != null) {
       final data = MediaQuery.of(context);
       final size = data.size;

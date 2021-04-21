@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
 class SliverTabBarDelegate extends SliverPersistentHeaderDelegate {
-  final double height, elevation;
+  final double? height, elevation;
   final Color background;
   final TabBar tabBar;
 
   SliverTabBarDelegate({
-    @required this.tabBar,
+    required this.tabBar,
     this.height,
     this.background = Colors.white,
     this.elevation,
@@ -17,7 +17,7 @@ class SliverTabBarDelegate extends SliverPersistentHeaderDelegate {
   Widget build(BuildContext context, double offset, bool overlap) {
     return Material(
       color: background,
-      elevation: elevation,
+      elevation: elevation!,
       child: tabBar,
     );
   }

@@ -1,7 +1,7 @@
 import 'package:codepan/database/models/sqlite_model.dart';
 import 'package:codepan/database/sqlite_statement.dart';
 import 'package:codepan/utils/codepan_utils.dart';
-import 'package:inflection2/inflection2.dart';
+import 'package:inflection3/inflection3.dart';
 
 enum Value {
   dateNow,
@@ -46,5 +46,5 @@ class FieldValue extends SQLiteModel {
     return null;
   }
 
-  FieldValue(String _field, this._value) : super(_field);
+  FieldValue(String? _field, this._value) : super(_field);
 }

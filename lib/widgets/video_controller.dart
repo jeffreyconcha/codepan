@@ -8,20 +8,20 @@ import 'package:codepan/widgets/text.dart';
 import 'package:flutter/material.dart';
 
 class VideoController extends StatelessWidget {
-  final OnSeekProgress onSeekProgress;
-  final VoidCallback onFullScreen;
-  final VoidCallback onPlay;
-  final bool isLoading;
-  final bool isInitialized;
-  final bool isPlaying;
-  final bool isFullscreen;
-  final Color color;
-  final double buffered;
-  final double current;
-  final double max;
+  final OnSeekProgress? onSeekProgress;
+  final VoidCallback? onFullScreen;
+  final VoidCallback? onPlay;
+  final bool? isLoading;
+  final bool? isInitialized;
+  final bool? isPlaying;
+  final bool? isFullscreen;
+  final Color? color;
+  final double? buffered;
+  final double? current;
+  final double? max;
 
   const VideoController({
-    Key key,
+    Key? key,
     this.isLoading,
     this.isInitialized,
     this.isPlaying,
@@ -42,7 +42,7 @@ class VideoController extends StatelessWidget {
       children: <Widget>[
         Center(
           child: PlaceholderHandler(
-            condition: !isLoading,
+            condition: !isLoading!,
             childBuilder: (context) {
               return Row(
                 mainAxisSize: MainAxisSize.min,
@@ -52,7 +52,7 @@ class VideoController extends StatelessWidget {
                     child: SkipButton(
                       direction: Direction.backward,
                       onPressed: () {
-                        onSeekProgress?.call(current - 10000);
+                        onSeekProgress?.call(current! - 10000);
                       },
                       isInitialized: isInitialized,
                     ),
@@ -61,15 +61,15 @@ class VideoController extends StatelessWidget {
                     flex: 5,
                     child: Center(
                       child: PanButton(
-                        background: !isInitialized
+                        background: !isInitialized!
                             ? color ?? Theme.of(context).primaryColor
                             : Colors.transparent,
                         radius: d.at(70),
                         width: d.at(70),
                         height: d.at(70),
                         child: Icon(
-                          isPlaying ? Icons.pause : Icons.play_arrow,
-                          size: isInitialized ? d.at(50) : d.at(40),
+                          isPlaying! ? Icons.pause : Icons.play_arrow,
+                          size: isInitialized! ? d.at(50) : d.at(40),
                           color: Colors.white,
                         ),
                         splashColor: Colors.white.withOpacity(0.4),
@@ -83,7 +83,7 @@ class VideoController extends StatelessWidget {
                     child: SkipButton(
                       direction: Direction.forward,
                       onPressed: () {
-                        onSeekProgress?.call(current + 10000);
+                        onSeekProgress?.call(current! + 10000);
                       },
                       isInitialized: isInitialized,
                     ),
@@ -129,7 +129,7 @@ class VideoController extends StatelessWidget {
             splashColor: Colors.white.withOpacity(0.4),
             highlightColor: Colors.transparent,
             child: Icon(
-              isFullscreen ? Icons.fullscreen_exit : Icons.fullscreen,
+              isFullscreen! ? Icons.fullscreen_exit : Icons.fullscreen,
               size: d.at(30),
               color: Colors.white,
             ),
@@ -148,12 +148,12 @@ enum Direction {
 
 class SkipButton extends StatelessWidget {
   final Direction direction;
-  final VoidCallback onPressed;
-  final bool isInitialized;
+  final VoidCallback? onPressed;
+  final bool? isInitialized;
 
   const SkipButton({
-    Key key,
-    @required this.direction,
+    Key? key,
+    required this.direction,
     this.onPressed,
     this.isInitialized,
   }) : super(key: key);

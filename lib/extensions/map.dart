@@ -13,24 +13,24 @@ const boolPrefixes = <String>[
 ];
 
 extension MapUtils on Map<String, dynamic> {
-  int getInt(String key) {
+  int? getInt(String key) {
     final value = this[getKey(key)];
     return PanUtils.parseInt(value);
   }
 
-  double getDouble(String key) {
+  double? getDouble(String key) {
     final value = this[getKey(key)];
     return PanUtils.parseDouble(value);
   }
 
-  bool getBool(String key) {
+  bool? getBool(String key) {
     final value = this[getKey(key)];
     return PanUtils.parseBool(value);
   }
 
-  T getEnum<T>({
-    @required String key,
-    @required List<T> values,
+  T? getEnum<T>({
+    required String key,
+    required List<T> values,
   }) {
     final value = this[getKey(key)];
     for (final element in values) {
@@ -68,7 +68,7 @@ extension MapUtils on Map<String, dynamic> {
 
   void setPrefix(
     String prefix, {
-    int index,
+    int? index,
   }) {
     if (index != null && index != 0) {
       this[prefixKey] = '$prefix.$index';

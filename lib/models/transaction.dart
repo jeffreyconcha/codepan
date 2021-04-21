@@ -5,9 +5,9 @@ import 'package:flutter/foundation.dart';
 
 abstract class TransactionData extends EntityData
     implements Comparable<TransactionData> {
-  final String dateCreated, timeCreated, dateUpdated, timeUpdated;
-  final bool isDeleted;
-  final int id;
+  final String? dateCreated, timeCreated, dateUpdated, timeUpdated;
+  final bool? isDeleted;
+  final int? id;
 
   const TransactionData({
     this.id,
@@ -19,7 +19,7 @@ abstract class TransactionData extends EntityData
   });
 
   @override
-  List<Object> get props => [id];
+  List<Object?> get props => [id];
 
   @protected
   Map<String, dynamic> get map {
@@ -35,7 +35,7 @@ abstract class TransactionData extends EntityData
   }
 
   @protected
-  Map<String, dynamic> filtered([Map<String, dynamic> map]) {
+  Map<String, dynamic> filtered([Map<String, dynamic>? map]) {
     final filtered = map ?? <String, dynamic>{};
     filtered.addAll(this.map);
     filtered.removeWhere((key, value) {
@@ -44,7 +44,7 @@ abstract class TransactionData extends EntityData
     return filtered;
   }
 
-  DateTimeData get createdAt {
+  DateTimeData? get createdAt {
     if (dateCreated != null && timeCreated != null) {
       return DateTimeData(
         date: dateCreated,
@@ -54,7 +54,7 @@ abstract class TransactionData extends EntityData
     return null;
   }
 
-  DateTimeData get updatedAt {
+  DateTimeData? get updatedAt {
     if (dateUpdated != null && timeUpdated != null) {
       return DateTimeData(
         date: dateUpdated,
@@ -80,21 +80,20 @@ abstract class TransactionData extends EntityData
       final dt2 = DateTime.parse('${other.dateCreated} ${other.timeCreated}');
       if (dt1.isBefore(dt2)) {
         return -1;
-      } else if (dt1.isAfter(dt2)) {
+      }
+      if (dt1.isAfter(dt2)) {
         return 1;
-      } else if (dt1 == dt2) {
-        return 0;
       }
     }
-    return null;
+    return 0;
   }
 
   TransactionData copyWith({
-    int id,
-    String dateCreated,
-    String timeCreated,
-    String dateUpdated,
-    String timeUpdated,
-    bool isDeleted,
+    int? id,
+    String? dateCreated,
+    String? timeCreated,
+    String? dateUpdated,
+    String? timeUpdated,
+    bool? isDeleted,
   });
 }

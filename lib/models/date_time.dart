@@ -7,11 +7,11 @@ const String timeFormat = 'HH:mm:ss';
 const String locale = 'en_US';
 
 class DateTimeData extends Equatable {
-  final String date;
-  final String time;
+  final String? date;
+  final String? time;
 
   @override
-  List<Object> get props {
+  List<Object?> get props {
     return [
       date,
       time,
@@ -38,12 +38,9 @@ class DateTimeData extends Equatable {
 
   DateTime get value => DateTime.parse('$date $time');
 
-  bool get isNewMinute {
-    if (time != null) {
-      final split = time.split(':');
-      return split.last == '00';
-    }
-    return null;
+  bool? get isNewMinute {
+    final split = time!.split(':');
+    return split.last == '00';
   }
 
   const DateTimeData({
@@ -65,7 +62,7 @@ class DateTimeData extends Equatable {
     return DateTimeData.from(value);
   }
 
-  Map<String, String> toMap() {
+  Map<String, String?> toMap() {
     return {
       'date': date,
       'time': time,
@@ -73,11 +70,11 @@ class DateTimeData extends Equatable {
   }
 
   Duration difference(DateTimeData other) {
-    return value.difference(other?.value);
+    return value.difference(other.value);
   }
 
   bool isEqual(DateTimeData other) {
-    return date == other?.date && time == other?.time;
+    return date == other.date && time == other.time;
   }
 
   bool isAfter(DateTimeData other) {

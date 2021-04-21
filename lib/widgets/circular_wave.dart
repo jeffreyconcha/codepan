@@ -8,10 +8,10 @@ class CircularWave extends StatefulWidget {
   final Color color;
 
   const CircularWave({
-    Key key,
-    @required this.radius,
-    @required this.waveCount,
-    @required this.color,
+    Key? key,
+    required this.radius,
+    required this.waveCount,
+    required this.color,
     this.duration = const Duration(seconds: 1),
   }) : super(key: key);
 
@@ -21,8 +21,8 @@ class CircularWave extends StatefulWidget {
 
 class _CircularWaveState extends State<CircularWave>
     with SingleTickerProviderStateMixin {
-  AnimationController _controller;
-  Animation<double> _animation;
+  late AnimationController _controller;
+  late Animation<double> _animation;
   double _waveRadius = 0.0;
 
   double get waveGap => widget.radius / widget.waveCount;
@@ -89,12 +89,12 @@ class _CircularWaveState extends State<CircularWave>
 class CircularWavePainter extends CustomPainter {
   final double waveRadius, waveGap;
   final Color color;
-  Paint _wavePaint;
+  late Paint _wavePaint;
 
   CircularWavePainter({
-    @required this.waveRadius,
-    @required this.waveGap,
-    @required this.color,
+    required this.waveRadius,
+    required this.waveGap,
+    required this.color,
   }) {
     _wavePaint = Paint()
       ..color = color

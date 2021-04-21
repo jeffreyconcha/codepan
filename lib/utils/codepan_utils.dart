@@ -7,7 +7,7 @@ import 'package:codepan/models/date_time.dart';
 import 'package:connectivity/connectivity.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:inflection2/inflection2.dart';
+import 'package:inflection3/inflection3.dart';
 import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -37,34 +37,30 @@ class PanUtils {
     return DateTimeData.from(now);
   }
 
-  static DateTimeData splitDateTime(String input, {String pattern = ' '}) {
-    if (input != null) {
-      final data = input.split(pattern);
-      if (data != null && data.length == 2) {
-        return DateTimeData(
-          date: data[0],
-          time: data[1],
-        );
-      }
+  static DateTimeData? splitDateTime(String input, {String pattern = ' '}) {
+    final data = input.split(pattern);
+    if (data.length == 2) {
+      return DateTimeData(
+        date: data[0],
+        time: data[1],
+      );
     }
     return null;
   }
 
   static String formatMoney(double input) {
-    if (input == null) return null;
     final nf = NumberFormat('#,###.00', 'en_US');
     return nf.format(input);
   }
 
   static String formatDouble(String format, double input) {
-    if (input == null) return null;
     final nf = NumberFormat(format, 'en_US');
     return nf.format(input);
   }
 
   static Future<File> getFile({
-    String folder,
-    @required String fileName,
+    String? folder,
+    required String fileName,
   }) async {
     final root = await getApplicationDocumentsDirectory();
     if (folder != null) {
@@ -82,14 +78,11 @@ class PanUtils {
     String folder,
   ) async {
     final root = await getApplicationDocumentsDirectory();
-    if (folder != null) {
-      final dir = Directory('${root.path}/$folder');
-      if (!await dir.exists()) {
-        await dir.create();
-      }
-      return dir;
+    final dir = Directory('${root.path}/$folder');
+    if (!await dir.exists()) {
+      await dir.create();
     }
-    return root;
+    return dir;
   }
 
   static Future<bool> hasInternet() async {
@@ -114,15 +107,15 @@ class PanUtils {
     }
   }
 
-  static int parseInt(dynamic input) {
+  static int? parseInt(dynamic input) {
     return input is int ? input : int.tryParse(input.toString());
   }
 
-  static double parseDouble(dynamic input) {
+  static double? parseDouble(dynamic input) {
     return input is double ? input : double.tryParse(input.toString());
   }
 
-  static bool parseBool(dynamic input) {
+  static bool? parseBool(dynamic input) {
     if (input is bool) {
       return input;
     } else if (input is int) {

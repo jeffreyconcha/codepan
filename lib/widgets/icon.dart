@@ -2,18 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
 class PanIcon extends StatelessWidget {
-  final EdgeInsetsGeometry margin, padding;
-  final bool isInternal;
+  final EdgeInsetsGeometry? margin, padding;
+  final Color? color, background;
+  final double? width, height;
   final Alignment alignment;
-  final Color color, background;
-  final double width, height;
-  final String package;
+  final bool isInternal;
+  final String? package;
   final String icon;
   final BoxFit fit;
 
   const PanIcon({
-    Key key,
-    @required this.icon,
+    Key? key,
+    required this.icon,
     this.width,
     this.height,
     this.fit = BoxFit.contain,
@@ -28,6 +28,7 @@ class PanIcon extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final _package = isInternal ? 'codepan' : null;
     return Container(
       width: width,
       height: height,
@@ -39,7 +40,7 @@ class PanIcon extends StatelessWidget {
         color: color,
         fit: fit,
         alignment: alignment,
-        package: package ?? isInternal ? 'codepan' : null,
+        package: package ?? _package,
       ),
     );
   }

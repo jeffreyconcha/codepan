@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 
 extension CustomPainterUtils on CustomPainter {
   Future<ui.Image> renderImage({
-    @required int width,
-    @required int height,
+    required int width,
+    required int height,
   }) async {
     final recorder = ui.PictureRecorder();
     final canvas = Canvas(recorder);

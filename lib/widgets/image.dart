@@ -1,15 +1,15 @@
 import 'package:flutter/widgets.dart';
 
 class PanImage extends StatelessWidget {
-  final Alignment alignment;
-  final EdgeInsetsGeometry margin, padding;
-  final double width, height;
+  final Alignment? alignment;
+  final EdgeInsetsGeometry? margin, padding;
+  final double? width, height;
   final String image;
-  final BoxFit fit;
+  final BoxFit? fit;
 
   const PanImage({
-    Key key,
-    @required this.image,
+    Key? key,
+    required this.image,
     this.width,
     this.height,
     this.fit,

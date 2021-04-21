@@ -4,7 +4,7 @@ import 'package:codepan/database/sqlite_exception.dart';
 import 'package:codepan/database/sqlite_query.dart';
 import 'package:codepan/database/sqlite_statement.dart';
 import 'package:codepan/utils/codepan_utils.dart';
-import 'package:inflection2/inflection2.dart';
+import 'package:inflection3/inflection3.dart';
 
 enum Operator {
   equals,
@@ -30,29 +30,29 @@ enum Scan {
 
 class Condition extends SQLiteModel {
   dynamic _value, _start, _end;
-  List<Condition> orList;
-  List<Condition> andList;
-  Operator _operator;
-  Scan _scan;
+  List<Condition>? orList;
+  List<Condition>? andList;
+  Operator? _operator;
+  Scan? _scan;
 
   String get start => _getValue(_start);
 
   String get end => _getValue(_end);
 
-  Operator get operator => _operator;
+  Operator? get operator => _operator;
 
   bool get hasOrList => orList?.isNotEmpty ?? false;
 
   bool get hasAndList => andList?.isNotEmpty ?? false;
 
-  String get value {
+  String? get value {
     if (_value != null) {
       if (_value is bool) {
         return _value
             ? SQLiteStatement.trueValue.toString()
             : SQLiteStatement.falseValue.toString();
       } else if (_value is String) {
-        final text = _value as String;
+        final text = _value as String?;
         if (_operator == Operator.like && _scan != null) {
           switch (_scan) {
             case Scan.start:
@@ -75,10 +75,10 @@ class Condition extends SQLiteModel {
         return query.build();
       } else if (_value is List<dynamic>) {
         final buffer = StringBuffer();
-        final list = _value as List<dynamic>;
+        final list = _value as List<dynamic>?;
         for (final v in _value) {
           buffer.write(v.toString());
-          if (v != list.last) {
+          if (v != list!.last) {
             buffer.write(',');
           }
         }
@@ -112,7 +112,7 @@ class Condition extends SQLiteModel {
   bool get isValid => hasValue || _isNoValueOperator;
 
   Condition(
-    String _field,
+    String? _field,
     this._value, {
     dynamic start,
     dynamic end,
@@ -223,7 +223,7 @@ class Condition extends SQLiteModel {
     );
   }
 
-  factory Condition.isNull(String field) {
+  factory Condition.isNull(String? field) {
     return Condition(
       field,
       null,
@@ -312,7 +312,7 @@ class Condition extends SQLiteModel {
     );
   }
 
-  String asString() {
+  String? asString() {
     final type = hasValue && _value is Operator ? _value : operator;
     if (type != null) {
       switch (type) {
@@ -362,18 +362,18 @@ class Condition extends SQLiteModel {
     } else {
       if (hasOrList) {
         final b = StringBuffer();
-        for (final condition in orList) {
+        for (final condition in orList!) {
           b.write(condition.asString());
-          if (condition != orList.last) {
+          if (condition != orList!.last) {
             b.write(" OR ");
           }
         }
         return '(${b.toString()})';
       } else if (hasAndList) {
         final b = StringBuffer();
-        for (final condition in andList) {
+        for (final condition in andList!) {
           b.write(condition.asString());
-          if (condition != andList.last) {
+          if (condition != andList!.last) {
             b.write(" AND ");
           }
         }

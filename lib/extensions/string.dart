@@ -1,6 +1,6 @@
 import 'package:codepan/utils/codepan_utils.dart';
 import 'package:flutter/foundation.dart';
-import 'package:inflection2/inflection2.dart';
+import 'package:inflection3/inflection3.dart';
 
 const _true = <String>['true', 'yes', 'on', '1'];
 const _false = <String>['false', 'no', 'off', '0'];
@@ -33,7 +33,7 @@ extension StringUtils on String {
     return '${this[0].toLowerCase()}${this.substring(1)}';
   }
 
-  String nullify() {
+  String? nullify() {
     if (this != null && (this == 'null' || this.isEmpty)) {
       return null;
     }
@@ -42,7 +42,7 @@ extension StringUtils on String {
 
   String complete(
     dynamic input, {
-    String identifier,
+    String? identifier,
   }) {
     final buffer = StringBuffer();
     final id = identifier ?? '\$';
@@ -104,7 +104,7 @@ extension StringUtils on String {
     return SINGULAR.convert(this);
   }
 
-  bool toBool() {
+  bool? toBool() {
     if (_true.contains(this)) {
       return true;
     } else if (_false.contains(this)) {
@@ -119,8 +119,8 @@ extension StringUtils on String {
   }
 
   String hideCharAt({
-    @required int index,
-    @required int count,
+    required int index,
+    required int count,
     String replacement = '*',
   }) {
     if (index + count <= this.length) {

@@ -8,7 +8,7 @@ abstract class EntityData extends Equatable {
 
   String get table => schemaInstance.tableName;
 
-  String get unique => schemaInstance.unique;
+  String? get unique => schemaInstance.unique;
 
-  List<String> get uniqueGroup => schemaInstance.uniqueGroup;
+  List<String?>? get uniqueGroup => schemaInstance.uniqueGroup;
 }

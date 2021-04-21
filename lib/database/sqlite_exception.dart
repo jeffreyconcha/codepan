@@ -17,6 +17,7 @@ class SQLiteException extends DatabaseException {
       'main query to join tables using foreign keys.';
   static const String invalidTableType =
       'Invalid table type, table can only be a type of String, Table or TableSchema.';
+  static const String noFieldsInQuery = 'No fields found in query.';
 
   SQLiteException(String message) : super(message);
 

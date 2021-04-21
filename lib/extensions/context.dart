@@ -16,7 +16,7 @@ extension BuildContextUtils on BuildContext {
     Navigator.of(this).pop();
   }
 
-  void push({@required Widget page}) {
+  void push({required Widget page}) {
     Navigator.of(this).push(
       CupertinoPageRoute(
         builder: (context) {
@@ -26,7 +26,7 @@ extension BuildContextUtils on BuildContext {
     );
   }
 
-  void replace({@required Widget page}) {
+  void replace({required Widget page}) {
     Navigator.of(this).pushReplacement(
       FadeRoute(
         enter: page,
@@ -34,7 +34,7 @@ extension BuildContextUtils on BuildContext {
     );
   }
 
-  void fadeIn({@required Widget page}) {
+  void fadeIn({required Widget page}) {
     Navigator.of(this).push(
       FadeRoute(
         enter: page,

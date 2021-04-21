@@ -1,10 +1,10 @@
+import 'dart:async';
 import 'dart:io';
 import 'dart:math' as m;
 import 'dart:typed_data';
 import 'dart:ui';
 import 'package:codepan/extensions/painter.dart';
 import 'package:codepan/resources/dimensions.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_native_image/flutter_native_image.dart';
 import 'package:image/image.dart' as i;
@@ -18,14 +18,14 @@ typedef PainterBuilder = CustomPainter Function(
 extension FileUtils on File {
   String get name {
     final separator = Platform.pathSeparator;
-    return this?.path?.split(separator)?.last;
+    return this.path.split(separator).last;
   }
 
   Future<File> cropImage({
-    @required double preferredWidth,
-    @required double preferredHeight,
+    required double preferredWidth,
+    required double preferredHeight,
   }) async {
-    final image = i.decodeImage(this.readAsBytesSync());
+    final image = i.decodeImage(this.readAsBytesSync())!;
     final preferredRatio = preferredWidth / preferredHeight;
     final min = m.min(image.width, image.height);
     final max = m.max(image.width, image.height);
@@ -68,8 +68,8 @@ extension FileUtils on File {
   }
 
   Future<File> stampImage({
-    @required PainterBuilder builder,
-    @required BuildContext context,
+    required PainterBuilder builder,
+    required BuildContext context,
   }) async {
     final d = Dimension.of(context);
     final rotation = await getImageRotation();
@@ -85,10 +85,10 @@ extension FileUtils on File {
       width: rotated.width,
       height: rotated.height,
     );
-    final byte = await rendered.toByteData(
+    final byte = await (rendered.toByteData(
       format: ImageByteFormat.png,
-    );
-    final stamp = i.decodeImage(byte.buffer.asUint8List());
+    ) as FutureOr<ByteData>);
+    final stamp = i.decodeImage(byte.buffer.asUint8List())!;
     final stamped = i.drawImage(rotated, stamp);
     final original = i.copyRotate(stamped, 360 - rotation);
     final encoded = i.encodeJpg(original);
@@ -98,7 +98,7 @@ extension FileUtils on File {
 
   Future<bool> isLandscape() async {
     final properties = await FlutterNativeImage.getImageProperties(path);
-    return properties.width > properties.height;
+    return properties.width! > properties.height!;
   }
 
   Future<int> getImageRotation() async {
@@ -106,20 +106,17 @@ extension FileUtils on File {
     switch (properties.orientation) {
       case ImageOrientation.rotate90:
         return 90;
-        break;
       case ImageOrientation.rotate180:
         return 180;
-        break;
       case ImageOrientation.rotate270:
         return 270;
-        break;
       default:
     }
     return 0;
   }
 
   Future<i.Image> getRotatedImage() async {
-    final image = i.decodeImage(this.readAsBytesSync());
+    final image = i.decodeImage(this.readAsBytesSync())!;
     final rotation = await getImageRotation();
     return i.copyRotate(image, rotation);
   }

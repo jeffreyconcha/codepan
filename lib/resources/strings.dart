@@ -1,3 +1,5 @@
+import 'package:permission_handler/permission_handler.dart';
+
 class Errors {
   static const String failedToPlayVideo = 'Failed to play video.';
   static const String failedToPlayAudio = 'Failed to play audio';
@@ -26,4 +28,30 @@ class PermissionName {
   static const String sms = 'SMS';
   static const String speech = 'Speech';
   static const String notification = 'Notification';
+}
+
+class PermissionValue {
+  static const int calendar = 0;
+  static const int camera = 1;
+  static const int contacts = 2;
+  static const int location = 3;
+  static const int locationAlways = 4;
+  static const int locationWhenInUse = 5;
+  static const int mediaLibrary = 6;
+  static const int microphone = 7;
+  static const int phone = 8;
+  static const int photos = 9;
+  static const int photosAddOnly = 10;
+  static const int reminders = 11;
+  static const int sensors = 12;
+  static const int sms = 13;
+  static const int speech = 14;
+  static const int storage = 15;
+  static const int ignoreBatteryOptimizations = 16;
+  static const int notification = 17;
+  static const int accessMediaLocation = 18;
+  static const int activityRecognition = 19;
+  static const int unknown = 20;
+  static const int bluetooth = 21;
+  static const int manageExternalStorage = 22;
 }
