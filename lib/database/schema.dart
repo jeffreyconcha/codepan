@@ -42,11 +42,12 @@ abstract class DatabaseSchema<T> {
     return null;
   }
 
-  List<String?>? uniqueGroup(T entity) {
-    final list = <String?>[];
+  List<String>? uniqueGroup(T entity) {
+    final list = <String>[];
     for (final field in fields(entity)) {
-      if (field.inUniqueGroup) {
-        list.add(field.field);
+      final name = field.field;
+      if (field.inUniqueGroup && name != null) {
+        list.add(name);
       }
     }
     return list.isNotEmpty ? list : null;
@@ -118,7 +119,7 @@ class TableSchema<T> {
 
   String? get unique => databaseSchema.unique(entity);
 
-  List<String?>? get uniqueGroup => databaseSchema.uniqueGroup(entity);
+  List<String>? get uniqueGroup => databaseSchema.uniqueGroup(entity);
 
   List<TableSchema> get references => databaseSchema.references(entity);
 

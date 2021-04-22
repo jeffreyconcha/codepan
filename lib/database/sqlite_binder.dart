@@ -88,9 +88,9 @@ class SQLiteBinder {
           final last = records.last;
           _map![table] = last['$alias.$primaryKey'];
         }
-      } else if (uniqueGroup!.isNotEmpty) {
+      } else if (uniqueGroup?.isNotEmpty ?? false) {
         final query = SQLiteQuery(
-          select: uniqueGroup..add(primaryKey),
+          select: uniqueGroup!..add(primaryKey),
           from: schema.table,
           orderBy: [
             Field.asOrder(

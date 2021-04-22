@@ -22,7 +22,7 @@ class SQLiteAdapter implements DatabaseExecutor {
   final OnDatabaseVersionChange? onDowngrade;
   final OnDatabaseVersionChange? onUpgrade;
   final OnDatabaseCreate? onCreate;
-  final DatabaseSchema? schema;
+  final DatabaseSchema schema;
   final String? password;
   final String name;
   final int version;
@@ -44,11 +44,11 @@ class SQLiteAdapter implements DatabaseExecutor {
   SQLiteAdapter({
     required this.name,
     required this.version,
+    required this.schema,
     this.password,
     this.onCreate,
     this.onUpgrade,
     this.onDowngrade,
-    this.schema,
   });
 
   /// Always use await when opening a database
