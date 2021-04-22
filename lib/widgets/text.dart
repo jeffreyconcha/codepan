@@ -27,7 +27,7 @@ class PanText extends StatelessWidget {
   final TextOverflow? overflow;
   final List<Shadow>? shadows;
   final FontStyle fontStyle;
-  final Alignment alignment;
+  final Alignment? alignment;
   final TextAlign textAlign;
   final BoxBorder? border;
   final bool isRequired;
@@ -179,7 +179,7 @@ class PanText extends StatelessWidget {
     }
     final clean = _text?.replaceAll(standard, '');
     final buffer = StringBuffer();
-    _text?.runes?.forEach((code) {
+    _text?.runes.forEach((code) {
       final character = String.fromCharCode(code);
       if (character == standard) {
         matchCount++;

@@ -32,6 +32,9 @@ abstract class MasterData extends TransactionData {
       });
   }
 
+  @override
+  bool get isNull => id == null && webId == null;
+
   @protected
   Map<String, dynamic> filtered([Map<String, dynamic>? map]) {
     final filtered = map ?? <String, dynamic>{};

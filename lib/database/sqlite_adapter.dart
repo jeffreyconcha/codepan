@@ -1,4 +1,5 @@
 import 'dart:async';
+
 import 'package:codepan/database/schema.dart';
 import 'package:codepan/database/sqlite_binder.dart';
 import 'package:codepan/database/sqlite_exception.dart';
@@ -91,11 +92,11 @@ class SQLiteAdapter implements DatabaseExecutor {
     return rawQuery(sql);
   }
 
-  Future<dynamic> getValue(String sql) async {
+  Future<T?> getValue<T>(String sql) async {
     final list = await rawQuery(sql);
     if (list.isNotEmpty) {
       final first = list.first;
-      return first.values.first;
+      return first.values.first as T;
     }
     return null;
   }
@@ -165,7 +166,7 @@ class SQLiteAdapter implements DatabaseExecutor {
 
   Future<void> checkVersion() async {
     final sql = "PRAGMA user_version";
-    int? version = await (getValue(sql) as FutureOr<int?>);
+    int? version = await getValue(sql);
     print('$name at version: $version');
   }
 

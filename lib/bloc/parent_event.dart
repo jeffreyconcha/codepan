@@ -2,7 +2,7 @@ import 'package:codepan/bloc/parent_state.dart';
 import 'package:equatable/equatable.dart';
 
 class ParentEvent extends Equatable {
-  final ParentState state;
+  final ParentState? state;
 
   const ParentEvent(this.state);
 
@@ -11,5 +11,7 @@ class ParentEvent extends Equatable {
   }
 
   @override
-  List<Object> get props => [state];
+  List<Object?> get props {
+    return [state];
+  }
 }

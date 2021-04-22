@@ -24,9 +24,10 @@ enum PageScrollBehaviour {
 class PageBlocBuilder<E extends ParentEvent, B extends ParentBloc<E, S>,
     S extends ParentState> extends StatelessWidget {
   final Color? background, statusBarColor;
-  final WidgetBlocBuilder? builder, layer;
   final PageScrollBehaviour behaviour;
   final Widget? bottomNavigationBar;
+  final WidgetBlocBuilder builder;
+  final WidgetBlocBuilder? layer;
   final Brightness? brightness;
   final BlocObserver observer;
   final BlocCreator creator;
@@ -80,8 +81,9 @@ class PageBlocBuilder<E extends ParentEvent, B extends ParentBloc<E, S>,
 
 class _PageBlocBody<E extends ParentEvent, B extends ParentBloc<E, S>,
     S extends ParentState> extends StatelessWidget {
-  final WidgetBlocBuilder? builder, layer;
   final PageScrollBehaviour behaviour;
+  final WidgetBlocBuilder? layer;
+  final WidgetBlocBuilder builder;
   final BlocObserver observer;
   final double maxHeight;
 
@@ -104,18 +106,17 @@ class _PageBlocBody<E extends ParentEvent, B extends ParentBloc<E, S>,
             case PageScrollBehaviour.none:
               return Stack(
                 children: [
-                  builder!.call(context, state),
+                  builder.call(context, state),
                   Container(
                     child: layer?.call(context, state),
                   ),
                 ],
               );
-              break;
             default:
               return SingleChildScrollView(
                 child: Stack(
                   children: [
-                    builder!.call(context, state),
+                    builder.call(context, state),
                     SafeArea(
                       child: Container(
                         height: maxHeight,
@@ -125,7 +126,6 @@ class _PageBlocBody<E extends ParentEvent, B extends ParentBloc<E, S>,
                   ],
                 ),
               );
-              break;
           }
         },
       ),
@@ -206,7 +206,6 @@ class _PageBody extends StatelessWidget {
             ),
           ],
         );
-        break;
       default:
         return SingleChildScrollView(
           child: Stack(
@@ -221,7 +220,6 @@ class _PageBody extends StatelessWidget {
             ],
           ),
         );
-        break;
     }
   }
 }

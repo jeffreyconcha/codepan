@@ -48,13 +48,16 @@ class DateTimeData extends Equatable {
     this.time = '00:00:00',
   });
 
-  factory DateTimeData.from(DateTime input) {
-    final date = DateFormat(dateFormat);
-    final time = DateFormat(timeFormat);
-    return DateTimeData(
-      date: date.format(input),
-      time: time.format(input),
-    );
+  factory DateTimeData.from(DateTime? input) {
+    if (input != null) {
+      final date = DateFormat(dateFormat);
+      final time = DateFormat(timeFormat);
+      return DateTimeData(
+        date: date.format(input),
+        time: time.format(input),
+      );
+    }
+    return DateTimeData();
   }
 
   factory DateTimeData.parse(String input) {

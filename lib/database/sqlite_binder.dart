@@ -1,4 +1,5 @@
 import 'dart:async';
+
 import 'package:codepan/database/models/condition.dart';
 import 'package:codepan/database/models/field.dart';
 import 'package:codepan/database/models/table.dart' as tb;
@@ -239,8 +240,7 @@ class SQLiteBinder {
   ) async {
     final map = stmt.map;
     final oldId = _map![key];
-    final dynamic id =
-        oldId ?? await (db.getValue(query.build()) as FutureOr<int?>);
+    final dynamic id = oldId ?? await db.getValue(query.build());
     if (id != null) {
       _map![key] = id;
       return id;
@@ -270,7 +270,7 @@ class SQLiteBinder {
     _batch.execute(sql);
   }
 
-  Future<TransactionData?> insertForId({
+  Future<T> insertForId<T extends TransactionData>({
     required TransactionData data,
     UpdatePriority priority = UpdatePriority.unique,
   }) async {
@@ -279,7 +279,7 @@ class SQLiteBinder {
         data: data,
         priority: priority,
       ),
-    );
+    ) as T;
   }
 
   Future<int?>? insertData({
@@ -411,7 +411,7 @@ class SQLiteBinder {
 
   void addColumn(String table, Field field) {
     final stmt = SQLiteStatement();
-    final sql = stmt.addColumn(table, field)!;
+    final sql = stmt.addColumn(table, field);
     addStatement(sql);
   }
 }
