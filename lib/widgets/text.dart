@@ -15,40 +15,43 @@ class PanText extends StatelessWidget {
   final double? width, height, fontSize, fontHeight, radius;
   final EdgeInsetsGeometry? margin, padding;
   final OnTextOverflow? onTextOverflow;
-  final Color? fontColor, background;
-  final TextDirection? textDirection;
-  final OverflowState? overflowState;
   final BoxConstraints? constraints;
   final TextDecoration? decoration;
   final List<InlineSpan>? children;
   final String? text, fontFamily;
   final SpannableText? spannable;
-  final FontWeight? fontWeight;
   final TextOverflow? overflow;
   final List<Shadow>? shadows;
-  final FontStyle? fontStyle;
   final Alignment? alignment;
-  final TextAlign textAlign;
   final BoxBorder? border;
-  final bool isRequired;
+  final Color? fontColor;
   final int? maxLines;
+  final TextDirection textDirection;
+  final OverflowState overflowState;
+  final FontWeight fontWeight;
+  final FontStyle fontStyle;
+  final TextAlign textAlign;
+  final Color background;
+  final bool isRequired;
 
   const PanText({
     Key? key,
-    this.text,
-    this.fontSize,
-    this.fontHeight,
-    this.fontColor,
-    this.fontFamily,
     this.fontStyle = FontStyle.normal,
     this.fontWeight = FontWeight.normal,
     this.alignment = Alignment.center,
     this.background = PanColors.none,
     this.textAlign = TextAlign.center,
     this.textDirection = TextDirection.ltr,
+    this.overflowState = OverflowState.initial,
+    this.isRequired = false,
+    this.radius = 0,
+    this.text,
+    this.fontSize,
+    this.fontHeight,
+    this.fontColor,
+    this.fontFamily,
     this.overflow,
     this.decoration,
-    this.radius = 0,
     this.margin,
     this.padding,
     this.border,
@@ -57,8 +60,6 @@ class PanText extends StatelessWidget {
     this.maxLines,
     this.shadows,
     this.onTextOverflow,
-    this.overflowState = OverflowState.initial,
-    this.isRequired = false,
     this.children,
     this.constraints,
     this.spannable,

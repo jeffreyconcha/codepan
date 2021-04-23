@@ -38,7 +38,7 @@ class LoadingIndicator extends StatelessWidget {
         placeholderBuilder: (context) {
           return PanActivityIndicator(
             radius: radius ?? d.at(15),
-            animating: true,
+            isAnimating: true,
             activeColor: Colors.grey,
             inactiveColor: Colors.grey.withOpacity(0.5),
           );

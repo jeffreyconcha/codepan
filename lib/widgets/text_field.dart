@@ -5,7 +5,6 @@ import 'package:flutter/widgets.dart';
 
 class PanTextField extends StatefulWidget {
   final Color? fontColor,
-      background,
       borderColor,
       focusedBorderColor,
       hintFontColor,
@@ -28,10 +27,8 @@ class PanTextField extends StatefulWidget {
   final List<TextInputFormatter>? inputFormatters;
   final int? maxLines, minLines, maxLength;
   final ValueChanged<String>? onFieldSubmitted;
-  final TextCapitalization? textCapitalization;
   final TextAlignVertical? textAlignVertical;
   final TextEditingController? controller;
-  final TextInputAction? textInputAction;
   final EdgeInsetsGeometry? margin, padding;
   final FocusNode? focusNode, nextFocusNode;
   final ValueChanged<bool>? onFocusChange;
@@ -39,22 +36,34 @@ class PanTextField extends StatefulWidget {
   final Widget? prefixIcon, suffixIcon;
   final String? text, hint, fontFamily;
   final TextInputType? keyboardType;
-  final FontWeight? fontWeight;
-  final TextAlign? textAlign;
-  final FontStyle? fontStyle;
-  final Alignment? alignment;
+  final TextCapitalization textCapitalization;
+  final TextInputAction textInputAction;
+  final FontWeight fontWeight;
+  final FontStyle fontStyle;
+  final Alignment alignment;
+  final Color background;
+  final TextAlign textAlign;
 
   const PanTextField({
     Key? key,
+    this.fontStyle = FontStyle.normal,
+    this.fontWeight = FontWeight.normal,
+    this.alignment = Alignment.center,
+    this.background = PanColors.none,
+    this.textInputAction = TextInputAction.done,
+    this.textCapitalization = TextCapitalization.none,
+    this.textAlign = TextAlign.start,
+    this.enabled = true,
+    this.autofocus = false,
+    this.isPassword = false,
+    this.showCursor = true,
+    this.bottomBorderOnly = false,
+    this.enableInteractiveSelection = true,
     this.text,
     this.fontSize,
     this.fontHeight,
     this.fontColor,
     this.fontFamily,
-    this.fontStyle = FontStyle.normal,
-    this.fontWeight = FontWeight.normal,
-    this.alignment = Alignment.center,
-    this.background = PanColors.none,
     this.radius,
     this.margin,
     this.padding,
@@ -64,15 +73,7 @@ class PanTextField extends StatefulWidget {
     this.focusedBorderColor,
     this.focusedBorderWidth,
     this.hint,
-    this.enabled = true,
-    this.autofocus = false,
-    this.isPassword = false,
-    this.bottomBorderOnly = false,
-    this.enableInteractiveSelection = true,
     this.controller,
-    this.textInputAction = TextInputAction.done,
-    this.textCapitalization = TextCapitalization.none,
-    this.textAlign = TextAlign.start,
     this.textAlignVertical,
     this.focusNode,
     this.nextFocusNode,
@@ -91,7 +92,6 @@ class PanTextField extends StatefulWidget {
     this.onFocusChange,
     this.cursorHeight,
     this.cursorColor,
-    this.showCursor = true,
   }) : super(key: key);
 
   @override
@@ -167,11 +167,11 @@ class _PanTextFieldState extends State<PanTextField> {
           initialValue: widget.text,
           enabled: widget.enabled,
           enableInteractiveSelection: widget.enableInteractiveSelection,
-          textCapitalization: widget.textCapitalization!,
+          textCapitalization: widget.textCapitalization,
           onChanged: widget.onChanged,
           inputFormatters: widget.inputFormatters,
           keyboardType: widget.keyboardType,
-          textAlign: widget.textAlign!,
+          textAlign: widget.textAlign,
           textAlignVertical: widget.textAlignVertical,
           controller: widget.controller,
           obscureText: _obscureText,

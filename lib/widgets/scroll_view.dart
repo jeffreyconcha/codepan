@@ -5,22 +5,21 @@ class PanScrollView extends StatelessWidget {
   final RefreshController? refreshController;
   final ScrollController? scrollController;
   final VoidCallback? onRefresh;
+  final Widget? child, header;
   final bool? enablePullDown;
-  final Axis scrollDirection;
   final EdgeInsets? padding;
-  final Widget? child;
-  final Widget? header;
+  final Axis scrollDirection;
 
   const PanScrollView({
     Key? key,
     this.child,
     this.padding,
-    this.scrollDirection = Axis.vertical,
     this.refreshController,
     this.scrollController,
     this.enablePullDown,
     this.header,
     this.onRefresh,
+    this.scrollDirection = Axis.vertical,
   }) : super(key: key);
 
   @override

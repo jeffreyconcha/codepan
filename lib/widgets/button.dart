@@ -4,36 +4,39 @@ import 'package:codepan/widgets/text.dart';
 import 'package:flutter/material.dart';
 
 class PanButton extends StatelessWidget {
-  final double? fontSize, fontHeight, radius, borderWidth, width, height;
-  final Color? fontColor, background, borderColor, splashColor, highlightColor;
-  final EdgeInsetsGeometry? margin, padding;
+  final Color? fontColor, splashColor, highlightColor;
+  final double? fontSize, fontHeight, width, height;
   final BoxConstraints? constraints;
   final String? text, fontFamily;
   final VoidCallback? onPressed;
+  final FocusNode? focusNode;
+  final EdgeInsets? margin;
+  final Widget? child;
+  final Color borderColor, background;
+  final double borderWidth, radius;
   final FontWeight fontWeight;
   final FontStyle fontStyle;
   final Alignment alignment;
-  final FocusNode? focusNode;
   final TextAlign textAlign;
-  final Widget? child;
+  final EdgeInsets padding;
 
   const PanButton({
     Key? key,
-    this.text,
-    this.fontSize,
-    this.fontHeight,
-    this.fontColor,
-    this.fontFamily,
     this.fontStyle = FontStyle.normal,
     this.fontWeight = FontWeight.normal,
     this.alignment = Alignment.center,
     this.background = PanColors.none,
     this.textAlign = TextAlign.center,
-    this.margin,
     this.padding = const EdgeInsets.all(0),
-    this.radius = 0,
-    this.borderWidth = 0,
     this.borderColor = PanColors.none,
+    this.borderWidth = 0,
+    this.radius = 0,
+    this.text,
+    this.fontSize,
+    this.fontHeight,
+    this.fontColor,
+    this.fontFamily,
+    this.margin,
     this.onPressed,
     this.width,
     this.height,
@@ -58,8 +61,8 @@ class PanButton extends StatelessWidget {
           color: background,
           focusNode: focusNode,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(radius!),
-            side: BorderSide(color: borderColor!, width: borderWidth!),
+            borderRadius: BorderRadius.circular(radius),
+            side: BorderSide(color: borderColor, width: borderWidth),
           ),
           padding: padding,
           onPressed: onPressed,

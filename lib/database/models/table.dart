@@ -16,7 +16,7 @@ class Table<T> {
     final int max = 3;
     final buffer = StringBuffer();
     final vowels = RegExp(r'[aeiuo]');
-    final raw = name!.replaceAll(DatabaseSchema.tableSuffix, '');
+    final raw = name.replaceAll(DatabaseSchema.tableSuffix, '');
     List<String> list = raw.split('_');
     for (final word in list) {
       final lower = word.toLowerCase();

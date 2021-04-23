@@ -54,16 +54,13 @@ class Condition extends SQLiteModel {
       } else if (_value is String) {
         final text = _value as String?;
         if (_operator == Operator.like && _scan != null) {
-          switch (_scan) {
+          switch (_scan!) {
             case Scan.start:
               return '\'%$text\'';
-              break;
             case Scan.end:
               return '\'$text%\'';
-              break;
             case Scan.between:
               return '\'%$text%\'';
-              break;
           }
         }
         return '\'$text\'';
@@ -318,46 +315,32 @@ class Condition extends SQLiteModel {
       switch (type) {
         case Operator.equals:
           return "$field = $value";
-          break;
         case Operator.notEquals:
           return "$field != $value";
-          break;
         case Operator.greaterThan:
           return "$field > $value";
-          break;
         case Operator.lessThan:
           return "$field < $value";
-          break;
         case Operator.greaterThanOrEquals:
           return "$field >= $value";
-          break;
         case Operator.lessThanOrEquals:
           return "$field <= $value";
-          break;
         case Operator.between:
           return "$field BETWEEN $start AND $end";
-          break;
         case Operator.isNull:
           return "$field IS NULL";
-          break;
         case Operator.notNull:
           return "$field NOT NULL";
-          break;
         case Operator.isEmpty:
           return "$field = ''";
-          break;
         case Operator.notEmpty:
           return "$field != ''";
-          break;
         case Operator.like:
           return "$field LIKE $value";
-          break;
         case Operator.inside:
           return "$field IN ($value)";
-          break;
         case Operator.notInside:
           return "$field NOT IN ($value)";
-          break;
       }
     } else {
       if (hasOrList) {

@@ -223,7 +223,7 @@ class Field extends SQLiteModel {
     if (hasDataType) {
       buffer.write('$field $dataType');
       if (hasConstraint) {
-        switch (constraint) {
+        switch (constraint!) {
           case Constraint.primaryKey:
             buffer.write(' PRIMARY KEY NOT NULL');
             break;

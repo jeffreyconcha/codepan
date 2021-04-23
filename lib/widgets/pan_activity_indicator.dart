@@ -1,95 +1,20 @@
 library nuts_activity_indicator;
 
 import 'dart:math' as math;
+
 import 'package:flutter/widgets.dart';
 
-/// A highly customizable activity indicator (spinner)
-/// based on the iOS-style activity indicator from the
-/// `cupertino` package.
-///
-/// Key takeaways from [Apple Human Interface Guidelines on Activity Indicators](https://developer.apple.com/design/human-interface-guidelines/ios/controls/progress-indicators/#activity-indicators)
-/// that are relevant to the [PanActivityIndicator] class:
-///
-/// * use activity indicator only when activity cannot be quantified
-/// (for example remaining time, task count, data size).
-/// * keep it moving: only disable [animating] if the process stalls.
-///
-/// For more information, see
-/// * [Flutter `cupertino` library `CupertinoActivityIndicator` class](https://api.flutter.dev/flutter/cupertino/CupertinoActivityIndicator-class.html)
-/// * [Apple Human Interface Guidelines on Activity Indicators](https://developer.apple.com/design/human-interface-guidelines/ios/controls/progress-indicators/#activity-indicators)
 class PanActivityIndicator extends StatefulWidget {
-  /// Whether the activity indicator is running its animation.
-  ///
-  /// Defaults to true.
-  final bool animating;
-
-  /// Radius of the activity indicator.
-  ///
-  /// Defaults to 10px. Must be positive and cannot be null.
+  final double relativeWidth, startRatio, endRatio;
+  final Color activeColor, inactiveColor;
+  final Duration animationDuration;
+  final bool isAnimating;
   final double radius;
-
-  /// The count of rectangles the activity indicator has.
-  ///
-  /// The activity indicator (spinner) is made up of multiple small
-  /// rectangles, "ticks", and this number specifies how many of
-  /// these small ticks should be painted in the widget.
-  ///
-  /// Defaults to 12. Must be positive and cannot be null.
   final int tickCount;
 
-  /// The active color of the small rectangles within the activity indicator.
-  ///
-  /// The activity indicator (spinner) contains [tickCount] stationary rectangles
-  /// and these ticks' colors are animated between the [activeColor] and
-  /// [inactiveColor] colors, thus creating a perceived rotation of the object.
-  ///
-  /// Defaults to a grey color, #9D9D9D
-  final Color activeColor;
-
-  /// The deactive color of the small rectangles within the activity indicator.
-  ///
-  /// The activity indicator (spinner) contains [tickCount] stationary rectangles
-  /// and these ticks' colors are animated between the [activeColor] and
-  /// [inactiveColor] colors, thus creating a perceived rotation of the object.
-  ///
-  /// Defaults to a grey color, #E5E5EA
-  final Color inactiveColor;
-
-  /// The time in which the activity indicator's animation finishes.
-  ///
-  /// The animation takes a circle by fading between the active and
-  /// inactive colors for each small tick.
-  ///
-  /// Defaults to 1 second.
-  final Duration animationDuration;
-
-  /// TODO: what is this width value really?
-  final double relativeWidth;
-
-  /// Radius ratio tells where the rectangles start.
-  ///
-  /// Defaults to 0.5, meaning that the "ticks" will go from
-  /// (0.5 * radius, radius).
-  ///
-  /// I'm sorry I can't explain it any better. Check the example app...
-  ///
-  /// If you know how to explain it better, open a PR!
-  final double startRatio;
-
-  /// Radius ratio tells where the rectangles end.
-  ///
-  /// Defaults to 1, meaning that the "ticks" will go from
-  /// (0.5 * radius, 1 * radius).
-  ///
-  /// I'm sorry I can't explain it any better. Check the example app...
-  ///
-  /// If you know how to explain it better, open a PR!
-  final double endRatio;
-
-  /// Creates a highly customizable activity indicator.
   const PanActivityIndicator({
     Key? key,
-    this.animating = true,
+    this.isAnimating = true,
     this.radius = 10,
     this.startRatio = 0.5,
     this.endRatio = 1.0,
@@ -115,7 +40,7 @@ class _PanActivityIndicatorState extends State<PanActivityIndicator>
       duration: widget.animationDuration,
       vsync: this,
     );
-    if (widget.animating) {
+    if (widget.isAnimating) {
       _animationController!.repeat();
     }
   }
@@ -123,8 +48,8 @@ class _PanActivityIndicatorState extends State<PanActivityIndicator>
   @override
   void didUpdateWidget(PanActivityIndicator oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (widget.animating != oldWidget.animating) {
-      if (widget.animating) {
+    if (widget.isAnimating != oldWidget.isAnimating) {
+      if (widget.isAnimating) {
         _animationController!.repeat();
       } else {
         _animationController!.stop();

@@ -23,7 +23,7 @@ void _printPost(String url, Map<String, dynamic> params) {
 }
 
 void _printError(dynamic error, StackTrace stacktrace) {
-  debugPrint('${error?.toString()}: ${stacktrace?.toString()}');
+  debugPrint('${error?.toString()}: ${stacktrace.toString()}');
 }
 
 void _printLarge(String text) {
