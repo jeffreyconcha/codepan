@@ -4,7 +4,7 @@ import 'package:codepan/database/sqlite_adapter.dart';
 class SQLiteCache {
   static final Map<String, SQLiteAdapter> cache = Map();
 
-  static Future<SQLiteAdapter?> getDatabase({
+  static Future<SQLiteAdapter> getDatabase({
     required String name,
     required String password,
     required int version,
@@ -29,6 +29,6 @@ class SQLiteCache {
       await db.checkVersion();
       cache[name] = db;
     }
-    return cache[name];
+    return cache[name]!;
   }
 }

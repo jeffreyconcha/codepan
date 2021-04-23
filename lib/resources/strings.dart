@@ -53,3 +53,7 @@ class PermissionValue {
   static const int bluetooth = 21;
   static const int manageExternalStorage = 22;
 }
+
+class Exceptions {
+  static const invalidArgument = 'Invalid argument';
+}

@@ -98,7 +98,7 @@ class _TextPlaceholderState extends State<TextPlaceholder>
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children:
-                              List.generate(widget.noOfLines ?? 0, (index) {
+                              List.generate(widget.noOfLines, (index) {
                             final width = !widget.equalWidth && index % 2 != 0
                                 ? constraints.maxWidth * 0.9
                                 : constraints.maxWidth;

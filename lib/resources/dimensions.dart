@@ -13,14 +13,7 @@ class Dimension {
     this.isSafeArea = false,
   });
 
-  double? get deviceRatio {
-    if (context != null) {
-      final data = MediaQuery.of(context);
-      final size = data.size;
-      return size.width / size.height;
-    }
-    return null;
-  }
+  double get deviceRatio => max / min;
 
   double at(double dp) {
     final sw = min;
@@ -29,11 +22,8 @@ class Dimension {
   }
 
   double scale(double dp) {
-    if (context != null) {
-      final data = MediaQuery.of(context);
-      return at(dp) * data.textScaleFactor;
-    }
-    return dp;
+    final data = MediaQuery.of(context);
+    return at(dp) * data.textScaleFactor;
   }
 
   double viewPortFraction(double fraction) {
@@ -46,19 +36,13 @@ class Dimension {
   }
 
   double get statusBarHeight {
-    if (context != null) {
-      final data = MediaQuery.of(context);
-      return data.padding.top;
-    }
-    return 0;
+    final data = MediaQuery.of(context);
+    return data.padding.top;
   }
 
   double get bottomPadding {
-    if (context != null) {
-      final data = MediaQuery.of(context);
-      return data.padding.bottom;
-    }
-    return 0;
+    final data = MediaQuery.of(context);
+    return data.padding.bottom;
   }
 
   double get max {
@@ -74,19 +58,13 @@ class Dimension {
   }
 
   double get maxHeight {
-    if (context != null) {
-      final data = MediaQuery.of(context);
-      final padding = isSafeArea ? data.padding.top : 0;
-      return data.size.height - padding;
-    }
-    return double.infinity;
+    final data = MediaQuery.of(context);
+    final padding = isSafeArea ? data.padding.top : 0;
+    return data.size.height - padding;
   }
 
   double get maxWidth {
-    if (context != null) {
-      final data = MediaQuery.of(context);
-      return data.size.width;
-    }
-    return double.infinity;
+    final data = MediaQuery.of(context);
+    return data.size.width;
   }
 }

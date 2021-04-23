@@ -64,9 +64,7 @@ abstract class TransactionData extends EntityData
     return null;
   }
 
-  bool get isNull => id == null;
-
-  bool get isNotNull => !isNull;
+  bool get hasId => id != null;
 
   SQLiteStatement toStatement() {
     return SQLiteStatement.fromMap(toMap());

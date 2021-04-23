@@ -184,7 +184,7 @@ class _PanTextFieldState extends State<PanTextField> {
             if (widget.nextFocusNode != null) {
               FocusScope.of(context).requestFocus(widget.nextFocusNode);
             }
-            widget.onFieldSubmitted!(value);
+            widget.onFieldSubmitted?.call(value);
           },
           maxLines: widget.isPassword ? 1 : widget.maxLength,
           minLines: widget.minLines,

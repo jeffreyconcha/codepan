@@ -3,6 +3,7 @@ import 'dart:io';
 import 'dart:math' as m;
 import 'dart:typed_data';
 import 'dart:ui';
+
 import 'package:codepan/extensions/painter.dart';
 import 'package:codepan/resources/dimensions.dart';
 import 'package:flutter/material.dart';
@@ -85,10 +86,8 @@ extension FileUtils on File {
       width: rotated.width,
       height: rotated.height,
     );
-    final byte = await (rendered.toByteData(
-      format: ImageByteFormat.png,
-    ) as FutureOr<ByteData>);
-    final stamp = i.decodeImage(byte.buffer.asUint8List())!;
+    final byte = await rendered.toByteData(format: ImageByteFormat.png);
+    final stamp = i.decodeImage(byte!.buffer.asUint8List())!;
     final stamped = i.drawImage(rotated, stamp);
     final original = i.copyRotate(stamped, 360 - rotation);
     final encoded = i.encodeJpg(original);
