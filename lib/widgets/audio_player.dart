@@ -21,12 +21,12 @@ class PanAudioPlayer extends StatefulWidget {
 
   const PanAudioPlayer({
     Key? key,
-    this.data,
-    this.color,
     this.background = Colors.white,
-    this.onProgressChanged,
+    this.color,
+    this.data,
     this.onCompleted,
     this.onError,
+    this.onProgressChanged,
   }) : super(key: key);
 
   @override

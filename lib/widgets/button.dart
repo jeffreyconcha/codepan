@@ -6,45 +6,45 @@ import 'package:flutter/material.dart';
 class PanButton extends StatelessWidget {
   final Color? fontColor, splashColor, highlightColor;
   final double? fontSize, fontHeight, width, height;
+  final Color borderColor, background;
   final BoxConstraints? constraints;
+  final double borderWidth, radius;
   final String? text, fontFamily;
   final VoidCallback? onPressed;
-  final FocusNode? focusNode;
-  final EdgeInsets? margin;
-  final Widget? child;
-  final Color borderColor, background;
-  final double borderWidth, radius;
   final FontWeight fontWeight;
-  final FontStyle fontStyle;
+  final FocusNode? focusNode;
   final Alignment alignment;
+  final FontStyle fontStyle;
   final TextAlign textAlign;
   final EdgeInsets padding;
+  final EdgeInsets? margin;
+  final Widget? child;
 
   const PanButton({
     Key? key,
-    this.fontStyle = FontStyle.normal,
-    this.fontWeight = FontWeight.normal,
     this.alignment = Alignment.center,
     this.background = PanColors.none,
-    this.textAlign = TextAlign.center,
-    this.padding = const EdgeInsets.all(0),
     this.borderColor = PanColors.none,
     this.borderWidth = 0,
-    this.radius = 0,
-    this.text,
-    this.fontSize,
-    this.fontHeight,
+    this.child,
+    this.constraints,
+    this.focusNode,
     this.fontColor,
     this.fontFamily,
+    this.fontHeight,
+    this.fontSize,
+    this.fontStyle = FontStyle.normal,
+    this.fontWeight = FontWeight.normal,
+    this.height,
+    this.highlightColor,
     this.margin,
     this.onPressed,
-    this.width,
-    this.height,
-    this.child,
-    this.focusNode,
-    this.highlightColor,
+    this.padding = const EdgeInsets.all(0),
+    this.radius = 0,
     this.splashColor,
-    this.constraints,
+    this.text,
+    this.textAlign = TextAlign.center,
+    this.width,
   }) : super(key: key);
 
   @override

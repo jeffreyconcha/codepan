@@ -5,19 +5,19 @@ class PanHero extends StatelessWidget {
   final HeroFlightShuttleBuilder? flightShuttleBuilder;
   final HeroPlaceholderBuilder? placeholderBuilder;
   final bool flexible, transitionOnUserGestures;
-  final CreateRectTween? createRectTween;
-  final Widget child;
+  final CreateRectTween? tween;
   final String tag;
+  final Widget child;
 
   const PanHero({
     Key? key,
     required this.child,
     required this.tag,
-    this.transitionOnUserGestures = false,
+    this.tween,
     this.flexible = false,
-    this.placeholderBuilder,
     this.flightShuttleBuilder,
-    this.createRectTween,
+    this.placeholderBuilder,
+    this.transitionOnUserGestures = false,
   }) : super(key: key);
 
   @override
@@ -28,7 +28,7 @@ class PanHero extends StatelessWidget {
       transitionOnUserGestures: transitionOnUserGestures,
       placeholderBuilder: placeholderBuilder,
       flightShuttleBuilder: flightShuttleBuilder,
-      createRectTween: createRectTween,
+      createRectTween: tween,
       child: Material(
         color: t.backgroundColor,
         child: PlaceholderHandler(

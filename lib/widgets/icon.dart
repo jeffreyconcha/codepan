@@ -5,8 +5,8 @@ class PanIcon extends StatelessWidget {
   final EdgeInsetsGeometry? margin, padding;
   final Color? color, background;
   final double? width, height;
-  final String? package;
   final Alignment alignment;
+  final String? package;
   final bool isInternal;
   final String icon;
   final BoxFit fit;
@@ -14,16 +14,16 @@ class PanIcon extends StatelessWidget {
   const PanIcon({
     Key? key,
     required this.icon,
-    this.fit = BoxFit.contain,
     this.alignment = Alignment.center,
-    this.isInternal = false,
-    this.width,
-    this.height,
-    this.color,
     this.background,
+    this.color,
+    this.fit = BoxFit.contain,
+    this.height,
+    this.isInternal = false,
     this.margin,
-    this.padding,
     this.package,
+    this.padding,
+    this.width,
   }) : super(key: key);
 
   @override

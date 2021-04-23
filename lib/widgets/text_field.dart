@@ -4,94 +4,94 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 
 class PanTextField extends StatefulWidget {
-  final Color? fontColor,
-      borderColor,
+  final Color? borderColor,
+      cursorColor,
       focusedBorderColor,
       hintFontColor,
       iconColor,
-      cursorColor;
-  final double? width,
-      height,
-      fontSize,
-      fontHeight,
-      radius,
+      fontColor;
+  final double? borderWidth,
       cursorHeight,
-      borderWidth,
-      focusedBorderWidth;
-  final bool enabled,
-      autofocus,
+      focusedBorderWidth,
+      fontHeight,
+      fontSize,
+      height,
+      radius,
+      width;
+  final bool autofocus,
+      bottomBorderOnly,
       enableInteractiveSelection,
       isPassword,
       showCursor,
-      bottomBorderOnly;
+      enabled;
   final List<TextInputFormatter>? inputFormatters;
-  final int? maxLines, minLines, maxLength;
   final ValueChanged<String>? onFieldSubmitted;
-  final TextAlignVertical? textAlignVertical;
-  final TextEditingController? controller;
+  final TextCapitalization textCapitalization;
   final EdgeInsetsGeometry? margin, padding;
   final FocusNode? focusNode, nextFocusNode;
+  final TextAlignVertical? textAlignVertical;
+  final int? maxLines, minLines, maxLength;
+  final TextEditingController? controller;
   final ValueChanged<bool>? onFocusChange;
   final ValueChanged<String>? onChanged;
-  final Widget? prefixIcon, suffixIcon;
-  final String? text, hint, fontFamily;
-  final TextInputType? keyboardType;
-  final TextCapitalization textCapitalization;
   final TextInputAction textInputAction;
+  final String? text, hint, fontFamily;
+  final Widget? prefixIcon, suffixIcon;
+  final TextInputType? keyboardType;
   final FontWeight fontWeight;
-  final FontStyle fontStyle;
   final Alignment alignment;
-  final Color background;
+  final FontStyle fontStyle;
   final TextAlign textAlign;
+  final Color background;
 
   const PanTextField({
     Key? key,
-    this.fontStyle = FontStyle.normal,
-    this.fontWeight = FontWeight.normal,
     this.alignment = Alignment.center,
-    this.background = PanColors.none,
-    this.textInputAction = TextInputAction.done,
-    this.textCapitalization = TextCapitalization.none,
-    this.textAlign = TextAlign.start,
-    this.enabled = true,
     this.autofocus = false,
-    this.isPassword = false,
-    this.showCursor = true,
-    this.bottomBorderOnly = false,
-    this.enableInteractiveSelection = true,
-    this.text,
-    this.fontSize,
-    this.fontHeight,
-    this.fontColor,
-    this.fontFamily,
-    this.radius,
-    this.margin,
-    this.padding,
-    this.hintFontColor,
+    this.background = PanColors.none,
     this.borderColor,
     this.borderWidth,
+    this.bottomBorderOnly = false,
+    this.controller,
+    this.cursorColor,
+    this.cursorHeight,
+    this.enabled = true,
+    this.enableInteractiveSelection = true,
     this.focusedBorderColor,
     this.focusedBorderWidth,
-    this.hint,
-    this.controller,
-    this.textAlignVertical,
     this.focusNode,
-    this.nextFocusNode,
-    this.onFieldSubmitted,
-    this.maxLines,
-    this.minLines,
-    this.maxLength,
-    this.width,
+    this.fontColor,
+    this.fontFamily,
+    this.fontHeight,
+    this.fontSize,
+    this.fontStyle = FontStyle.normal,
+    this.fontWeight = FontWeight.normal,
     this.height,
-    this.prefixIcon,
-    this.suffixIcon,
+    this.hint,
+    this.hintFontColor,
     this.iconColor,
     this.inputFormatters,
+    this.isPassword = false,
     this.keyboardType,
+    this.margin,
+    this.maxLength,
+    this.maxLines,
+    this.minLines,
+    this.nextFocusNode,
     this.onChanged,
+    this.onFieldSubmitted,
     this.onFocusChange,
-    this.cursorHeight,
-    this.cursorColor,
+    this.padding,
+    this.prefixIcon,
+    this.radius,
+    this.showCursor = true,
+    this.suffixIcon,
+    this.text,
+    this.textAlign = TextAlign.start,
+    this.textAlignVertical,
+    this.textCapitalization = TextCapitalization.none,
+    this.textInputAction = TextInputAction.done,
+    this.width,
   }) : super(key: key);
 
   @override

@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
 enum OverflowState {
-  expand,
   collapse,
+  expand,
   initial,
 }
 
@@ -15,54 +15,54 @@ class PanText extends StatelessWidget {
   final double? width, height, fontSize, fontHeight, radius;
   final EdgeInsetsGeometry? margin, padding;
   final OnTextOverflow? onTextOverflow;
+  final TextDirection textDirection;
   final BoxConstraints? constraints;
-  final TextDecoration? decoration;
+  final OverflowState overflowState;
   final List<InlineSpan>? children;
-  final String? text, fontFamily;
+  final TextDecoration? decoration;
   final SpannableText? spannable;
+  final String? text, fontFamily;
   final TextOverflow? overflow;
+  final FontWeight fontWeight;
   final List<Shadow>? shadows;
   final Alignment? alignment;
-  final BoxBorder? border;
-  final Color? fontColor;
-  final int? maxLines;
-  final TextDirection textDirection;
-  final OverflowState overflowState;
-  final FontWeight fontWeight;
   final FontStyle fontStyle;
   final TextAlign textAlign;
+  final BoxBorder? border;
   final Color background;
+  final Color? fontColor;
   final bool isRequired;
+  final int? maxLines;
 
   const PanText({
     Key? key,
-    this.fontStyle = FontStyle.normal,
-    this.fontWeight = FontWeight.normal,
     this.alignment = Alignment.center,
     this.background = PanColors.none,
-    this.textAlign = TextAlign.center,
-    this.textDirection = TextDirection.ltr,
-    this.overflowState = OverflowState.initial,
-    this.isRequired = false,
-    this.radius = 0,
-    this.text,
-    this.fontSize,
-    this.fontHeight,
-    this.fontColor,
-    this.fontFamily,
-    this.overflow,
-    this.decoration,
-    this.margin,
-    this.padding,
     this.border,
-    this.width,
-    this.height,
-    this.maxLines,
-    this.shadows,
-    this.onTextOverflow,
     this.children,
     this.constraints,
+    this.decoration,
+    this.fontColor,
+    this.fontFamily,
+    this.fontHeight,
+    this.fontSize,
+    this.fontStyle = FontStyle.normal,
+    this.fontWeight = FontWeight.normal,
+    this.height,
+    this.isRequired = false,
+    this.margin,
+    this.maxLines,
+    this.onTextOverflow,
+    this.overflow,
+    this.overflowState = OverflowState.initial,
+    this.padding,
+    this.radius = 0,
+    this.shadows,
     this.spannable,
+    this.text,
+    this.textAlign = TextAlign.center,
+    this.textDirection = TextDirection.ltr,
+    this.width,
   }) : super(key: key);
 
   @override
