@@ -1,3 +1,4 @@
+import 'package:codepan/extensions/duration.dart';
 import 'package:equatable/equatable.dart';
 import 'package:intl/intl.dart';
 import 'package:time_ago_provider/time_ago_provider.dart' as ago;
@@ -24,6 +25,8 @@ class DateTimeData extends Equatable {
 
   String get displayTime => DateFormat.jm(locale).format(value);
 
+  String get displayTimeWithSeconds => DateFormat.jms(locale).format(value);
+
   String get dayOfTheWeek => DateFormat.EEEE(locale).format(value);
 
   String get dayOfTheMonth => DateFormat.d(locale).format(value);
@@ -37,6 +40,10 @@ class DateTimeData extends Equatable {
   String get history => ago.format(value);
 
   DateTime get value => DateTime.parse('$date $time');
+
+  String get timezone => value.timeZoneName;
+
+  String get timezoneValue => value.timeZoneOffset.format(withSeconds: false);
 
   bool? get isNewMinute {
     final split = time!.split(':');
@@ -91,5 +98,10 @@ class DateTimeData extends Equatable {
   DateTimeData add(Duration duration) {
     final sum = value.add(duration);
     return DateTimeData.from(sum);
+  }
+
+  @override
+  String toString() {
+    return '$date $time';
   }
 }

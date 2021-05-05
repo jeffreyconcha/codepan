@@ -33,7 +33,7 @@ extension StringUtils on String {
   }
 
   String? nullify() {
-    if (this != null && (this == 'null' || this.isEmpty)) {
+    if ((this == 'null' || this.isEmpty)) {
       return null;
     }
     return this;
