@@ -1,4 +1,4 @@
-typedef Creator<T> = T Function();
+typedef Creator<T> = Future<T> Function(int key);
 
 class CacheManager<T> {
   final map = <int, T>{};
@@ -6,11 +6,11 @@ class CacheManager<T> {
 
   CacheManager(this.creator);
 
-  T getCached(int key) {
+  Future<T> getCached(int key) async {
     final data = map[key];
     if (data != null) {
       return data;
     }
-    return creator.call();
+    return await creator.call(key);
   }
 }
