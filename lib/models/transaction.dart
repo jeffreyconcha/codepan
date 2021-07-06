@@ -1,5 +1,5 @@
 import 'package:codepan/database/sqlite_statement.dart';
-import 'package:codepan/models/date_time.dart';
+import '../time/date_time.dart';
 import 'package:codepan/models/entity.dart';
 import 'package:flutter/foundation.dart';
 
@@ -44,9 +44,9 @@ abstract class TransactionData extends EntityData
     return filtered;
   }
 
-  DateTimeData? get createdAt {
+  Time? get createdAt {
     if (dateCreated != null && timeCreated != null) {
-      return DateTimeData(
+      return Time(
         date: dateCreated,
         time: timeCreated,
       );
@@ -54,9 +54,9 @@ abstract class TransactionData extends EntityData
     return null;
   }
 
-  DateTimeData? get updatedAt {
+  Time? get updatedAt {
     if (dateUpdated != null && timeUpdated != null) {
-      return DateTimeData(
+      return Time(
         date: dateUpdated,
         time: timeUpdated,
       );
@@ -78,8 +78,8 @@ abstract class TransactionData extends EntityData
         timeCreated != null &&
         other.dateCreated != null &&
         other.timeCreated != null) {
-      final dt1 = DateTime.parse('$dateCreated $timeCreated');
-      final dt2 = DateTime.parse('${other.dateCreated} ${other.timeCreated}');
+      final dt1 = Time.parse('$dateCreated $timeCreated');
+      final dt2 = Time.parse('${other.dateCreated} ${other.timeCreated}');
       if (dt1.isBefore(dt2)) {
         return -1;
       }

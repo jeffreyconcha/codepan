@@ -7,7 +7,7 @@ const String dateFormat = 'yyyy-MM-dd';
 const String timeFormat = 'HH:mm:ss';
 const String locale = 'en_US';
 
-class DateTimeData extends Equatable {
+class Time extends Equatable {
   final String? date;
   final String? time;
 
@@ -50,26 +50,31 @@ class DateTimeData extends Equatable {
     return split.last == '00';
   }
 
-  const DateTimeData({
+  const Time({
     this.date = '0000-00-00',
     this.time = '00:00:00',
   });
 
-  factory DateTimeData.from(DateTime? input) {
+  factory Time.from(DateTime? input) {
     if (input != null) {
       final date = DateFormat(dateFormat);
       final time = DateFormat(timeFormat);
-      return DateTimeData(
+      return Time(
         date: date.format(input),
         time: time.format(input),
       );
     }
-    return DateTimeData();
+    return Time();
   }
 
-  factory DateTimeData.parse(String input) {
+  factory Time.parse(String input) {
     final value = DateTime.parse(input);
-    return DateTimeData.from(value);
+    return Time.from(value);
+  }
+
+  factory Time.now() {
+    final value = DateTime.now();
+    return Time.from(value);
   }
 
   Map<String, String?> toMap() {
@@ -79,25 +84,25 @@ class DateTimeData extends Equatable {
     };
   }
 
-  Duration difference(DateTimeData other) {
+  Duration difference(Time other) {
     return value.difference(other.value);
   }
 
-  bool isEqual(DateTimeData other) {
+  bool isEqual(Time other) {
     return date == other.date && time == other.time;
   }
 
-  bool isAfter(DateTimeData other) {
+  bool isAfter(Time other) {
     return value.isAfter(other.value);
   }
 
-  bool isBefore(DateTimeData other) {
+  bool isBefore(Time other) {
     return value.isBefore(other.value);
   }
 
-  DateTimeData add(Duration duration) {
+  Time add(Duration duration) {
     final sum = value.add(duration);
-    return DateTimeData.from(sum);
+    return Time.from(sum);
   }
 
   @override
