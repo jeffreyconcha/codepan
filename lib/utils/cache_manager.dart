@@ -11,6 +11,6 @@ class CacheManager<T> {
     if (data != null) {
       return data;
     }
-    return await creator.call(key);
+   return map[key] = await creator.call(key);
   }
 }
