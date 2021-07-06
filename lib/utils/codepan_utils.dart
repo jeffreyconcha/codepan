@@ -2,8 +2,8 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:isolate';
 import 'dart:ui';
+
 import 'package:codepan/extensions/extensions.dart';
-import '../time/date_time.dart';
 import 'package:connectivity/connectivity.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -32,17 +32,6 @@ void _printLarge(String text) {
 }
 
 class PanUtils {
-  static Time? splitDateTime(String input, {String pattern = ' '}) {
-    final data = input.split(pattern);
-    if (data.length == 2) {
-      return Time(
-        date: data[0],
-        time: data[1],
-      );
-    }
-    return null;
-  }
-
   static String formatMoney(double input) {
     final nf = NumberFormat('#,###.00', 'en_US');
     return nf.format(input);
