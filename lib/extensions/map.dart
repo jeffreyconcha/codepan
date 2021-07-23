@@ -13,43 +13,57 @@ const boolPrefixes = <String>[
 
 extension MapUtils on Map<String, dynamic> {
   int? getInt(String key) {
-    final value = this[getKey(key)];
-    return PanUtils.parseInt(value);
+    if (hasKey(key)) {
+      final value = this[getKey(key)];
+      return PanUtils.parseInt(value);
+    }
+    return null;
   }
 
   double? getDouble(String key) {
-    final value = this[getKey(key)];
-    return PanUtils.parseDouble(value);
+    if (hasKey(key)) {
+      final value = this[getKey(key)];
+      return PanUtils.parseDouble(value);
+    }
+    return null;
   }
 
   bool? getBool(String key) {
-    final value = this[getKey(key)];
-    return PanUtils.parseBool(value);
+    if (hasKey(key)) {
+      final value = this[getKey(key)];
+      return PanUtils.parseBool(value);
+    }
+    return null;
   }
 
   T? getEnum<T>({
     required String key,
     required List<T> values,
   }) {
-    final value = this[getKey(key)];
-    for (final element in values) {
-      if (value == element.enumValue) {
-        return element;
+    if (hasKey(key)) {
+      final value = this[getKey(key)];
+      for (final element in values) {
+        if (value == element.enumValue) {
+          return element;
+        }
       }
     }
     return null;
   }
 
   dynamic get(String key) {
-    final value = this[getKey(key)];
-    final split = key.toSnake().split('_');
-    if (boolPrefixes.contains(split.first)) {
-      return PanUtils.parseBool(value);
-    } else if (value is String) {
-      final unescape = HtmlUnescape();
-      return unescape.convert(value);
+    if (hasKey(key)) {
+      final value = this[getKey(key)];
+      final split = key.toSnake().split('_');
+      if (boolPrefixes.contains(split.first)) {
+        return PanUtils.parseBool(value);
+      } else if (value is String) {
+        final unescape = HtmlUnescape();
+        return unescape.convert(value);
+      }
+      return value;
     }
-    return value;
+    return null;
   }
 
   bool hasKey(String key) {
