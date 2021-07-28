@@ -32,11 +32,13 @@ void _printLarge(String text) {
 }
 
 class PanUtils {
+  @deprecated
   static String formatMoney(double input) {
     final nf = NumberFormat('#,###.00', 'en_US');
     return nf.format(input);
   }
 
+  @deprecated
   static String formatDouble(String format, double input) {
     final nf = NumberFormat(format, 'en_US');
     return nf.format(input);
@@ -58,9 +60,7 @@ class PanUtils {
     }
   }
 
-  static Future<Directory> getDirectory(
-    String folder,
-  ) async {
+  static Future<Directory> getDirectory(String folder,) async {
     final root = await getApplicationDocumentsDirectory();
     final dir = Directory('${root.path}/$folder');
     if (!await dir.exists()) {
@@ -72,7 +72,7 @@ class PanUtils {
   static Future<bool> hasInternet() async {
     final result = await Connectivity().checkConnectivity();
     return result == ConnectivityResult.wifi ||
-        result == ConnectivityResult.mobile;
+            result == ConnectivityResult.mobile;
   }
 
   static bool isValidUrl(String url) {
@@ -104,7 +104,7 @@ class PanUtils {
       return input;
     } else if (input is int) {
       final binary = parseInt(input);
-      return binary.toBool();
+      return binary?.toBool();
     } else if (input is String) {
       return input.toBool();
     }

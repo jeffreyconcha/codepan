@@ -210,7 +210,9 @@ class Field extends SQLiteModel {
   }
 
   /// Short for "<b>Unique Group</b>" <br/>
-  /// Call this method if you want this field to be included in unique group.<br/>
+  /// Call this method if you want this field to be included in unique group. <br/>
+  /// If the same record has the same unique group fields it will update the 
+  /// existing record instead of inserting new record thus eliminating duplicates.<br/>
   /// Will only be applied to non-unique constraint.
   void ug() {
     if (constraint != Constraint.unique) {

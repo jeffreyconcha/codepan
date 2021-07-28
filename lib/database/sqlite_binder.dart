@@ -267,6 +267,9 @@ class SQLiteBinder {
   }
 
   void addStatement(final sql) {
+  	if(_showLog) {
+  	  print(sql);
+    }
     _batch.execute(sql);
   }
 

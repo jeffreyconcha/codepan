@@ -30,8 +30,11 @@ abstract class StateWithSearch<S extends StatefulWidget, M extends MasterData>
       _suggestions.clear();
       if (_search.isNotEmpty) {
         for (final item in allItems) {
-          if (item.name!.toLowerCase().contains(_search)) {
-            _suggestions.add(item);
+          final name = item.name;
+          if(name != null) {
+            if (name.toLowerCase().contains(_search)) {
+              _suggestions.add(item);
+            }
           }
         }
       }
