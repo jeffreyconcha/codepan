@@ -7,12 +7,12 @@ extension DoubleUtils on double {
   }
 
   String format({String? format}) {
-    if (format != null) {
-      final nf = NumberFormat(format, 'en_US');
-      return nf.format(this);
+    if (this % 1 == 0) {
+      return this.toStringAsFixed(0);
     } else {
-      if (this % 1 == 0) {
-        return this.toStringAsFixed(0);
+      if (format != null) {
+        final nf = NumberFormat(format, 'en_US');
+        return nf.format(this);
       } else {
         return this.toMoneyFormat();
       }
