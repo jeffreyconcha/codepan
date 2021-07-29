@@ -11,7 +11,10 @@ import 'package:codepan/widgets/text.dart';
 import 'package:codepan/widgets/text_field.dart';
 import 'package:flutter/material.dart';
 
+typedef MenuSearchBuilder = Widget Function(ValueChanged<String> onSearch);
+
 class MenuDialog<T extends MasterData> extends StatefulWidget {
+  final MenuSearchBuilder? searchBuilder;
   final ValueChanged<T>? onSelectItem;
   final String? title, titleFont;
   final List<T>? disabledItems;
@@ -28,6 +31,7 @@ class MenuDialog<T extends MasterData> extends StatefulWidget {
     this.fontColor = PanColors.text,
     this.searchIcon,
     this.titleFont,
+    this.searchBuilder,
   }) : super(key: key);
 
   @override
@@ -57,24 +61,34 @@ class _MenuDialogState<T extends MasterData>
           childBuilder: (context) {
             return Column(
               children: [
-                PanTextField(
-                  height: d.at(43),
-                  prefixIcon: widget.searchIcon ??
-                      PanIcon(
-                        icon: 'search',
-                        package: 'codepan',
-                        color: widget.fontColor.withOpacity(0.5),
-                        padding: EdgeInsets.all(d.at(12)),
-                      ),
-                  maxLines: 1,
-                  padding: EdgeInsets.zero,
-                  margin: EdgeInsets.all(d.at(10)),
-                  onChanged: onSearch,
-                  textInputAction: TextInputAction.search,
-                  borderWidth: d.at(1),
-                  borderColor: PanColors.border,
-                  focusedBorderWidth: d.at(1),
-                  focusedBorderColor: t.primaryColor,
+                PlaceholderHandler(
+                  condition: widget.searchBuilder != null,
+                  childBuilder: (context) {
+                    return widget.searchBuilder!.call(onSearch);
+                  },
+                  placeholderBuilder: (context) {
+                    return PanTextField(
+                      height: d.at(43),
+                      prefixIcon: widget.searchIcon ??
+                          PanIcon(
+                            icon: 'search',
+                            package: 'codepan',
+                            color: widget.fontColor.withOpacity(0.5),
+                            padding: EdgeInsets.all(d.at(12)),
+                          ),
+                      maxLines: 1,
+                      padding: EdgeInsets.zero,
+                      margin: EdgeInsets.all(d.at(10)),
+                      onChanged: onSearch,
+                      textAlignVertical: TextAlignVertical.center,
+                      textInputAction: TextInputAction.done,
+                      borderWidth: d.at(1),
+                      borderColor: PanColors.border,
+                      focusedBorderWidth: d.at(1),
+                      focusedBorderColor: t.primaryColor,
+                      radius: d.at(5),
+                    );
+                  },
                 ),
                 LineDivider(),
                 Container(
