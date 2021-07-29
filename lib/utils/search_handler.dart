@@ -1,8 +1,11 @@
-import 'package:codepan/models/master.dart';
 import 'package:codepan/utils/debouncer.dart';
 import 'package:flutter/cupertino.dart';
 
-abstract class StateWithSearch<S extends StatefulWidget, M extends MasterData>
+abstract class Searchable {
+  List<String?> get searchable;
+}
+
+abstract class StateWithSearch<S extends StatefulWidget, M extends Searchable>
     extends State<S> {
   final Debouncer _debouncer = Debouncer();
   final List<M> _suggestions = [];
@@ -22,18 +25,20 @@ abstract class StateWithSearch<S extends StatefulWidget, M extends MasterData>
   @override
   void dispose() {
     super.dispose();
+    _debouncer.cancel();
   }
 
   void onSearch(text) {
+    _debouncer.cancel();
     _debouncer.run(() {
       _search = text.toLowerCase();
       _suggestions.clear();
       if (_search.isNotEmpty) {
         for (final item in allItems) {
-          final name = item.name;
-          if(name != null) {
-            if (name.toLowerCase().contains(_search)) {
+          for (final text in item.searchable) {
+            if (text != null && text.toLowerCase().contains(_search)) {
               _suggestions.add(item);
+              break;
             }
           }
         }
