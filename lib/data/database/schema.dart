@@ -1,5 +1,5 @@
-import 'package:codepan/database/models/field.dart';
-import 'package:codepan/database/models/table.dart';
+import 'package:codepan/data/database/models/field.dart';
+import 'package:codepan/data/database/models/table.dart';
 import 'package:codepan/extensions/extensions.dart';
 
 abstract class DatabaseSchema<T> {

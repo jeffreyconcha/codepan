@@ -1,4 +1,4 @@
-import 'package:codepan/models/transaction.dart';
+import 'package:codepan/data/models/entities/transaction.dart';
 import 'package:codepan/utils/search_handler.dart';
 import 'package:flutter/foundation.dart';
 

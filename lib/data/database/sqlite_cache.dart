@@ -1,5 +1,5 @@
-import 'package:codepan/database/initializer.dart';
-import 'package:codepan/database/sqlite_adapter.dart';
+import 'package:codepan/data/database/initializer.dart';
+import 'package:codepan/data/database/sqlite_adapter.dart';
 
 class SQLiteCache {
   static final Map<String, SQLiteAdapter> cache = Map();

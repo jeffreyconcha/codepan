@@ -1,3 +1,7 @@
+class Strings {
+  static const String loading = 'Loading...';
+}
+
 class Errors {
   static const String failedToPlayVideo = 'Failed to play video.';
   static const String failedToPlayAudio = 'Failed to play audio';

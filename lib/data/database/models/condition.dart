@@ -1,8 +1,8 @@
-import 'package:codepan/database/models/field.dart';
-import 'package:codepan/database/models/sqlite_model.dart';
-import 'package:codepan/database/sqlite_exception.dart';
-import 'package:codepan/database/sqlite_query.dart';
-import 'package:codepan/database/sqlite_statement.dart';
+import 'package:codepan/data/database/models/field.dart';
+import 'package:codepan/data/database/models/sqlite_model.dart';
+import 'package:codepan/data/database/sqlite_exception.dart';
+import 'package:codepan/data/database/sqlite_query.dart';
+import 'package:codepan/data/database/sqlite_statement.dart';
 import 'package:codepan/utils/codepan_utils.dart';
 import 'package:inflection3/inflection3.dart';
 

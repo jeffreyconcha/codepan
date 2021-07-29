@@ -1,6 +1,6 @@
-import 'package:codepan/database/sqlite_statement.dart';
+import 'package:codepan/data/database/sqlite_statement.dart';
+import 'package:codepan/data/models/entities/entity.dart';
 import 'package:codepan/time/time.dart';
-import 'package:codepan/models/entity.dart';
 import 'package:flutter/foundation.dart';
 
 abstract class TransactionData extends EntityData

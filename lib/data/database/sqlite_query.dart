@@ -1,8 +1,8 @@
-import 'package:codepan/database/mixin/query_properties.dart';
-import 'package:codepan/database/models/field.dart';
-import 'package:codepan/database/models/table.dart' as tb;
-import 'package:codepan/database/schema.dart';
-import 'package:codepan/database/sqlite_exception.dart';
+import 'package:codepan/data/database/mixin/query_properties.dart';
+import 'package:codepan/data/database/models/field.dart';
+import 'package:codepan/data/database/models/table.dart' as tb;
+import 'package:codepan/data/database/schema.dart';
+import 'package:codepan/data/database/sqlite_exception.dart';
 
 enum JoinType {
   left,

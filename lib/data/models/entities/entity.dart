@@ -1,4 +1,4 @@
-import 'package:codepan/database/schema.dart';
+import 'package:codepan/data/database/schema.dart';
 import 'package:equatable/equatable.dart';
 
 abstract class EntityData extends Equatable {

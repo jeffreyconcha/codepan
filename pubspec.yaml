@@ -30,6 +30,7 @@ dependencies:
   time_ago_provider: ^4.0.0
   video_player: ^2.1.1
   visibility_detector: ^0.2.0
+  flutter_animation_progress_bar: ^2.0.0
 
 dev_dependencies:
   flutter_test:

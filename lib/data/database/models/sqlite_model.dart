@@ -1,4 +1,4 @@
-import 'package:codepan/database/models/table.dart';
+import 'package:codepan/data/database/models/table.dart';
 
 class SQLiteModel {
   String? _field;

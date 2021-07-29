@@ -1,5 +1,5 @@
-import 'package:codepan/database/models/sqlite_model.dart';
-import 'package:codepan/database/sqlite_statement.dart';
+import 'package:codepan/data/database/models/sqlite_model.dart';
+import 'package:codepan/data/database/sqlite_statement.dart';
 import 'package:codepan/utils/codepan_utils.dart';
 import 'package:inflection3/inflection3.dart';
 

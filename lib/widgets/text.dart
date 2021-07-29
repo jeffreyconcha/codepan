@@ -26,6 +26,7 @@ class PanText extends StatelessWidget {
   final FontWeight fontWeight;
   final List<Shadow>? shadows;
   final Alignment? alignment;
+  final TextStyle? textStyle;
   final FontStyle fontStyle;
   final TextAlign textAlign;
   final BoxBorder? border;
@@ -63,11 +64,12 @@ class PanText extends StatelessWidget {
     this.textAlign = TextAlign.center,
     this.textDirection = TextDirection.ltr,
     this.width,
+    this.textStyle,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final style = TextStyle(
+    final style = textStyle ?? TextStyle(
       color: fontColor,
       fontFamily: fontFamily,
       fontStyle: fontStyle,

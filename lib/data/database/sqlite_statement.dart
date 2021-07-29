@@ -1,10 +1,10 @@
-import 'package:codepan/database/mixin/query_properties.dart';
-import 'package:codepan/database/models/condition.dart';
-import 'package:codepan/database/models/field.dart';
-import 'package:codepan/database/models/field_value.dart';
-import 'package:codepan/database/models/sqlite_model.dart';
-import 'package:codepan/database/sqlite_exception.dart';
-import 'package:codepan/database/sqlite_query.dart';
+import 'package:codepan/data/database/mixin/query_properties.dart';
+import 'package:codepan/data/database/models/condition.dart';
+import 'package:codepan/data/database/models/field.dart';
+import 'package:codepan/data/database/models/field_value.dart';
+import 'package:codepan/data/database/models/sqlite_model.dart';
+import 'package:codepan/data/database/sqlite_exception.dart';
+import 'package:codepan/data/database/sqlite_query.dart';
 
 class SQLiteStatement with QueryProperties {
   static const String id = 'id';

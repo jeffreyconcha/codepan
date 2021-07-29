@@ -1,10 +1,10 @@
 import 'dart:async';
 
-import 'package:codepan/database/schema.dart';
-import 'package:codepan/database/sqlite_binder.dart';
-import 'package:codepan/database/sqlite_exception.dart';
-import 'package:codepan/database/sqlite_query.dart';
-import 'package:codepan/database/sqlite_statement.dart';
+import 'package:codepan/data/database/schema.dart';
+import 'package:codepan/data/database/sqlite_binder.dart';
+import 'package:codepan/data/database/sqlite_exception.dart';
+import 'package:codepan/data/database/sqlite_query.dart';
+import 'package:codepan/data/database/sqlite_statement.dart';
 import 'package:path/path.dart';
 import 'package:sqflite_sqlcipher/sqflite.dart';
 

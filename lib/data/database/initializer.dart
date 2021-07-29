@@ -1,8 +1,8 @@
-import 'package:codepan/database/schema.dart';
-import 'package:codepan/database/sqlite_adapter.dart';
-import 'package:codepan/database/sqlite_binder.dart';
-import 'package:codepan/database/sqlite_exception.dart';
-import 'package:codepan/database/sqlite_statement.dart';
+import 'package:codepan/data/database/schema.dart';
+import 'package:codepan/data/database/sqlite_adapter.dart';
+import 'package:codepan/data/database/sqlite_binder.dart';
+import 'package:codepan/data/database/sqlite_exception.dart';
+import 'package:codepan/data/database/sqlite_statement.dart';
 import 'package:flutter/foundation.dart';
 
 abstract class DatabaseInitializer {
