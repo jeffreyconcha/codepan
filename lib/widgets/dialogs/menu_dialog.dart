@@ -1,4 +1,3 @@
-import 'package:codepan/data/models/entities/master.dart';
 import 'package:codepan/extensions/context.dart';
 import 'package:codepan/resources/colors.dart';
 import 'package:codepan/resources/dimensions.dart';
@@ -13,7 +12,11 @@ import 'package:flutter/material.dart';
 
 typedef MenuSearchBuilder = Widget Function(ValueChanged<String> onSearch);
 
-class MenuDialog<T extends MasterData> extends StatefulWidget {
+abstract class Selectable implements Searchable {
+  String? get title;
+}
+
+class MenuDialog<T extends Selectable> extends StatefulWidget {
   final MenuSearchBuilder? searchBuilder;
   final ValueChanged<T>? onSelectItem;
   final String? title, titleFont;
@@ -38,7 +41,7 @@ class MenuDialog<T extends MasterData> extends StatefulWidget {
   _MenuDialogState<T> createState() => _MenuDialogState<T>();
 }
 
-class _MenuDialogState<T extends MasterData>
+class _MenuDialogState<T extends Selectable>
     extends StateWithSearch<MenuDialog<T>, T> {
   @override
   List<T> get allItems => widget.items;
@@ -133,7 +136,7 @@ class _MenuDialogState<T extends MasterData>
   bool _isDisabled(T item) {
     if (widget.disabledItems?.isNotEmpty ?? false) {
       for (final _item in widget.disabledItems!) {
-        if (_item.id == item.id) {
+        if (_item.title == item.title) {
           return true;
         }
       }
@@ -142,7 +145,7 @@ class _MenuDialogState<T extends MasterData>
   }
 }
 
-class _MenuItem<T extends MasterData> extends StatelessWidget {
+class _MenuItem<T extends Selectable> extends StatelessWidget {
   final ValueChanged<T>? onSelectItem;
   final bool withDivider, isDisabled;
   final Color fontColor;
@@ -167,7 +170,7 @@ class _MenuItem<T extends MasterData> extends StatelessWidget {
         InkWell(
           child: PanText(
             height: height,
-            text: item.name,
+            text: item.title,
             fontSize: d.at(13),
             fontColor: isDisabled ? fontColor.withOpacity(0.4) : fontColor,
             alignment: Alignment.centerLeft,

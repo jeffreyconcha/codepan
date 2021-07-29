@@ -1,10 +1,13 @@
 import 'package:codepan/data/models/entities/transaction.dart';
-import 'package:codepan/utils/search_handler.dart';
+import 'package:codepan/widgets/dialogs/menu_dialog.dart';
 import 'package:flutter/foundation.dart';
 
-abstract class MasterData extends TransactionData implements Searchable {
+abstract class MasterData extends TransactionData implements Selectable {
   final int? webId;
   final String? name;
+
+  @override
+  String? get title => name;
 
   @override
   List<String?> get searchable => [name];
