@@ -13,6 +13,8 @@ import 'package:flutter/material.dart';
 typedef MenuSearchBuilder = Widget Function(ValueChanged<String> onSearch);
 
 abstract class Selectable implements Searchable {
+  String? get identifier;
+
   String? get title;
 }
 

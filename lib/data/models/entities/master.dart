@@ -10,6 +10,9 @@ abstract class MasterData extends TransactionData implements Selectable {
   String? get title => name;
 
   @override
+  String? get identifier => id?.toString();
+
+  @override
   List<String?> get searchable => [name];
 
   const MasterData({

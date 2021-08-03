@@ -1,5 +1,6 @@
 import 'package:codepan/extensions/duration.dart';
 import 'package:equatable/equatable.dart';
+import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:time_ago_provider/time_ago_provider.dart' as ago;
 
@@ -75,6 +76,12 @@ class Time extends Equatable {
   factory Time.now() {
     final value = DateTime.now();
     return Time.from(value);
+  }
+
+  factory Time.fromTimeOfDay(TimeOfDay input) {
+    String format(int value) => value < 10 ? '0$value' : '$value';
+    final time = '${format(input.hour)}:${format(input.minute)}:00';
+    return Time(time: time);
   }
 
   Map<String, String?> toMap() {
