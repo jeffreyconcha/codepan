@@ -15,6 +15,7 @@ class InformationDialog extends StatefulWidget {
   final InformationController? controller;
   final bool dismissible, withDivider;
   final List<InlineSpan>? children;
+  final EdgeInsets? margin;
   final Color fontColor;
   final Widget? child;
 
@@ -34,6 +35,7 @@ class InformationDialog extends StatefulWidget {
     this.withDivider = false,
     this.titleFont,
     this.fontColor = PanColors.text,
+    this.margin,
   }) : super(key: key);
 
   @override
@@ -81,7 +83,7 @@ class _InformationDialogState extends State<InformationDialog> {
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(d.at(dialogRadius)),
                   ),
-                  margin: EdgeInsets.all(d.at(dialogMargin)),
+                  margin: widget.margin ?? EdgeInsets.all(d.at(dialogMargin)),
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(d.at(dialogRadius)),
                     child: Column(
