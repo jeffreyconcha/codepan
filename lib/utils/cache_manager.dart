@@ -9,9 +9,7 @@ class CacheManager<K, V> {
   });
 
   void add(K key, V value) {
-    map.addAll({
-      key: value,
-    });
+    map.putIfAbsent(key, () => value);
   }
 
   Future<V?> getCached(K key) async {
