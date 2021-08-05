@@ -17,7 +17,7 @@ class TextPlaceholder extends StatefulWidget {
     this.equalWidth = false,
     this.titleHeight,
     this.lineHeight,
-    this.color = PanColors.grey,
+    this.color = PanColors.grey1,
   }) : super(key: key);
 
   @override

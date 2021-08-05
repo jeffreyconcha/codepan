@@ -1,4 +1,8 @@
 import 'package:codepan/resources/colors.dart';
+import 'package:codepan/resources/dimensions.dart';
+import 'package:codepan/widgets/dialogs/menu_dialog.dart';
+import 'package:codepan/widgets/line_divider.dart';
+import 'package:codepan/widgets/text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
@@ -221,6 +225,97 @@ class _PanTextFieldState extends State<PanTextField> {
           widget.onFocusChange?.call(hasFocus);
         },
       ),
+    );
+  }
+}
+
+class AutocompleteHandler<T extends Selectable> extends StatelessWidget {
+  final AutocompleteFieldViewBuilder fieldBuilder;
+  final Widget? listItem, listDivider;
+  final ValueChanged<T>? onSelected;
+  final List<T> suggestions;
+  final Color color;
+
+  const AutocompleteHandler({
+    Key? key,
+    required this.suggestions,
+    required this.fieldBuilder,
+    this.listItem,
+    this.listDivider,
+    this.color = PanColors.grey2,
+    this.onSelected,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    final d = Dimension.of(context);
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        return Autocomplete<T>(
+            optionsBuilder: (value) {
+              final input = value.text.toLowerCase();
+              if (input.isNotEmpty) {
+                return suggestions.where(
+                  (element) {
+                    for (final search in element.searchable) {
+                      if (search != null) {
+                        final lower = search.toLowerCase();
+                        if (lower.contains(input)) {
+                          return true;
+                        }
+                      }
+                    }
+
+                    return false;
+                  },
+                );
+              }
+              return <T>[];
+            },
+            fieldViewBuilder: fieldBuilder,
+            displayStringForOption: (item) => item.title!,
+            optionsViewBuilder: (context, onSelected, options) {
+              return Align(
+                alignment: Alignment.topLeft,
+                child: Material(
+                  elevation: d.at(5),
+                  shadowColor: PanColors.border,
+                  child: Container(
+                    width: constraints.maxWidth,
+                    color: color,
+                    child: ListView.separated(
+                      padding: EdgeInsets.zero,
+                      itemCount: options.length,
+                      shrinkWrap: true,
+                      itemBuilder: (context, index) {
+                        final item = options.elementAt(index);
+                        return Material(
+                          child: InkWell(
+                            child: listItem ??
+                                PanText(
+                                  text: item.title,
+                                  height: d.at(40),
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal: d.at(10),
+                                  ),
+                                  alignment: Alignment.centerLeft,
+                                ),
+                            onTap: () {
+                              onSelected(item);
+                            },
+                          ),
+                        );
+                      },
+                      separatorBuilder: (context, int) {
+                        return listDivider ?? LineDivider();
+                      },
+                    ),
+                  ),
+                ),
+              );
+            },
+            onSelected: onSelected);
+      },
     );
   }
 }

@@ -1,16 +1,27 @@
-typedef Creator<T> = Future<T> Function(int key);
+typedef Creator<K, V> = Future<V> Function(K key);
 
-class CacheManager<T> {
-  final map = <int, T>{};
-  final Creator<T> creator;
+class CacheManager<K, V> {
+  final Creator<K, V>? creator;
+  final map = <K, V>{};
 
-  CacheManager(this.creator);
+  CacheManager({
+    this.creator,
+  });
 
-  Future<T> getCached(int key) async {
+  void add(K key, V value) {
+    map.addAll({
+      key: value,
+    });
+  }
+
+  Future<V?> getCached(K key) async {
     final data = map[key];
     if (data != null) {
       return data;
     }
-   return map[key] = await creator.call(key);
+    if (creator != null) {
+      return map[key] = await creator!.call(key);
+    }
+    return null;
   }
 }

@@ -18,7 +18,7 @@ class LinearProgressBar extends StatelessWidget {
     required this.max,
     this.height,
     this.showPercentage = true,
-    this.backgroundColor = PanColors.grey,
+    this.backgroundColor = PanColors.grey1,
     this.fontColor = PanColors.text,
   }) : super(key: key);
 
