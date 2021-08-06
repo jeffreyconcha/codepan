@@ -308,32 +308,36 @@ class _AutocompleteHandlerState<T extends Selectable>
                   child: Material(
                     elevation: d.at(5),
                     shadowColor: PanColors.border,
-                    child: ListView.separated(
-                      padding: EdgeInsets.zero,
-                      itemCount: options.length,
-                      shrinkWrap: true,
-                      itemBuilder: (context, index) {
-                        final item = options.elementAt(index);
-                        return Material(
-                          child: InkWell(
-                            child: widget.listItem ??
-                                PanText(
-                                  text: item.title,
-                                  height: d.at(40),
-                                  padding: EdgeInsets.symmetric(
-                                    horizontal: d.at(10),
+                    child: Container(
+                      color: widget.color,
+                      width: constraints.maxWidth,
+                      child: ListView.separated(
+                        padding: EdgeInsets.zero,
+                        itemCount: options.length,
+                        shrinkWrap: true,
+                        itemBuilder: (context, index) {
+                          final item = options.elementAt(index);
+                          return Material(
+                            child: InkWell(
+                              child: widget.listItem ??
+                                  PanText(
+                                    text: item.title,
+                                    height: d.at(40),
+                                    padding: EdgeInsets.symmetric(
+                                      horizontal: d.at(10),
+                                    ),
+                                    alignment: Alignment.centerLeft,
                                   ),
-                                  alignment: Alignment.centerLeft,
-                                ),
-                            onTap: () {
-                              onSelected(item);
-                            },
-                          ),
-                        );
-                      },
-                      separatorBuilder: (context, int) {
-                        return widget.listDivider ?? LineDivider();
-                      },
+                              onTap: () {
+                                onSelected(item);
+                              },
+                            ),
+                          );
+                        },
+                        separatorBuilder: (context, int) {
+                          return widget.listDivider ?? LineDivider();
+                        },
+                      ),
                     ),
                   ),
                 );
