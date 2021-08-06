@@ -229,16 +229,26 @@ class _PanTextFieldState extends State<PanTextField> {
   }
 }
 
-class AutocompleteHandler<T extends Selectable> extends StatelessWidget {
-  final AutocompleteFieldViewBuilder fieldBuilder;
+typedef OnLoadSuggestions<T> = Future<List<T>> Function();
+typedef FieldViewBuilder = Widget Function(
+  BuildContext context,
+  TextEditingController controller,
+  FocusNode node,
+  VoidCallback onSelected,
+  ValueChanged<String> onChanged,
+);
+
+class AutocompleteHandler<T extends Selectable> extends StatefulWidget {
+  final OnLoadSuggestions<T> onLoadSuggestions;
+  final FieldViewBuilder fieldBuilder;
   final Widget? listItem, listDivider;
   final ValueChanged<T>? onSelected;
-  final List<T> suggestions;
+
   final Color color;
 
   const AutocompleteHandler({
     Key? key,
-    required this.suggestions,
+    required this.onLoadSuggestions,
     required this.fieldBuilder,
     this.listItem,
     this.listDivider,
@@ -247,42 +257,57 @@ class AutocompleteHandler<T extends Selectable> extends StatelessWidget {
   }) : super(key: key);
 
   @override
+  _AutocompleteHandlerState<T> createState() => _AutocompleteHandlerState<T>();
+}
+
+class _AutocompleteHandlerState<T extends Selectable>
+    extends State<AutocompleteHandler<T>> {
+  @override
   Widget build(BuildContext context) {
     final d = Dimension.of(context);
     return LayoutBuilder(
       builder: (context, constraints) {
-        return Autocomplete<T>(
-            optionsBuilder: (value) {
-              final input = value.text.toLowerCase();
-              if (input.isNotEmpty) {
-                return suggestions.where(
-                  (element) {
-                    for (final search in element.searchable) {
-                      if (search != null) {
-                        final lower = search.toLowerCase();
-                        if (lower.contains(input)) {
-                          return true;
+        return StreamBuilder<List<T>>(
+          stream: _loadSuggestions(),
+          builder: (context, snapshot) {
+            return Autocomplete<T>(
+              optionsBuilder: (value) {
+                if (snapshot.connectionState == ConnectionState.done) {
+                  final input = value.text.toLowerCase();
+                  if (input.isNotEmpty && snapshot.hasData) {
+                    return snapshot.data!.where(
+                      (element) {
+                        for (final search in element.searchable) {
+                          if (search != null) {
+                            final lower = search.toLowerCase();
+                            if (lower.contains(input)) {
+                              return true;
+                            }
+                          }
                         }
-                      }
-                    }
-
-                    return false;
-                  },
+                        return false;
+                      },
+                    );
+                  }
+                }
+                return <T>[];
+              },
+              fieldViewBuilder: (context, controller, node, onSelected) {
+                return widget.fieldBuilder(
+                  context,
+                  controller,
+                  node,
+                  onSelected,
+                  _onChanged,
                 );
-              }
-              return <T>[];
-            },
-            fieldViewBuilder: fieldBuilder,
-            displayStringForOption: (item) => item.title!,
-            optionsViewBuilder: (context, onSelected, options) {
-              return Align(
-                alignment: Alignment.topLeft,
-                child: Material(
-                  elevation: d.at(5),
-                  shadowColor: PanColors.border,
-                  child: Container(
-                    width: constraints.maxWidth,
-                    color: color,
+              },
+              displayStringForOption: (item) => item.title!,
+              optionsViewBuilder: (context, onSelected, options) {
+                return Align(
+                  alignment: Alignment.topLeft,
+                  child: Material(
+                    elevation: d.at(5),
+                    shadowColor: PanColors.border,
                     child: ListView.separated(
                       padding: EdgeInsets.zero,
                       itemCount: options.length,
@@ -291,7 +316,7 @@ class AutocompleteHandler<T extends Selectable> extends StatelessWidget {
                         final item = options.elementAt(index);
                         return Material(
                           child: InkWell(
-                            child: listItem ??
+                            child: widget.listItem ??
                                 PanText(
                                   text: item.title,
                                   height: d.at(40),
@@ -307,15 +332,23 @@ class AutocompleteHandler<T extends Selectable> extends StatelessWidget {
                         );
                       },
                       separatorBuilder: (context, int) {
-                        return listDivider ?? LineDivider();
+                        return widget.listDivider ?? LineDivider();
                       },
                     ),
                   ),
-                ),
-              );
-            },
-            onSelected: onSelected);
+                );
+              },
+              onSelected: widget.onSelected,
+            );
+          },
+        );
       },
     );
+  }
+
+  void _onChanged(String text) {}
+
+  Stream<List<T>>? _loadSuggestions() async* {
+    yield await widget.onLoadSuggestions.call();
   }
 }
