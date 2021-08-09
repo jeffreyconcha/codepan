@@ -17,7 +17,7 @@ class PanIcon extends StatelessWidget {
     this.alignment = Alignment.center,
     this.background,
     this.color,
-    this.fit = BoxFit.contain,
+    this.fit = BoxFit.none,
     this.height,
     this.isInternal = false,
     this.margin,
