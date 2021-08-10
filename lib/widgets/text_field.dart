@@ -243,7 +243,6 @@ class AutocompleteHandler<T extends Selectable> extends StatefulWidget {
   final FieldViewBuilder fieldBuilder;
   final Widget? listItem, listDivider;
   final ValueChanged<T>? onSelected;
-
   final Color color;
 
   const AutocompleteHandler({

@@ -49,7 +49,7 @@ class _ProgressDialogState extends State<ProgressDialog> {
 
   @override
   void dispose() {
-    controller!._reset();
+    controller!.dispose();
     super.dispose();
   }
 
