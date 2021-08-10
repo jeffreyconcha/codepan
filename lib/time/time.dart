@@ -46,6 +46,8 @@ class Time extends Equatable {
 
   String get timezoneValue => value.timeZoneOffset.format(withSeconds: false);
 
+  int get milliseconds => value.millisecondsSinceEpoch;
+
   bool? get isNewMinute {
     final split = time!.split(':');
     return split.last == '00';
