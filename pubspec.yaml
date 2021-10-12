@@ -11,21 +11,21 @@ dependencies:
   flutter:
     sdk: flutter
   app_settings: ^4.1.0
-  audioplayers: ^0.18.3
+  audioplayers: ^0.20.1
   cached_network_image: ^3.0.0
   connectivity: ^3.0.3
   equatable: ^2.0.0
-  exif: ^2.0.0
+  exif: ^3.0.0
   flutter_bloc: ^7.0.0
   flutter_native_image: ^0.0.6
-  flutter_svg: ^0.21.0+1
+  flutter_svg: ^0.22.0
   html_unescape: ^2.0.0
   image: ^3.0.2
   inflection3: ^0.5.3+2
   intl: ^0.17.0
   path_provider: ^2.0.1
-  permission_handler: ^7.0.0
-  pull_to_refresh: ^1.6.5
+  permission_handler: ^8.1.6
+  pull_to_refresh: ^2.0.0
   sqflite_sqlcipher: ^2.0.0
   time_ago_provider: ^4.0.0
   video_player: ^2.1.1

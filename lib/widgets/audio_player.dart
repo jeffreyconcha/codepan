@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+
 import 'package:audioplayers/audioplayers.dart';
 import 'package:codepan/media/media.dart';
 import 'package:codepan/resources/colors.dart';
@@ -54,25 +55,25 @@ class _PanAudioPlayerState extends State<PanAudioPlayer> {
     });
     _onPlayerStateChanged = _audio.onPlayerStateChanged.listen((state) {
       switch (state) {
-        case AudioPlayerState.PLAYING:
+        case PlayerState.PLAYING:
           setState(() async {
             _max = (await _audio.getDuration()).toDouble();
           });
           _setPlaying(true);
           _setLoading(false);
           break;
-        case AudioPlayerState.PAUSED:
+        case PlayerState.PAUSED:
           _setPlaying(false);
           _setLoading(false);
           break;
-        case AudioPlayerState.COMPLETED:
+        case PlayerState.COMPLETED:
           widget.onCompleted?.call();
           _setPlaying(false);
           setState(() {
             _current = _max;
           });
           break;
-        case AudioPlayerState.STOPPED:
+        case PlayerState.STOPPED:
           _setPlaying(false);
           break;
       }
