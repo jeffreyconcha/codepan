@@ -4,7 +4,7 @@ import 'package:codepan/widgets/text.dart';
 import 'package:flutter/material.dart';
 
 class PanButton extends StatelessWidget {
-  final Color? fontColor, splashColor, highlightColor, textColorHint;
+  final Color? fontColor, splashColor, highlightColor, hintFontColor;
   final double? fontSize, fontHeight, width, height;
   final Color borderColor, background;
   final String? text, fontFamily, hint;
@@ -36,7 +36,7 @@ class PanButton extends StatelessWidget {
     this.fontSize,
     this.fontStyle = FontStyle.normal,
     this.fontWeight = FontWeight.normal,
-    this.textColorHint,
+    this.hintFontColor,
     this.margin,
     this.onPressed,
     this.padding = EdgeInsets.zero,
@@ -80,30 +80,16 @@ class PanButton extends StatelessWidget {
                 return child!;
               },
               placeholderBuilder: (context) {
-                return PlaceholderHandler(
-                  condition: text?.isNotEmpty ?? false,
-                  childBuilder: (context) {
-                    return PanText(
-                      text: text,
-                      fontSize: fontSize,
-                      fontColor: fontColor,
-                      fontWeight: fontWeight,
-                      fontFamily: fontFamily,
-                      textAlign: textAlign,
-                      alignment: alignment,
-                    );
-                  },
-                  placeholderBuilder: (context) {
-                    return PanText(
-                      text: hint,
-                      fontSize: fontSize,
-                      fontColor: textColorHint,
-                      fontWeight: fontWeight,
-                      fontFamily: fontFamily,
-                      textAlign: textAlign,
-                      alignment: alignment,
-                    );
-                  },
+                return PanText(
+                  text: text ?? '',
+                  fontSize: fontSize,
+                  fontColor: fontColor,
+                  fontWeight: fontWeight,
+                  fontFamily: fontFamily,
+                  textAlign: textAlign,
+                  alignment: alignment,
+                  hintFontColor: hintFontColor,
+                  hint: hint,
                 );
               },
             ),

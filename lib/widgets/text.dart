@@ -14,14 +14,15 @@ typedef OnTextOverflow = Widget Function(int lines);
 class PanText extends StatelessWidget {
   final double? width, height, fontSize, fontHeight, radius;
   final EdgeInsetsGeometry? margin, padding;
+  final Color? fontColor, hintFontColor;
   final OnTextOverflow? onTextOverflow;
+  final String? text, hint, fontFamily;
   final TextDirection textDirection;
   final BoxConstraints? constraints;
   final OverflowState overflowState;
   final List<InlineSpan>? children;
   final TextDecoration? decoration;
   final SpannableText? spannable;
-  final String? text, fontFamily;
   final TextOverflow? overflow;
   final FontWeight fontWeight;
   final List<Shadow>? shadows;
@@ -31,7 +32,6 @@ class PanText extends StatelessWidget {
   final TextAlign textAlign;
   final BoxBorder? border;
   final Color background;
-  final Color? fontColor;
   final bool isRequired;
   final int? maxLines;
 
@@ -65,20 +65,24 @@ class PanText extends StatelessWidget {
     this.textDirection = TextDirection.ltr,
     this.width,
     this.textStyle,
+    this.hintFontColor,
+    this.hint,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final style = textStyle ?? TextStyle(
-      color: fontColor,
-      fontFamily: fontFamily,
-      fontStyle: fontStyle,
-      fontWeight: fontWeight,
-      height: fontHeight,
-      fontSize: fontSize,
-      decoration: decoration,
-      shadows: shadows,
-    );
+    final hasText = this.text?.isNotEmpty ?? false;
+    final style = textStyle ??
+        TextStyle(
+          color: hasText ? fontColor : hintFontColor,
+          fontFamily: fontFamily,
+          fontStyle: fontStyle,
+          fontWeight: fontWeight,
+          height: fontHeight,
+          fontSize: fontSize,
+          decoration: decoration,
+          shadows: shadows,
+        );
     List<InlineSpan>? spanList;
     if (spannable != null) {
       spanList = [];
@@ -101,6 +105,7 @@ class PanText extends StatelessWidget {
         ),
       );
     }
+    final text = hasText ? this.text : hint;
     final span = TextSpan(
       text: spannable != null ? null : text ?? '',
       style: style,
