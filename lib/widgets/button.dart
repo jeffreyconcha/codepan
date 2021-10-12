@@ -4,13 +4,13 @@ import 'package:codepan/widgets/text.dart';
 import 'package:flutter/material.dart';
 
 class PanButton extends StatelessWidget {
-  final Color? fontColor, splashColor, highlightColor;
+  final Color? fontColor, splashColor, highlightColor, textColorHint;
   final double? fontSize, fontHeight, width, height;
   final Color borderColor, background;
+  final String? text, fontFamily, hint;
   final BoxConstraints? constraints;
   final double borderWidth, radius;
   final BoxDecoration? decoration;
-  final String? text, fontFamily;
   final VoidCallback? onPressed;
   final FontWeight fontWeight;
   final Alignment alignment;
@@ -36,6 +36,7 @@ class PanButton extends StatelessWidget {
     this.fontSize,
     this.fontStyle = FontStyle.normal,
     this.fontWeight = FontWeight.normal,
+    this.textColorHint,
     this.margin,
     this.onPressed,
     this.padding = EdgeInsets.zero,
@@ -44,6 +45,7 @@ class PanButton extends StatelessWidget {
     this.splashColor = PanColors.splash,
     this.text,
     this.textAlign = TextAlign.center,
+    this.hint,
     this.decoration,
   }) : super(key: key);
 
@@ -78,14 +80,30 @@ class PanButton extends StatelessWidget {
                 return child!;
               },
               placeholderBuilder: (context) {
-                return PanText(
-                  text: text ?? '',
-                  fontSize: fontSize,
-                  fontColor: fontColor,
-                  fontWeight: fontWeight,
-                  fontFamily: fontFamily,
-                  textAlign: textAlign,
-                  alignment: alignment,
+                return PlaceholderHandler(
+                  condition: text?.isNotEmpty ?? false,
+                  childBuilder: (context) {
+                    return PanText(
+                      text: text,
+                      fontSize: fontSize,
+                      fontColor: fontColor,
+                      fontWeight: fontWeight,
+                      fontFamily: fontFamily,
+                      textAlign: textAlign,
+                      alignment: alignment,
+                    );
+                  },
+                  placeholderBuilder: (context) {
+                    return PanText(
+                      text: hint,
+                      fontSize: fontSize,
+                      fontColor: textColorHint,
+                      fontWeight: fontWeight,
+                      fontFamily: fontFamily,
+                      textAlign: textAlign,
+                      alignment: alignment,
+                    );
+                  },
                 );
               },
             ),
