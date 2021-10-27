@@ -7,6 +7,7 @@ import 'package:time_ago_provider/time_ago_provider.dart' as ago;
 const String dateFormat = 'yyyy-MM-dd';
 const String timeFormat = 'HH:mm:ss';
 const String locale = 'en_US';
+const int zeroInMillisecondsEpoch = -62170012800000;
 
 class Time extends Equatable {
   final String? date;
@@ -91,6 +92,14 @@ class Time extends Equatable {
       'date': date,
       'time': time,
     };
+  }
+
+  bool isZero() {
+    return milliseconds == zeroInMillisecondsEpoch;
+  }
+
+  bool isNotZero() {
+    return !isZero();
   }
 
   Duration difference(Time other) {

@@ -16,7 +16,7 @@ dependencies:
   connectivity: ^3.0.3
   equatable: ^2.0.0
   exif: ^3.0.0
-  flutter_bloc: ^7.0.0
+  flutter_bloc: ^7.3.1
   flutter_native_image: ^0.0.6
   flutter_svg: ^0.22.0
   html_unescape: ^2.0.0

@@ -123,7 +123,7 @@ class PanText extends StatelessWidget {
       textDirection: textDirection,
     );
     return PlaceholderHandler(
-      condition: (text != null && text!.isNotEmpty) || children != null,
+      condition: (text != null && text.isNotEmpty) || children != null,
       child: Container(
         width: width,
         height: height,
