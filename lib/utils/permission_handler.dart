@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'package:app_settings/app_settings.dart';
 import 'package:codepan/extensions/context.dart';
 import 'package:codepan/extensions/string.dart';
@@ -9,18 +8,17 @@ import 'package:permission_handler/permission_handler.dart';
 
 abstract class StateWithPermission<T extends StatefulWidget>
     extends StateWithLifecycle<T> {
-  bool _isPermanentlyDenied = false;
   bool _isGranted = false;
   bool _hasDialog = false;
 
   List<Permission> get permissions;
 
-  void onPermissionResult(bool isGranted);
+  void onPermissionGranted();
 
   /// Return [bool] value of true when prompting a dialog to the user.<br/>
   /// [onDialogDetach] - Callback function to notify the permission
   /// handler that the dialog has been detached.
-  bool onPermanentlyDenied(
+  bool onPermissionDenied(
     Permission permission,
     String title,
     String message,
@@ -45,9 +43,7 @@ abstract class StateWithPermission<T extends StatefulWidget>
     if (_isGranted) {
       _checkPermissions(request: true);
     } else {
-      if (_isPermanentlyDenied) {
-        _checkPermissions(request: false);
-      }
+      _checkPermissions(request: false);
     }
   }
 
@@ -55,9 +51,11 @@ abstract class StateWithPermission<T extends StatefulWidget>
   @mustCallSuper
   void onInactive() {
     super.onInactive();
-    if (_hasDialog && _isPermanentlyDenied) {
-      context.pop();
-    }
+    // print('inactive log $_hasDialog $_isGranted');
+    // if (_hasDialog && !_isGranted) {
+    //   // context.pop();
+    //   _hasDialog = false;
+    // }
   }
 
   Future<void> goToSettings() {
@@ -65,87 +63,91 @@ abstract class StateWithPermission<T extends StatefulWidget>
   }
 
   void _checkPermissions({required bool request}) async {
-    _isPermanentlyDenied = false;
-    bool hasDenied = false;
     for (final permission in permissions) {
       _isGranted = request
           ? await permission.request().isGranted
           : await permission.isGranted;
-      debugPrint('PermissionValue: (${permission.value}) isGranted: $_isGranted');
+      String? name = _getPermissionName(permission.value);
+      debugPrint('Permission($name).isGranted: $_isGranted ", '
+          'Request($request)');
       if (!_isGranted) {
-        if (await permission.isPermanentlyDenied || Platform.isIOS) {
-          String? name;
-          switch (permission.value) {
-            case PermissionValue.camera:
-              name = PermissionName.camera;
-              break;
-            case PermissionValue.storage:
-              name = PermissionName.storage;
-              break;
-            case PermissionValue.calendar:
-              name = PermissionName.calendar;
-              break;
-            case PermissionValue.contacts:
-              name = PermissionName.contacts;
-              break;
-            case PermissionValue.mediaLibrary:
-              name = PermissionName.mediaLibrary;
-              break;
-            case PermissionValue.microphone:
-              name = PermissionName.microphone;
-              break;
-            case PermissionValue.photos:
-              name = PermissionName.photos;
-              break;
-            case PermissionValue.reminders:
-              name = PermissionName.reminders;
-              break;
-            case PermissionValue.sensors:
-              name = PermissionName.sensors;
-              break;
-            case PermissionValue.sms:
-              name = PermissionName.sms;
-              break;
-            case PermissionValue.speech:
-              name = PermissionName.speech;
-              break;
-            case PermissionValue.notification:
-              name = PermissionName.notification;
-              break;
-            default:
-              switch (permission.value) {
-                case PermissionValue.locationAlways:
-                  name = PermissionName.locationAlways;
-                  break;
-                case PermissionValue.locationWhenInUse:
-                  name = PermissionName.locationWhenInUse;
-                  break;
-                case PermissionValue.location:
-                  name = PermissionName.location;
-                  break;
-                case PermissionValue.phone:
-                  name = PermissionName.phone;
-                  break;
-                default:
-                  break;
-              }
-              break;
-          }
-          _hasDialog = onPermanentlyDenied(
+        if (!_hasDialog) {
+          _hasDialog = onPermissionDenied(
             permission,
             PermissionInfo.title,
             PermissionInfo.message.complete('\"$name\"'),
             () => _hasDialog = false,
           );
-          _isPermanentlyDenied = true;
-          break;
-        } else {
-          hasDenied = true;
         }
+        break;
       }
     }
-    if (!_isPermanentlyDenied) {
-      onPermissionResult(!hasDenied);
+    if (_isGranted) {
+      if (_hasDialog) {
+        context.pop();
+      }
+      onPermissionGranted();
     }
+  }
+
+  String? _getPermissionName(int value) {
+    String? name;
+    switch (value) {
+      case PermissionValue.camera:
+        name = PermissionName.camera;
+        break;
+      case PermissionValue.storage:
+        name = PermissionName.storage;
+        break;
+      case PermissionValue.calendar:
+        name = PermissionName.calendar;
+        break;
+      case PermissionValue.contacts:
+        name = PermissionName.contacts;
+        break;
+      case PermissionValue.mediaLibrary:
+        name = PermissionName.mediaLibrary;
+        break;
+      case PermissionValue.microphone:
+        name = PermissionName.microphone;
+        break;
+      case PermissionValue.photos:
+        name = PermissionName.photos;
+        break;
+      case PermissionValue.reminders:
+        name = PermissionName.reminders;
+        break;
+      case PermissionValue.sensors:
+        name = PermissionName.sensors;
+        break;
+      case PermissionValue.sms:
+        name = PermissionName.sms;
+        break;
+      case PermissionValue.speech:
+        name = PermissionName.speech;
+        break;
+      case PermissionValue.notification:
+        name = PermissionName.notification;
+        break;
+      default:
+        switch (value) {
+          case PermissionValue.locationAlways:
+            name = PermissionName.locationAlways;
+            break;
+          case PermissionValue.locationWhenInUse:
+            name = PermissionName.locationWhenInUse;
+            break;
+          case PermissionValue.location:
+            name = PermissionName.location;
+            break;
+          case PermissionValue.phone:
+            name = PermissionName.phone;
+            break;
+          default:
+            break;
+        }
+        break;
+    }
+    return name;
   }
 }
