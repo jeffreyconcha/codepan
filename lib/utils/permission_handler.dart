@@ -4,6 +4,7 @@ import 'package:codepan/extensions/string.dart';
 import 'package:codepan/resources/strings.dart';
 import 'package:codepan/utils/lifecycle_handler.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 abstract class StateWithPermission<T extends StatefulWidget>
@@ -13,7 +14,7 @@ abstract class StateWithPermission<T extends StatefulWidget>
 
   List<Permission> get permissions;
 
-  void onPermissionGranted();
+  void onPermissionsGranted();
 
   /// Return [bool] value of true when prompting a dialog to the user.<br/>
   /// [onDialogDetach] - Callback function to notify the permission
@@ -47,26 +48,22 @@ abstract class StateWithPermission<T extends StatefulWidget>
     }
   }
 
-  @override
-  @mustCallSuper
-  void onInactive() {
-    super.onInactive();
-    // print('inactive log $_hasDialog $_isGranted');
-    // if (_hasDialog && !_isGranted) {
-    //   // context.pop();
-    //   _hasDialog = false;
-    // }
-  }
-
   Future<void> goToSettings() {
     return AppSettings.openAppSettings();
   }
 
   void _checkPermissions({required bool request}) async {
     for (final permission in permissions) {
-      _isGranted = request
-          ? await permission.request().isGranted
-          : await permission.isGranted;
+      if (request) {
+        try {
+          final status = await permission.request();
+          _isGranted = status.isGranted;
+        } on PlatformException catch (error) {
+          debugPrint(error.toString());
+        }
+      } else {
+        _isGranted = await permission.isGranted;
+      }
       String? name = _getPermissionName(permission.value);
       debugPrint('Permission($name).isGranted: $_isGranted ", '
           'Request($request)');
@@ -84,9 +81,10 @@ abstract class StateWithPermission<T extends StatefulWidget>
     }
     if (_isGranted) {
       if (_hasDialog) {
+        _hasDialog = false;
         context.pop();
       }
-      onPermissionGranted();
+      onPermissionsGranted();
     }
   }
 
