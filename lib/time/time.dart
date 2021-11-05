@@ -25,6 +25,8 @@ class Time extends Equatable {
 
   String get displayDate => DateFormat.yMMMMd(locale).format(value);
 
+  String get shortDate => DateFormat.yMMMd(locale).format(value);
+
   String get displayTime => DateFormat.jm(locale).format(value);
 
   String get displayTimeWithSeconds => DateFormat.jms(locale).format(value);
@@ -107,11 +109,19 @@ class Time extends Equatable {
   }
 
   bool isEqual(Time other) {
-    return date == other.date && time == other.time;
+    return value.isAtSameMomentAs(other.value);
   }
 
   bool isAfter(Time other) {
     return value.isAfter(other.value);
+  }
+
+  bool isAfterOrAtSameMomentAs(Time other) {
+    return isAfter(other) || isEqual(other);
+  }
+
+  bool isBeforeOrAtSameMomentAs(Time other) {
+    return isBefore(other) || isEqual(other);
   }
 
   bool isBefore(Time other) {
