@@ -32,11 +32,13 @@ class DefaultDatabaseInitializer extends DatabaseInitializer {
   Future<void> onCreate(SQLiteAdapter db, int version) async {
     final binder = SQLiteBinder(db);
     try {
-      await binder.beginTransaction();
-      await _createTables(binder);
-      await _createIndices(binder);
-      await _createTimeTriggers(binder);
-      await binder.finish();
+      await binder.transact<bool>(
+        body: (binder) async {
+          await _createTables(binder);
+          await _createIndices(binder);
+          await _createTimeTriggers(binder);
+        },
+      );
     } catch (error) {
       final message = "${SQLiteException.initializationFailed}\n$error";
       throw SQLiteException(message);
@@ -51,13 +53,15 @@ class DefaultDatabaseInitializer extends DatabaseInitializer {
   ) async {
     final binder = SQLiteBinder(db);
     try {
-      await binder.beginTransaction();
-      await _createTables(binder);
-      await _updateTables(binder);
-      await _createIndices(binder);
-      await _updateIndices(binder);
-      await _createTimeTriggers(binder);
-      await binder.finish();
+      await binder.transact<bool>(
+        body: (binder) async {
+          await _createTables(binder);
+          await _updateTables(binder);
+          await _createIndices(binder);
+          await _updateIndices(binder);
+          await _createTimeTriggers(binder);
+        },
+      );
     } catch (error) {
       await db.instance!.setVersion(oldVersion);
       final message = "${SQLiteException.initializationFailed}\n$error";
@@ -73,13 +77,15 @@ class DefaultDatabaseInitializer extends DatabaseInitializer {
   ) async {
     final binder = SQLiteBinder(db);
     try {
-      await binder.beginTransaction();
-      await _createTables(binder);
-      await _updateTables(binder);
-      await _createIndices(binder);
-      await _updateIndices(binder);
-      await _createTimeTriggers(binder);
-      await binder.finish();
+      await binder.transact<bool>(
+        body: (binder) async {
+          await _createTables(binder);
+          await _updateTables(binder);
+          await _createIndices(binder);
+          await _updateIndices(binder);
+          await _createTimeTriggers(binder);
+        },
+      );
     } catch (error) {
       await db.instance!.setVersion(oldVersion);
       final message = "${SQLiteException.initializationFailed}\n$error";

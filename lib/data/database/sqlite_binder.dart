@@ -22,11 +22,13 @@ enum UpdatePriority {
 const tag = 'DATABASE BINDER';
 const primaryKey = SQLiteStatement.id;
 
-typedef BinderBody = Future<void> Function(SQLiteBinder binder);
+typedef BinderBody = Future<dynamic> Function(
+  SQLiteBinder binder,
+);
 
 class SQLiteBinder {
   final SQLiteAdapter db;
-  late BinderBody? _body;
+  late BinderBody _body;
   late DateTime _time;
   late Batch _batch;
   Map<String?, int?>? _map;
@@ -42,12 +44,13 @@ class SQLiteBinder {
     return SQLiteBinder(db);
   }
 
-  /// [body] - Enclosed in try catch, will automatically removed the binder or any
-  /// pending transaction when an error occurred to avoid database lock.
-  Future<void> beginTransaction({
+  /// [body] - Enclosed in try catch to automatically remove the binder or
+  /// any pending transaction when an error occurred to avoid database lock.
+  Future<T> transact<T>({
+    required BinderBody body,
     List<TableSchema>? prepare,
     bool showLog = false,
-    BinderBody? body,
+    bool autoFinish = true,
   }) async {
     if (!db.inTransaction) {
       if (prepare?.isNotEmpty ?? false) {
@@ -55,18 +58,23 @@ class SQLiteBinder {
       }
       this._batch = db.batch();
       this._showLog = showLog;
-      this._body = body;
       if (_showLog) {
         _time = DateTime.now();
         debugPrint('$tag: BEGIN TRANSACTION');
       }
       db.setBinder(this);
-      try {
-        await body?.call(this);
-      } catch (error) {
-        db.removeBinder();
-        rethrow;
+    }
+    this._body = body;
+    try {
+      if (autoFinish) {
+        await body.call(this);
+        return await finish() as T;
+      } else {
+        return await body.call(this) as T;
       }
+    } catch (error) {
+      db.removeBinder();
+      rethrow;
     }
   }
 
@@ -136,7 +144,7 @@ class SQLiteBinder {
   Future<bool> apply() async {
     final result = await finish(clearMap: false);
     if (result) {
-      await beginTransaction(body: _body);
+      await transact(body: _body);
     }
     return result;
   }
@@ -158,11 +166,12 @@ class SQLiteBinder {
             debugPrint('$tag: TRANSACTION SUCCESSFUL');
             debugPrint('$tag: FINISHED AT $formatted');
           }
-          db.removeBinder();
           result = true;
         } catch (error, stacktrace) {
           printError(error, stacktrace);
           rethrow;
+        } finally {
+          db.removeBinder();
         }
         return result;
       } else {
