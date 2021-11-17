@@ -22,13 +22,16 @@ enum UpdatePriority {
 const tag = 'DATABASE BINDER';
 const primaryKey = SQLiteStatement.id;
 
+typedef BinderBody = Future<void> Function(SQLiteBinder binder);
+
 class SQLiteBinder {
   final SQLiteAdapter db;
+  late BinderBody? _body;
+  late DateTime _time;
+  late Batch _batch;
   Map<String?, int?>? _map;
   bool _showLog = false;
   bool _chain = false;
-  late DateTime _time;
-  late Batch _batch;
 
   SQLiteBinder(this.db);
 
@@ -39,9 +42,12 @@ class SQLiteBinder {
     return SQLiteBinder(db);
   }
 
+  /// [body] - Enclosed in try catch, will automatically removed the binder or any
+  /// pending transaction when an error occurred to avoid database lock.
   Future<void> beginTransaction({
     List<TableSchema>? prepare,
     bool showLog = false,
+    BinderBody? body,
   }) async {
     if (!db.inTransaction) {
       if (prepare?.isNotEmpty ?? false) {
@@ -49,11 +55,18 @@ class SQLiteBinder {
       }
       this._batch = db.batch();
       this._showLog = showLog;
+      this._body = body;
       if (_showLog) {
         _time = DateTime.now();
         debugPrint('$tag: BEGIN TRANSACTION');
       }
       db.setBinder(this);
+      try {
+        await body?.call(this);
+      } catch (error) {
+        db.removeBinder();
+        rethrow;
+      }
     }
   }
 
@@ -123,7 +136,7 @@ class SQLiteBinder {
   Future<bool> apply() async {
     final result = await finish(clearMap: false);
     if (result) {
-      await beginTransaction();
+      await beginTransaction(body: _body);
     }
     return result;
   }
@@ -131,30 +144,33 @@ class SQLiteBinder {
   Future<bool> finish({
     bool clearMap = true,
   }) async {
-    if (!_chain) {
-      bool result = false;
-      if (clearMap) {
-        _map?.clear();
-      }
-      try {
-        await _batch.commit(noResult: true);
-        if (_showLog) {
-          final duration = DateTime.now().difference(_time);
-          final formatted = duration.format(isReadable: true);
-          debugPrint('$tag: TRANSACTION SUCCESSFUL');
-          debugPrint('$tag: FINISHED AT $formatted');
+    if (db.inTransaction) {
+      if (!_chain) {
+        bool result = false;
+        if (clearMap) {
+          _map?.clear();
         }
-        db.removeBinder();
-        result = true;
-      } catch (error, stacktrace) {
-        printError(error, stacktrace);
-        rethrow;
+        try {
+          await _batch.commit(noResult: true);
+          if (_showLog) {
+            final duration = DateTime.now().difference(_time);
+            final formatted = duration.format(isReadable: true);
+            debugPrint('$tag: TRANSACTION SUCCESSFUL');
+            debugPrint('$tag: FINISHED AT $formatted');
+          }
+          db.removeBinder();
+          result = true;
+        } catch (error, stacktrace) {
+          printError(error, stacktrace);
+          rethrow;
+        }
+        return result;
+      } else {
+        chain(false);
+        return true;
       }
-      return result;
-    } else {
-      chain(false);
-      return true;
     }
+    return false;
   }
 
   void chain([bool chain = true]) {
@@ -267,8 +283,8 @@ class SQLiteBinder {
   }
 
   void addStatement(final sql) {
-  	if(_showLog) {
-  	  print(sql);
+    if (_showLog) {
+      print(sql);
     }
     _batch.execute(sql);
   }
