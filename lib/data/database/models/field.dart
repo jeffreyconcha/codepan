@@ -196,7 +196,7 @@ class Field extends SQLiteModel {
     this._constraint = constraint;
   }
 
-  Field.orderBy({
+  Field.order({
     required String field,
     Order order = Order.ascending,
     bool collate = false,
