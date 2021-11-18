@@ -61,7 +61,7 @@ class Time extends Equatable {
     this.time = '00:00:00',
   });
 
-  factory Time.from(DateTime? input) {
+  factory Time.value(DateTime? input) {
     if (input != null) {
       final date = DateFormat(dateFormat);
       final time = DateFormat(timeFormat);
@@ -73,14 +73,19 @@ class Time extends Equatable {
     return Time();
   }
 
+  factory Time.millis(int timestamp) {
+    final value = DateTime.fromMillisecondsSinceEpoch(timestamp);
+    return Time.value(value);
+  }
+
   factory Time.parse(String input) {
     final value = DateTime.parse(input);
-    return Time.from(value);
+    return Time.value(value);
   }
 
   factory Time.now() {
     final value = DateTime.now();
-    return Time.from(value);
+    return Time.value(value);
   }
 
   factory Time.fromTimeOfDay(TimeOfDay input) {
@@ -116,11 +121,11 @@ class Time extends Equatable {
     return value.isAfter(other.value);
   }
 
-  bool isAfterOrAtSameMomentAs(Time other) {
+  bool isAfterOrEqual(Time other) {
     return isAfter(other) || isEqual(other);
   }
 
-  bool isBeforeOrAtSameMomentAs(Time other) {
+  bool isBeforeOrEqual(Time other) {
     return isBefore(other) || isEqual(other);
   }
 
@@ -130,7 +135,7 @@ class Time extends Equatable {
 
   Time add(Duration duration) {
     final sum = value.add(duration);
-    return Time.from(sum);
+    return Time.value(sum);
   }
 
   @override
