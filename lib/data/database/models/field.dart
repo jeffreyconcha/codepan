@@ -10,6 +10,10 @@ enum Constraint {
   defaultField,
   unique,
 }
+enum Function {
+  count,
+  sum,
+}
 enum DataType {
   integer,
   text,
@@ -18,13 +22,9 @@ enum DataType {
 }
 
 class Field extends SQLiteModel {
-  bool? _collate,
-      _isCount,
-      _inUniqueGroup,
-      _withDateTrigger,
-      _withTimeTrigger,
-      _isIndex;
+  bool? _collate, _inUniqueGroup, _withDateTrigger, _withTimeTrigger, _isIndex;
   Constraint? _constraint;
+  Function? _function;
   DataType? _type;
   dynamic _value;
   Table? _reference;
@@ -42,7 +42,7 @@ class Field extends SQLiteModel {
 
   bool get inUniqueGroup => _inUniqueGroup ?? false;
 
-  bool get isCount => _isCount ?? false;
+  bool get isFunction => _function != null;
 
   bool? get collate => _collate;
 
@@ -99,7 +99,7 @@ class Field extends SQLiteModel {
     this._isIndex = isIndex;
   }
 
-  Field.asColumn(
+  Field.column(
     String field, {
     required DataType type,
     bool inUniqueGroup = false,
@@ -108,12 +108,12 @@ class Field extends SQLiteModel {
     this._inUniqueGroup = inUniqueGroup;
   }
 
-  Field.asPrimaryKey([String field = SQLiteStatement.id]) : super(field) {
+  Field.primaryKey([String field = SQLiteStatement.id]) : super(field) {
     this._constraint = Constraint.primaryKey;
     this._type = DataType.integer;
   }
 
-  Field.asForeignKey(
+  Field.foreignKey(
     String field, {
     required Table at,
     bool inUniqueGroup = false,
@@ -124,7 +124,7 @@ class Field extends SQLiteModel {
     this._inUniqueGroup = inUniqueGroup;
   }
 
-  Field.asUnique(
+  Field.unique(
     String field, {
     DataType type = DataType.integer,
   }) : super(field) {
@@ -132,7 +132,7 @@ class Field extends SQLiteModel {
     this._type = type;
   }
 
-  Field.asDefault(
+  Field.defaultValue(
     String field, {
     required dynamic value,
     bool inUniqueGroup = false,
@@ -142,7 +142,7 @@ class Field extends SQLiteModel {
     this._inUniqueGroup = inUniqueGroup;
   }
 
-  Field.asDate(
+  Field.date(
     String field, {
     bool withTrigger = false,
     bool inUniqueGroup = false,
@@ -152,7 +152,7 @@ class Field extends SQLiteModel {
     this._inUniqueGroup = inUniqueGroup;
   }
 
-  Field.asTime(
+  Field.time(
     String field, {
     bool withTrigger = false,
     bool inUniqueGroup = false,
@@ -163,7 +163,7 @@ class Field extends SQLiteModel {
   }
 
   @deprecated
-  Field.asUniqueGroup(
+  Field.uniqueGroup(
     String field, {
     Table? at,
     DataType type = DataType.integer,
@@ -178,7 +178,7 @@ class Field extends SQLiteModel {
 
   /// Shorthand for instantiating foreign keys. <br/><br/>
   /// Note: Must only be used in queries.
-  Field.asReference({
+  Field.reference({
     required String field,
     required Table reference,
   }) : super(field) {
@@ -186,7 +186,7 @@ class Field extends SQLiteModel {
     this._reference = reference;
   }
 
-  Field.asIndex(
+  Field.index(
     String field, {
     DataType type = DataType.integer,
     Constraint? constraint,
@@ -196,7 +196,7 @@ class Field extends SQLiteModel {
     this._constraint = constraint;
   }
 
-  Field.asOrder({
+  Field.orderBy({
     required String field,
     Order order = Order.ascending,
     bool collate = false,
@@ -205,13 +205,24 @@ class Field extends SQLiteModel {
     this._collate = collate;
   }
 
-  Field.asCount(String field) : super(field) {
-    this._isCount = true;
+  Field.function(
+    String field, {
+    required Function function,
+  }) : super(field) {
+    this._function = function;
+  }
+
+  Field.countOf(String field) : super(field) {
+    Field.function(field, function: Function.count);
+  }
+
+  Field.sumOf(String field) : super(field) {
+    Field.function(field, function: Function.sum);
   }
 
   /// Short for "<b>Unique Group</b>" <br/>
   /// Call this method if you want this field to be included in unique group. <br/>
-  /// If the same record has the same unique group fields it will update the 
+  /// If the same record has the same unique group fields it will update the
   /// existing record instead of inserting new record thus eliminating duplicates.<br/>
   /// Will only be applied to non-unique constraint.
   void ug() {
@@ -250,8 +261,17 @@ class Field extends SQLiteModel {
         final value = order.enumValue;
         final direction = value.replaceAll('ending', '').toUpperCase();
         buffer.write(' $direction');
-      } else if (isCount) {
-        buffer.write('COUNT($field)');
+      } else if (isFunction) {
+        switch (_function) {
+          case Function.count:
+            buffer.write('COUNT($field)');
+            break;
+          case Function.sum:
+            buffer.write('SUM($field)');
+            break;
+          default:
+            break;
+        }
       }
     }
     return buffer.toString();

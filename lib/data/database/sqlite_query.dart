@@ -106,7 +106,7 @@ class SQLiteQuery with QueryProperties {
       if (field is Field) {
         _addOrder(field, table: table);
       } else if (field is String) {
-        final f = Field.asOrder(field: field);
+        final f = Field.orderBy(field: field);
         _addOrder(f, table: table);
       }
     });

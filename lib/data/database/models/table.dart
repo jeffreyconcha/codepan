@@ -51,7 +51,7 @@ class Table<T> {
     Order order = Order.ascending,
     bool collate = false,
   }) {
-    return Field.asOrder(
+    return Field.orderBy(
       field: field,
       order: order,
       collate: collate,

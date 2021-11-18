@@ -93,7 +93,7 @@ class SQLiteBinder {
           ],
           from: schema.table,
           orderBy: [
-            Field.asOrder(
+            Field.orderBy(
               field: primaryKey,
               order: Order.ascending,
             ),
@@ -114,7 +114,7 @@ class SQLiteBinder {
           select: uniqueGroup!..add(primaryKey),
           from: schema.table,
           orderBy: [
-            Field.asOrder(
+            Field.orderBy(
               field: primaryKey,
               order: Order.ascending,
             ),
@@ -195,7 +195,7 @@ class SQLiteBinder {
         ],
         from: table,
         orderBy: [
-          Field.asOrder(
+          Field.orderBy(
             field: primaryKey,
             order: Order.descending,
           )

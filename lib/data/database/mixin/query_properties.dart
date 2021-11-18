@@ -30,13 +30,13 @@ mixin QueryProperties {
     final buffer = StringBuffer();
     if (fieldList != null) {
       for (final field in fieldList) {
-        if (!field.isCount) {
+        if (!field.isFunction) {
           buffer.write(field.field);
         } else {
           buffer.write(field.asString());
         }
         if (withAlias) {
-          if (!field.isCount) {
+          if (!field.isFunction) {
             buffer.write(' as \'${field.field}\'');
           } else {
             buffer.write(' as \'${field.asString()}\'');
