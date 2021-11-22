@@ -213,11 +213,11 @@ class Field extends SQLiteModel {
   }
 
   Field.countOf(String field) : super(field) {
-    Field.function(field, function: Function.count);
+    this._function = Function.count;
   }
 
   Field.sumOf(String field) : super(field) {
-    Field.function(field, function: Function.sum);
+    this._function = Function.sum;
   }
 
   /// Short for "<b>Unique Group</b>" <br/>
