@@ -11,6 +11,7 @@ enum Constraint {
   unique,
   dateFormatted,
   timeFormatted,
+  notNull,
 }
 enum Function {
   count,
@@ -25,14 +26,12 @@ enum DataType {
 
 class Field extends SQLiteModel {
   bool? _collate, _inUniqueGroup, _withDateTrigger, _withTimeTrigger, _isIndex;
-  Constraint? _constraint;
+  List<Constraint>? _constraintList;
   Function? _function;
   DataType? _type;
   dynamic _value;
   Table? _reference;
   Order? _order;
-
-  Constraint? get constraint => _constraint;
 
   dynamic get value => _value;
 
@@ -48,7 +47,8 @@ class Field extends SQLiteModel {
 
   bool? get collate => _collate;
 
-  bool get hasConstraint => _constraint != null;
+  bool get hasConstraints =>
+      _constraintList != null && _constraintList!.isNotEmpty;
 
   bool get hasDataType => _type != null;
 
@@ -60,9 +60,9 @@ class Field extends SQLiteModel {
 
   bool get isIndex => _isIndex ?? false;
 
-  bool get isForeignKey => _constraint == Constraint.foreignKey;
+  bool get isForeignKey => hasConstraint(Constraint.foreignKey);
 
-  bool get isUnique => _constraint == Constraint.unique;
+  bool get isUnique => hasConstraint(Constraint.unique);
 
   String? get dataType => hasDataType ? _type.toString().split('.').last : null;
 
@@ -88,10 +88,10 @@ class Field extends SQLiteModel {
     bool isIndex = false,
   }) : super(_field) {
     if (value != null) {
-      this._constraint = Constraint.defaultField;
+      _addConstraint(Constraint.defaultField);
       this._type = _getDataType(value);
     } else {
-      this._constraint = constraint;
+      _addConstraint(constraint);
       this._type = type;
     }
     this._value = value;
@@ -111,7 +111,7 @@ class Field extends SQLiteModel {
   }
 
   Field.primaryKey([String field = SQLiteStatement.id]) : super(field) {
-    this._constraint = Constraint.primaryKey;
+    _addConstraint(Constraint.primaryKey);
     this._type = DataType.integer;
   }
 
@@ -120,7 +120,7 @@ class Field extends SQLiteModel {
     required Table at,
     bool inUniqueGroup = false,
   }) : super(field) {
-    this._constraint = Constraint.foreignKey;
+    _addConstraint(Constraint.foreignKey);
     this._type = DataType.integer;
     this._reference = at;
     this._inUniqueGroup = inUniqueGroup;
@@ -130,7 +130,7 @@ class Field extends SQLiteModel {
     String field, {
     DataType type = DataType.integer,
   }) : super(field) {
-    this._constraint = Constraint.unique;
+    _addConstraint(Constraint.unique);
     this._type = type;
   }
 
@@ -139,45 +139,43 @@ class Field extends SQLiteModel {
     required dynamic value,
     bool inUniqueGroup = false,
   }) : super(field) {
-    this._constraint = Constraint.defaultField;
+    _addConstraint(Constraint.defaultField);
     this._type = _getDataType(value);
     this._inUniqueGroup = inUniqueGroup;
   }
 
-  Field.date(
-    String field, {
-    bool withTrigger = false,
-    bool inUniqueGroup = false,
-  }) : super(field) {
+  Field.autoDate(String field) : super(field) {
+    _addConstraint(Constraint.dateFormatted);
     this._type = DataType.text;
-    this._constraint = Constraint.dateFormatted;
-    this._withDateTrigger = withTrigger;
-    this._inUniqueGroup = inUniqueGroup;
+    this._withDateTrigger = true;
   }
 
-  Field.time(
-    String field, {
-    bool withTrigger = false,
-    bool inUniqueGroup = false,
-  }) : super(field) {
+  Field.autoTime(String field) : super(field) {
+    _addConstraint(Constraint.timeFormatted);
     this._type = DataType.text;
-    this._constraint = Constraint.timeFormatted;
-    this._withTimeTrigger = withTrigger;
-    this._inUniqueGroup = inUniqueGroup;
+    this._withTimeTrigger = true;
   }
 
-  @deprecated
-  Field.uniqueGroup(
-    String field, {
-    Table? at,
-    DataType type = DataType.integer,
-  }) : super(field) {
-    this._type = type;
-    this._inUniqueGroup = true;
-    if (at != null) {
-      this._constraint = Constraint.foreignKey;
-      this._reference = at;
-    }
+  Field.uniqueDate(String field) : super(field) {
+    _addConstraint(Constraint.unique);
+    _addConstraint(Constraint.dateFormatted);
+    this._type = DataType.text;
+  }
+
+  Field.uniqueTime(String field) : super(field) {
+    _addConstraint(Constraint.unique);
+    _addConstraint(Constraint.timeFormatted);
+    this._type = DataType.text;
+  }
+
+  Field.date(String field) : super(field) {
+    _addConstraint(Constraint.dateFormatted);
+    this._type = DataType.text;
+  }
+
+  Field.time(String field) : super(field) {
+    _addConstraint(Constraint.timeFormatted);
+    this._type = DataType.text;
   }
 
   /// Shorthand for instantiating foreign keys. <br/><br/>
@@ -186,7 +184,7 @@ class Field extends SQLiteModel {
     required String field,
     required Table reference,
   }) : super(field) {
-    this._constraint = Constraint.foreignKey;
+    _addConstraint(Constraint.foreignKey);
     this._reference = reference;
   }
 
@@ -197,7 +195,7 @@ class Field extends SQLiteModel {
   }) : super(field) {
     this._type = type;
     this._isIndex = true;
-    this._constraint = constraint;
+    _addConstraint(constraint);
   }
 
   Field.order({
@@ -230,7 +228,7 @@ class Field extends SQLiteModel {
   /// existing record instead of inserting new record thus eliminating duplicates.<br/>
   /// Will only be applied to a non-unique constraint.
   void ug() {
-    if (constraint != Constraint.unique) {
+    if (hasConstraints && !_constraintList!.contains(Constraint.unique)) {
       this._inUniqueGroup = true;
     }
   }
@@ -239,27 +237,32 @@ class Field extends SQLiteModel {
     final buffer = new StringBuffer();
     if (hasDataType) {
       buffer.write('$field $dataType');
-      if (hasConstraint) {
-        switch (constraint!) {
-          case Constraint.primaryKey:
-            buffer.write(' PRIMARY KEY NOT NULL');
-            break;
-          case Constraint.foreignKey:
-            buffer
-                .write(' REFERENCES ${reference!.name}(${SQLiteStatement.id})');
-            break;
-          case Constraint.unique:
-            buffer.write(' UNIQUE');
-            break;
-          case Constraint.defaultField:
-            buffer.write(' DEFAULT $defaultValue');
-            break;
-          case Constraint.dateFormatted:
-            buffer.write(' CHECK ($field IS DATE($field))');
-            break;
-          case Constraint.timeFormatted:
-            buffer.write(' CHECK ($field IS TIME($field))');
-            break;
+      if (hasConstraints) {
+        for (final constraint in _constraintList!) {
+          switch (constraint) {
+            case Constraint.primaryKey:
+              buffer.write(' PRIMARY KEY NOT NULL');
+              break;
+            case Constraint.foreignKey:
+              buffer.write(
+                  ' REFERENCES ${reference!.name}(${SQLiteStatement.id})');
+              break;
+            case Constraint.unique:
+              buffer.write(' UNIQUE');
+              break;
+            case Constraint.defaultField:
+              buffer.write(' DEFAULT $defaultValue');
+              break;
+            case Constraint.dateFormatted:
+              buffer.write(' CHECK ($field IS DATE($field))');
+              break;
+            case Constraint.timeFormatted:
+              buffer.write(' CHECK ($field IS TIME($field))');
+              break;
+            case Constraint.notNull:
+              buffer.write(' NOT NULL');
+              break;
+          }
         }
       }
     } else {
@@ -296,6 +299,20 @@ class Field extends SQLiteModel {
       return DataType.text;
     } else {
       return DataType.blob;
+    }
+  }
+
+  bool hasConstraint(Constraint constraint) {
+    if (hasConstraints) {
+      return _constraintList!.contains(constraint);
+    }
+    return false;
+  }
+
+  void _addConstraint(Constraint? constraint) {
+    if (constraint != null) {
+      _constraintList ??= [];
+      _constraintList!.add(constraint);
     }
   }
 }
