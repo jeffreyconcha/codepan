@@ -28,7 +28,6 @@ typedef BinderBody = Future<dynamic> Function(
 
 class SQLiteBinder {
   final SQLiteAdapter db;
-  late BinderBody _body;
   late DateTime _time;
   late Batch _batch;
   Map<String?, int?>? _map;
@@ -64,7 +63,6 @@ class SQLiteBinder {
       }
       db.setBinder(this);
     }
-    this._body = body;
     try {
       if (autoFinish) {
         await body.call(this);
@@ -142,11 +140,16 @@ class SQLiteBinder {
   }
 
   Future<bool> apply() async {
-    final result = await finish(clearMap: false);
-    if (result) {
-      await transact(body: _body);
+    if (db.inTransaction) {
+      try {
+        await _batch.commit(noResult: true);
+        return true;
+      } catch (error, stacktrace) {
+        printError(error, stacktrace);
+        rethrow;
+      }
     }
-    return result;
+    return false;
   }
 
   Future<bool> finish({
