@@ -48,12 +48,6 @@ class _ProgressDialogState extends State<ProgressDialog> {
   }
 
   @override
-  void dispose() {
-    controller!.dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     final d = Dimension.of(context);
     final t = Theme.of(context);
