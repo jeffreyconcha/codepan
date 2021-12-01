@@ -254,7 +254,7 @@ class Field extends SQLiteModel {
               buffer.write(' DEFAULT $defaultValue');
               break;
             case Constraint.dateFormatted:
-              buffer.write(' CHECK ($field IS DATE($field))');
+              buffer.write(' CHECK ($field IS DATE($field) OR $field = \'0000-00-00\')');
               break;
             case Constraint.timeFormatted:
               buffer.write(' CHECK ($field IS TIME($field))');
