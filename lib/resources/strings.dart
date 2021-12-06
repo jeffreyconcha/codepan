@@ -1,10 +1,15 @@
 class Strings {
   static const String loading = 'Loading...';
+  static const String pullDownToRefresh = 'Pull-down to Refresh';
+  static const String releaseToRefresh = 'Release to Refresh';
+  static const String completed = 'Completed';
+  static const String refreshing = 'Refreshing...';
 }
 
 class Errors {
   static const String failedToPlayVideo = 'Failed to play video.';
   static const String failedToPlayAudio = 'Failed to play audio';
+  static const String failedToRefresh = 'Failed to refresh.';
 }
 
 class PermissionInfo {

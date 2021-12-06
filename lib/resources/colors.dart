@@ -13,4 +13,6 @@ class PanColors {
   static const Color grey2 = Color(0xFFF7F8F8);
   static const Color splash = Color(0x19000000);
   static const Color highlight = Color(0x19000000);
+  static const Color red1 = Color(0xFFD32F2F);
+  static const Color green1 = Color(0xFF39AC4C);
 }

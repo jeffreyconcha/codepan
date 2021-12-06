@@ -78,7 +78,7 @@ class Field extends SQLiteModel {
   }
 
   Field(
-    String? _field, {
+    String _field, {
     DataType? type,
     Constraint? constraint,
     dynamic value,

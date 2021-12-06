@@ -103,6 +103,10 @@ extension StringUtils on String {
     return SINGULAR.convert(this);
   }
 
+  String toPlural() {
+    return PLURAL.convert(this);
+  }
+
   bool? toBool() {
     if (_true.contains(this)) {
       return true;

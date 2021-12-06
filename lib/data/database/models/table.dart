@@ -38,11 +38,11 @@ class Table<T> {
     return buffer.toString();
   }
 
-  String? rawField(String name) {
+  String rawField(String name) {
     return field(name).field;
   }
 
-  Field field(String? name) {
+  Field field(String name) {
     return Field(name)..setTable(this);
   }
 

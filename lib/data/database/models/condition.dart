@@ -109,7 +109,7 @@ class Condition extends SQLiteModel {
   bool get isValid => hasValue || _isNoValueOperator;
 
   Condition(
-    String? _field,
+    String _field,
     this._value, {
     dynamic start,
     dynamic end,
@@ -128,13 +128,13 @@ class Condition extends SQLiteModel {
     }
   }
 
-  Condition.or(this.orList) : super(null) {
+  Condition.or(this.orList) : super('') {
     if (hasAndList) {
       throw SQLiteException(SQLiteException.invalidConditionList);
     }
   }
 
-  Condition.and(this.andList) : super(null) {
+  Condition.and(this.andList) : super('') {
     if (hasOrList) {
       throw SQLiteException(SQLiteException.invalidConditionList);
     }
@@ -220,7 +220,7 @@ class Condition extends SQLiteModel {
     );
   }
 
-  factory Condition.isNull(String? field) {
+  factory Condition.isNull(String field) {
     return Condition(
       field,
       null,

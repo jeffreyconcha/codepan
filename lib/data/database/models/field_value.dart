@@ -46,5 +46,5 @@ class FieldValue extends SQLiteModel {
     return null;
   }
 
-  FieldValue(String? _field, this._value) : super(_field);
+  FieldValue(String _field, this._value) : super(_field);
 }
