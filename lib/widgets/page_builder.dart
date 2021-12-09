@@ -2,6 +2,7 @@ import 'package:codepan/bloc/parent_bloc.dart';
 import 'package:codepan/bloc/parent_event.dart';
 import 'package:codepan/bloc/parent_state.dart';
 import 'package:codepan/resources/dimensions.dart';
+import 'package:codepan/widgets/placeholder_handler.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -56,7 +57,6 @@ class PageBlocBuilder<E extends ParentEvent, B extends ParentBloc<E, S>,
         preferredSize: Size.fromHeight(0),
         child: AppBar(
           elevation: 0,
-          brightness: brightness ?? a.brightness,
           backgroundColor: statusBarColor,
         ),
       );
@@ -107,8 +107,16 @@ class _PageBlocBody<E extends ParentEvent, B extends ParentBloc<E, S>,
               return Stack(
                 children: [
                   builder.call(context, state),
-                  Container(
-                    child: layer?.call(context, state),
+                  LayoutBuilder(
+                    builder: (context, constraints) {
+                      return PlaceholderHandler(
+                        condition:
+                            maxHeight == constraints.maxHeight && layer != null,
+                        childBuilder: (context) {
+                          return layer!.call(context, state);
+                        },
+                      );
+                    },
                   ),
                 ],
               );
@@ -117,11 +125,21 @@ class _PageBlocBody<E extends ParentEvent, B extends ParentBloc<E, S>,
                 child: Stack(
                   children: [
                     builder.call(context, state),
-                    SafeArea(
-                      child: Container(
-                        height: maxHeight,
-                        child: layer?.call(context, state),
-                      ),
+                    LayoutBuilder(
+                      builder: (context, constraints) {
+                        return PlaceholderHandler(
+                          condition: maxHeight == constraints.maxHeight &&
+                              layer != null,
+                          childBuilder: (context) {
+                            return SafeArea(
+                              child: Container(
+                                height: maxHeight,
+                                child: layer!.call(context, state),
+                              ),
+                            );
+                          },
+                        );
+                      },
                     ),
                   ],
                 ),
@@ -162,7 +180,6 @@ class PageBuilder extends StatelessWidget {
         preferredSize: Size.fromHeight(0),
         child: AppBar(
           elevation: 0,
-          brightness: brightness ?? a.brightness,
           backgroundColor: statusBarColor,
         ),
       );
@@ -201,8 +218,16 @@ class _PageBody extends StatelessWidget {
         return Stack(
           children: [
             builder!.call(context),
-            Container(
-              child: layer?.call(context),
+            LayoutBuilder(
+              builder: (context, constraints) {
+                return PlaceholderHandler(
+                  condition:
+                      maxHeight == constraints.maxHeight && layer != null,
+                  childBuilder: (context) {
+                    return layer!.call(context);
+                  },
+                );
+              },
             ),
           ],
         );
@@ -211,11 +236,21 @@ class _PageBody extends StatelessWidget {
           child: Stack(
             children: [
               builder!.call(context),
-              SafeArea(
-                child: Container(
-                  height: maxHeight,
-                  child: layer?.call(context),
-                ),
+              LayoutBuilder(
+                builder: (context, constraints) {
+                  return PlaceholderHandler(
+                    condition:
+                        maxHeight == constraints.maxHeight && layer != null,
+                    childBuilder: (context) {
+                      return SafeArea(
+                        child: Container(
+                          height: maxHeight,
+                          child: layer!.call(context),
+                        ),
+                      );
+                    },
+                  );
+                },
               ),
             ],
           ),

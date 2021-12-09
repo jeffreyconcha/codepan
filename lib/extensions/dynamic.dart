@@ -6,7 +6,11 @@ extension DynamicUtils on dynamic {
 
   String get enumValue => PanUtils.enumValue(this);
 
+  String toWords() {
+    return enumValue.toSnake().replaceAll('_', ' ').toLowerCase();
+  }
+
   String toCapitalizedWords() {
-    return enumValue.toSnake().replaceAll('_', ' ').capitalize();
+    return toWords().capitalize();
   }
 }
