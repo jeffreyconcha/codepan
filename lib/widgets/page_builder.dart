@@ -50,7 +50,6 @@ class PageBlocBuilder<E extends ParentEvent, B extends ParentBloc<E, S>,
   Widget build(BuildContext context) {
     final d = Dimension.of(context, isSafeArea: true);
     final t = Theme.of(context);
-    final a = t.appBarTheme;
     PreferredSize? appBar;
     if (bottomNavigationBar == null) {
       appBar = PreferredSize(
@@ -121,13 +120,13 @@ class _PageBlocBody<E extends ParentEvent, B extends ParentBloc<E, S>,
                 ],
               );
             default:
-              return SingleChildScrollView(
-                child: Stack(
-                  children: [
-                    builder.call(context, state),
-                    LayoutBuilder(
-                      builder: (context, constraints) {
-                        return PlaceholderHandler(
+              return LayoutBuilder(
+                builder: (context, constraints) {
+                  return SingleChildScrollView(
+                    child: Stack(
+                      children: [
+                        builder.call(context, state),
+                        PlaceholderHandler(
                           condition: maxHeight == constraints.maxHeight &&
                               layer != null,
                           childBuilder: (context) {
@@ -138,11 +137,11 @@ class _PageBlocBody<E extends ParentEvent, B extends ParentBloc<E, S>,
                               ),
                             );
                           },
-                        );
-                      },
+                        ),
+                      ],
                     ),
-                  ],
-                ),
+                  );
+                },
               );
           }
         },
@@ -153,15 +152,16 @@ class _PageBlocBody<E extends ParentEvent, B extends ParentBloc<E, S>,
 
 class PageBuilder extends StatelessWidget {
   final Color? background, statusBarColor;
-  final WidgetBuilder? builder, layer;
   final PageScrollBehaviour behaviour;
   final Widget? bottomNavigationBar;
   final Brightness? brightness;
+  final WidgetBuilder builder;
+  final WidgetBuilder? layer;
 
   const PageBuilder({
     Key? key,
+    required this.builder,
     this.background,
-    this.builder,
     this.layer,
     this.brightness,
     this.bottomNavigationBar,
@@ -173,7 +173,6 @@ class PageBuilder extends StatelessWidget {
   Widget build(BuildContext context) {
     final d = Dimension.of(context, isSafeArea: true);
     final t = Theme.of(context);
-    final a = t.appBarTheme;
     PreferredSize? appBar;
     if (bottomNavigationBar == null) {
       appBar = PreferredSize(
@@ -199,13 +198,14 @@ class PageBuilder extends StatelessWidget {
 }
 
 class _PageBody extends StatelessWidget {
-  final WidgetBuilder? builder, layer;
   final PageScrollBehaviour? behaviour;
+  final WidgetBuilder builder;
+  final WidgetBuilder? layer;
   final double? maxHeight;
 
   const _PageBody({
     Key? key,
-    this.builder,
+    required this.builder,
     this.layer,
     this.behaviour,
     this.maxHeight,
@@ -217,7 +217,7 @@ class _PageBody extends StatelessWidget {
       case PageScrollBehaviour.none:
         return Stack(
           children: [
-            builder!.call(context),
+            builder.call(context),
             LayoutBuilder(
               builder: (context, constraints) {
                 return PlaceholderHandler(
@@ -232,13 +232,13 @@ class _PageBody extends StatelessWidget {
           ],
         );
       default:
-        return SingleChildScrollView(
-          child: Stack(
-            children: [
-              builder!.call(context),
-              LayoutBuilder(
-                builder: (context, constraints) {
-                  return PlaceholderHandler(
+        return LayoutBuilder(
+          builder: (context, constraints) {
+            return SingleChildScrollView(
+              child: Stack(
+                children: [
+                  builder.call(context),
+                  PlaceholderHandler(
                     condition:
                         maxHeight == constraints.maxHeight && layer != null,
                     childBuilder: (context) {
@@ -249,11 +249,11 @@ class _PageBody extends StatelessWidget {
                         ),
                       );
                     },
-                  );
-                },
+                  ),
+                ],
               ),
-            ],
-          ),
+            );
+          },
         );
     }
   }
