@@ -139,8 +139,14 @@ class SQLiteStatement with QueryProperties {
     return buffer.toString();
   }
 
-  String delete(String table, dynamic id) {
-    return 'DELETE FROM $table WHERE ${SQLiteStatement.id} = ${id.toString()}';
+  String delete(
+    String table, [
+    dynamic id,
+  ]) {
+    if (id != null) {
+      return 'DELETE FROM $table WHERE ${SQLiteStatement.id} = ${id.toString()}';
+    }
+    return 'DELETE FROM $table';
   }
 
   String deleteWithConditions(String table) {

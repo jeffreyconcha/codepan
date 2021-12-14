@@ -397,6 +397,12 @@ class SQLiteBinder {
     }
   }
 
+  void truncate(String table) {
+    final stmt = SQLiteStatement();
+    addStatement(stmt.delete(table));
+    addStatement(stmt.resetTable(table));
+  }
+
   void delete(String table, dynamic id) {
     final sql = SQLiteStatement().delete(table, id);
     addStatement(sql);

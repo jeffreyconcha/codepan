@@ -5,7 +5,7 @@ extension DurationUtils on Duration {
     bool isAbbreviated = false,
   }) {
     String format(int n) => n.toString().padLeft(2, "0");
-    final num h = this.inHours.remainder(24);
+    final num h = this.inHours;
     final num m = this.inMinutes.remainder(60);
     final num s = this.inSeconds.remainder(60);
     final hs = isReadable
