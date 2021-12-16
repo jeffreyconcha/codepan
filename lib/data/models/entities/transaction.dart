@@ -15,7 +15,7 @@ abstract class TransactionData extends EntityData
     this.timeCreated,
     this.dateUpdated,
     this.timeUpdated,
-    this.isDeleted = false,
+    this.isDeleted,
   });
 
   @override

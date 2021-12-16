@@ -3,6 +3,7 @@ import 'package:codepan/data/database/models/field.dart';
 import 'package:codepan/data/database/models/table.dart' as tb;
 import 'package:codepan/data/database/schema.dart';
 import 'package:codepan/data/database/sqlite_exception.dart';
+import 'package:codepan/extensions/dynamic.dart';
 
 enum JoinType {
   left,
@@ -224,7 +225,7 @@ class SQLiteQuery with QueryProperties {
             bf.write(', ${q.fieldsWithAlias}');
           }
           final tb = q.table!;
-          final type = q.type.toString().split('.').last;
+          final type = q.type.toWords(allCaps: true);
           bq.write(' $type JOIN ${tb.name} as ${tb.alias} ON ${q.conditions}');
         }
         buffer.write('SELECT $fieldsWithAlias');

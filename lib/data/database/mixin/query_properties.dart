@@ -91,7 +91,9 @@ mixin QueryProperties {
     Table? table,
   }) {
     if (c.isValid) {
-      c.setTable(table);
+      if (!c.field.contains('.')) {
+        c.setTable(table);
+      }
       _conditionList ??= [];
       _conditionList!.add(c);
     } else if (c.hasOrList) {
