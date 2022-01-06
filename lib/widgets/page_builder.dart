@@ -41,7 +41,7 @@ class PageBlocBuilder<E extends ParentEvent, B extends ParentBloc<E, S>,
     this.layer,
     this.background,
     this.brightness,
-    this.statusBarColor = Colors.transparent,
+    this.statusBarColor,
     this.behaviour = PageScrollBehaviour.whole,
     this.bottomNavigationBar,
   }) : super(key: key);
@@ -50,20 +50,21 @@ class PageBlocBuilder<E extends ParentEvent, B extends ParentBloc<E, S>,
   Widget build(BuildContext context) {
     final d = Dimension.of(context, isSafeArea: true);
     final t = Theme.of(context);
+    final _background = background ?? t.backgroundColor;
     PreferredSize? appBar;
     if (bottomNavigationBar == null) {
       appBar = PreferredSize(
         preferredSize: Size.fromHeight(0),
         child: AppBar(
           elevation: 0,
-          backgroundColor: statusBarColor,
+          backgroundColor: statusBarColor ?? _background,
         ),
       );
     }
     return BlocProvider<B>(
       create: creator as B Function(BuildContext),
       child: Scaffold(
-        backgroundColor: background ?? t.backgroundColor,
+        backgroundColor: _background,
         appBar: appBar,
         body: _PageBlocBody<E, B, S>(
           builder: builder,
@@ -165,7 +166,7 @@ class PageBuilder extends StatelessWidget {
     this.layer,
     this.brightness,
     this.bottomNavigationBar,
-    this.statusBarColor = Colors.transparent,
+    this.statusBarColor,
     this.behaviour = PageScrollBehaviour.whole,
   }) : super(key: key);
 
@@ -173,18 +174,19 @@ class PageBuilder extends StatelessWidget {
   Widget build(BuildContext context) {
     final d = Dimension.of(context, isSafeArea: true);
     final t = Theme.of(context);
+    final _background = background ?? t.backgroundColor;
     PreferredSize? appBar;
     if (bottomNavigationBar == null) {
       appBar = PreferredSize(
         preferredSize: Size.fromHeight(0),
         child: AppBar(
           elevation: 0,
-          backgroundColor: statusBarColor,
+          backgroundColor: statusBarColor ?? _background,
         ),
       );
     }
     return Scaffold(
-      backgroundColor: background ?? t.backgroundColor,
+      backgroundColor: _background,
       appBar: appBar,
       body: _PageBody(
         builder: builder,
