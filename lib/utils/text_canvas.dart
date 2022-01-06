@@ -1,4 +1,6 @@
 import 'dart:ui' as ui;
+
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class TextCanvas extends CustomPainter {
@@ -32,7 +34,13 @@ class TextCanvas extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     _painter.layout(maxWidth: size.width);
-    _painter.paint(canvas, offset);
+    if (textAlign == TextAlign.right || textAlign == TextAlign.end) {
+      final contentWidth = _painter.size.width + offset.dx;
+      final dx = size.width - contentWidth;
+      _painter.paint(canvas, Offset(dx, offset.dy));
+    } else {
+      _painter.paint(canvas, offset);
+    }
   }
 
   @override

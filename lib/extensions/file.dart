@@ -76,18 +76,16 @@ extension FileUtils on File {
     final rotation = await getImageRotation();
     final rotated = await getRotatedImage();
     final min = m.min(rotated.width, rotated.height);
+    final max = m.max(rotated.width, rotated.height);
     final scale = min / d.min;
-    final painter = builder.call(
-      rotated.width,
-      rotated.height,
-      scale,
-    );
+    final painter = builder.call(min, max, scale);
     final rendered = await painter.renderImage(
-      width: rotated.width,
-      height: rotated.height,
+      width: min,
+      height: max,
     );
     final byte = await rendered.toByteData(format: ImageByteFormat.png);
-    final stamp = i.decodeImage(byte!.buffer.asUint8List())!;
+    final watermark = i.decodeImage(byte!.buffer.asUint8List())!;
+    final stamp = i.copyRotate(watermark, rotation);
     final stamped = i.drawImage(rotated, stamp);
     final original = i.copyRotate(stamped, 360 - rotation);
     final encoded = i.encodeJpg(original);
