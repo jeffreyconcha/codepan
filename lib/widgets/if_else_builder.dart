@@ -1,20 +1,20 @@
 import 'package:flutter/material.dart';
 
-class PlaceholderHandler extends StatelessWidget {
-  final WidgetBuilder? childBuilder, placeholderBuilder;
-  final Widget? child, placeholder;
+class IfElseBuilder extends StatelessWidget {
+  final WidgetBuilder? ifBuilder, elseBuilder;
+  final Widget? ifChild, elseChild;
   final EdgeInsets? margin, padding;
   final double? width, height;
   final Alignment? alignment;
   final bool? condition;
   final Color? color;
 
-  const PlaceholderHandler({
+  const IfElseBuilder({
     Key? key,
-    this.child,
-    this.placeholder,
-    this.childBuilder,
-    this.placeholderBuilder,
+    this.ifChild,
+    this.elseChild,
+    this.ifBuilder,
+    this.elseBuilder,
     this.condition = false,
     this.margin,
     this.padding,
@@ -34,8 +34,8 @@ class PlaceholderHandler extends StatelessWidget {
       padding: padding,
       alignment: alignment,
       child: condition!
-          ? child ?? childBuilder?.call(context)
-          : placeholder ?? placeholderBuilder?.call(context),
+          ? ifChild ?? ifBuilder?.call(context)
+          : elseChild ?? elseBuilder?.call(context),
     );
   }
 }

@@ -1,4 +1,4 @@
-import 'package:codepan/widgets/placeholder_handler.dart';
+import 'package:codepan/widgets/if_else_builder.dart';
 import 'package:flutter/material.dart';
 
 class PanHero extends StatelessWidget {
@@ -31,10 +31,10 @@ class PanHero extends StatelessWidget {
       createRectTween: tween,
       child: Material(
         color: t.backgroundColor,
-        child: PlaceholderHandler(
+        child: IfElseBuilder(
           condition: !flexible,
-          childBuilder: (context) => child,
-          placeholderBuilder: (context) {
+          ifBuilder: (context) => child,
+          elseBuilder: (context) {
             return SingleChildScrollView(
               child: child,
             );

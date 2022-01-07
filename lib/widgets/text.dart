@@ -1,5 +1,5 @@
 import 'package:codepan/resources/colors.dart';
-import 'package:codepan/widgets/placeholder_handler.dart';
+import 'package:codepan/widgets/if_else_builder.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
@@ -122,17 +122,17 @@ class PanText extends StatelessWidget {
       textAlign: textAlign,
       textDirection: textDirection,
     );
-    return PlaceholderHandler(
+    return IfElseBuilder(
       condition: (text != null && text.isNotEmpty) || children != null,
-      child: Container(
+      ifChild: Container(
         width: width,
         height: height,
         margin: margin,
         padding: padding,
         alignment: alignment,
-        child: PlaceholderHandler(
+        child: IfElseBuilder(
           condition: onTextOverflow != null,
-          childBuilder: (context) {
+          ifBuilder: (context) {
             return LayoutBuilder(
               builder: (context, constraints) {
                 final painter = TextPainter(
@@ -161,7 +161,7 @@ class PanText extends StatelessWidget {
               },
             );
           },
-          placeholderBuilder: (context) {
+          elseBuilder: (context) {
             return rich;
           },
         ),

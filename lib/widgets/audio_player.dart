@@ -9,7 +9,7 @@ import 'package:codepan/resources/strings.dart';
 import 'package:codepan/widgets/button.dart';
 import 'package:codepan/widgets/loading_indicator.dart';
 import 'package:codepan/widgets/media_progress_indicator.dart';
-import 'package:codepan/widgets/placeholder_handler.dart';
+import 'package:codepan/widgets/if_else_builder.dart';
 import 'package:flutter/material.dart';
 
 class PanAudioPlayer extends StatefulWidget {
@@ -101,11 +101,11 @@ class _PanAudioPlayerState extends State<PanAudioPlayer> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
-          PlaceholderHandler(
+          IfElseBuilder(
             width: d.at(50),
             height: d.at(50),
             condition: !_isLoading,
-            childBuilder: (context) {
+            ifBuilder: (context) {
               return PanButton(
                 radius: d.at(100),
                 width: d.at(50),
@@ -118,7 +118,7 @@ class _PanAudioPlayerState extends State<PanAudioPlayer> {
                 onPressed: play,
               );
             },
-            placeholderBuilder: (context) {
+            elseBuilder: (context) {
               return LoadingIndicator(
                 width: d.at(25),
                 height: d.at(25),

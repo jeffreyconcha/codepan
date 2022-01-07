@@ -6,7 +6,7 @@ import 'package:codepan/resources/strings.dart';
 import 'package:codepan/transitions/route_transition.dart';
 import 'package:codepan/utils/debouncer.dart';
 import 'package:codepan/widgets/loading_indicator.dart';
-import 'package:codepan/widgets/placeholder_handler.dart';
+import 'package:codepan/widgets/if_else_builder.dart';
 import 'package:codepan/widgets/video_controller.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -145,9 +145,9 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
           child: Stack(
             children: <Widget>[
               Center(
-                child: PlaceholderHandler(
+                child: IfElseBuilder(
                   condition: _isInitialized,
-                  childBuilder: (context) {
+                  ifBuilder: (context) {
                     return Stack(
                       children: <Widget>[
                         Center(
@@ -156,9 +156,9 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
                             child: VideoPlayer(_controller!),
                           ),
                         ),
-                        PlaceholderHandler(
+                        IfElseBuilder(
                           condition: _isBuffering,
-                          childBuilder: (context) {
+                          ifBuilder: (context) {
                             return LoadingIndicator(
                               color: widget.color,
                             );
@@ -167,7 +167,7 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
                       ],
                     );
                   },
-                  placeholderBuilder: (context) {
+                  elseBuilder: (context) {
                     return Stack(
                       children: [
                         CachedNetworkImage(
@@ -176,9 +176,9 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
                           imageUrl: _thumbnailUrl ?? '',
                           fit: BoxFit.contain,
                         ),
-                        PlaceholderHandler(
+                        IfElseBuilder(
                           condition: _isLoading,
-                          childBuilder: (context) {
+                          ifBuilder: (context) {
                             return LoadingIndicator(
                               color: widget.color,
                             );
@@ -196,10 +196,10 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
                   child: AnimatedOpacity(
                     duration: Duration(milliseconds: 250),
                     opacity: _isControllerVisible ? 1 : 0,
-                    child: PlaceholderHandler(
+                    child: IfElseBuilder(
                       color: Colors.black.withOpacity(0.2),
                       condition: _isControllerVisible,
-                      childBuilder: (context) {
+                      ifBuilder: (context) {
                         return VideoController(
                           color: widget.color,
                           isInitialized: _isInitialized,

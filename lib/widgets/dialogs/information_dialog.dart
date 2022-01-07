@@ -3,7 +3,7 @@ import 'package:codepan/resources/colors.dart';
 import 'package:codepan/resources/dimensions.dart';
 import 'package:codepan/widgets/button.dart';
 import 'package:codepan/widgets/line_divider.dart';
-import 'package:codepan/widgets/placeholder_handler.dart';
+import 'package:codepan/widgets/if_else_builder.dart';
 import 'package:codepan/widgets/text.dart';
 import 'package:flutter/material.dart';
 
@@ -101,19 +101,19 @@ class _InformationDialogState extends State<InformationDialog> {
                             vertical: d.at(15),
                           ),
                         ),
-                        PlaceholderHandler(
+                        IfElseBuilder(
                           condition: widget.withDivider,
-                          childBuilder: (context) {
+                          ifBuilder: (context) {
                             return LineDivider(
                               color: t.primaryColor,
                               thickness: d.at(2),
                             );
                           },
                         ),
-                        PlaceholderHandler(
+                        IfElseBuilder(
                           condition: widget.child != null,
-                          childBuilder: (context) => widget.child!,
-                          placeholderBuilder: (context) {
+                          ifBuilder: (context) => widget.child!,
+                          elseBuilder: (context) {
                             return PanText(
                               text: message,
                               fontSize: d.at(13),
@@ -137,9 +137,9 @@ class _InformationDialogState extends State<InformationDialog> {
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.end,
                             children: [
-                              PlaceholderHandler(
+                              IfElseBuilder(
                                 condition: widget.positive != null,
-                                childBuilder: (context) {
+                                ifBuilder: (context) {
                                   return PanButton(
                                     text: widget.positive,
                                     fontColor: t.primaryColor,
@@ -154,9 +154,9 @@ class _InformationDialogState extends State<InformationDialog> {
                                   );
                                 },
                               ),
-                              PlaceholderHandler(
+                              IfElseBuilder(
                                 condition: widget.negative != null,
-                                childBuilder: (context) {
+                                ifBuilder: (context) {
                                   return PanButton(
                                     text: widget.negative,
                                     fontColor: widget.fontColor,

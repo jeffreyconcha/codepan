@@ -1,6 +1,6 @@
 import 'package:codepan/resources/colors.dart';
 import 'package:codepan/resources/dimensions.dart';
-import 'package:codepan/widgets/placeholder_handler.dart';
+import 'package:codepan/widgets/if_else_builder.dart';
 import 'package:flutter/material.dart';
 
 class TextPlaceholder extends StatefulWidget {
@@ -82,9 +82,9 @@ class _TextPlaceholderState extends State<TextPlaceholder>
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
-                        PlaceholderHandler(
+                        IfElseBuilder(
                           condition: widget.withTitle,
-                          childBuilder: (context) {
+                          ifBuilder: (context) {
                             return Container(
                               width: constraints.maxWidth * 0.75,
                               height: widget.titleHeight ?? d.at(25),

@@ -1,6 +1,6 @@
 import 'package:codepan/resources/colors.dart';
 import 'package:codepan/resources/dimensions.dart';
-import 'package:codepan/widgets/placeholder_handler.dart';
+import 'package:codepan/widgets/if_else_builder.dart';
 import 'package:flutter/material.dart';
 
 enum DividerType {
@@ -25,16 +25,16 @@ class LineDivider extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final d = Dimension.of(context);
-    return PlaceholderHandler(
+    return IfElseBuilder(
       margin: margin,
       condition: type == DividerType.horizontal,
-      childBuilder: (context) {
+      ifBuilder: (context) {
         return Container(
           height: thickness ?? d.at(1),
           color: color,
         );
       },
-      placeholderBuilder: (context) {
+      elseBuilder: (context) {
         return Container(
           width: thickness ?? d.at(1),
           color: color,

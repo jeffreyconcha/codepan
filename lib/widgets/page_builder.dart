@@ -2,7 +2,7 @@ import 'package:codepan/bloc/parent_bloc.dart';
 import 'package:codepan/bloc/parent_event.dart';
 import 'package:codepan/bloc/parent_state.dart';
 import 'package:codepan/resources/dimensions.dart';
-import 'package:codepan/widgets/placeholder_handler.dart';
+import 'package:codepan/widgets/if_else_builder.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -109,10 +109,10 @@ class _PageBlocBody<E extends ParentEvent, B extends ParentBloc<E, S>,
                   builder.call(context, state),
                   LayoutBuilder(
                     builder: (context, constraints) {
-                      return PlaceholderHandler(
+                      return IfElseBuilder(
                         condition:
                             maxHeight == constraints.maxHeight && layer != null,
-                        childBuilder: (context) {
+                        ifBuilder: (context) {
                           return layer!.call(context, state);
                         },
                       );
@@ -127,10 +127,10 @@ class _PageBlocBody<E extends ParentEvent, B extends ParentBloc<E, S>,
                     child: Stack(
                       children: [
                         builder.call(context, state),
-                        PlaceholderHandler(
+                        IfElseBuilder(
                           condition: maxHeight == constraints.maxHeight &&
                               layer != null,
-                          childBuilder: (context) {
+                          ifBuilder: (context) {
                             return SafeArea(
                               child: Container(
                                 height: maxHeight,
@@ -222,10 +222,10 @@ class _PageBody extends StatelessWidget {
             builder.call(context),
             LayoutBuilder(
               builder: (context, constraints) {
-                return PlaceholderHandler(
+                return IfElseBuilder(
                   condition:
                       maxHeight == constraints.maxHeight && layer != null,
-                  childBuilder: (context) {
+                  ifBuilder: (context) {
                     return layer!.call(context);
                   },
                 );
@@ -240,10 +240,10 @@ class _PageBody extends StatelessWidget {
               child: Stack(
                 children: [
                   builder.call(context),
-                  PlaceholderHandler(
+                  IfElseBuilder(
                     condition:
                         maxHeight == constraints.maxHeight && layer != null,
-                    childBuilder: (context) {
+                    ifBuilder: (context) {
                       return SafeArea(
                         child: Container(
                           height: maxHeight,

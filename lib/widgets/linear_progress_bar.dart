@@ -1,7 +1,7 @@
 import 'package:codepan/resources/colors.dart';
 import 'package:codepan/resources/dimensions.dart';
 import 'package:codepan/utils/codepan_utils.dart';
-import 'package:codepan/widgets/placeholder_handler.dart';
+import 'package:codepan/widgets/if_else_builder.dart';
 import 'package:codepan/widgets/text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animation_progress_bar/flutter_animation_progress_bar.dart';
@@ -47,9 +47,9 @@ class LinearProgressBar extends StatelessWidget {
             ),
           ),
         ),
-        PlaceholderHandler(
+        IfElseBuilder(
           condition: showPercentage,
-          childBuilder: (context) {
+          ifBuilder: (context) {
             return PanText(
               text: PanUtils.getPercentage(progress!, max!),
               fontColor: fontColor,

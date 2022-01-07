@@ -1,5 +1,5 @@
 import 'package:codepan/resources/colors.dart';
-import 'package:codepan/widgets/placeholder_handler.dart';
+import 'package:codepan/widgets/if_else_builder.dart';
 import 'package:codepan/widgets/text.dart';
 import 'package:flutter/material.dart';
 
@@ -74,12 +74,12 @@ class PanButton extends StatelessWidget {
                     width: borderWidth,
                   ),
                 ),
-            child: PlaceholderHandler(
+            child: IfElseBuilder(
               condition: child != null,
-              childBuilder: (context) {
+              ifBuilder: (context) {
                 return child!;
               },
-              placeholderBuilder: (context) {
+              elseBuilder: (context) {
                 return PanText(
                   text: text ?? '',
                   fontSize: fontSize,

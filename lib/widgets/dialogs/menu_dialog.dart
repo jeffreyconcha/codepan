@@ -5,7 +5,7 @@ import 'package:codepan/utils/search_handler.dart';
 import 'package:codepan/widgets/dialogs/information_dialog.dart';
 import 'package:codepan/widgets/icon.dart';
 import 'package:codepan/widgets/line_divider.dart';
-import 'package:codepan/widgets/placeholder_handler.dart';
+import 'package:codepan/widgets/if_else_builder.dart';
 import 'package:codepan/widgets/text.dart';
 import 'package:codepan/widgets/text_field.dart';
 import 'package:flutter/material.dart';
@@ -61,17 +61,17 @@ class _MenuDialogState<T extends Selectable>
       withDivider: true,
       child: Material(
         color: Colors.white,
-        child: PlaceholderHandler(
+        child: IfElseBuilder(
           condition: showSuggestions || totalHeight > d.min,
-          childBuilder: (context) {
+          ifBuilder: (context) {
             return Column(
               children: [
-                PlaceholderHandler(
+                IfElseBuilder(
                   condition: widget.searchBuilder != null,
-                  childBuilder: (context) {
+                  ifBuilder: (context) {
                     return widget.searchBuilder!.call(onSearch);
                   },
-                  placeholderBuilder: (context) {
+                  elseBuilder: (context) {
                     return PanTextField(
                       height: d.at(43),
                       prefixIcon: widget.searchIcon ??
@@ -115,7 +115,7 @@ class _MenuDialogState<T extends Selectable>
               ],
             );
           },
-          placeholderBuilder: (context) {
+          elseBuilder: (context) {
             return Column(
               children: List.generate(items.length, (index) {
                 final item = items[index];
@@ -190,9 +190,9 @@ class _MenuItem<T extends Selectable> extends StatelessWidget {
                 }
               : null,
         ),
-        PlaceholderHandler(
+        IfElseBuilder(
           condition: withDivider,
-          childBuilder: (context) {
+          ifBuilder: (context) {
             return LineDivider();
           },
         ),

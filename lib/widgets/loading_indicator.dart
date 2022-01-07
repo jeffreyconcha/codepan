@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'package:codepan/resources/dimensions.dart';
 import 'package:codepan/widgets/pan_activity_indicator.dart';
-import 'package:codepan/widgets/placeholder_handler.dart';
+import 'package:codepan/widgets/if_else_builder.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -16,7 +16,7 @@ class LoadingIndicator extends StatelessWidget {
     Key? key,
     this.width,
     this.height,
-    this.color,
+    this.color = Colors.grey,
     this.radius,
     this.isPlatformDependent = false,
   }) : super(key: key);
@@ -25,22 +25,22 @@ class LoadingIndicator extends StatelessWidget {
   Widget build(BuildContext context) {
     final d = Dimension.of(context);
     return Center(
-      child: PlaceholderHandler(
+      child: IfElseBuilder(
         width: width,
         height: height,
         alignment: Alignment.center,
         condition: isPlatformDependent && Platform.isAndroid,
-        childBuilder: (context) {
+        ifBuilder: (context) {
           return CircularProgressIndicator(
             valueColor: AlwaysStoppedAnimation<Color?>(color),
           );
         },
-        placeholderBuilder: (context) {
+        elseBuilder: (context) {
           return PanActivityIndicator(
             radius: radius ?? d.at(15),
             isAnimating: true,
-            activeColor: Colors.grey,
-            inactiveColor: Colors.grey.withOpacity(0.5),
+            activeColor: color!,
+            inactiveColor: color!.withOpacity(0.5),
           );
         },
       ),

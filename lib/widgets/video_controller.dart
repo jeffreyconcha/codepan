@@ -3,7 +3,7 @@ import 'package:codepan/widgets/button.dart';
 import 'package:codepan/widgets/icon.dart';
 import 'package:codepan/widgets/loading_indicator.dart';
 import 'package:codepan/widgets/media_progress_indicator.dart';
-import 'package:codepan/widgets/placeholder_handler.dart';
+import 'package:codepan/widgets/if_else_builder.dart';
 import 'package:codepan/widgets/text.dart';
 import 'package:flutter/material.dart';
 
@@ -41,9 +41,9 @@ class VideoController extends StatelessWidget {
     return Stack(
       children: <Widget>[
         Center(
-          child: PlaceholderHandler(
+          child: IfElseBuilder(
             condition: !isLoading!,
-            childBuilder: (context) {
+            ifBuilder: (context) {
               return Row(
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
@@ -91,17 +91,17 @@ class VideoController extends StatelessWidget {
                 ],
               );
             },
-            placeholderBuilder: (context) {
+            elseBuilder: (context) {
               return LoadingIndicator(
                 color: color,
               );
             },
           ),
         ),
-        PlaceholderHandler(
+        IfElseBuilder(
           alignment: Alignment.bottomCenter,
           condition: isInitialized,
-          childBuilder: (context) {
+          ifBuilder: (context) {
             return Padding(
               padding: EdgeInsets.symmetric(
                 horizontal: d.at(20),
@@ -162,10 +162,10 @@ class SkipButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final d = Dimension.of(context);
     final isForward = direction == Direction.forward;
-    return PlaceholderHandler(
+    return IfElseBuilder(
       alignment: isForward ? Alignment.centerLeft : Alignment.centerRight,
       condition: isInitialized,
-      childBuilder: (context) {
+      ifBuilder: (context) {
         return PanButton(
           radius: d.at(60),
           width: d.at(60),

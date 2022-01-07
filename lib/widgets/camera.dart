@@ -7,7 +7,7 @@ import 'package:codepan/resources/dimensions.dart';
 import 'package:codepan/utils/codepan_utils.dart';
 import 'package:codepan/utils/lifecycle_handler.dart';
 import 'package:codepan/utils/text_canvas.dart';
-import 'package:codepan/widgets/placeholder_handler.dart';
+import 'package:codepan/widgets/if_else_builder.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart' as p;
 import 'package:system_clock/system_clock.dart';
@@ -120,10 +120,10 @@ class _PanCameraState extends StateWithLifecycle<PanCamera> {
       builder: (context, constraints) {
         _maxWidth = constraints.maxWidth;
         _maxHeight = constraints.maxHeight;
-        return PlaceholderHandler(
+        return IfElseBuilder(
           alignment: Alignment.center,
           condition: isInitialized,
-          childBuilder: (context) {
+          ifBuilder: (context) {
             return Transform.scale(
               scale: d.deviceRatio / value!.aspectRatio,
               child: Listener(
