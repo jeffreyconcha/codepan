@@ -1,4 +1,5 @@
 import 'package:codepan/resources/dimensions.dart';
+import 'package:codepan/widgets/elevated.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -37,18 +38,11 @@ class HeaderBody extends StatelessWidget {
         ),
         Align(
           alignment: Alignment.topCenter,
-          child: Container(
+          child: Elevated(
+            color: headerColor,
             height: headerHeight ?? d.at(60),
-            decoration: BoxDecoration(
-              color: headerColor,
-              boxShadow: <BoxShadow>[
-                BoxShadow(
-                  color: shadowColor ?? t.shadowColor,
-                  blurRadius: shadowBlurRadius ?? d.at(3),
-                  offset: shadowOffset ?? Offset(0, d.at(2)),
-                )
-              ],
-            ),
+            shadowBlurRadius: shadowBlurRadius ?? d.at(3),
+            shadowOffset: shadowOffset ?? Offset(0, d.at(2)),
             child: header,
           ),
         ),
