@@ -44,7 +44,7 @@ class Elevated extends StatelessWidget {
           BoxShadow(
             color: shadowColor ?? t.shadowColor,
             blurRadius: shadowBlurRadius ?? d.at(10),
-            spreadRadius: spreadRadius ?? 0,
+            spreadRadius: spreadRadius ?? d.at(2),
             offset: shadowOffset ?? Offset.zero,
           )
         ],
