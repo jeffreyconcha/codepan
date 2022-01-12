@@ -42,6 +42,8 @@ abstract class MasterData extends TransactionData implements Selectable {
       });
   }
 
+  bool get hasWebId => webId != null && webId != 0;
+
   @protected
   Map<String, dynamic> filtered([Map<String, dynamic>? map]) {
     final filtered = map ?? <String, dynamic>{};
@@ -66,4 +68,19 @@ abstract class MasterData extends TransactionData implements Selectable {
     int? webId,
     String? name,
   });
+}
+
+abstract class MasterList<T extends MasterData> {
+  List<T>? get masterList;
+
+  String get listToText {
+    final buffer = StringBuffer();
+    masterList?.forEach((element) {
+      buffer.write(element.name);
+      if (masterList!.last != element) {
+        buffer.write(', ');
+      }
+    });
+    return buffer.toString();
+  }
 }

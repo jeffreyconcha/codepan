@@ -10,6 +10,10 @@ class SQLiteModel {
 
   String get field => hasAlias ? '$alias.$_field' : this._field;
 
+  bool nameIs(String name) {
+    return name == _field;
+  }
+
   SQLiteModel(this._field, {this.table});
 
   void setTable(Table? table) {

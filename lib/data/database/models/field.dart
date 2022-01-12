@@ -142,6 +142,7 @@ class Field extends SQLiteModel {
     _addConstraint(Constraint.defaultField);
     this._type = _getDataType(value);
     this._inUniqueGroup = inUniqueGroup;
+    this._value = value;
   }
 
   Field.autoDate(String field) : super(field) {

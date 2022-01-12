@@ -175,7 +175,7 @@ class SQLiteQuery with QueryProperties {
   }
 
   void joinForeignKeys({
-    required List<Field> foreignKeys,
+    required Iterable<Field> foreignKeys,
     JoinType type = JoinType.inner,
   }) {
     if (foreignKeys.isNotEmpty) {
