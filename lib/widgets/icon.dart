@@ -29,17 +29,19 @@ class PanIcon extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final _package = isInternal ? 'codepan' : null;
-    return Center(
-      child: Container(
-        width: width,
-        height: height,
-        margin: margin,
-        padding: padding,
-        color: background,
+    return Container(
+      width: width,
+      height: height,
+      margin: margin,
+      padding: padding,
+      color: background,
+      child: Center(
         child: SvgPicture.asset(
           'assets/icons/$icon.svg',
           color: color,
           fit: fit,
+          width: width,
+          height: height,
           alignment: alignment,
           package: package ?? _package,
         ),
