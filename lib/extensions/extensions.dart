@@ -6,3 +6,5 @@ export 'int.dart';
 export 'map.dart';
 export 'painter.dart';
 export 'string.dart';
+export 'list.dart';
+export 'double.dart';

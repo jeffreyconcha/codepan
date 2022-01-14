@@ -36,6 +36,16 @@ extension MapUtils on Map<String, dynamic> {
     return null;
   }
 
+  List? getList(String key) {
+    if (hasKey(key)) {
+      final value = this[getKey(key)];
+      if (value is List) {
+        return value;
+      }
+    }
+    return null;
+  }
+
   T? getEnum<T>({
     required String key,
     required List<T> values,
