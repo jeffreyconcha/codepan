@@ -294,7 +294,7 @@ class SQLiteBinder {
     return null;
   }
 
-  void addStatement(final sql) {
+  void addStatement(final String sql) {
     if (_showLog) {
       print(sql);
     }
@@ -383,6 +383,25 @@ class SQLiteBinder {
     final name = _getTableName(table);
     final sql = stmt.updateFromStatement(name);
     addStatement(sql);
+  }
+
+  /// table - Can only be a List of String, Table or TableSchema.
+  void resetBool({
+    required List<dynamic> tables,
+    required String column,
+    bool value = true,
+  }) {
+    final stmt = SQLiteStatement.from(
+      fieldsAndValues: {
+        column: value,
+      },
+      conditions: {
+        column: !value,
+      },
+    );
+    for (final table in tables) {
+      update(table: table, stmt: stmt);
+    }
   }
 
   String? _getTableName(dynamic table) {
