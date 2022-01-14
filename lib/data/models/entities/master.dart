@@ -55,7 +55,7 @@ abstract class MasterData extends TransactionData implements Selectable {
   }
 
   @override
-  Map<String, dynamic> toMap() => filtered();
+  Map<String, dynamic> toMap();
 
   @override
   MasterData copyWith({

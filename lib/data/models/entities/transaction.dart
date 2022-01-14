@@ -70,7 +70,7 @@ abstract class TransactionData extends EntityData
     return SQLiteStatement.fromMap(toMap());
   }
 
-  Map<String, dynamic> toMap() => filtered();
+  Map<String, dynamic> toMap();
 
   @override
   int compareTo(TransactionData other) {
