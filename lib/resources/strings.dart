@@ -1,7 +1,7 @@
 class Strings {
   static const String loading = 'Loading...';
-  static const String pullDownToRefresh = 'Pull-down to Refresh';
-  static const String releaseToRefresh = 'Release to Refresh';
+  static const String pullDownToRefresh = 'Pull-down to refresh';
+  static const String releaseToRefresh = 'Release to refresh';
   static const String completed = 'Completed';
   static const String refreshing = 'Refreshing...';
 }

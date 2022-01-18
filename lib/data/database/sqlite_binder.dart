@@ -389,7 +389,7 @@ class SQLiteBinder {
   void resetBool({
     required List<dynamic> tables,
     required String column,
-    bool value = true,
+    bool value = false,
   }) {
     final stmt = SQLiteStatement.from(
       fieldsAndValues: {

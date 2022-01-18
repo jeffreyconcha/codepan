@@ -120,4 +120,10 @@ extension MapUtils on Map<String, dynamic> {
   Map<String, dynamic> copy() {
     return Map.of(this);
   }
+
+  Future<void> asyncLoop(Future<void> action(String key, dynamic value)) async {
+    for (final map in this.entries) {
+      await action(map.key, map.value);
+    }
+  }
 }

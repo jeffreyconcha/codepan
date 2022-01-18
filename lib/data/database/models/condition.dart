@@ -308,6 +308,14 @@ class Condition extends SQLiteModel {
       operator: Operator.notInside,
     );
   }
+  
+  factory Condition.isTrue(String field) {
+    return Condition(field, true);
+  }
+  
+  factory Condition.isFalse(String field) {
+    return Condition(field, false);
+  }
 
   String? asString() {
     final type = hasValue && _value is Operator ? _value : operator;
