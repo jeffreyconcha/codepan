@@ -3,6 +3,7 @@ import 'package:codepan/data/database/models/sqlite_model.dart';
 import 'package:codepan/data/database/sqlite_exception.dart';
 import 'package:codepan/data/database/sqlite_query.dart';
 import 'package:codepan/data/database/sqlite_statement.dart';
+import 'package:codepan/data/models/entities/transaction.dart';
 import 'package:codepan/utils/codepan_utils.dart';
 import 'package:inflection3/inflection3.dart';
 
@@ -74,7 +75,11 @@ class Condition extends SQLiteModel {
         final buffer = StringBuffer();
         final list = _value as List<dynamic>?;
         for (final v in _value) {
-          buffer.write(v.toString());
+          if (v is TransactionData) {
+            buffer.write(v.id);
+          } else {
+            buffer.write(v.toString());
+          }
           if (v != list!.last) {
             buffer.write(',');
           }
@@ -308,11 +313,11 @@ class Condition extends SQLiteModel {
       operator: Operator.notInside,
     );
   }
-  
+
   factory Condition.isTrue(String field) {
     return Condition(field, true);
   }
-  
+
   factory Condition.isFalse(String field) {
     return Condition(field, false);
   }

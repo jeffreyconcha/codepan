@@ -17,19 +17,18 @@ enum Order {
 }
 
 class SQLiteQuery with QueryProperties {
-  Map<String, int>? _tableMap;
   List<SQLiteQuery>? _joinList;
   List<Field>? _orderList;
   List<Field>? _groupList;
   TableSchema? _schema;
   late bool _randomOrder;
-  tb.Table? _table;
+  late tb.Table _table;
   JoinType? _type;
   int? _limit;
 
   JoinType? get type => _type;
 
-  tb.Table? get table => _table;
+  tb.Table get table => _table;
 
   TableSchema? get schema => _schema;
 
@@ -41,11 +40,11 @@ class SQLiteQuery with QueryProperties {
 
   int? get limit => _limit;
 
-  bool get hasJoin => _joinList != null && _joinList!.isNotEmpty;
+  bool get hasJoin => _joinList?.isNotEmpty ?? false;
 
-  bool get hasOrder => _orderList != null && _orderList!.isNotEmpty;
+  bool get hasOrder => _orderList?.isNotEmpty ?? false;
 
-  bool get hasGroup => _groupList != null && _groupList!.isNotEmpty;
+  bool get hasGroup => _groupList?.isNotEmpty ?? false;
 
   bool get hasLimit => _limit != null && _limit != 0;
 
@@ -72,14 +71,12 @@ class SQLiteQuery with QueryProperties {
     } else {
       throw SQLiteException(SQLiteException.invalidTableType);
     }
-    if (_table != null) {
-      addFields(select, table: _table);
-      addConditions(where, table: _table);
-      _addOrders(orderBy, table: _table);
-      _addGroups(groupBy, table: _table);
-      this._randomOrder = randomOrder;
-      this._limit = limit;
-    }
+    addFields(select, table: _table);
+    addConditions(where, table: _table);
+    _addOrders(orderBy, table: _table);
+    _addGroups(groupBy, table: _table);
+    this._randomOrder = randomOrder;
+    this._limit = limit;
   }
 
   factory SQLiteQuery.all({
@@ -149,16 +146,40 @@ class SQLiteQuery with QueryProperties {
     query._setJoinType(type);
     _joinList ??= [];
     final table = query.table;
-    if (tableExists(table)) {
-      _tableMap ??= {};
-      final index = _tableMap![table!.name];
-      if (index != null) {
-        table.setJoinIndex(index + 1);
-      } else {
-        table.setJoinIndex(1);
+    final count = _getTableCount(table);
+    if (count > 0) {
+      table.setJoinNumber(count + 1);
+      if (count == 1) {
+        _setFirstTable(table);
       }
     }
     _joinList!.add(query);
+  }
+
+  void _setFirstTable(tb.Table table) {
+    if (hasJoin) {
+      for (final query in _joinList!) {
+        final other = query.table;
+        if (table.entity == other.entity) {
+          other.setJoinNumber(1);
+          break;
+        }
+      }
+    }
+  }
+
+  int _getTableCount(tb.Table table) {
+    if (hasJoin) {
+      int count = 0;
+      for (final query in _joinList!) {
+        final other = query.table;
+        if (table.entity == other.entity) {
+          count++;
+        }
+      }
+      return count;
+    }
+    return 0;
   }
 
   void joinAllForeignKeys({
@@ -189,7 +210,7 @@ class SQLiteQuery with QueryProperties {
               select: schema.fields,
               from: table,
               where: {
-                'id': _table!.field(field.field),
+                'id': _table.field(field.field),
               },
             ),
             type: type,
@@ -199,15 +220,6 @@ class SQLiteQuery with QueryProperties {
         throw SQLiteException(SQLiteException.noSchemaFoundInQuery);
       }
     }
-  }
-
-  bool tableExists(tb.Table? table) {
-    for (final query in _joinList!) {
-      if (table!.name == query.table!.name) {
-        return true;
-      }
-    }
-    return false;
   }
 
   Field field(String name) {

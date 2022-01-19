@@ -139,4 +139,9 @@ extension StringUtils on String {
     }
     throw Exception('Invalid parameters, length is only ${this.length}.');
   }
+
+  int extractNumbers() {
+    final numeric = this.replaceAll(RegExp(r'[^0-9]'), '');
+    return int.parse(numeric);
+  }
 }

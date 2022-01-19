@@ -3,6 +3,7 @@ import 'package:codepan/utils/codepan_utils.dart';
 import 'package:html_unescape/html_unescape.dart';
 
 const prefixKey = '\$prefix';
+const prefixSeparator = '\$prefixSeparator';
 const boolPrefixes = <String>[
   'is',
   'has',
@@ -92,12 +93,14 @@ extension MapUtils on Map<String, dynamic> {
   void setPrefix(
     String prefix, {
     int? index,
+    String? separator = '.',
   }) {
     if (index != null && index != 0) {
       this[prefixKey] = '$prefix.$index';
     } else {
       this[prefixKey] = prefix;
     }
+    this[prefixSeparator] = separator;
   }
 
   void addPrefix(dynamic additional) {
@@ -110,8 +113,9 @@ extension MapUtils on Map<String, dynamic> {
   String getKey(String key) {
     if (this.containsKey(prefixKey)) {
       final prefix = this[prefixKey];
+      final separator = this[prefixSeparator];
       if (prefix != null) {
-        return '$prefix.$key';
+        return '$prefix$separator$key';
       }
     }
     return key;

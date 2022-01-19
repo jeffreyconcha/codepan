@@ -60,7 +60,7 @@ class Table<T> {
 
   Table(this.name, [this.entity]);
 
-  void setJoinIndex(int joinIndex) {
+  void setJoinNumber(int joinIndex) {
     this.joinIndex = joinIndex;
   }
 

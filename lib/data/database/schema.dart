@@ -46,7 +46,7 @@ abstract class DatabaseSchema<T> {
     final list = <String>[];
     for (final field in fields(entity)) {
       final name = field.field;
-      if (field.inUniqueGroup && name != null) {
+      if (field.inUniqueGroup) {
         list.add(name);
       }
     }

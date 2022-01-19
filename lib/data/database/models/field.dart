@@ -47,8 +47,7 @@ class Field extends SQLiteModel {
 
   bool? get collate => _collate;
 
-  bool get hasConstraints =>
-      _constraintList != null && _constraintList!.isNotEmpty;
+  bool get hasConstraints => _constraintList?.isNotEmpty ?? false;
 
   bool get hasDataType => _type != null;
 
@@ -229,7 +228,7 @@ class Field extends SQLiteModel {
   /// existing record instead of inserting new record thus eliminating duplicates.<br/>
   /// Will only be applied to a non-unique constraint.
   void ug() {
-    if (hasConstraints && !_constraintList!.contains(Constraint.unique)) {
+    if (!hasConstraints || !_constraintList!.contains(Constraint.unique)) {
       this._inUniqueGroup = true;
     }
   }
