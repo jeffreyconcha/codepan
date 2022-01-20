@@ -223,7 +223,7 @@ class SQLiteQuery with QueryProperties {
   }
 
   Field field(String name) {
-    return table!.field(name);
+    return table.field(name);
   }
 
   String build() {
@@ -236,18 +236,18 @@ class SQLiteQuery with QueryProperties {
           if (q.hasFields) {
             bf.write(', ${q.fieldsWithAlias}');
           }
-          final tb = q.table!;
+          final tb = q.table;
           final type = q.type.toWords(allCaps: true);
           bq.write(' $type JOIN ${tb.name} as ${tb.alias} ON ${q.conditions}');
         }
         buffer.write('SELECT $fieldsWithAlias');
         buffer.write(bf.toString());
-        buffer.write(' FROM ${table!.name} as ${table!.alias}');
+        buffer.write(' FROM ${table.name} as ${table.alias}');
         buffer.write(bq.toString());
       } else {
         if (hasFields) {
           buffer.write(
-              'SELECT $fieldsWithAlias FROM ${table!.name} as ${table!.alias}');
+              'SELECT $fieldsWithAlias FROM ${table.name} as ${table.alias}');
         }
       }
       if (hasConditions) {

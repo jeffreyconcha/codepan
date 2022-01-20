@@ -313,26 +313,29 @@ class SQLiteBinder {
     ) as T;
   }
 
-  Future<int?>? insertData({
-    required TransactionData data,
+  Future<int?> insertData({
+    required TransactionData? data,
     UpdatePriority priority = UpdatePriority.unique,
     bool ignoreId = false,
   }) {
-    dynamic unique;
-    switch (priority) {
-      case UpdatePriority.unique:
-        unique = data.unique ?? data.uniqueGroup;
-        break;
-      case UpdatePriority.uniqueGroup:
-        unique = data.uniqueGroup ?? data.unique;
-        break;
+    if (data != null) {
+      dynamic unique;
+      switch (priority) {
+        case UpdatePriority.unique:
+          unique = data.unique ?? data.uniqueGroup;
+          break;
+        case UpdatePriority.uniqueGroup:
+          unique = data.uniqueGroup ?? data.unique;
+          break;
+      }
+      return insert(
+        data.table,
+        data.toStatement(),
+        unique: unique,
+        ignoreId: ignoreId,
+      );
     }
-    return insert(
-      data.table,
-      data.toStatement(),
-      unique: unique,
-      ignoreId: ignoreId,
-    );
+    return Future.value(null);
   }
 
   /// table - Can only be a type of String, Table or TableSchema.

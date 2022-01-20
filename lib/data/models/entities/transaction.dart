@@ -1,3 +1,4 @@
+import 'package:codepan/data/database/sqlite_binder.dart';
 import 'package:codepan/data/database/sqlite_statement.dart';
 import 'package:codepan/data/models/entities/entity.dart';
 import 'package:codepan/time/time.dart';
@@ -98,4 +99,26 @@ abstract class TransactionData extends EntityData
     String? timeUpdated,
     bool? isDeleted,
   });
+
+  Future<T> insertForId<T extends TransactionData>(
+    SQLiteBinder binder, {
+    UpdatePriority priority = UpdatePriority.unique,
+  }) async {
+    return binder.insertForId(
+      data: this,
+      priority: priority,
+    );
+  }
+
+  Future<int?> insert(
+    SQLiteBinder binder, {
+    UpdatePriority priority = UpdatePriority.unique,
+    bool ignoreId = false,
+  }) {
+    return binder.insertData(
+      data: this,
+      priority: priority,
+      ignoreId: ignoreId,
+    );
+  }
 }
