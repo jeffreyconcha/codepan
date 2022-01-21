@@ -2,18 +2,23 @@ import 'package:flutter/cupertino.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 class PullToRefresh extends StatelessWidget {
+  final Widget? header, loading, placeholder;
   final VoidCallback? onRefresh, onLoading;
+  final bool isLoading, enablePullDown;
   final RefreshController controller;
-  final bool isLoading;
-  final Widget? header;
+  final int? itemCount;
   final Widget child;
 
   const PullToRefresh({
     Key? key,
     required this.controller,
     required this.child,
+    this.placeholder,
     this.header,
+    this.loading,
     this.isLoading = false,
+    this.enablePullDown = true,
+    this.itemCount,
     this.onRefresh,
     this.onLoading,
   }) : super(key: key);
@@ -23,7 +28,12 @@ class PullToRefresh extends StatelessWidget {
     return SmartRefresher(
       header: header,
       controller: controller,
-      child: child,
+      enablePullDown: enablePullDown,
+      child: isLoading
+          ? loading ?? child
+          : itemCount == 0
+              ? placeholder
+              : child,
       physics: isLoading ? NeverScrollableScrollPhysics() : null,
       onRefresh: onRefresh,
       onLoading: onLoading,

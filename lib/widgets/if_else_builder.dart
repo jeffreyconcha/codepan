@@ -15,7 +15,7 @@ class IfElseBuilder extends StatelessWidget {
     this.elseChild,
     this.ifBuilder,
     this.elseBuilder,
-    this.condition = false,
+    this.condition,
     this.margin,
     this.padding,
     this.width,
@@ -33,9 +33,9 @@ class IfElseBuilder extends StatelessWidget {
       margin: margin,
       padding: padding,
       alignment: alignment,
-      child: condition!
-          ? ifChild ?? ifBuilder?.call(context)
-          : elseChild ?? elseBuilder?.call(context),
+      child: condition ?? false
+          ? ifBuilder?.call(context) ?? ifChild
+          : elseBuilder?.call(context) ?? elseChild,
     );
   }
 }
