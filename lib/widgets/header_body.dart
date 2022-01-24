@@ -9,6 +9,7 @@ class HeaderBody extends StatelessWidget {
   final Offset? shadowOffset;
   final Widget header;
   final Widget? body;
+  final bool elevated;
 
   const HeaderBody({
     Key? key,
@@ -16,6 +17,7 @@ class HeaderBody extends StatelessWidget {
     this.body,
     this.headerHeight,
     this.headerColor = Colors.white,
+    this.elevated = true,
     this.backgroundColor,
     this.shadowColor,
     this.shadowBlurRadius,
@@ -25,7 +27,6 @@ class HeaderBody extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final d = Dimension.of(context);
-    final t = Theme.of(context);
     final height = headerHeight ?? d.at(60);
     return Stack(
       children: [
@@ -41,8 +42,9 @@ class HeaderBody extends StatelessWidget {
           child: Elevated(
             color: headerColor,
             height: headerHeight ?? d.at(60),
-            shadowBlurRadius: shadowBlurRadius ?? d.at(3),
-            shadowOffset: shadowOffset ?? Offset(0, d.at(3)),
+            shadowBlurRadius: elevated ? shadowBlurRadius ?? d.at(3) : 0,
+            shadowOffset:
+                elevated ? shadowOffset ?? Offset(0, d.at(3)) : Offset.zero,
             spreadRadius: 0,
             child: header,
           ),

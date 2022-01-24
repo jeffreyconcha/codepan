@@ -6,13 +6,13 @@ import 'package:codepan/widgets/if_else_builder.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-typedef WidgetBlocBuilder = Widget Function(
+typedef WidgetBlocBuilder<S extends ParentState> = Widget Function(
   BuildContext context,
-  ParentState state,
+  S state,
 );
-typedef BlocObserver = void Function(
+typedef BlocObserver<S extends ParentState> = void Function(
   BuildContext context,
-  ParentState state,
+  S state,
 );
 typedef BlocCreator = ParentBloc Function(
   BuildContext context,
@@ -27,10 +27,10 @@ class PageBlocBuilder<E extends ParentEvent, B extends ParentBloc<E, S>,
   final Color? background, statusBarColor;
   final PageScrollBehaviour behaviour;
   final Widget? bottomNavigationBar;
-  final WidgetBlocBuilder builder;
-  final WidgetBlocBuilder? layer;
+  final WidgetBlocBuilder<S> builder;
+  final WidgetBlocBuilder<S>? layer;
   final Brightness? brightness;
-  final BlocObserver observer;
+  final BlocObserver<S> observer;
   final BlocCreator creator;
 
   const PageBlocBuilder({
@@ -82,9 +82,9 @@ class PageBlocBuilder<E extends ParentEvent, B extends ParentBloc<E, S>,
 class _PageBlocBody<E extends ParentEvent, B extends ParentBloc<E, S>,
     S extends ParentState> extends StatelessWidget {
   final PageScrollBehaviour behaviour;
-  final WidgetBlocBuilder? layer;
-  final WidgetBlocBuilder builder;
-  final BlocObserver observer;
+  final WidgetBlocBuilder<S>? layer;
+  final WidgetBlocBuilder<S> builder;
+  final BlocObserver<S> observer;
   final double maxHeight;
 
   const _PageBlocBody({

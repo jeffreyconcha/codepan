@@ -125,7 +125,7 @@ class Time extends Equatable {
     return isAfter(other) || isEqual(other);
   }
 
-  bool isBeforeOrEqual(Time other) {
+  bool isBeforeOrEquals(Time other) {
     return isBefore(other) || isEqual(other);
   }
 

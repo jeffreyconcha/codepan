@@ -29,12 +29,13 @@ class PullToRefresh extends StatelessWidget {
       header: header,
       controller: controller,
       enablePullDown: enablePullDown,
-      child: isLoading
+      child: isLoading && itemCount == 0
           ? loading ?? child
           : itemCount == 0
               ? placeholder
               : child,
-      physics: isLoading ? NeverScrollableScrollPhysics() : null,
+      physics:
+          isLoading && itemCount != 0 ? NeverScrollableScrollPhysics() : null,
       onRefresh: onRefresh,
       onLoading: onLoading,
     );
