@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:codepan/data/database/models/condition.dart';
 import 'package:codepan/data/database/models/field.dart';
 import 'package:codepan/data/database/models/table.dart' as tb;
 import 'package:codepan/data/database/schema.dart';
@@ -26,10 +27,10 @@ typedef BinderBody = Future<dynamic> Function(
 );
 
 class SQLiteBinder {
-  final SQLiteAdapter db;
   late Map<String, int> _map;
   late DateTime _time;
   late Batch _batch;
+  final SQLiteAdapter db;
   bool _showLog = false;
   bool _chain = false;
 
@@ -121,6 +122,93 @@ class SQLiteBinder {
     _chain = chain;
   }
 
+  Future<int> _mapId(
+    SQLiteStatement stmt,
+    String table,
+    dynamic unique,
+  ) async {
+    if (unique != null) {
+      final key = _getKeyForExistingId(stmt, table, unique);
+      if (key != null) {
+        final existingId = _map[key] ??
+            await _queryExistingId(
+              stmt,
+              table,
+              unique,
+            );
+        if (existingId != null) {
+          return _map[key] = existingId;
+        }
+      }
+    }
+    return _getNextId(table);
+  }
+
+  String? _getKeyForExistingId(
+    SQLiteStatement stmt,
+    String table,
+    dynamic unique,
+  ) {
+    final map = stmt.map!;
+    if (unique is String) {
+      final value = map[unique];
+      return '$table.$unique($value)';
+    } else if (unique is List<String>) {
+      final buffer = StringBuffer('$table');
+      if (unique.isNotEmpty) {
+        for (final field in unique) {
+          final value = map[field];
+          if (value != null) {
+            buffer.write('.$field($value)');
+          } else {
+            return null;
+          }
+        }
+        return buffer.toString();
+      }
+    }
+    return null;
+  }
+
+  Future<int?> _queryExistingId(
+    SQLiteStatement stmt,
+    String table,
+    dynamic unique,
+  ) async {
+    final map = stmt.map!;
+    final query = SQLiteQuery(
+      select: [
+        primaryKey,
+      ],
+      from: table,
+    );
+    if (unique is String) {
+      final value = map[unique];
+      if (value != null) {
+        query.addCondition(
+          Condition.equals(unique, value),
+        );
+      }
+    } else if (unique is List<String>) {
+      for (final field in unique) {
+        final value = map[field];
+        if (value != null) {
+          query.addCondition(
+            Condition.equals(field, value),
+          );
+        } else {
+          return null;
+        }
+      }
+    }
+    return query.hasConditions ? await db.getValue(query.build()) : null;
+  }
+
+  Future<int> _getNextId(String table) async {
+    final currentId = _map[table] ?? await _queryLastId(table);
+    return _map[table] = currentId + 1;
+  }
+
   Future<int> _queryLastId(String table) async {
     final query = SQLiteQuery(
       select: [
@@ -136,11 +224,6 @@ class SQLiteBinder {
       limit: 1,
     );
     return await db.getValue(query.build()) ?? 0;
-  }
-
-  Future<int> _generateId(SQLiteStatement stmt, String table) async {
-    final currentId = _map[table] ?? await _queryLastId(table);
-    return _map[table] = currentId + 1;
   }
 
   void addStatement(final String sql) {
@@ -196,9 +279,9 @@ class SQLiteBinder {
   }) async {
     final map = stmt.map!;
     final name = _getTableName(table);
-    final field = map[primaryKey] != null ? primaryKey : unique;
-    addStatement(stmt.insert(name, unique: field));
-    return ignoreId ? null : await _generateId(stmt, name);
+    final _unique = map[primaryKey] != null ? primaryKey : unique;
+    addStatement(stmt.insert(name, unique: _unique));
+    return ignoreId ? null : await _mapId(stmt, name, unique);
   }
 
   void updateData({
