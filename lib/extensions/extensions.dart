@@ -8,3 +8,4 @@ export 'painter.dart';
 export 'string.dart';
 export 'list.dart';
 export 'double.dart';
+export 'directory.dart';

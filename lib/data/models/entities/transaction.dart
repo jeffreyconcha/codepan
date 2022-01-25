@@ -103,7 +103,7 @@ abstract class TransactionData extends EntityData
   Future<T> insertForId<T extends TransactionData>(
     SQLiteBinder binder, {
     UpdatePriority priority = UpdatePriority.unique,
-  }) async {
+  }) {
     return binder.insertForId(
       data: this,
       priority: priority,

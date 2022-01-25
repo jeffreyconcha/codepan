@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:codepan/data/database/models/condition.dart';
 import 'package:codepan/data/database/models/field.dart';
 import 'package:codepan/data/database/models/table.dart' as tb;
 import 'package:codepan/data/database/schema.dart';
@@ -28,13 +27,13 @@ typedef BinderBody = Future<dynamic> Function(
 
 class SQLiteBinder {
   final SQLiteAdapter db;
+  late Map<String, int> _map;
   late DateTime _time;
   late Batch _batch;
-  Map<String?, int?>? _map;
   bool _showLog = false;
   bool _chain = false;
 
-  SQLiteBinder(this.db);
+  SQLiteBinder(this.db) : _map = {};
 
   factory SQLiteBinder.chain(SQLiteAdapter db) {
     if (db.inTransaction) {
@@ -47,14 +46,10 @@ class SQLiteBinder {
   /// any pending transaction when an error occurred to avoid database lock.
   Future<T> transact<T>({
     required BinderBody body,
-    List<TableSchema>? prepare,
     bool showLog = false,
     bool autoFinish = true,
   }) async {
     if (!db.inTransaction) {
-      if (prepare?.isNotEmpty ?? false) {
-        await _prepare(prepare!);
-      }
       this._batch = db.batch();
       this._showLog = showLog;
       if (_showLog) {
@@ -73,69 +68,6 @@ class SQLiteBinder {
     } catch (error) {
       db.removeBinder();
       rethrow;
-    }
-  }
-
-  Future<void> _prepare(List<TableSchema> schemaList) async {
-    _map ??= {};
-    for (final schema in schemaList) {
-      final unique = schema.unique;
-      final uniqueGroup = schema.uniqueGroup;
-      final table = schema.tableName;
-      final alias = schema.alias;
-      if (unique != null) {
-        final query = SQLiteQuery(
-          select: [
-            primaryKey,
-            unique,
-          ],
-          from: schema.table,
-          orderBy: [
-            Field.order(
-              field: primaryKey,
-              order: Order.ascending,
-            ),
-          ],
-        );
-        final records = await db.read(query.build());
-        for (final record in records) {
-          final uniqueValue = record['$alias.$unique'];
-          final key = '$table.$unique($uniqueValue)';
-          _map![key] = record['$alias.$primaryKey'];
-        }
-        if (records.isNotEmpty) {
-          final last = records.last;
-          _map![table] = last['$alias.$primaryKey'];
-        }
-      } else if (uniqueGroup?.isNotEmpty ?? false) {
-        final query = SQLiteQuery(
-          select: uniqueGroup!..add(primaryKey),
-          from: schema.table,
-          orderBy: [
-            Field.order(
-              field: primaryKey,
-              order: Order.ascending,
-            ),
-          ],
-        );
-        final records = await db.read(query.build());
-        for (final record in records) {
-          final buffer = StringBuffer();
-          for (final unique in uniqueGroup) {
-            final uniqueValue = record['$alias.$unique'];
-            buffer.write('$unique($uniqueValue)');
-            if (unique != uniqueGroup.last) {
-              buffer.write('.');
-            }
-          }
-          final key = '$table.${buffer.toString()}';
-          _map![key] = record['$alias.$primaryKey'];
-        }
-        if (records.isNotEmpty) {
-          final last = records.last;
-          _map![table] = last['$alias.$primaryKey'];
-        }
-      }
     }
   }
 
@@ -159,7 +91,7 @@ class SQLiteBinder {
       if (!_chain) {
         bool result = false;
         if (clearMap) {
-          _map?.clear();
+          _map.clear();
         }
         try {
           await _batch.commit(noResult: true);
@@ -189,109 +121,26 @@ class SQLiteBinder {
     _chain = chain;
   }
 
-  Future<void> _registerLastId(String? table) async {
-    _map ??= {};
-    if (!_map!.containsKey(table)) {
-      final query = SQLiteQuery(
-        select: [
-          primaryKey,
-        ],
-        from: table,
-        orderBy: [
-          Field.order(
-            field: primaryKey,
-            order: Order.descending,
-          )
-        ],
-        limit: 1,
-      );
-      final id = await db.getValue(query.build());
-      _map![table] = id ?? 0;
-    }
+  Future<int> _queryLastId(String table) async {
+    final query = SQLiteQuery(
+      select: [
+        primaryKey,
+      ],
+      from: table,
+      orderBy: [
+        Field.order(
+          field: primaryKey,
+          order: Order.descending,
+        )
+      ],
+      limit: 1,
+    );
+    return await db.getValue(query.build()) ?? 0;
   }
 
-  Future<int?> _mapId(
-    String? table,
-    SQLiteStatement stmt, {
-    dynamic unique,
-  }) async {
-    await _registerLastId(table);
-    final map = stmt.map;
-    if (unique != null) {
-      if (unique is String && unique != primaryKey) {
-        final value = map![unique];
-        final key = '$table.$unique($value)';
-        final query = SQLiteQuery(
-          select: [
-            primaryKey,
-          ],
-          from: table,
-          where: [
-            Condition.notNull(unique),
-            Condition.equals(unique, value),
-          ],
-        );
-        return _getId(stmt, query, key, table);
-      } else if (unique is List<String>) {
-        final conditions = <Condition>[];
-        final buffer = StringBuffer();
-        for (final field in unique) {
-          final value = map![field];
-          conditions.addAll([
-            Condition.notNull(field),
-            Condition.equals(field, value),
-          ]);
-          buffer.write('$field($value)');
-          if (field != unique.last) {
-            buffer.write('.');
-          }
-        }
-        final key = '$table.${buffer.toString()}';
-        final query = SQLiteQuery(
-          select: [
-            primaryKey,
-          ],
-          from: table,
-          where: conditions,
-        );
-        return _getId(stmt, query, key, table);
-      }
-    }
-    return _generateId(map!, table);
-  }
-
-  Future<int?> _getId(
-    SQLiteStatement stmt,
-    SQLiteQuery query,
-    String key,
-    String? table,
-  ) async {
-    final map = stmt.map;
-    final oldId = _map![key];
-    final dynamic id = oldId ?? await db.getValue(query.build());
-    if (id != null) {
-      _map![key] = id;
-      return id;
-    } else {
-      final newId = _generateId(map!, table);
-      _map![key] = newId;
-      return newId;
-    }
-  }
-
-  int? _generateId(Map<String?, dynamic> map, String? table) {
-    final id = map[SQLiteStatement.id];
-    if (id != null) {
-      return id as int;
-    } else {
-      if (_map!.containsKey(table)) {
-        final oldId = _map![table]!;
-        final newId = oldId + 1;
-        _map![table] = newId;
-        return newId;
-      }
-    }
-    return null;
+  Future<int> _generateId(SQLiteStatement stmt, String table) async {
+    final currentId = _map[table] ?? await _queryLastId(table);
+    return _map[table] = currentId + 1;
   }
 
   void addStatement(final String sql) {
@@ -349,7 +198,7 @@ class SQLiteBinder {
     final name = _getTableName(table);
     final field = map[primaryKey] != null ? primaryKey : unique;
     addStatement(stmt.insert(name, unique: field));
-    return ignoreId ? null : await _mapId(name, stmt, unique: field);
+    return ignoreId ? null : await _generateId(stmt, name);
   }
 
   void updateData({
@@ -407,7 +256,7 @@ class SQLiteBinder {
     }
   }
 
-  String? _getTableName(dynamic table) {
+  String _getTableName(dynamic table) {
     if (table is String) {
       return table;
     } else if (table is tb.Table) {

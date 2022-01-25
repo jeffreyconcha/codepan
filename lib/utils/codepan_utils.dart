@@ -31,6 +31,14 @@ void _printLarge(String text) {
   pattern.allMatches(text).forEach((match) => print(match.group(0)));
 }
 
+List<int> range(int min, int max) {
+  final list = <int>[];
+  for (int i = min; i <= max; i++) {
+    list.add(i);
+  }
+  return list;
+}
+
 class PanUtils {
   @deprecated
   static String formatMoney(double input) {
@@ -60,7 +68,7 @@ class PanUtils {
     }
   }
 
-  static Future<Directory> getDirectory(String folder,) async {
+  static Future<Directory> getDirectory(String folder) async {
     final root = await getApplicationDocumentsDirectory();
     final dir = Directory('${root.path}/$folder');
     if (!await dir.exists()) {

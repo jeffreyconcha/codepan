@@ -96,7 +96,7 @@ extension MapUtils on Map<String, dynamic> {
     String? separator = '.',
   }) {
     if (index != null && index != 0) {
-      this[prefixKey] = '$prefix.$index';
+      this[prefixKey] = '$prefix$index';
     } else {
       this[prefixKey] = prefix;
     }
