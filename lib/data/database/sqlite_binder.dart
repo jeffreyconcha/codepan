@@ -128,10 +128,10 @@ class SQLiteBinder {
     dynamic unique,
   ) async {
     if (unique != null) {
-      final key = _getKeyForExistingId(stmt, table, unique);
+      final key = _getKeyFromUnique(stmt, table, unique);
       if (key != null) {
         final existingId = _map[key] ??
-            await _queryExistingId(
+            await _queryIdFromUnique(
               stmt,
               table,
               unique,
@@ -144,7 +144,7 @@ class SQLiteBinder {
     return _getNextId(table);
   }
 
-  String? _getKeyForExistingId(
+  String? _getKeyFromUnique(
     SQLiteStatement stmt,
     String table,
     dynamic unique,
@@ -170,7 +170,7 @@ class SQLiteBinder {
     return null;
   }
 
-  Future<int?> _queryExistingId(
+  Future<int?> _queryIdFromUnique(
     SQLiteStatement stmt,
     String table,
     dynamic unique,
