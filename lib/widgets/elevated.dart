@@ -19,7 +19,7 @@ class Elevated extends StatelessWidget {
     this.shadowOffset,
     this.margin,
     this.padding,
-    this.color,
+    this.color = Colors.white,
     this.width,
     this.height,
     this.radius = 0,

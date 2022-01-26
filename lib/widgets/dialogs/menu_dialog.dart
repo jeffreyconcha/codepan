@@ -4,8 +4,8 @@ import 'package:codepan/resources/dimensions.dart';
 import 'package:codepan/utils/search_handler.dart';
 import 'package:codepan/widgets/dialogs/information_dialog.dart';
 import 'package:codepan/widgets/icon.dart';
-import 'package:codepan/widgets/line_divider.dart';
 import 'package:codepan/widgets/if_else_builder.dart';
+import 'package:codepan/widgets/line_divider.dart';
 import 'package:codepan/widgets/text.dart';
 import 'package:codepan/widgets/text_field.dart';
 import 'package:flutter/material.dart';
@@ -78,8 +78,9 @@ class _MenuDialogState<T extends Selectable>
                           PanIcon(
                             icon: 'search',
                             package: 'codepan',
+                            width: d.at(15),
+                            height: d.at(15),
                             color: widget.fontColor.withOpacity(0.5),
-                            padding: EdgeInsets.all(d.at(12)),
                           ),
                       maxLines: 1,
                       padding: EdgeInsets.zero,

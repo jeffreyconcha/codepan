@@ -3,6 +3,7 @@ import 'package:codepan/extensions/extensions.dart';
 import 'package:codepan/resources/colors.dart';
 import 'package:codepan/resources/dimensions.dart';
 import 'package:codepan/resources/strings.dart';
+import 'package:codepan/widgets/elevated.dart';
 import 'package:codepan/widgets/linear_progress_bar.dart';
 import 'package:codepan/widgets/text.dart';
 import 'package:flutter/material.dart';
@@ -64,13 +65,10 @@ class _ProgressDialogState extends State<ProgressDialog> {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
-                Container(
+                Elevated(
                   width: widget.width,
                   height: widget.height,
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(d.at(dialogRadius)),
-                  ),
+                  radius: d.at(dialogRadius),
                   margin: EdgeInsets.all(dialogMargin),
                   padding: EdgeInsets.only(
                     top: d.at(20),
