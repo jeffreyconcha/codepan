@@ -134,8 +134,13 @@ class Time extends Equatable {
   }
 
   Time add(Duration duration) {
-    final sum = value.add(duration);
-    return Time.value(sum);
+    final result = value.add(duration);
+    return Time.value(result);
+  }
+
+  Time subtract(Duration duration) {
+    final result = value.subtract(duration);
+    return Time.value(result);
   }
 
   @override

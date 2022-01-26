@@ -7,6 +7,13 @@ const _loweredInTitle = <String>['of', 'and', 'or', 'is', 'are', 'a', 'with'];
 const _punctuations = <String>[',', '.', '?', '!', ';', ':'];
 
 extension StringUtils on String {
+  bool equalsIgnoreCase(String? other) {
+    if (other != null) {
+      return this.toLowerCase() == other.toLowerCase();
+    }
+    return false;
+  }
+
   String capitalize() {
     final space = ' ';
     if (this.contains(space)) {
