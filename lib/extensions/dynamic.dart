@@ -7,10 +7,13 @@ extension DynamicUtils on dynamic {
 
   String get enumValue => PanUtils.enumValue(this);
 
+  String get snake => enumValue.toSnake();
+
   String toWords({
     bool allCaps = false,
+    String separator = ' ',
   }) {
-    final words = enumValue.toSnake().replaceAll('_', ' ');
+    final words = snake.replaceAll('_', separator);
     if (allCaps) {
       return words.toUpperCase();
     }
