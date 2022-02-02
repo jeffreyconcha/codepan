@@ -32,7 +32,7 @@ class PullToRefresh extends StatelessWidget {
       child: isLoading && itemCount == 0
           ? loading ?? child
           : itemCount == 0
-              ? placeholder
+              ? placeholder ?? child
               : child,
       physics:
           isLoading && itemCount != 0 ? NeverScrollableScrollPhysics() : null,

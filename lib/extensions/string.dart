@@ -7,6 +7,20 @@ const _loweredInTitle = <String>['of', 'and', 'or', 'is', 'are', 'a', 'with'];
 const _punctuations = <String>[',', '.', '?', '!', ';', ':'];
 
 extension StringUtils on String {
+
+  String getInitials([int max = 2]) {
+    final buffer = StringBuffer();
+    var count = 0;
+    for (final word in this.split(' ')) {
+      buffer.write(word.substring(0, 1));
+      count++;
+      if (count >= max) {
+        break;
+      }
+    }
+    return buffer.toString().toUpperCase();
+  }
+
   bool equalsIgnoreCase(String? other) {
     if (other != null) {
       return this.toLowerCase() == other.toLowerCase();
