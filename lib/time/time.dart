@@ -88,6 +88,19 @@ class Time extends Equatable {
     return Time.value(value);
   }
 
+  factory Time.today() {
+    final value = DateTime.now();
+    final date = DateFormat(dateFormat);
+    return Time(
+      date: date.format(value),
+    );
+  }
+
+  factory Time.yesterday() {
+    final duration = Duration(days: 1);
+    return Time.today().subtract(duration);
+  }
+
   factory Time.fromTimeOfDay(TimeOfDay input) {
     String format(int value) => value < 10 ? '0$value' : '$value';
     final time = '${format(input.hour)}:${format(input.minute)}:00';
@@ -146,5 +159,37 @@ class Time extends Equatable {
   @override
   String toString() {
     return '$date $time';
+  }
+}
+
+class TimeRange {
+  final Time start;
+  final Time end;
+
+  DateTimeRange get value {
+    return DateTimeRange(
+      start: start.value,
+      end: end.value,
+    );
+  }
+
+  const TimeRange({
+    required this.start,
+    required this.end,
+  });
+
+  factory TimeRange.now() {
+    final now = Time.now();
+    return TimeRange(
+      start: now,
+      end: now,
+    );
+  }
+
+  factory TimeRange.value(DateTimeRange? range) {
+    return TimeRange(
+      start: Time.value(range?.start),
+      end: Time.value(range?.end),
+    );
   }
 }

@@ -4,9 +4,12 @@ import 'dart:isolate';
 import 'dart:ui';
 
 import 'package:codepan/extensions/extensions.dart';
+import 'package:codepan/resources/colors.dart';
+import 'package:codepan/time/time.dart';
 import 'package:connectivity/connectivity.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/src/material/date_picker.dart' as dp;
 import 'package:inflection3/inflection3.dart';
 import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
@@ -16,6 +19,7 @@ const _urlPattern =
 const printError = _printError;
 const printLarge = _printLarge;
 const printPost = _printPost;
+const century = const Duration(days: 365 * 100);
 
 void _printPost(String url, Map<String, dynamic> params) {
   final encoder = JsonEncoder.withIndent('  ');
@@ -144,5 +148,64 @@ class PanUtils {
       return word.replaceAll(first, past);
     }
     return PAST.convert(word);
+  }
+
+  static Future<Time> showDatePicker(
+    BuildContext context, {
+    Time? initialDate,
+  }) async {
+    final t = Theme.of(context);
+    final now = Time.now();
+    final firstDate = now.subtract(century);
+    final lastDate = now.add(century);
+    final initial = initialDate?.isNotZero() ?? false ? initialDate : now;
+    final data = await dp.showDatePicker(
+      context: context,
+      initialDate: initial!.value,
+      firstDate: firstDate.value,
+      lastDate: lastDate.value,
+      builder: (context, child) {
+        return Theme(
+          data: ThemeData.light().copyWith(
+            colorScheme: ColorScheme.light(
+              primary: t.primaryColor,
+              onPrimary: Colors.white,
+              onSurface: PanColors.text,
+            ),
+          ),
+          child: child!,
+        );
+      },
+    );
+    return Time.value(data);
+  }
+
+  static Future<TimeRange> showDateRangePicker(
+    BuildContext context, {
+    TimeRange? initialDateRange,
+  }) async {
+    final t = Theme.of(context);
+    final now = Time.now();
+    final firstDate = now.subtract(century);
+    final lastDate = now.add(century);
+    final data = await dp.showDateRangePicker(
+      context: context,
+      firstDate: firstDate.value,
+      lastDate: lastDate.value,
+      errorInvalidRangeText: 'pota ka',
+      builder: (context, child) {
+        return Theme(
+          data: ThemeData.light().copyWith(
+            colorScheme: ColorScheme.light(
+              primary: t.primaryColor,
+              onPrimary: Colors.white,
+              onSurface: PanColors.text,
+            ),
+          ),
+          child: child!,
+        );
+      },
+    );
+    return TimeRange.value(data);
   }
 }
