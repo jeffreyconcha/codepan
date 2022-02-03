@@ -42,6 +42,25 @@ extension BuildContextUtils on BuildContext {
     );
   }
 
+  void slideDialog({required Widget page}) {
+    showGeneralDialog(
+      context: this,
+      transitionDuration: Duration(milliseconds: 250),
+      pageBuilder: (context, anim1, anim2) {
+        return page;
+      },
+      transitionBuilder: (context, anim1, anim2, child) {
+        return SlideTransition(
+          position: Tween(
+            begin: Offset(0, 1),
+            end: Offset(0, 0),
+          ).animate(anim1),
+          child: child,
+        );
+      },
+    );
+  }
+
   void hideKeyboard() {
     FocusScope.of(this).unfocus();
   }

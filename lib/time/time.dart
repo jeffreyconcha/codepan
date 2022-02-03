@@ -115,7 +115,7 @@ class Time extends Equatable {
   }
 
   bool isZero() {
-    return milliseconds == zeroInMillisecondsEpoch;
+    return milliseconds <= zeroInMillisecondsEpoch;
   }
 
   bool isNotZero() {
