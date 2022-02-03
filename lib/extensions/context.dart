@@ -42,7 +42,7 @@ extension BuildContextUtils on BuildContext {
     );
   }
 
-  void slideDialog({required Widget page}) {
+  void slideToTop({required Widget page}) {
     showGeneralDialog(
       context: this,
       transitionDuration: Duration(milliseconds: 250),
