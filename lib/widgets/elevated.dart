@@ -6,6 +6,7 @@ class Elevated extends StatelessWidget {
   final double? width, height, shadowBlurRadius, spreadRadius;
   final EdgeInsets? padding, margin;
   final Color? color, shadowColor;
+  final BorderRadius? borderRadius;
   final Offset? shadowOffset;
   final Alignment? alignment;
   final double radius;
@@ -25,6 +26,7 @@ class Elevated extends StatelessWidget {
     this.radius = 0,
     this.alignment,
     this.spreadRadius,
+    this.borderRadius,
   }) : super(key: key);
 
   @override
@@ -39,7 +41,7 @@ class Elevated extends StatelessWidget {
       alignment: alignment,
       decoration: BoxDecoration(
         color: color,
-        borderRadius: BorderRadius.circular(radius),
+        borderRadius: borderRadius ?? BorderRadius.circular(radius),
         boxShadow: <BoxShadow>[
           BoxShadow(
             color: shadowColor ?? t.shadowColor,

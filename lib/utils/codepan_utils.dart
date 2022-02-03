@@ -155,10 +155,10 @@ class PanUtils {
     Time? initialDate,
   }) async {
     final t = Theme.of(context);
-    final now = Time.now();
-    final firstDate = now.subtract(century);
-    final lastDate = now.add(century);
-    final initial = initialDate?.isNotZero() ?? false ? initialDate : now;
+    final today = Time.today();
+    final firstDate = today.subtract(century);
+    final lastDate = today.add(century);
+    final initial = initialDate?.isNotZero() ?? false ? initialDate : today;
     final data = await dp.showDatePicker(
       context: context,
       initialDate: initial!.value,
@@ -185,14 +185,13 @@ class PanUtils {
     TimeRange? initialDateRange,
   }) async {
     final t = Theme.of(context);
-    final now = Time.now();
-    final firstDate = now.subtract(century);
-    final lastDate = now.add(century);
+    final today = Time.today();
+    final firstDate = today.subtract(century);
+    final lastDate = today.add(century);
     final data = await dp.showDateRangePicker(
       context: context,
       firstDate: firstDate.value,
       lastDate: lastDate.value,
-      errorInvalidRangeText: 'pota ka',
       builder: (context, child) {
         return Theme(
           data: ThemeData.light().copyWith(
