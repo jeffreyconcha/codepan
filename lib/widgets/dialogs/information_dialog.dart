@@ -94,7 +94,7 @@ class _InformationDialogState extends State<InformationDialog> {
                         textAlign: TextAlign.left,
                         padding: EdgeInsets.symmetric(
                           horizontal: d.at(20),
-                          vertical: d.at(15),
+                          vertical: d.at(13),
                         ),
                       ),
                       IfElseBuilder(

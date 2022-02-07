@@ -4,6 +4,7 @@ class Strings {
   static const String releaseToRefresh = 'Release to refresh';
   static const String completed = 'Completed';
   static const String refreshing = 'Refreshing...';
+  static const String noAvailableItems = 'No available items.';
 }
 
 class Errors {

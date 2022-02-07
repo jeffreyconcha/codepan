@@ -1,6 +1,9 @@
+import 'dart:core';
+
 import 'package:codepan/extensions/context.dart';
 import 'package:codepan/resources/colors.dart';
 import 'package:codepan/resources/dimensions.dart';
+import 'package:codepan/resources/strings.dart';
 import 'package:codepan/utils/search_handler.dart';
 import 'package:codepan/widgets/dialogs/information_dialog.dart';
 import 'package:codepan/widgets/icon.dart';
@@ -52,7 +55,7 @@ class _MenuDialogState<T extends Selectable>
   Widget build(BuildContext context) {
     final d = Dimension.of(context);
     final t = Theme.of(context);
-    final height = d.at(50);
+    final height = d.at(45);
     final totalHeight = height * items.length;
     return InformationDialog(
       title: widget.title,
@@ -73,7 +76,7 @@ class _MenuDialogState<T extends Selectable>
                   },
                   elseBuilder: (context) {
                     return PanTextField(
-                      height: d.at(43),
+                      height: d.at(40),
                       prefixIcon: widget.searchIcon ??
                           PanIcon(
                             icon: 'search',
@@ -106,6 +109,7 @@ class _MenuDialogState<T extends Selectable>
                       return _MenuItem<T>(
                         item: item,
                         height: height,
+                        fontColor: widget.fontColor,
                         onSelectItem: widget.onSelectItem,
                         withDivider: item != items.last,
                         isDisabled: _isDisabled(item),
@@ -117,18 +121,33 @@ class _MenuDialogState<T extends Selectable>
             );
           },
           elseBuilder: (context) {
-            return Column(
-              children: List.generate(items.length, (index) {
-                final item = items[index];
-                return _MenuItem<T>(
-                  item: item,
-                  height: height,
-                  fontColor: widget.fontColor,
-                  onSelectItem: widget.onSelectItem,
-                  withDivider: item != items.last,
-                  isDisabled: _isDisabled(item),
+            return IfElseBuilder(
+              condition: items.isNotEmpty,
+              ifBuilder: (context) {
+                return Column(
+                  children: List.generate(items.length, (index) {
+                    final item = items[index];
+                    return _MenuItem<T>(
+                      item: item,
+                      height: height,
+                      fontColor: widget.fontColor,
+                      onSelectItem: widget.onSelectItem,
+                      withDivider: item != items.last,
+                      isDisabled: _isDisabled(item),
+                    );
+                  }),
                 );
-              }),
+              },
+              elseBuilder: (context) {
+                return Container(
+                  height: height * 3,
+                  child: PanText(
+                    text: Strings.noAvailableItems,
+                    fontSize: d.at(11),
+                    fontColor: PanColors.grey3,
+                  ),
+                );
+              },
             );
           },
         ),

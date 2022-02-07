@@ -1,3 +1,6 @@
+import 'package:codepan/data/models/entities/master.dart';
+import 'package:codepan/data/models/entities/transaction.dart';
+
 typedef Validator<E> = num Function(E);
 
 enum Type {
@@ -32,5 +35,33 @@ extension ListUtils<E> on List<E> {
       }
     }
     return elementAt(index);
+  }
+
+  String get text => toText();
+
+  String toText([String separator = ', ']) {
+    final buffer = StringBuffer();
+    this.forEach((element) {
+      if (element is MasterData) {
+        buffer.write(element.name);
+      } else {
+        buffer.write(element);
+      }
+      if (this.last != element) {
+        buffer.write(separator);
+      }
+    });
+    return buffer.toString();
+  }
+
+  List<int> get idList {
+    final list = <int>[];
+    this.forEach((element) {
+      if (element is TransactionData) {
+        final id = element.id;
+        if (id != null) list.add(id);
+      }
+    });
+    return list;
   }
 }

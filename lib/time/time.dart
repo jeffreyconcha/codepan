@@ -186,6 +186,14 @@ class TimeRange {
     );
   }
 
+  factory TimeRange.today() {
+    final today = Time.today();
+    return TimeRange(
+      start: today,
+      end: today,
+    );
+  }
+
   factory TimeRange.value(DateTimeRange? range) {
     return TimeRange(
       start: Time.value(range?.start),

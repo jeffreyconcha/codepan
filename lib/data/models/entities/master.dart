@@ -77,18 +77,3 @@ abstract class MasterData extends TransactionData implements Selectable {
     String? name,
   });
 }
-
-abstract class MasterList<T extends MasterData> {
-  List<T>? get masterList;
-
-  String get listToText {
-    final buffer = StringBuffer();
-    masterList?.forEach((element) {
-      buffer.write(element.name);
-      if (masterList!.last != element) {
-        buffer.write(', ');
-      }
-    });
-    return buffer.toString();
-  }
-}
