@@ -141,6 +141,11 @@ class Time extends Equatable {
     return this <= other;
   }
 
+  bool isWithin(Duration duration) {
+    final now = Time.now();
+    return this >= now.subtract(duration);
+  }
+
   Time add(Duration duration) {
     final result = value.add(duration);
     return Time.value(result);
@@ -149,11 +154,6 @@ class Time extends Equatable {
   Time subtract(Duration duration) {
     final result = value.subtract(duration);
     return Time.value(result);
-  }
-
-  bool within(Duration duration) {
-    final now = Time.now();
-    return this >= now.subtract(duration);
   }
 
   bool operator <(Time other) {
