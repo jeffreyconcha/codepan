@@ -82,11 +82,12 @@ extension MapUtils on Map<String, dynamic> {
   }
 
   dynamic getValue(String key) {
-    final value = this[key];
+    final _key = getKey(key);
+    final value = this[_key];
     if (value != null) {
       return value;
     }
-    final fallbackKey = getFallbackKey(key);
+    final fallbackKey = getFallbackKey(_key);
     if (fallbackKey != null) {
       return this[fallbackKey];
     }
