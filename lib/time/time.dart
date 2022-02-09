@@ -194,6 +194,18 @@ class TimeRange {
     );
   }
 
+  factory TimeRange.week() {
+    final today = Time.today();
+    return TimeRange(
+      start: today.subtract(
+        Duration(
+          days: 7,
+        ),
+      ),
+      end: today,
+    );
+  }
+
   factory TimeRange.value(DateTimeRange? range) {
     return TimeRange(
       start: Time.value(range?.start),
