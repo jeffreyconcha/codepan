@@ -1,13 +1,13 @@
 import 'package:flutter/cupertino.dart';
 
-class CircleContainer extends StatelessWidget {
+class Circular extends StatelessWidget {
   final EdgeInsets? margin, padding;
   final Alignment alignment;
   final double? diameter;
   final Widget? child;
   final Color? color;
 
-  const CircleContainer({
+  const Circular({
     Key? key,
     this.child,
     this.color,

@@ -14,12 +14,7 @@ class Time extends Equatable {
   final String? time;
 
   @override
-  List<Object?> get props {
-    return [
-      date,
-      time,
-    ];
-  }
+  List<Object?> get props => [milliseconds];
 
   String get display => DateFormat.yMMMMd(locale).add_jm().format(value);
 
@@ -127,23 +122,23 @@ class Time extends Equatable {
   }
 
   bool isEqual(Time other) {
-    return value.isAtSameMomentAs(other.value);
+    return this == other;
   }
 
   bool isAfter(Time other) {
-    return value.isAfter(other.value);
-  }
-
-  bool isAfterOrEqual(Time other) {
-    return isAfter(other) || isEqual(other);
-  }
-
-  bool isBeforeOrEquals(Time other) {
-    return isBefore(other) || isEqual(other);
+    return this > other;
   }
 
   bool isBefore(Time other) {
-    return value.isBefore(other.value);
+    return this < other;
+  }
+
+  bool isAfterOrEqual(Time other) {
+    return this >= other;
+  }
+
+  bool isBeforeOrEquals(Time other) {
+    return this <= other;
   }
 
   Time add(Duration duration) {
@@ -154,6 +149,27 @@ class Time extends Equatable {
   Time subtract(Duration duration) {
     final result = value.subtract(duration);
     return Time.value(result);
+  }
+
+  bool within(Duration duration) {
+    final now = Time.now();
+    return this >= now.subtract(duration);
+  }
+
+  bool operator <(Time other) {
+    return value.isBefore(other.value);
+  }
+
+  bool operator >(Time other) {
+    return value.isAfter(other.value);
+  }
+
+  bool operator <=(Time other) {
+    return value.isBefore(other.value) || this == other;
+  }
+
+  bool operator >=(Time other) {
+    return value.isAfter(other.value) || this == other;
   }
 
   @override
