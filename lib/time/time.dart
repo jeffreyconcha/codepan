@@ -199,7 +199,7 @@ class TimeRange {
     return TimeRange(
       start: today.subtract(
         Duration(
-          days: 7,
+          days: 6,
         ),
       ),
       end: today,

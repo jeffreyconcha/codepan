@@ -2,8 +2,10 @@ import 'package:codepan/extensions/extensions.dart';
 import 'package:codepan/utils/codepan_utils.dart';
 import 'package:html_unescape/html_unescape.dart';
 
+const prefixFallbackKey = '\$prefixFallback';
+const fallbackSeparatorKey = '\$fallbackSeparator';
 const prefixKey = '\$prefix';
-const prefixSeparator = '\$prefixSeparator';
+const separatorKey = '\$separator';
 const boolPrefixes = <String>[
   'is',
   'has',
@@ -15,7 +17,7 @@ const boolPrefixes = <String>[
 extension MapUtils on Map<String, dynamic> {
   int? getInt(String key) {
     if (hasKey(key)) {
-      final value = this[getKey(key)];
+      final value = getValue(key);
       return PanUtils.parseInt(value);
     }
     return null;
@@ -23,7 +25,7 @@ extension MapUtils on Map<String, dynamic> {
 
   double? getDouble(String key) {
     if (hasKey(key)) {
-      final value = this[getKey(key)];
+      final value = getValue(key);
       return PanUtils.parseDouble(value);
     }
     return null;
@@ -31,7 +33,7 @@ extension MapUtils on Map<String, dynamic> {
 
   bool? getBool(String key) {
     if (hasKey(key)) {
-      final value = this[getKey(key)];
+      final value = getValue(key);
       return PanUtils.parseBool(value);
     }
     return null;
@@ -39,7 +41,7 @@ extension MapUtils on Map<String, dynamic> {
 
   List? getList(String key) {
     if (hasKey(key)) {
-      final value = this[getKey(key)];
+      final value = getValue(key);
       if (value is List) {
         return value;
       }
@@ -52,7 +54,7 @@ extension MapUtils on Map<String, dynamic> {
     required List<T> values,
   }) {
     if (hasKey(key)) {
-      final value = this[getKey(key)];
+      final value = getValue(key);
       if (value is String) {
         for (final element in values) {
           if (value.snake == element.snake) {
@@ -66,7 +68,7 @@ extension MapUtils on Map<String, dynamic> {
 
   dynamic get(String key) {
     if (hasKey(key)) {
-      final value = this[getKey(key)];
+      final value = getValue(key);
       final split = key.toSnake().split('_');
       if (boolPrefixes.contains(split.first)) {
         return PanUtils.parseBool(value);
@@ -79,9 +81,28 @@ extension MapUtils on Map<String, dynamic> {
     return null;
   }
 
+  dynamic getValue(String key) {
+    final value = this[key];
+    if (value != null) {
+      return value;
+    }
+    final fallbackKey = getFallbackKey(key);
+    if (fallbackKey != null) {
+      return this[fallbackKey];
+    }
+    return null;
+  }
+
   bool hasKey(String key) {
     final _key = getKey(key);
-    return this.containsKey(_key);
+    if (this.containsKey(_key)) {
+      return true;
+    }
+    final fallbackKey = getFallbackKey(_key);
+    if (fallbackKey != null) {
+      return this.containsKey(fallbackKey);
+    }
+    return false;
   }
 
   bool hasKeyWithValue(String key) {
@@ -95,14 +116,22 @@ extension MapUtils on Map<String, dynamic> {
   void setPrefix(
     String prefix, {
     int? index,
-    String? separator = '.',
+    String separator = '.',
   }) {
     if (index != null && index != 0) {
       this[prefixKey] = '$prefix$index';
     } else {
       this[prefixKey] = prefix;
     }
-    this[prefixSeparator] = separator;
+    this[separatorKey] = separator;
+  }
+
+  void setPrefixFallback(
+    String prefix, {
+    String separator = '.',
+  }) {
+    this[prefixFallbackKey] = prefix;
+    this[fallbackSeparatorKey] = separator;
   }
 
   void addPrefix(dynamic additional) {
@@ -115,12 +144,23 @@ extension MapUtils on Map<String, dynamic> {
   String getKey(String key) {
     if (this.containsKey(prefixKey)) {
       final prefix = this[prefixKey];
-      final separator = this[prefixSeparator];
+      final separator = this[separatorKey];
       if (prefix != null) {
         return '$prefix$separator$key';
       }
     }
     return key;
+  }
+
+  String? getFallbackKey(String key) {
+    if (this.containsKey(prefixFallbackKey)) {
+      final prefix = this[prefixFallbackKey];
+      final separator = this[fallbackSeparatorKey];
+      if (prefix != null) {
+        return '$prefix$separator$key';
+      }
+    }
+    return null;
   }
 
   Map<String, dynamic> copy() {
