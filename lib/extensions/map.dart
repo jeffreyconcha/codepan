@@ -53,9 +53,11 @@ extension MapUtils on Map<String, dynamic> {
   }) {
     if (hasKey(key)) {
       final value = this[getKey(key)];
-      for (final element in values) {
-        if (value == element.enumValue) {
-          return element;
+      if (value is String) {
+        for (final element in values) {
+          if (value.snake == element.snake) {
+            return element;
+          }
         }
       }
     }

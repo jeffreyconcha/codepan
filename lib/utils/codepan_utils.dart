@@ -140,16 +140,6 @@ class PanUtils {
     return data.toString().split('.').last;
   }
 
-  static String toPast(String word) {
-    final dash = '-';
-    if (word.contains(dash)) {
-      final first = word.split(dash).first;
-      final past = PAST.convert(first);
-      return word.replaceAll(first, past);
-    }
-    return PAST.convert(word);
-  }
-
   static Future<Time> showDatePicker(
     BuildContext context, {
     Time? initialDate,

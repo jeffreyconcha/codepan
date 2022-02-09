@@ -1,4 +1,3 @@
-import 'package:codepan/utils/codepan_utils.dart';
 import 'package:inflection3/inflection3.dart';
 
 const _true = <String>['true', 'yes', 'on', '1'];
@@ -98,6 +97,16 @@ extension StringUtils on String {
     return SNAKE_CASE.convert(this);
   }
 
+  String _wordToPast(String word) {
+    final dash = '-';
+    if (word.contains(dash)) {
+      final first = word.split(dash).first;
+      final past = PAST.convert(first);
+      return word.replaceAll(first, past);
+    }
+    return PAST.convert(word);
+  }
+
   String toPast() {
     final space = ' ';
     if (this.contains(space)) {
@@ -107,7 +116,7 @@ extension StringUtils on String {
       for (int i = 0; i < length; i++) {
         final word = words[i];
         if (i == 0) {
-          buffer.write(PanUtils.toPast(word));
+          buffer.write(_wordToPast(word));
         } else {
           buffer.write(word);
         }
@@ -117,7 +126,7 @@ extension StringUtils on String {
       }
       return buffer.toString();
     }
-    return PanUtils.toPast(this);
+    return _wordToPast(this);
   }
 
   String toSingular() {
@@ -161,7 +170,15 @@ extension StringUtils on String {
     throw Exception('Invalid parameters, length is only ${this.length}.');
   }
 
-  int extractNumbers() {
+  String get alphaNumeric {
+    return this.replaceAll(RegExp(r'[^A-Za-z0-9]'), '');
+  }
+
+  String get alphabets {
+    return this.replaceAll(RegExp(r'[^A-Za-z]'), '');
+  }
+
+  int get numbers {
     final numeric = this.replaceAll(RegExp(r'[^0-9]'), '');
     return int.parse(numeric);
   }
