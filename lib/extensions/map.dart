@@ -110,6 +110,10 @@ extension MapUtils on Map<String, dynamic> {
     if (this.containsKey(_key)) {
       return this[_key] != null;
     }
+    final fallbackKey = getFallbackKey(_key);
+    if (fallbackKey != null) {
+      return this[fallbackKey] != null;
+    }
     return false;
   }
 
