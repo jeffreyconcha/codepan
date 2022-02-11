@@ -12,6 +12,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/material.dart' as dp;
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -215,10 +216,16 @@ class PanUtils {
     return buffer.toString();
   }
 
-  static Future<String?> getAddressFromPosition(
-    Position? position,
+  static Future<String?> getAddressCoordinates(
+    dynamic position,
   ) async {
-    if (position != null) {
+    if (position is Position) {
+      return await getAddressFromCoordinates(
+        position.latitude,
+        position.longitude,
+      );
+    }
+    if (position is LatLng) {
       return await getAddressFromCoordinates(
         position.latitude,
         position.longitude,

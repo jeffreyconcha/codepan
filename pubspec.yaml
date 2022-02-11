@@ -31,10 +31,13 @@ dependencies:
   video_player: ^2.1.1
   visibility_detector: ^0.2.0
   flutter_animation_progress_bar: ^2.0.0
-  system_clock: ^1.2.0-nullsafety.1
+  system_clock: ^1.2.0
   camera: ^0.9.4+5
   geocoding: ^2.0.2
   geolocator: ^8.1.1
+  location: ^4.3.0
+  google_maps_flutter: ^2.1.1
+
 
 dev_dependencies:
   flutter_test:
