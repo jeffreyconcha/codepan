@@ -7,11 +7,15 @@ import 'package:time_ago_provider/time_ago_provider.dart' as ago;
 const String dateFormat = 'yyyy-MM-dd';
 const String timeFormat = 'HH:mm:ss';
 const String locale = 'en_US';
-const int zeroInMillisecondsEpoch = -62170012800000;
+const int millisecondsEpoch = 62170012800000;
 
 class Time extends Equatable {
-  final String? date;
-  final String? time;
+  final String? _date;
+  final String? _time;
+
+  String? get date => DateFormat(dateFormat).format(value);
+
+  String? get time => DateFormat(timeFormat).format(value);
 
   @override
   List<Object?> get props => [milliseconds];
@@ -38,23 +42,26 @@ class Time extends Equatable {
 
   String get history => ago.format(value);
 
-  DateTime get value => DateTime.parse('$date $time');
+  DateTime get value => DateTime.parse('$_date $_time');
 
   String get timezone => value.timeZoneName;
 
   String get timezoneValue => value.timeZoneOffset.format(withSeconds: false);
 
-  int get milliseconds => value.millisecondsSinceEpoch;
+  int get millisecondsSinceEpoch => value.millisecondsSinceEpoch;
+
+  int get milliseconds => millisecondsSinceEpoch + millisecondsEpoch;
 
   bool? get isNewMinute {
-    final split = time!.split(':');
+    final split = _time!.split(':');
     return split.last == '00';
   }
 
   const Time({
-    this.date = '0000-00-00',
-    this.time = '00:00:00',
-  });
+    String? date = '0000-00-00',
+    String? time = '00:00:00',
+  })  : _date = date,
+        _time = time;
 
   factory Time.value(DateTime? input) {
     if (input != null) {
@@ -68,8 +75,8 @@ class Time extends Equatable {
     return Time();
   }
 
-  factory Time.millis(int timestamp) {
-    final value = DateTime.fromMillisecondsSinceEpoch(timestamp);
+  factory Time.stamp(int stamp) {
+    final value = DateTime.fromMillisecondsSinceEpoch(stamp);
     return Time.value(value);
   }
 
@@ -113,9 +120,7 @@ class Time extends Equatable {
     return Duration(milliseconds: milliseconds);
   }
 
-  bool isZero() {
-    return milliseconds <= zeroInMillisecondsEpoch;
-  }
+  bool isZero() => milliseconds == 0;
 
   bool isNotZero() {
     return !isZero();
@@ -176,9 +181,17 @@ class Time extends Equatable {
     return value.isAfter(other.value) || this == other;
   }
 
+  Time operator +(Time other) {
+    return add(other.duration);
+  }
+
+  Time operator -(Time other) {
+    return subtract(other.duration);
+  }
+
   @override
   String toString() {
-    return '$date $time';
+    return '$_date $_time';
   }
 }
 
