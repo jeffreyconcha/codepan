@@ -13,9 +13,9 @@ class Time extends Equatable {
   final String? _date;
   final String? _time;
 
-  String? get date => DateFormat(dateFormat).format(value);
+  String? get date => DateFormat(dateFormat, locale).format(value);
 
-  String? get time => DateFormat(timeFormat).format(value);
+  String? get time => DateFormat(timeFormat, locale).format(value);
 
   @override
   List<Object?> get props => [milliseconds];
