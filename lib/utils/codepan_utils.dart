@@ -216,7 +216,7 @@ class PanUtils {
     return buffer.toString();
   }
 
-  static Future<String?> getAddressCoordinates(
+  static Future<String?> getAddress(
     dynamic position,
   ) async {
     if (position is Position) {
