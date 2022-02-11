@@ -109,7 +109,7 @@ class Time extends Equatable {
     };
   }
 
-  Duration toDuration() {
+  Duration get duration {
     return Duration(milliseconds: milliseconds);
   }
 
