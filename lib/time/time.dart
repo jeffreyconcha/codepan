@@ -109,6 +109,10 @@ class Time extends Equatable {
     };
   }
 
+  Duration toDuration() {
+    return Duration(milliseconds: milliseconds);
+  }
+
   bool isZero() {
     return milliseconds <= zeroInMillisecondsEpoch;
   }
