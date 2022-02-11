@@ -7,7 +7,6 @@ import 'package:codepan/extensions/extensions.dart';
 import 'package:codepan/resources/colors.dart';
 import 'package:codepan/time/time.dart';
 import 'package:connectivity/connectivity.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/material.dart' as dp;
 import 'package:geocoding/geocoding.dart';
@@ -43,6 +42,13 @@ List<int> range(int min, int max) {
     list.add(i);
   }
   return list;
+}
+
+enum AddressAttribute {
+  street,
+  locality,
+  administrativeArea,
+  country,
 }
 
 class PanUtils {
@@ -202,33 +208,50 @@ class PanUtils {
 
   static Future<String> getAddressFromCoordinates(
     double latitude,
-    double longitude,
-  ) async {
+    double longitude, {
+    List<AddressAttribute>? attrs,
+  }) async {
     final buffer = StringBuffer();
     final places = await placemarkFromCoordinates(latitude, longitude);
     if (places.isNotEmpty) {
       final place = places.first;
-      buffer.write('${place.street}, ');
-      buffer.write('${place.locality}, ');
-      buffer.write('${place.administrativeArea}, ');
-      buffer.write('${place.country}');
+      if (attrs?.contains(AddressAttribute.street) ?? true) {
+        buffer.write('${place.street},');
+      }
+      if (attrs?.contains(AddressAttribute.locality) ?? true) {
+        buffer.write(' ${place.locality},');
+      }
+      if (attrs?.contains(AddressAttribute.administrativeArea) ?? true) {
+        buffer.write(' ${place.administrativeArea},');
+      }
+      if (attrs?.contains(AddressAttribute.country) ?? true) {
+        buffer.write(' ${place.country}');
+      }
+    }
+    final address = buffer.toString();
+    final index = address.lastIndexOf(',');
+    if (index == address.length - 1) {
+      return address.substring(0, index).trim();
     }
     return buffer.toString();
   }
 
   static Future<String?> getAddress(
-    dynamic position,
-  ) async {
+    dynamic position, {
+    List<AddressAttribute>? attrs,
+  }) async {
     if (position is Position) {
       return await getAddressFromCoordinates(
         position.latitude,
         position.longitude,
+        attrs: attrs,
       );
     }
     if (position is LatLng) {
       return await getAddressFromCoordinates(
         position.latitude,
         position.longitude,
+        attrs: attrs,
       );
     }
     return null;

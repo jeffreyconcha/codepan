@@ -61,7 +61,7 @@ class PanText extends StatelessWidget {
     this.shadows,
     this.spannable,
     this.text,
-    this.textAlign = TextAlign.center,
+    this.textAlign = TextAlign.left,
     this.textDirection = TextDirection.ltr,
     this.width,
     this.textStyle,
