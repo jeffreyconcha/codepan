@@ -10,6 +10,8 @@ import 'package:connectivity/connectivity.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/material.dart' as dp;
+import 'package:geocoding/geocoding.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -83,7 +85,7 @@ class PanUtils {
   static Future<bool> hasInternet() async {
     final result = await Connectivity().checkConnectivity();
     return result == ConnectivityResult.wifi ||
-            result == ConnectivityResult.mobile;
+        result == ConnectivityResult.mobile;
   }
 
   static bool isValidUrl(String url) {
@@ -195,5 +197,33 @@ class PanUtils {
       },
     );
     return TimeRange.value(data);
+  }
+
+  static Future<String> getAddressFromCoordinates(
+    double latitude,
+    double longitude,
+  ) async {
+    final buffer = StringBuffer();
+    final places = await placemarkFromCoordinates(latitude, longitude);
+    if (places.isNotEmpty) {
+      final place = places.first;
+      buffer.write('${place.street}, ');
+      buffer.write('${place.locality}, ');
+      buffer.write('${place.administrativeArea}, ');
+      buffer.write('${place.country}');
+    }
+    return buffer.toString();
+  }
+
+  static Future<String?> getAddressFromPosition(
+    Position? position,
+  ) async {
+    if (position != null) {
+      return await getAddressFromCoordinates(
+        position.latitude,
+        position.longitude,
+      );
+    }
+    return null;
   }
 }

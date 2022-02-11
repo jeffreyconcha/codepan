@@ -6,6 +6,7 @@ class Circular extends StatelessWidget {
   final double? diameter;
   final Widget? child;
   final Color? color;
+  final Border? border;
 
   const Circular({
     Key? key,
@@ -14,6 +15,7 @@ class Circular extends StatelessWidget {
     this.diameter,
     this.margin,
     this.padding,
+    this.border,
     this.alignment = Alignment.center,
   }) : super(key: key);
 
@@ -28,6 +30,7 @@ class Circular extends StatelessWidget {
       decoration: BoxDecoration(
         shape: BoxShape.circle,
         color: color,
+        border: border,
       ),
       child: child,
     );

@@ -27,23 +27,25 @@ extension StringUtils on String {
     return false;
   }
 
-  String capitalize() {
-    final space = ' ';
-    if (this.contains(space)) {
-      final buffer = StringBuffer();
-      final words = this.split(space);
-      for (int i = 0; i < words.length; i++) {
-        final word = words[i];
-        if (_loweredInTitle.contains(word) && i != 0) {
-          buffer.write(word);
-        } else {
-          buffer.write('${word[0].toUpperCase()}${word.substring(1)}');
+  String capitalize([bool isSentence = false]) {
+    if (!isSentence) {
+      final space = ' ';
+      if (this.contains(space)) {
+        final buffer = StringBuffer();
+        final words = this.split(space);
+        for (int i = 0; i < words.length; i++) {
+          final word = words[i];
+          if (_loweredInTitle.contains(word) && i != 0) {
+            buffer.write(word);
+          } else {
+            buffer.write('${word[0].toUpperCase()}${word.substring(1)}');
+          }
+          if (i < words.length - 1) {
+            buffer.write(space);
+          }
         }
-        if (i < words.length - 1) {
-          buffer.write(space);
-        }
+        return buffer.toString();
       }
-      return buffer.toString();
     }
     return '${this[0].toUpperCase()}${this.substring(1)}';
   }

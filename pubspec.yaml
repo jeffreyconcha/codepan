@@ -33,6 +33,8 @@ dependencies:
   flutter_animation_progress_bar: ^2.0.0
   system_clock: ^1.2.0-nullsafety.1
   camera: ^0.9.4+5
+  geocoding: ^2.0.2
+  geolocator: ^8.1.1
 
 dev_dependencies:
   flutter_test:
