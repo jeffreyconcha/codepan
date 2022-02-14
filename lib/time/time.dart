@@ -193,6 +193,8 @@ class Time extends Equatable {
   String toString() {
     return '$_date $_time';
   }
+
+  static const zero = const Time();
 }
 
 class TimeRange {
