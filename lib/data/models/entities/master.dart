@@ -2,7 +2,7 @@ import 'package:codepan/data/models/entities/transaction.dart';
 import 'package:codepan/widgets/dialogs/menu_dialog.dart';
 import 'package:flutter/foundation.dart';
 
-abstract class MasterData extends TransactionData implements Selectable {
+abstract class MasterData extends TransactionData with Selectable {
   final int? webId;
   final String? name;
 

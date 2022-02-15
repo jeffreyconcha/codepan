@@ -22,11 +22,14 @@ abstract class Selectable implements Searchable {
 }
 
 class MenuDialog<T extends Selectable> extends StatefulWidget {
+  final Widget? searchIcon, checkedIcon, uncheckedIcon;
+  final ValueChanged<List<T>>? onSelectItems;
   final MenuSearchBuilder? searchBuilder;
   final ValueChanged<T>? onSelectItem;
   final String? title, titleFont;
   final List<T>? disabledItems;
-  final Widget? searchIcon;
+  final List<T>? selectedItems;
+  final bool isMultiple;
   final Color fontColor;
   final List<T> items;
 
@@ -34,12 +37,17 @@ class MenuDialog<T extends Selectable> extends StatefulWidget {
     Key? key,
     required this.items,
     this.disabledItems,
+    this.selectedItems,
     this.title,
     this.onSelectItem,
+    this.onSelectItems,
     this.fontColor = PanColors.text,
     this.searchIcon,
     this.titleFont,
     this.searchBuilder,
+    this.checkedIcon,
+    this.uncheckedIcon,
+    this.isMultiple = false,
   }) : super(key: key);
 
   @override
@@ -48,8 +56,24 @@ class MenuDialog<T extends Selectable> extends StatefulWidget {
 
 class _MenuDialogState<T extends Selectable>
     extends StateWithSearch<MenuDialog<T>, T> {
+  late List<T> _selectedItems;
+
+  bool get isMultiple => widget.isMultiple;
+
+  List<T>? get disabledItems => widget.disabledItems;
+
   @override
   List<T> get allItems => widget.items;
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedItems = widget.selectedItems ?? [];
+    if (isMultiple) {
+      assert(widget.checkedIcon != null, 'No widget for checked icon.');
+      assert(widget.uncheckedIcon != null, 'No widget for unchecked icon.');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -110,9 +134,13 @@ class _MenuDialogState<T extends Selectable>
                         item: item,
                         height: height,
                         fontColor: widget.fontColor,
-                        onSelectItem: widget.onSelectItem,
                         withDivider: item != items.last,
-                        isDisabled: _isDisabled(item),
+                        checkedIcon: widget.checkedIcon,
+                        uncheckedIcon: widget.uncheckedIcon,
+                        isMultiple: isMultiple,
+                        isSelected: _selectedItems.contains(item),
+                        isDisabled: disabledItems?.contains(item) ?? false,
+                        onSelectItem: _onSelectItem,
                       );
                     },
                   ),
@@ -131,9 +159,13 @@ class _MenuDialogState<T extends Selectable>
                       item: item,
                       height: height,
                       fontColor: widget.fontColor,
-                      onSelectItem: widget.onSelectItem,
                       withDivider: item != items.last,
-                      isDisabled: _isDisabled(item),
+                      checkedIcon: widget.checkedIcon,
+                      uncheckedIcon: widget.uncheckedIcon,
+                      isMultiple: isMultiple,
+                      isSelected: _selectedItems.contains(item),
+                      isDisabled: disabledItems?.contains(item) ?? false,
+                      onSelectItem: _onSelectItem,
                     );
                   }),
                 );
@@ -155,21 +187,26 @@ class _MenuDialogState<T extends Selectable>
     );
   }
 
-  bool _isDisabled(T item) {
-    if (widget.disabledItems?.isNotEmpty ?? false) {
-      for (final _item in widget.disabledItems!) {
-        if (_item.title == item.title) {
-          return true;
+  void _onSelectItem(T item) {
+    if (widget.isMultiple) {
+      setState(() {
+        if (_selectedItems.contains(item)) {
+          _selectedItems.remove(item);
+        } else {
+          _selectedItems.add(item);
         }
-      }
+      });
+    } else {
+      context.pop();
+      widget.onSelectItem?.call(item);
     }
-    return false;
   }
 }
 
 class _MenuItem<T extends Selectable> extends StatelessWidget {
+  final bool withDivider, isDisabled, isMultiple, isSelected;
+  final Widget? checkedIcon, uncheckedIcon;
   final ValueChanged<T>? onSelectItem;
-  final bool withDivider, isDisabled;
   final Color fontColor;
   final double height;
   final T item;
@@ -182,6 +219,10 @@ class _MenuItem<T extends Selectable> extends StatelessWidget {
     this.isDisabled = false,
     this.onSelectItem,
     this.fontColor = PanColors.text,
+    this.checkedIcon,
+    this.uncheckedIcon,
+    this.isMultiple = false,
+    this.isSelected = false,
   }) : super(key: key);
 
   @override
@@ -190,25 +231,44 @@ class _MenuItem<T extends Selectable> extends StatelessWidget {
     return Column(
       children: [
         InkWell(
-          child: PanText(
-            height: height,
-            text: item.title,
-            fontSize: d.at(13),
-            fontColor: isDisabled ? fontColor.withOpacity(0.4) : fontColor,
-            alignment: Alignment.centerLeft,
-            textAlign: TextAlign.left,
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
+          child: Padding(
             padding: EdgeInsets.symmetric(
               horizontal: d.at(18),
             ),
+            child: Row(
+              children: [
+                IfElseBuilder(
+                  condition: isMultiple,
+                  ifBuilder: (context) {
+                    return IfElseBuilder(
+                      condition: isSelected,
+                      margin: EdgeInsets.only(
+                        right: d.at(10),
+                      ),
+                      ifBuilder: (context) {
+                        return checkedIcon!;
+                      },
+                      elseBuilder: (context) {
+                        return uncheckedIcon!;
+                      },
+                    );
+                  },
+                ),
+                PanText(
+                  height: height,
+                  text: item.title,
+                  fontSize: d.at(13),
+                  fontColor:
+                      isDisabled ? fontColor.withOpacity(0.4) : fontColor,
+                  alignment: Alignment.centerLeft,
+                  textAlign: TextAlign.left,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ],
+            ),
           ),
-          onTap: !isDisabled
-              ? () {
-                  context.pop();
-                  onSelectItem?.call(item);
-                }
-              : null,
+          onTap: !isDisabled ? () => onSelectItem?.call(item) : null,
         ),
         IfElseBuilder(
           condition: withDivider,
