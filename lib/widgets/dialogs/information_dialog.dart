@@ -13,8 +13,8 @@ import 'dialog_config.dart';
 class InformationDialog extends StatefulWidget {
   final String? title, message, positive, negative, titleFont;
   final VoidCallback? onPositiveTap, onNegativeTap, onDetach;
+  final bool dismissible, withDivider, autoDismiss;
   final InformationController? controller;
-  final bool dismissible, withDivider;
   final List<InlineSpan>? children;
   final EdgeInsets? margin;
   final Color fontColor;
@@ -37,6 +37,7 @@ class InformationDialog extends StatefulWidget {
     this.titleFont,
     this.fontColor = PanColors.text,
     this.margin,
+    this.autoDismiss = true,
   }) : super(key: key);
 
   @override
@@ -84,18 +85,38 @@ class _InformationDialogState extends State<InformationDialog> {
                   margin: widget.margin ?? EdgeInsets.all(d.at(dialogMargin)),
                   child: Column(
                     children: <Widget>[
-                      PanText(
-                        text: widget.title,
-                        fontSize: d.at(15),
-                        fontFamily: widget.titleFont ?? titleFont,
-                        fontWeight: FontWeight.bold,
-                        fontColor: widget.fontColor,
-                        alignment: Alignment.centerLeft,
-                        textAlign: TextAlign.left,
-                        padding: EdgeInsets.symmetric(
-                          horizontal: d.at(20),
-                          vertical: d.at(13),
-                        ),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: PanText(
+                              text: widget.title,
+                              fontSize: d.at(15),
+                              fontFamily: widget.titleFont ?? titleFont,
+                              fontWeight: FontWeight.bold,
+                              fontColor: widget.fontColor,
+                              alignment: Alignment.centerLeft,
+                              textAlign: TextAlign.left,
+                              padding: EdgeInsets.symmetric(
+                                horizontal: d.at(20),
+                                vertical: d.at(13),
+                              ),
+                            ),
+                          ),
+                          PanButton(
+                            width: d.at(40),
+                            height: d.at(40),
+                            radius: d.at(20),
+                            child: Icon(
+                              Icons.close,
+                              color: PanColors.text,
+                              size: d.at(20),
+                            ),
+                            onPressed: () => context.pop(),
+                            margin: EdgeInsets.only(
+                              right: d.at(5),
+                            ),
+                          ),
+                        ],
                       ),
                       IfElseBuilder(
                         condition: widget.withDivider,
@@ -127,6 +148,7 @@ class _InformationDialogState extends State<InformationDialog> {
                       ),
                       Padding(
                         padding: EdgeInsets.only(
+                          top: d.at(10),
                           right: d.at(20),
                           bottom: d.at(5),
                         ),
@@ -144,11 +166,16 @@ class _InformationDialogState extends State<InformationDialog> {
                                   radius: d.at(3),
                                   padding: EdgeInsets.all(d.at(10)),
                                   onPressed: () {
-                                    _detach(context);
+                                    if (widget.autoDismiss) {
+                                      _detach(context);
+                                    }
                                     widget.onPositiveTap?.call();
                                   },
                                 );
                               },
+                            ),
+                            SizedBox(
+                              width: d.at(10),
                             ),
                             IfElseBuilder(
                               condition: widget.negative != null,
@@ -161,7 +188,9 @@ class _InformationDialogState extends State<InformationDialog> {
                                   radius: d.at(3),
                                   padding: EdgeInsets.all(d.at(10)),
                                   onPressed: () {
-                                    _detach(context);
+                                    if (widget.autoDismiss) {
+                                      _detach(context);
+                                    }
                                     widget.onNegativeTap?.call();
                                   },
                                 );

@@ -23,10 +23,10 @@ abstract class Selectable implements Searchable {
 
 class MenuDialog<T extends Selectable> extends StatefulWidget {
   final Widget? searchIcon, checkedIcon, uncheckedIcon;
+  final String? title, titleFont, positive, negative;
   final ValueChanged<List<T>>? onSelectItems;
   final MenuSearchBuilder? searchBuilder;
   final ValueChanged<T>? onSelectItem;
-  final String? title, titleFont;
   final List<T>? disabledItems;
   final List<T>? selectedItems;
   final bool isMultiple;
@@ -47,6 +47,8 @@ class MenuDialog<T extends Selectable> extends StatefulWidget {
     this.searchBuilder,
     this.checkedIcon,
     this.uncheckedIcon,
+    this.positive,
+    this.negative,
     this.isMultiple = false,
   }) : super(key: key);
 
@@ -72,6 +74,8 @@ class _MenuDialogState<T extends Selectable>
     if (isMultiple) {
       assert(widget.checkedIcon != null, 'No widget for checked icon.');
       assert(widget.uncheckedIcon != null, 'No widget for unchecked icon.');
+      assert(widget.positive != null, 'No text for positive button.');
+      assert(widget.negative != null, 'No text for negative button.');
     }
   }
 
@@ -85,6 +89,9 @@ class _MenuDialogState<T extends Selectable>
       title: widget.title,
       titleFont: widget.titleFont,
       fontColor: widget.fontColor,
+      positive: widget.positive,
+      negative: widget.negative,
+      autoDismiss: false,
       withDivider: true,
       child: Material(
         color: Colors.white,
@@ -184,6 +191,15 @@ class _MenuDialogState<T extends Selectable>
           },
         ),
       ),
+      onPositiveTap: () {
+        context.pop();
+        widget.onSelectItems?.call(_selectedItems);
+      },
+      onNegativeTap: () {
+        setState(() {
+          _selectedItems.clear();
+        });
+      },
     );
   }
 
