@@ -18,7 +18,7 @@ abstract class MasterData extends TransactionData implements Selectable {
   String? get title => name;
 
   @override
-  String? get identifier => id?.toString();
+  dynamic get identifier => id;
 
   @override
   List<String?> get searchable => [name];

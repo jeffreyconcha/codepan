@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 
 class IfElseBuilder extends StatelessWidget {
   final WidgetBuilder? ifBuilder, elseBuilder;
+  final BoxConstraints? constraints;
   final Widget? ifChild, elseChild;
   final EdgeInsets? margin, padding;
+  final BoxDecoration? decoration;
   final double? width, height;
   final Alignment? alignment;
   final bool? condition;
@@ -22,6 +24,8 @@ class IfElseBuilder extends StatelessWidget {
     this.height,
     this.color,
     this.alignment,
+    this.decoration,
+    this.constraints,
   }) : super(key: key);
 
   @override
@@ -33,6 +37,8 @@ class IfElseBuilder extends StatelessWidget {
       margin: margin,
       padding: padding,
       alignment: alignment,
+      decoration: decoration,
+      constraints: constraints,
       child: condition ?? false
           ? ifBuilder?.call(context) ?? ifChild
           : elseBuilder?.call(context) ?? elseChild,

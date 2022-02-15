@@ -1,7 +1,6 @@
 import 'package:codepan/resources/colors.dart';
 import 'package:codepan/widgets/if_else_builder.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 
 enum OverflowState {
   collapse,
@@ -13,10 +12,10 @@ typedef OnTextOverflow = Widget Function(int lines);
 
 class PanText extends StatelessWidget {
   final double? width, height, fontSize, fontHeight, radius;
-  final EdgeInsetsGeometry? margin, padding;
   final Color? fontColor, hintFontColor;
   final OnTextOverflow? onTextOverflow;
   final String? text, hint, fontFamily;
+  final EdgeInsets? margin, padding;
   final TextDirection textDirection;
   final BoxConstraints? constraints;
   final OverflowState overflowState;
@@ -37,7 +36,7 @@ class PanText extends StatelessWidget {
 
   const PanText({
     Key? key,
-    this.alignment = Alignment.center,
+    this.alignment,
     this.background = PanColors.none,
     this.border,
     this.children,
@@ -124,14 +123,20 @@ class PanText extends StatelessWidget {
     );
     return IfElseBuilder(
       condition: (text != null && text.isNotEmpty) || children != null,
-      ifChild: Container(
-        width: width,
-        height: height,
-        margin: margin,
-        padding: padding,
-        alignment: alignment,
-        child: IfElseBuilder(
+      ifBuilder: (context) {
+        return IfElseBuilder(
           condition: onTextOverflow != null,
+          width: width,
+          height: height,
+          margin: margin,
+          padding: padding,
+          alignment: alignment,
+          decoration: BoxDecoration(
+            color: background,
+            borderRadius: BorderRadius.circular(radius!),
+            border: border,
+          ),
+          constraints: constraints,
           ifBuilder: (context) {
             return LayoutBuilder(
               builder: (context, constraints) {
@@ -164,14 +169,8 @@ class PanText extends StatelessWidget {
           elseBuilder: (context) {
             return rich;
           },
-        ),
-        decoration: BoxDecoration(
-          color: background,
-          borderRadius: BorderRadius.circular(radius!),
-          border: border,
-        ),
-        constraints: constraints,
-      ),
+        );
+      },
     );
   }
 
