@@ -92,7 +92,7 @@ class _InformationDialogState extends State<InformationDialog> {
                               text: widget.title,
                               fontSize: d.at(15),
                               fontFamily: widget.titleFont ?? titleFont,
-                              fontWeight: FontWeight.bold,
+                              fontWeight: FontWeight.w600,
                               fontColor: widget.fontColor,
                               alignment: Alignment.centerLeft,
                               textAlign: TextAlign.left,
