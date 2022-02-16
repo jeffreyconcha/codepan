@@ -1,4 +1,5 @@
 import 'package:codepan/extensions/duration.dart';
+import 'package:codepan/resources/strings.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -30,7 +31,13 @@ class Time extends Equatable {
 
   String get displayTimeWithSeconds => DateFormat.jms(locale).format(value);
 
-  String get dayOfTheWeek => DateFormat.EEEE(locale).format(value);
+  String get dayOfTheWeek {
+    final today = Time.today();
+    if (this == today) {
+      return Strings.today;
+    }
+    return DateFormat.EEEE(locale).format(value);
+  }
 
   String get dayOfTheMonth => DateFormat.d(locale).format(value);
 

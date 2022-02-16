@@ -5,6 +5,8 @@ class Strings {
   static const String completed = 'Completed';
   static const String refreshing = 'Refreshing...';
   static const String noAvailableItems = 'No available items.';
+  static const String today = 'Today';
+  static const String yesterday = 'Yesterday';
 }
 
 class Errors {

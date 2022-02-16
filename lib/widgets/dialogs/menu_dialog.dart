@@ -182,8 +182,9 @@ class _MenuDialogState<T extends Selectable>
                   height: height * 3,
                   child: PanText(
                     text: Strings.noAvailableItems,
-                    fontSize: d.at(11),
+                    fontSize: d.at(12),
                     fontColor: PanColors.grey3,
+                    alignment: Alignment.center,
                   ),
                 );
               },
