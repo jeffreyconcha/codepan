@@ -136,7 +136,7 @@ class _MenuDialogState<T extends Selectable>
                 );
               },
             ),
-            Container(
+            ConstrainedBox(
               constraints: BoxConstraints(
                 maxHeight: d.min,
               ),

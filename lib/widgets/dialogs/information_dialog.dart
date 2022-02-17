@@ -149,7 +149,7 @@ class _InformationDialogState extends State<InformationDialog> {
                       Padding(
                         padding: EdgeInsets.symmetric(
                           horizontal: d.at(20),
-                          vertical: d.at(10),
+                          vertical: d.at(7),
                         ),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.end,
