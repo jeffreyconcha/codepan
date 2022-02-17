@@ -39,7 +39,7 @@ class TimeRange extends Equatable {
         return '$range, ${start.displayYear}';
       }
     }
-    return start.displayDate;
+    return start.abbrDate;
   }
 
   bool get isValid => start <= end;
@@ -48,7 +48,8 @@ class TimeRange extends Equatable {
 
   bool get isNotZero => !isZero;
 
-  Duration get duration => isValid ? end.difference(start) : Duration.zero;
+  Duration get duration =>
+      isValid ? end.difference(start) + Duration(days: 1) : Duration.zero;
 
   DateTimeRange get value {
     return DateTimeRange(
