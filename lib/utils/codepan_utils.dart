@@ -6,6 +6,7 @@ import 'dart:ui';
 import 'package:codepan/extensions/extensions.dart';
 import 'package:codepan/resources/colors.dart';
 import 'package:codepan/time/time.dart';
+import 'package:codepan/time/time_range.dart';
 import 'package:connectivity/connectivity.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/material.dart' as dp;
@@ -156,7 +157,7 @@ class PanUtils {
     final today = Time.today();
     final firstDate = today.subtract(century);
     final lastDate = today.add(century);
-    final initial = initialDate?.isNotZero() ?? false ? initialDate : today;
+    final initial = initialDate?.isNotZero ?? false ? initialDate : today;
     final data = await dp.showDatePicker(
       context: context,
       initialDate: initial!.value,

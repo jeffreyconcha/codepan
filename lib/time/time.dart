@@ -25,27 +25,35 @@ class Time extends Equatable {
 
   String get displayDate => DateFormat.yMMMMd(locale).format(value);
 
-  String get shortDate => DateFormat.yMMMd(locale).format(value);
+  String get displayWeekDayDate => '$displayWeekday, $displayDate}';
 
   String get displayTime => DateFormat.jm(locale).format(value);
 
   String get displayTimeWithSeconds => DateFormat.jms(locale).format(value);
 
-  String get dayOfTheWeek {
-    final today = Time.today();
-    if (this == today) {
-      return Strings.today;
-    }
-    return DateFormat.EEEE(locale).format(value);
+  String get displayWeekday {
+    return this != Time.today()
+        ? DateFormat.EEEE(locale).format(value)
+        : Strings.today;
   }
 
-  String get dayOfTheMonth => DateFormat.d(locale).format(value);
+  String get displayDay => DateFormat.d(locale).format(value);
 
-  String get monthInYear => DateFormat.MMMM(locale).format(value);
+  String get displayMonth => DateFormat.MMMM(locale).format(value);
 
-  String get abbreviatedWeekday => DateFormat.E(locale).format(value);
+  String get displayYear => DateFormat.y(locale).format(value);
 
-  String get abbreviatedMonth => DateFormat.MMM(locale).format(value);
+  String get displayMonthDay => DateFormat.MMMMd(locale).format(value);
+
+  String get abbrWeekday => DateFormat.E(locale).format(value);
+
+  String get abbrMonth => DateFormat.MMM(locale).format(value);
+
+  String get abbrMonthDay => DateFormat.MMMMd(locale).format(value);
+
+  String get abbrWeekdayDate => '$abbrWeekday, $abbrDate';
+
+  String get abbrDate => DateFormat.yMMMd(locale).format(value);
 
   String get history => ago.format(value);
 
@@ -127,11 +135,9 @@ class Time extends Equatable {
     return Duration(milliseconds: milliseconds);
   }
 
-  bool isZero() => milliseconds == 0;
+  bool get isZero => milliseconds == 0;
 
-  bool isNotZero() {
-    return !isZero();
-  }
+  bool get isNotZero => !isZero;
 
   Duration difference(Time other) {
     return value.difference(other.value);
@@ -160,6 +166,14 @@ class Time extends Equatable {
   bool isWithin(Duration duration) {
     final now = Time.now();
     return this >= now.subtract(duration);
+  }
+
+  bool isSameMonth(Time other) {
+    return value.month == other.value.month;
+  }
+
+  bool isSameYear(Time other) {
+    return value.year == other.value.year;
   }
 
   Time add(Duration duration) {
@@ -204,54 +218,13 @@ class Time extends Equatable {
   static const zero = const Time();
 }
 
-class TimeRange {
-  final Time start;
-  final Time end;
+class TimeController extends ValueNotifier<Time> {
+  TimeController({
+    required Time time,
+  }) : super(time);
 
-  DateTimeRange get value {
-    return DateTimeRange(
-      start: start.value,
-      end: end.value,
-    );
-  }
-
-  const TimeRange({
-    required this.start,
-    required this.end,
-  });
-
-  factory TimeRange.now() {
-    final now = Time.now();
-    return TimeRange(
-      start: now,
-      end: now,
-    );
-  }
-
-  factory TimeRange.today() {
-    final today = Time.today();
-    return TimeRange(
-      start: today,
-      end: today,
-    );
-  }
-
-  factory TimeRange.week() {
-    final today = Time.today();
-    return TimeRange(
-      start: today.subtract(
-        Duration(
-          days: 6,
-        ),
-      ),
-      end: today,
-    );
-  }
-
-  factory TimeRange.value(DateTimeRange? range) {
-    return TimeRange(
-      start: Time.value(range?.start),
-      end: Time.value(range?.end),
-    );
+  void setTime(Time value) {
+    this.value = value;
+    notifyListeners();
   }
 }
