@@ -36,13 +36,17 @@ class TimeRange extends Equatable {
           return '${start.abbrMonth} $range, ${start.displayYear}';
         }
         final range = '${start.abbrMonthDay} - ${end.abbrMonthDay}';
-        return '$range ${start.displayYear}';
+        return '$range, ${start.displayYear}';
       }
     }
     return start.displayDate;
   }
 
   bool get isValid => start <= end;
+
+  bool get isZero => start.isZero || end.isZero;
+
+  bool get isNotZero => !isZero;
 
   Duration get duration => isValid ? end.difference(start) : Duration.zero;
 

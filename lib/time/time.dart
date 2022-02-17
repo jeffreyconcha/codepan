@@ -49,7 +49,7 @@ class Time extends Equatable {
 
   String get abbrMonth => DateFormat.MMM(locale).format(value);
 
-  String get abbrMonthDay => DateFormat.MMMMd(locale).format(value);
+  String get abbrMonthDay => DateFormat.MMMd(locale).format(value);
 
   String get abbrWeekdayDate => '$abbrWeekday, $abbrDate';
 
