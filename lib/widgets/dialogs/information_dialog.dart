@@ -147,10 +147,9 @@ class _InformationDialogState extends State<InformationDialog> {
                         },
                       ),
                       Padding(
-                        padding: EdgeInsets.only(
-                          top: d.at(10),
-                          right: d.at(20),
-                          bottom: d.at(5),
+                        padding: EdgeInsets.symmetric(
+                          horizontal: d.at(20),
+                          vertical: d.at(10),
                         ),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.end,
@@ -164,7 +163,10 @@ class _InformationDialogState extends State<InformationDialog> {
                                   fontSize: d.at(13),
                                   fontWeight: FontWeight.w600,
                                   radius: d.at(3),
-                                  padding: EdgeInsets.all(d.at(10)),
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal: d.at(15),
+                                    vertical: d.at(10),
+                                  ),
                                   onPressed: () {
                                     if (widget.autoDismiss) {
                                       _detach(context);
@@ -186,7 +188,10 @@ class _InformationDialogState extends State<InformationDialog> {
                                   fontSize: d.at(13),
                                   fontWeight: FontWeight.w600,
                                   radius: d.at(3),
-                                  padding: EdgeInsets.all(d.at(10)),
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal: d.at(15),
+                                    vertical: d.at(10),
+                                  ),
                                   onPressed: () {
                                     if (widget.autoDismiss) {
                                       _detach(context);

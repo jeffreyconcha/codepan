@@ -3,7 +3,6 @@ import 'dart:core';
 import 'package:codepan/extensions/context.dart';
 import 'package:codepan/resources/colors.dart';
 import 'package:codepan/resources/dimensions.dart';
-import 'package:codepan/resources/strings.dart';
 import 'package:codepan/utils/search_handler.dart';
 import 'package:codepan/widgets/dialogs/information_dialog.dart';
 import 'package:codepan/widgets/icon.dart';
@@ -83,8 +82,8 @@ class _MenuDialogState<T extends Selectable>
   Widget build(BuildContext context) {
     final d = Dimension.of(context);
     final t = Theme.of(context);
-    final height = d.at(45);
-    final totalHeight = height * items.length;
+    final itemHeight = d.at(45);
+    final totalHeight = itemHeight * items.length;
     return InformationDialog(
       title: widget.title,
       titleFont: widget.titleFont,
@@ -95,101 +94,74 @@ class _MenuDialogState<T extends Selectable>
       withDivider: true,
       child: Material(
         color: Colors.white,
-        child: IfElseBuilder(
-          condition: showSuggestions || totalHeight > d.min,
-          ifBuilder: (context) {
-            return Column(
-              children: [
-                IfElseBuilder(
-                  condition: widget.searchBuilder != null,
-                  ifBuilder: (context) {
-                    return widget.searchBuilder!.call(onSearch);
-                  },
-                  elseBuilder: (context) {
-                    return PanTextField(
-                      height: d.at(40),
-                      prefixIcon: widget.searchIcon ??
-                          PanIcon(
-                            icon: 'search',
-                            package: 'codepan',
-                            width: d.at(15),
-                            height: d.at(15),
-                            color: widget.fontColor.withOpacity(0.5),
-                          ),
-                      maxLines: 1,
-                      padding: EdgeInsets.zero,
-                      margin: EdgeInsets.all(d.at(10)),
-                      onChanged: onSearch,
-                      textAlignVertical: TextAlignVertical.center,
-                      textInputAction: TextInputAction.done,
-                      borderWidth: d.at(1),
-                      borderColor: PanColors.border,
-                      focusedBorderWidth: d.at(1),
-                      focusedBorderColor: t.primaryColor,
-                      radius: d.at(5),
-                    );
-                  },
-                ),
-                LineDivider(),
-                Container(
-                  height: d.min,
-                  child: ListView.builder(
-                    itemCount: items.length,
-                    itemBuilder: (context, index) {
-                      final item = items[index];
-                      return _MenuItem<T>(
-                        item: item,
-                        height: height,
-                        fontColor: widget.fontColor,
-                        withDivider: item != items.last,
-                        checkedIcon: widget.checkedIcon,
-                        uncheckedIcon: widget.uncheckedIcon,
-                        isMultiple: isMultiple,
-                        isSelected: _selectedItems.contains(item),
-                        isDisabled: disabledItems?.contains(item) ?? false,
-                        onSelectItem: _onSelectItem,
-                      );
-                    },
-                  ),
-                ),
-              ],
-            );
-          },
-          elseBuilder: (context) {
-            return IfElseBuilder(
-              condition: items.isNotEmpty,
+        child: Column(
+          children: [
+            IfElseBuilder(
+              condition: showSuggestions || totalHeight > d.min,
               ifBuilder: (context) {
                 return Column(
-                  children: List.generate(items.length, (index) {
-                    final item = items[index];
-                    return _MenuItem<T>(
-                      item: item,
-                      height: height,
-                      fontColor: widget.fontColor,
-                      withDivider: item != items.last,
-                      checkedIcon: widget.checkedIcon,
-                      uncheckedIcon: widget.uncheckedIcon,
-                      isMultiple: isMultiple,
-                      isSelected: _selectedItems.contains(item),
-                      isDisabled: disabledItems?.contains(item) ?? false,
-                      onSelectItem: _onSelectItem,
-                    );
-                  }),
+                  children: [
+                    IfElseBuilder(
+                      condition: widget.searchBuilder != null,
+                      ifBuilder: (context) {
+                        return widget.searchBuilder!.call(onSearch);
+                      },
+                      elseBuilder: (context) {
+                        return PanTextField(
+                          height: d.at(40),
+                          prefixIcon: widget.searchIcon ??
+                              PanIcon(
+                                icon: 'search',
+                                package: 'codepan',
+                                width: d.at(15),
+                                height: d.at(15),
+                                color: widget.fontColor.withOpacity(0.5),
+                              ),
+                          maxLines: 1,
+                          padding: EdgeInsets.zero,
+                          margin: EdgeInsets.all(d.at(10)),
+                          onChanged: onSearch,
+                          textAlignVertical: TextAlignVertical.center,
+                          textInputAction: TextInputAction.done,
+                          borderWidth: d.at(1),
+                          borderColor: PanColors.border,
+                          focusedBorderWidth: d.at(1),
+                          focusedBorderColor: t.primaryColor,
+                          radius: d.at(5),
+                        );
+                      },
+                    ),
+                    LineDivider(),
+                  ],
                 );
               },
-              elseBuilder: (context) {
-                return Container(
-                  height: height * 3,
-                  child: PanText(
-                    text: Strings.noAvailableItems,
-                    fontSize: d.at(12),
-                    fontColor: PanColors.grey3,
-                    alignment: Alignment.center,
-                  ),
-                );
-              },
-            );
-          },
+            ),
+            Container(
+              constraints: BoxConstraints(
+                maxHeight: d.min,
+              ),
+              child: ListView.builder(
+                itemCount: items.length,
+                shrinkWrap: true,
+                itemBuilder: (context, index) {
+                  final item = items[index];
+                  return _MenuItem<T>(
+                    item: item,
+                    height: itemHeight,
+                    fontColor: widget.fontColor,
+                    withDivider: item != items.last,
+                    checkedIcon: widget.checkedIcon,
+                    uncheckedIcon: widget.uncheckedIcon,
+                    isMultiple: isMultiple,
+                    isSelected: _selectedItems.contains(item),
+                    isDisabled: disabledItems?.contains(item) ?? false,
+                    onSelectItem: _onSelectItem,
+                  );
+                },
+              ),
+            ),
+            LineDivider(),
+          ],
         ),
       ),
       onPositiveTap: () {

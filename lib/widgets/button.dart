@@ -8,6 +8,7 @@ class PanButton extends StatelessWidget {
   final double? fontSize, fontHeight, width, height;
   final Color borderColor, background;
   final String? text, fontFamily, hint;
+  final EdgeInsets? margin, padding;
   final BoxConstraints? constraints;
   final double borderWidth, radius;
   final BoxDecoration? decoration;
@@ -16,8 +17,6 @@ class PanButton extends StatelessWidget {
   final Alignment alignment;
   final FontStyle fontStyle;
   final TextAlign textAlign;
-  final EdgeInsets padding;
-  final EdgeInsets? margin;
   final Widget? child;
 
   const PanButton({
