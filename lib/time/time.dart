@@ -45,7 +45,11 @@ class Time extends Equatable {
 
   String get displayMonthDay => DateFormat.MMMMd(locale).format(value);
 
-  String get abbrWeekday => DateFormat.E(locale).format(value);
+  String get abbrWeekday {
+    return this != Time.today()
+        ? DateFormat.E(locale).format(value)
+        : Strings.today;
+  }
 
   String get abbrMonth => DateFormat.MMM(locale).format(value);
 
