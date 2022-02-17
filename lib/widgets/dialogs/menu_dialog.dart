@@ -142,7 +142,7 @@ class _MenuDialogState<T extends Selectable>
               ),
               child: ListView.builder(
                 itemCount: items.length,
-                shrinkWrap: true,
+                shrinkWrap: totalHeight < d.min,
                 itemBuilder: (context, index) {
                   final item = items[index];
                   return _MenuItem<T>(
@@ -160,7 +160,12 @@ class _MenuDialogState<T extends Selectable>
                 },
               ),
             ),
-            LineDivider(),
+            IfElseBuilder(
+              condition: isMultiple,
+              ifBuilder: (context) {
+                return LineDivider();
+              },
+            ),
           ],
         ),
       ),
