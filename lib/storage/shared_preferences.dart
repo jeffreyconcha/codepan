@@ -37,9 +37,9 @@ class SharedPreferencesManager {
   }
 
   T? get<T>(String key) {
-    // final value = prefs.get(key);
-    switch(T) {
-
+    final value = prefs.get(key);
+    if (value != null) {
+      return value as T;
     }
     return null;
   }
