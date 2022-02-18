@@ -1,6 +1,9 @@
 import 'package:codepan/data/models/entities/master.dart';
 import 'package:codepan/data/models/entities/transaction.dart';
+import 'package:flutter/foundation.dart';
 
+typedef AsyncTypeConverter<E, N> = Future<N> Function(E);
+typedef TypeConverter<E, N> = N Function(E);
 typedef Validator<E> = num Function(E);
 
 enum Type {
@@ -9,7 +12,7 @@ enum Type {
 }
 
 extension ListUtils<E> on List<E> {
-  Future<void> asyncLoop(Future<void> action(E element)) async {
+  Future<void> asyncLoop(AsyncValueSetter<E> action) async {
     for (E element in this) {
       await action(element);
     }
@@ -63,5 +66,27 @@ extension ListUtils<E> on List<E> {
       }
     });
     return list;
+  }
+
+  List<N> transform<N>(
+    TypeConverter<E, N> action, {
+    bool sort = false,
+  }) {
+    final list = <N>[];
+    for (E element in this) {
+      list.add(action(element));
+    }
+    return sort ? (list..sort()) : list;
+  }
+
+  Future<List<N>> asyncTransform<N>(
+    AsyncTypeConverter<E, N> action, {
+    bool sort = false,
+  }) async {
+    final list = <N>[];
+    for (E element in this) {
+      list.add(await action(element));
+    }
+    return sort ? (list..sort()) : list;
   }
 }

@@ -83,7 +83,7 @@ class _MenuDialogState<T extends Selectable>
     final d = Dimension.of(context);
     final t = Theme.of(context);
     final itemHeight = d.at(45);
-    final totalHeight = itemHeight * items.length;
+    final totalHeight = itemHeight * allItems.length;
     return InformationDialog(
       title: widget.title,
       titleFont: widget.titleFont,
