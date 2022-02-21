@@ -1,32 +1,43 @@
 import 'package:codepan/data/models/entities/master.dart';
 import 'package:codepan/data/models/entities/transaction.dart';
-import 'package:flutter/foundation.dart';
 
-typedef AsyncTypeConverter<E, N> = Future<N> Function(E);
-typedef TypeConverter<E, N> = N Function(E);
-typedef Validator<E> = num Function(E);
+typedef AsyncTypeConverter<T, N> = Future<N?> Function(T item, int index);
+typedef TypeConverter<T, N> = N? Function(T item, int index);
+typedef AsyncLooper<T> = Future<void> Function(T item, int index);
+typedef Looper<T> = void Function(T item, int index);
+typedef Validator<T> = num Function(T item);
 
 enum Type {
   max,
   min,
 }
 
-extension ListUtils<E> on List<E> {
-  Future<void> asyncLoop(AsyncValueSetter<E> action) async {
-    for (E element in this) {
-      await action(element);
+extension ListUtils<T> on List<T> {
+  Future<void> loop(Looper<T> action) async {
+    int index = 0;
+    for (T element in this) {
+      action(element, index);
+      index++;
     }
   }
 
-  E max(Validator<E> validator) {
+  Future<void> asyncLoop(AsyncLooper<T> action) async {
+    int index = 0;
+    for (T element in this) {
+      await action(element, index);
+      index++;
+    }
+  }
+
+  T max(Validator<T> validator) {
     return _best(validator, Type.max);
   }
 
-  E min(Validator<E> validator) {
+  T min(Validator<T> validator) {
     return _best(validator, Type.min);
   }
 
-  E _best(Validator<E> validator, Type type) {
+  T _best(Validator<T> validator, Type type) {
     int index = 0;
     num? oldValue;
     for (final element in this) {
@@ -69,23 +80,33 @@ extension ListUtils<E> on List<E> {
   }
 
   List<N> transform<N>(
-    TypeConverter<E, N> action, {
+    TypeConverter<T, N> action, {
     bool sort = false,
   }) {
     final list = <N>[];
-    for (E element in this) {
-      list.add(action(element));
+    int index = 0;
+    for (T element in this) {
+      final transformed = action(element, index);
+      if (transformed != null) {
+        list.add(transformed);
+      }
+      index++;
     }
     return sort ? (list..sort()) : list;
   }
 
   Future<List<N>> asyncTransform<N>(
-    AsyncTypeConverter<E, N> action, {
+    AsyncTypeConverter<T, N> action, {
     bool sort = false,
   }) async {
     final list = <N>[];
-    for (E element in this) {
-      list.add(await action(element));
+    int index = 0;
+    for (T element in this) {
+      final transformed = await action(element, index);
+      if (transformed != null) {
+        list.add(transformed);
+      }
+      index++;
     }
     return sort ? (list..sort()) : list;
   }
