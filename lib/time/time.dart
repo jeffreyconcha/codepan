@@ -25,7 +25,7 @@ class Time extends Equatable {
 
   String get displayDate => DateFormat.yMMMMd(locale).format(value);
 
-  String get displayWeekDayDate => '$displayWeekday, $displayDate}';
+  String get displayWeekdayDate => '$displayWeekday, $displayDate';
 
   String get displayTime => DateFormat.jm(locale).format(value);
 
