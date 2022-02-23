@@ -49,6 +49,10 @@ class _InformationDialogState extends State<InformationDialog> {
 
   String? get message => _controller.value;
 
+  String? get positive => widget.positive;
+
+  String? get negative => widget.negative;
+
   @override
   void initState() {
     if (widget.controller != null) {
@@ -146,64 +150,68 @@ class _InformationDialogState extends State<InformationDialog> {
                           );
                         },
                       ),
-                      Padding(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: d.at(20),
-                          vertical: d.at(7),
-                        ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            IfElseBuilder(
-                              condition: widget.positive != null,
-                              ifBuilder: (context) {
-                                return PanButton(
-                                  text: widget.positive,
-                                  fontColor: t.primaryColor,
-                                  fontSize: d.at(13),
-                                  fontWeight: FontWeight.w600,
-                                  radius: d.at(3),
-                                  padding: EdgeInsets.symmetric(
-                                    horizontal: d.at(15),
-                                    vertical: d.at(10),
+                      IfElseBuilder(
+                          condition: positive != null || negative != null,
+                          ifBuilder: (context) {
+                            return Padding(
+                              padding: EdgeInsets.symmetric(
+                                horizontal: d.at(20),
+                                vertical: d.at(7),
+                              ),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: [
+                                  IfElseBuilder(
+                                    condition: positive != null,
+                                    ifBuilder: (context) {
+                                      return PanButton(
+                                        text: widget.positive,
+                                        fontColor: t.primaryColor,
+                                        fontSize: d.at(13),
+                                        fontWeight: FontWeight.w600,
+                                        radius: d.at(3),
+                                        padding: EdgeInsets.symmetric(
+                                          horizontal: d.at(15),
+                                          vertical: d.at(10),
+                                        ),
+                                        onPressed: () {
+                                          if (widget.autoDismiss) {
+                                            _detach(context);
+                                          }
+                                          widget.onPositiveTap?.call();
+                                        },
+                                      );
+                                    },
                                   ),
-                                  onPressed: () {
-                                    if (widget.autoDismiss) {
-                                      _detach(context);
-                                    }
-                                    widget.onPositiveTap?.call();
-                                  },
-                                );
-                              },
-                            ),
-                            SizedBox(
-                              width: d.at(10),
-                            ),
-                            IfElseBuilder(
-                              condition: widget.negative != null,
-                              ifBuilder: (context) {
-                                return PanButton(
-                                  text: widget.negative,
-                                  fontColor: widget.fontColor,
-                                  fontSize: d.at(13),
-                                  fontWeight: FontWeight.w600,
-                                  radius: d.at(3),
-                                  padding: EdgeInsets.symmetric(
-                                    horizontal: d.at(15),
-                                    vertical: d.at(10),
+                                  SizedBox(
+                                    width: d.at(10),
                                   ),
-                                  onPressed: () {
-                                    if (widget.autoDismiss) {
-                                      _detach(context);
-                                    }
-                                    widget.onNegativeTap?.call();
-                                  },
-                                );
-                              },
-                            ),
-                          ],
-                        ),
-                      ),
+                                  IfElseBuilder(
+                                    condition: negative != null,
+                                    ifBuilder: (context) {
+                                      return PanButton(
+                                        text: widget.negative,
+                                        fontColor: widget.fontColor,
+                                        fontSize: d.at(13),
+                                        fontWeight: FontWeight.w600,
+                                        radius: d.at(3),
+                                        padding: EdgeInsets.symmetric(
+                                          horizontal: d.at(15),
+                                          vertical: d.at(10),
+                                        ),
+                                        onPressed: () {
+                                          if (widget.autoDismiss) {
+                                            _detach(context);
+                                          }
+                                          widget.onNegativeTap?.call();
+                                        },
+                                      );
+                                    },
+                                  ),
+                                ],
+                              ),
+                            );
+                          }),
                     ],
                   ),
                 ),

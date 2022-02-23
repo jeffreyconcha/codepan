@@ -3,6 +3,7 @@ import 'dart:core';
 import 'package:codepan/extensions/context.dart';
 import 'package:codepan/resources/colors.dart';
 import 'package:codepan/resources/dimensions.dart';
+import 'package:codepan/resources/strings.dart';
 import 'package:codepan/utils/search_handler.dart';
 import 'package:codepan/widgets/dialogs/information_dialog.dart';
 import 'package:codepan/widgets/icon.dart';
@@ -140,22 +141,36 @@ class _MenuDialogState<T extends Selectable>
               constraints: BoxConstraints(
                 maxHeight: d.min,
               ),
-              child: ListView.builder(
-                itemCount: items.length,
-                shrinkWrap: totalHeight < d.min,
-                itemBuilder: (context, index) {
-                  final item = items[index];
-                  return _MenuItem<T>(
-                    item: item,
-                    height: itemHeight,
-                    fontColor: widget.fontColor,
-                    withDivider: item != items.last,
-                    checkedIcon: widget.checkedIcon,
-                    uncheckedIcon: widget.uncheckedIcon,
-                    isMultiple: isMultiple,
-                    isSelected: _selectedItems.contains(item),
-                    isDisabled: disabledItems?.contains(item) ?? false,
-                    onSelectItem: _onSelectItem,
+              child: IfElseBuilder(
+                condition: items.isNotEmpty,
+                ifBuilder: (context) {
+                  return ListView.builder(
+                    itemCount: items.length,
+                    shrinkWrap: totalHeight < d.min,
+                    itemBuilder: (context, index) {
+                      final item = items[index];
+                      return _MenuItem<T>(
+                        item: item,
+                        height: itemHeight,
+                        fontColor: widget.fontColor,
+                        withDivider: item != items.last,
+                        checkedIcon: widget.checkedIcon,
+                        uncheckedIcon: widget.uncheckedIcon,
+                        isMultiple: isMultiple,
+                        isSelected: _selectedItems.contains(item),
+                        isDisabled: disabledItems?.contains(item) ?? false,
+                        onSelectItem: _onSelectItem,
+                      );
+                    },
+                  );
+                },
+                elseBuilder: (context) {
+                  return PanText(
+                    text: Strings.noAvailableItems,
+                    height: d.at(100),
+                    fontSize: d.at(12),
+                    fontColor: PanColors.grey3,
+                    alignment: Alignment.center,
                   );
                 },
               ),

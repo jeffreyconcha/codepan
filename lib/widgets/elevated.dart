@@ -54,7 +54,10 @@ class Elevated extends StatelessWidget {
               )
             ],
       ),
-      child: child,
+      child: ClipRRect(
+        child: child,
+        borderRadius: borderRadius ?? BorderRadius.circular(radius),
+      ),
     );
   }
 }

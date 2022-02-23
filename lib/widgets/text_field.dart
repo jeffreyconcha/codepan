@@ -141,10 +141,12 @@ class _PanTextFieldState extends State<PanTextField> {
         widget.radius != null ? BorderRadius.circular(widget.radius!) : null;
     var suffixIcon;
     if (widget.isPassword) {
+      final d = Dimension.of(context);
       suffixIcon = IconButton(
         icon: Icon(
           _obscureText ? Icons.visibility_off : Icons.visibility,
           color: widget.iconColor,
+          size: d.at(18),
         ),
         onPressed: () {
           setState(() {
