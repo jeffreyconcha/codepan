@@ -6,7 +6,7 @@ import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 class PullToRefresh extends StatefulWidget {
   final Widget? header, loading, placeholder, floating;
-  final VoidCallback? onRefresh, onLoading;
+  final VoidCallback? onRefresh, onLoading, onScrollToMax;
   final bool isLoading, enablePullDown;
   final RefreshController controller;
   final int? itemCount;
@@ -24,6 +24,7 @@ class PullToRefresh extends StatefulWidget {
     this.itemCount,
     this.onRefresh,
     this.onLoading,
+    this.onScrollToMax,
     this.floating,
   }) : super(key: key);
 
@@ -100,6 +101,9 @@ class _PullToRefreshState extends State<PullToRefresh> {
                   }
                 }
               }
+            }
+            if (pixels > _pixels && metrics.atEdge) {
+              widget.onScrollToMax?.call();
             }
             _pixels = pixels;
           }
