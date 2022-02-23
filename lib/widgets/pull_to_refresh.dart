@@ -39,6 +39,8 @@ class _PullToRefreshState extends State<PullToRefresh> {
 
   Widget? get floating => widget.floating;
 
+  double get height => _size?.height ?? 0;
+
   @override
   void initState() {
     super.initState();
@@ -52,80 +54,77 @@ class _PullToRefreshState extends State<PullToRefresh> {
   @override
   Widget build(BuildContext context) {
     final d = Dimension.of(context);
-    return Stack(
-      children: [
-        NotificationListener(
-          child: SmartRefresher(
-            header: widget.header,
-            controller: widget.controller,
-            enablePullDown: widget.enablePullDown,
-            child: widget.isLoading && widget.itemCount == 0
-                ? widget.loading ?? widget.child
-                : widget.itemCount == 0
-                    ? widget.placeholder ?? widget.child
-                    : widget.child,
-            physics: widget.isLoading && widget.itemCount != 0
-                ? NeverScrollableScrollPhysics()
-                : null,
-            onRefresh: widget.onRefresh,
-            onLoading: widget.onLoading,
-          ),
-          onNotification: (data) {
-            if (data is ScrollUpdateNotification) {
-              final delta = data.scrollDelta ?? 0;
-              final metrics = data.metrics;
-              final pixels = metrics.pixels;
-              if (floating != null) {
-                if (pixels <= 0) {
-                  setState(() {
-                    if (widget.controller.isRefresh) {
-                      _offset += delta;
-                    } else {
-                      _offset = pixels;
-                    }
-                  });
-                } else {
-                  final height = _size?.height ?? 0;
-                  final offset = _offset + delta;
-                  if (pixels > _pixels) {
-                    if (_offset < height) {
-                      setState(() {
-                        _offset = offset < height ? offset : height;
-                      });
-                    }
+    final children = <Widget>[
+      NotificationListener(
+        child: SmartRefresher(
+          header: widget.header,
+          controller: widget.controller,
+          enablePullDown: widget.enablePullDown,
+          child: widget.isLoading && widget.itemCount == 0
+              ? widget.loading ?? widget.child
+              : widget.itemCount == 0
+                  ? widget.placeholder ?? widget.child
+                  : widget.child,
+          physics: widget.isLoading && widget.itemCount != 0
+              ? NeverScrollableScrollPhysics()
+              : null,
+          onRefresh: widget.onRefresh,
+          onLoading: widget.onLoading,
+        ),
+        onNotification: (data) {
+          if (data is ScrollUpdateNotification) {
+            final delta = data.scrollDelta ?? 0;
+            final metrics = data.metrics;
+            final pixels = metrics.pixels;
+            if (floating != null) {
+              if (pixels <= 0) {
+                setState(() {
+                  if (widget.controller.isRefresh) {
+                    _offset += delta;
                   } else {
-                    if (_offset > 0) {
-                      setState(() {
-                        _offset = offset > 0 ? offset : 0;
-                      });
-                    }
+                    _offset = pixels;
+                  }
+                });
+              } else {
+                final offset = _offset + delta;
+                if (pixels > _pixels) {
+                  if (_offset < height) {
+                    setState(() {
+                      _offset = offset < height ? offset : height;
+                    });
+                  }
+                } else {
+                  if (_offset > 0) {
+                    setState(() {
+                      _offset = offset > 0 ? offset : 0;
+                    });
                   }
                 }
               }
-              _pixels = pixels;
             }
-            return true;
-          },
-        ),
-        Builder(builder: (context) {
-          if (floating != null) {
-            return Positioned(
-              top: -_offset,
-              width: d.maxWidth,
-              child: Align(
-                alignment: Alignment.topCenter,
-                child: SizeListener(
-                  child: floating!,
-                  onSizeChange: (size) {
-                    _size = size;
-                  },
-                ),
-              ),
-            );
+            _pixels = pixels;
           }
-          return Container();
-        }),
-      ],
-    );
+          return true;
+        },
+      ),
+    ];
+    if (floating != null) {
+      children.add(
+        Positioned(
+          top: -_offset,
+          width: d.maxWidth,
+          child: Align(
+            alignment: Alignment.topCenter,
+            child: SizeListener(
+              child: floating!,
+              onSizeChange: (size) {
+                _size = size;
+              },
+            ),
+          ),
+        ),
+      );
+    }
+    return Stack(children: children);
   }
 }
