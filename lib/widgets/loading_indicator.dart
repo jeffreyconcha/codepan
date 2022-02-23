@@ -8,6 +8,7 @@ import 'package:codepan/widgets/rotating.dart';
 import 'package:flutter/material.dart';
 
 class LoadingIndicator extends StatelessWidget {
+  final EdgeInsets? margin;
   final double? width;
   final double? height;
   final double? radius;
@@ -21,6 +22,7 @@ class LoadingIndicator extends StatelessWidget {
     this.height,
     this.radius,
     this.icon,
+    this.margin,
     this.color = Colors.grey,
     this.isPlatformDependent = false,
   }) : super(key: key);
@@ -32,6 +34,7 @@ class LoadingIndicator extends StatelessWidget {
       child: IfElseBuilder(
         width: width,
         height: height,
+        margin: margin,
         alignment: Alignment.center,
         condition: isPlatformDependent && Platform.isAndroid,
         ifBuilder: (context) {

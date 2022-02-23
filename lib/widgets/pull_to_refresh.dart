@@ -37,19 +37,11 @@ class _PullToRefreshState extends State<PullToRefresh> {
   double _pixels = 0;
   Size? _size;
 
+  RefreshController get controller => widget.controller;
+
   Widget? get floating => widget.floating;
 
   double get height => _size?.height ?? 0;
-
-  @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -58,14 +50,14 @@ class _PullToRefreshState extends State<PullToRefresh> {
       NotificationListener(
         child: SmartRefresher(
           header: widget.header,
-          controller: widget.controller,
+          controller: controller,
           enablePullDown: widget.enablePullDown,
           child: widget.isLoading && widget.itemCount == 0
               ? widget.loading ?? widget.child
               : widget.itemCount == 0
                   ? widget.placeholder ?? widget.child
                   : widget.child,
-          physics: widget.isLoading && widget.itemCount != 0
+          physics: widget.isLoading && controller.isRefresh
               ? NeverScrollableScrollPhysics()
               : null,
           onRefresh: widget.onRefresh,
@@ -79,7 +71,7 @@ class _PullToRefreshState extends State<PullToRefresh> {
             if (floating != null) {
               if (pixels <= 0) {
                 setState(() {
-                  if (widget.controller.isRefresh) {
+                  if (controller.isRefresh) {
                     _offset += delta;
                   } else {
                     _offset = pixels;
