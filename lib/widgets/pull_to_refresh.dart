@@ -101,11 +101,11 @@ class _PullToRefreshState extends State<PullToRefresh> {
                   }
                 }
               }
+              _pixels = pixels;
             }
-            if (pixels > _pixels && metrics.atEdge) {
+            if (pixels != 0 && metrics.atEdge) {
               widget.onScrollToMax?.call();
             }
-            _pixels = pixels;
           }
           return true;
         },
