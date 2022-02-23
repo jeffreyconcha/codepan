@@ -1,14 +1,14 @@
 import 'dart:io';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:codepan/media/media.dart';
 import 'package:codepan/resources/dimensions.dart';
 import 'package:codepan/resources/strings.dart';
 import 'package:codepan/transitions/route_transition.dart';
 import 'package:codepan/utils/debouncer.dart';
-import 'package:codepan/widgets/loading_indicator.dart';
 import 'package:codepan/widgets/if_else_builder.dart';
+import 'package:codepan/widgets/loading_indicator.dart';
 import 'package:codepan/widgets/video_controller.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:video_player/video_player.dart';

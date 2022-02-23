@@ -1,9 +1,9 @@
 import 'package:codepan/resources/dimensions.dart';
 import 'package:codepan/widgets/button.dart';
 import 'package:codepan/widgets/icon.dart';
+import 'package:codepan/widgets/if_else_builder.dart';
 import 'package:codepan/widgets/loading_indicator.dart';
 import 'package:codepan/widgets/media_progress_indicator.dart';
-import 'package:codepan/widgets/if_else_builder.dart';
 import 'package:codepan/widgets/text.dart';
 import 'package:flutter/material.dart';
 

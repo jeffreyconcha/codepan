@@ -1,6 +1,5 @@
 import 'package:codepan/resources/dimensions.dart';
 import 'package:codepan/widgets/elevated.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class HeaderBody extends StatelessWidget {

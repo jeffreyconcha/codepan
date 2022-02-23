@@ -7,9 +7,9 @@ import 'package:codepan/resources/colors.dart';
 import 'package:codepan/resources/dimensions.dart';
 import 'package:codepan/resources/strings.dart';
 import 'package:codepan/widgets/button.dart';
+import 'package:codepan/widgets/if_else_builder.dart';
 import 'package:codepan/widgets/loading_indicator.dart';
 import 'package:codepan/widgets/media_progress_indicator.dart';
-import 'package:codepan/widgets/if_else_builder.dart';
 import 'package:flutter/material.dart';
 
 class PanAudioPlayer extends StatefulWidget {

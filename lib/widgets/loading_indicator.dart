@@ -5,7 +5,6 @@ import 'package:codepan/widgets/icon.dart';
 import 'package:codepan/widgets/if_else_builder.dart';
 import 'package:codepan/widgets/pan_activity_indicator.dart';
 import 'package:codepan/widgets/rotating.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class LoadingIndicator extends StatelessWidget {

@@ -1,5 +1,5 @@
 import 'package:codepan/utils/debouncer.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 
 abstract class Searchable {
   List<String?> get searchable;

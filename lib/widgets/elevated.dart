@@ -1,5 +1,4 @@
 import 'package:codepan/resources/dimensions.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class Elevated extends StatelessWidget {
@@ -10,6 +9,7 @@ class Elevated extends StatelessWidget {
   final List<BoxShadow>? boxShadow;
   final Offset? shadowOffset;
   final Alignment? alignment;
+  final BoxShape boxShape;
   final double radius;
   final Widget child;
 
@@ -29,6 +29,7 @@ class Elevated extends StatelessWidget {
     this.spreadRadius,
     this.borderRadius,
     this.boxShadow,
+    this.boxShape = BoxShape.rectangle,
   }) : super(key: key);
 
   @override
@@ -44,6 +45,7 @@ class Elevated extends StatelessWidget {
       decoration: BoxDecoration(
         color: color,
         borderRadius: borderRadius ?? BorderRadius.circular(radius),
+        shape: boxShape,
         boxShadow: boxShadow ??
             <BoxShadow>[
               BoxShadow(
