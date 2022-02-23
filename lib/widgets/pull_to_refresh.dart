@@ -83,20 +83,20 @@ class _PullToRefreshState extends State<PullToRefresh> {
                     } else {
                       _offset = pixels;
                     }
-                    print(_offset);
                   });
                 } else {
                   final height = _size?.height ?? 0;
+                  final offset = _offset + delta;
                   if (pixels > _pixels) {
                     if (_offset < height) {
                       setState(() {
-                        _offset += delta;
+                        _offset = offset < height ? offset : height;
                       });
                     }
                   } else {
                     if (_offset > 0) {
                       setState(() {
-                        _offset += delta;
+                        _offset = offset > 0 ? offset : 0;
                       });
                     }
                   }
