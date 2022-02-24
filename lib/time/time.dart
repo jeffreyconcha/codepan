@@ -1,5 +1,6 @@
 import 'package:codepan/extensions/duration.dart';
 import 'package:codepan/resources/strings.dart';
+import 'package:codepan/time/time_range.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -145,6 +146,51 @@ class Time extends Equatable {
 
   Duration difference(Time other) {
     return value.difference(other.value);
+  }
+
+  Time toFirstDayOfYear() {
+    final first = DateTime.utc(
+      value.year,
+      1,
+      1,
+      value.hour,
+      value.minute,
+      value.second,
+    );
+    return Time.value(first);
+  }
+
+  Time toFirstDayOfMonth() {
+    final first = DateTime.utc(
+      value.year,
+      value.month,
+      1,
+      value.hour,
+      value.minute,
+      value.second,
+    );
+    return Time.value(first);
+  }
+
+  TimeRange thisWeek() {
+    return toRange(duration: const Duration(days: 6));
+  }
+
+  TimeRange thisMonth() {
+    return TimeRange(
+      start: this.toFirstDayOfMonth(),
+      end: this,
+    );
+  }
+
+  TimeRange toRange({
+    required Duration duration,
+    bool onward = false,
+  }) {
+    return TimeRange(
+      start: onward ? add(duration) : subtract(duration),
+      end: this,
+    );
   }
 
   bool isEqual(Time other) {

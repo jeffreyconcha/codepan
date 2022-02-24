@@ -36,6 +36,8 @@ class Elevated extends StatelessWidget {
   Widget build(BuildContext context) {
     final d = Dimension.of(context);
     final t = Theme.of(context);
+    final _borderRadius =
+        boxShape == BoxShape.rectangle ? BorderRadius.circular(radius) : null;
     return Container(
       width: width,
       height: height,
@@ -44,7 +46,7 @@ class Elevated extends StatelessWidget {
       alignment: alignment,
       decoration: BoxDecoration(
         color: color,
-        borderRadius: borderRadius ?? BorderRadius.circular(radius),
+        borderRadius: borderRadius ?? _borderRadius,
         shape: boxShape,
         boxShadow: boxShadow ??
             <BoxShadow>[
@@ -56,10 +58,12 @@ class Elevated extends StatelessWidget {
               )
             ],
       ),
-      child: ClipRRect(
-        child: child,
-        borderRadius: borderRadius ?? BorderRadius.circular(radius),
-      ),
+      child: boxShape == BoxShape.rectangle
+          ? ClipRRect(
+              child: child,
+              borderRadius: borderRadius ?? BorderRadius.circular(radius),
+            )
+          : child,
     );
   }
 }

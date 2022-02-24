@@ -55,7 +55,7 @@ enum AddressAttribute {
 class PanUtils {
   @deprecated
   static String formatMoney(double input) {
-    final nf = NumberFormat('#,###.00', 'en_US');
+    final nf = NumberFormat('#,###.##', 'en_US');
     return nf.format(input);
   }
 

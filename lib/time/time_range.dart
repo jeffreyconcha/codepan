@@ -80,14 +80,8 @@ class TimeRange extends Equatable {
   }
 
   factory TimeRange.week() {
-    final today = Time.today();
-    return TimeRange(
-      start: today.subtract(
-        Duration(
-          days: 6,
-        ),
-      ),
-      end: today,
+    return Time.today().toRange(
+      duration: const Duration(days: 6),
     );
   }
 

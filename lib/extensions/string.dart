@@ -184,4 +184,11 @@ extension StringUtils on String {
     final numeric = this.replaceAll(RegExp(r'[^0-9]'), '');
     return int.parse(numeric);
   }
+
+  String get last {
+    if (this.isNotEmpty) {
+      return substring(length - 1, length);
+    }
+    return '';
+  }
 }
