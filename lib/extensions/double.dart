@@ -22,16 +22,16 @@ extension DoubleUtils on double {
     return '${nf.format(value)}$symbol';
   }
 
-  String format({String? format}) {
+  String format([int decimalDigits = 2]) {
     if (this % 1 == 0) {
-      return this.toStringAsFixed(0);
+      final nf = NumberFormat("#,###", 'en_US');
+      return nf.format(this);
     } else {
-      if (format != null) {
-        final nf = NumberFormat(format, 'en_US');
-        return nf.format(this);
-      } else {
-        return this.toMoneyFormat();
-      }
+      final nf = NumberFormat.simpleCurrency(
+        decimalDigits: decimalDigits,
+        name: '',
+      );
+      return nf.format(this);
     }
   }
 }
