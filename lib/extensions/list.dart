@@ -29,26 +29,29 @@ extension ListUtils<T> on List<T> {
     }
   }
 
-  T max(Validator<T> validator) {
+  T? max(Validator<T> validator) {
     return _best(validator, Type.max);
   }
 
-  T min(Validator<T> validator) {
+  T? min(Validator<T> validator) {
     return _best(validator, Type.min);
   }
 
-  T _best(Validator<T> validator, Type type) {
-    int index = 0;
-    num? oldValue;
-    for (final element in this) {
-      final current = validator(element);
-      if (oldValue == null ||
-          (type == Type.max ? current > oldValue : current < oldValue)) {
-        oldValue = current;
-        index = indexOf(element);
+  T? _best(Validator<T> validator, Type type) {
+    if (isNotEmpty) {
+      int index = 0;
+      num? oldValue;
+      for (final element in this) {
+        final current = validator(element);
+        if (oldValue == null ||
+            (type == Type.max ? current > oldValue : current < oldValue)) {
+          oldValue = current;
+          index = indexOf(element);
+        }
       }
+      return elementAt(index);
     }
-    return elementAt(index);
+    return null;
   }
 
   String get text => toText();

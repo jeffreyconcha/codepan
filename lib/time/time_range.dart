@@ -91,6 +91,16 @@ class TimeRange extends Equatable {
       end: Time.value(range?.end),
     );
   }
+
+  List<Time> toList() {
+    final list = <Time>[];
+    Time current = Time.value(start.value);
+    while (current <= end) {
+      list.add(current);
+      current = current.add(const Duration(days: 1));
+    }
+    return list;
+  }
 }
 
 class TimeRangeController extends ValueNotifier<TimeRange> {
