@@ -63,7 +63,9 @@ class Elevated extends StatelessWidget {
               child: child,
               borderRadius: borderRadius ?? BorderRadius.circular(radius),
             )
-          : child,
+          : ClipOval(
+              child: child,
+            ),
     );
   }
 }
