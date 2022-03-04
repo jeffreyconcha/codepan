@@ -23,4 +23,10 @@ abstract class ParentBloc<Event extends ParentEvent, State extends ParentState>
     super.onError(error, stackTrace);
     printError(error, stackTrace);
   }
+
+  void addAll(List<Event> events) {
+    events.forEach((event) {
+      add(event);
+    });
+  }
 }

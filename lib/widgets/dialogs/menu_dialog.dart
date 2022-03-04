@@ -142,8 +142,11 @@ class _MenuDialogState<T extends Selectable>
                 maxHeight: d.min,
               ),
               child: IfElseBuilder(
-                condition: items.isNotEmpty,
+                condition: allItems.isNotEmpty,
                 ifBuilder: (context) {
+                  if (items.isEmpty) {
+                    return placeholder;
+                  }
                   return ListView.builder(
                     itemCount: items.length,
                     shrinkWrap: totalHeight < d.min,
@@ -165,12 +168,9 @@ class _MenuDialogState<T extends Selectable>
                   );
                 },
                 elseBuilder: (context) {
-                  return PanText(
-                    text: Strings.noAvailableItems,
+                  return SizedBox(
                     height: d.at(100),
-                    fontSize: d.at(12),
-                    fontColor: PanColors.grey3,
-                    alignment: Alignment.center,
+                    child: placeholder,
                   );
                 },
               ),
@@ -193,6 +193,16 @@ class _MenuDialogState<T extends Selectable>
           _selectedItems.clear();
         });
       },
+    );
+  }
+
+  Widget get placeholder {
+    final d = Dimension.of(context);
+    return PanText(
+      text: Strings.noAvailableItems,
+      fontSize: d.at(12),
+      fontColor: PanColors.grey3,
+      alignment: Alignment.center,
     );
   }
 

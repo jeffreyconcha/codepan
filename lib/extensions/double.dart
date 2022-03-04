@@ -22,8 +22,11 @@ extension DoubleUtils on double {
     return '${nf.format(value)}$symbol';
   }
 
-  String format([int decimalDigits = 2]) {
-    if (this % 1 == 0) {
+  String format([
+    int decimalDigits = 2,
+    bool alwaysWithDecimal = false,
+  ]) {
+    if (this % 1 == 0 && !alwaysWithDecimal) {
       final nf = NumberFormat("#,###", 'en_US');
       return nf.format(this);
     } else {
