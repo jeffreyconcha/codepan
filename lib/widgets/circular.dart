@@ -32,7 +32,11 @@ class Circular extends StatelessWidget {
         color: color,
         border: border,
       ),
-      child: child,
+      child: child != null
+          ? ClipOval(
+              child: child,
+            )
+          : null,
     );
   }
 }
