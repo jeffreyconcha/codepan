@@ -6,7 +6,6 @@ const _loweredInTitle = <String>['of', 'and', 'or', 'is', 'are', 'a', 'with'];
 const _punctuations = <String>[',', '.', '?', '!', ';', ':'];
 
 extension StringUtils on String {
-
   String getInitials([int max = 2]) {
     final buffer = StringBuffer();
     var count = 0;
@@ -64,6 +63,8 @@ extension StringUtils on String {
   String complete(
     dynamic input, {
     String? identifier,
+    bool withQuotes = false,
+    bool isSpannable = false,
   }) {
     final buffer = StringBuffer();
     final id = identifier ?? '\$';
@@ -79,7 +80,14 @@ extension StringUtils on String {
     for (int i = 0; i < words.length; i++) {
       final word = words[i];
       if (word.contains(id) && iterator.moveNext()) {
-        buffer.write(iterator.current);
+        final replacement =
+            withQuotes ? '\"${iterator.current}\"' : iterator.current;
+
+        if (isSpannable) {
+          buffer.write('<s>$replacement</s>');
+        } else {
+          buffer.write(replacement);
+        }
         final code = word.runes.last;
         final last = String.fromCharCode(code);
         if (_punctuations.contains(last)) {

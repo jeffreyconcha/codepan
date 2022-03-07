@@ -85,9 +85,7 @@ class PanText extends StatelessWidget {
     List<InlineSpan>? spanList;
     if (spannable != null) {
       spanList = [];
-      spanList.addAll(
-        _toSpannable(spannable!),
-      );
+      spanList.addAll(spannable!.toSpanList(this.text));
     }
     if (children != null) {
       spanList ??= [];
@@ -173,15 +171,25 @@ class PanText extends StatelessWidget {
       },
     );
   }
+}
 
-  List<InlineSpan> _toSpannable(SpannableText spannable) {
-    final list = <InlineSpan>[];
+class SpannableText {
+  final List<String> identifiers;
+  final TextStyle style;
+
+  const SpannableText({
+    required this.identifiers,
+    required this.style,
+  });
+
+  List<TextSpan> toSpanList(String? text) {
+    final list = <TextSpan>[];
     int index = 0;
     int start = 0;
     int matchCount = 0;
     final standard = '\$';
     String? _text = text;
-    for (final identifier in spannable.identifiers) {
+    for (final identifier in identifiers) {
       _text = _text!.replaceAll(identifier, standard);
     }
     final clean = _text?.replaceAll(standard, '');
@@ -202,7 +210,7 @@ class PanText extends StatelessWidget {
           list.add(
             TextSpan(
               text: clean!.substring(start, end),
-              style: spannable.style,
+              style: style,
             ),
           );
         }
@@ -222,14 +230,4 @@ class PanText extends StatelessWidget {
     }
     return list;
   }
-}
-
-class SpannableText {
-  final List<String> identifiers;
-  final TextStyle style;
-
-  const SpannableText({
-    required this.identifiers,
-    required this.style,
-  });
 }
