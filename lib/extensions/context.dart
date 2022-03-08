@@ -11,12 +11,12 @@ extension BuildContextUtils on BuildContext {
     }
   }
 
-  void pop() {
-    Navigator.of(this).pop();
+  void pop<T>([T? result]) {
+    Navigator.of(this).pop(result);
   }
 
-  void push({required Widget page}) {
-    Navigator.of(this).push(
+  Future<dynamic> push({required Widget page}) {
+    return Navigator.of(this).push(
       CupertinoPageRoute(
         builder: (context) {
           return page;
@@ -25,16 +25,16 @@ extension BuildContextUtils on BuildContext {
     );
   }
 
-  void replace({required Widget page}) {
-    Navigator.of(this).pushReplacement(
+  Future<dynamic> replace({required Widget page}) {
+    return Navigator.of(this).pushReplacement(
       FadeRoute(
         enter: page,
       ),
     );
   }
 
-  void fadeIn({required Widget page}) {
-    Navigator.of(this).push(
+  Future<dynamic> fadeIn({required Widget page}) {
+    return Navigator.of(this).push(
       FadeRoute(
         enter: page,
       ),

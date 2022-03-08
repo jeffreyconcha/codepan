@@ -46,6 +46,14 @@ class Time extends Equatable {
 
   String get displayMonthDay => DateFormat.MMMMd(locale).format(value);
 
+  String get displayMonthYear {
+    final today = Time.today();
+    if (this.isBetween(today.toMonth())) {
+      return Strings.thisMonth;
+    }
+    return '$displayMonth $displayYear';
+  }
+
   String get abbrWeekday {
     return this != Time.today()
         ? DateFormat.E(locale).format(value)
@@ -55,6 +63,18 @@ class Time extends Equatable {
   String get abbrMonth => DateFormat.MMM(locale).format(value);
 
   String get abbrMonthDay => DateFormat.MMMd(locale).format(value);
+
+  String get abbrMonthYear {
+    final today = Time.today();
+    final first = today.toFirstDayOfMonth();
+    final last = first.subtract(Duration(days: 1));
+    if (this.isBetween(today.toMonth())) {
+      return Strings.thisMonth;
+    } else if (this.isBetween(last.toMonth())) {
+      return Strings.lastMonth;
+    }
+    return '$abbrMonth $displayYear';
+  }
 
   String get abbrWeekdayDate => '$abbrWeekday, $abbrDate';
 
@@ -71,6 +91,20 @@ class Time extends Equatable {
   int get millisecondsSinceEpoch => value.millisecondsSinceEpoch;
 
   int get milliseconds => millisecondsSinceEpoch + millisecondsEpoch;
+
+  bool get isToday => this == Time.today();
+
+  int get daysInMonth {
+    final start = DateTime(value.year, value.month, 0);
+    final end = DateTime(value.year, value.month + 1, 0);
+    return end.difference(start).inDays;
+  }
+
+  int get daysInYear {
+    final start = DateTime(value.year, 0, 0);
+    final end = DateTime(value.year + 1, 0, 0);
+    return end.difference(start).inDays;
+  }
 
   bool? get isNewMinute {
     final split = _time!.split(':');
@@ -172,14 +206,26 @@ class Time extends Equatable {
     return Time.value(first);
   }
 
-  TimeRange thisWeek() {
+  Time toLastDayOfMonth() {
+    final first = DateTime.utc(
+      value.year,
+      value.month,
+      daysInMonth,
+      value.hour,
+      value.minute,
+      value.second,
+    );
+    return Time.value(first);
+  }
+
+  TimeRange toPastWeek() {
     return toRange(duration: const Duration(days: 6));
   }
 
-  TimeRange thisMonth() {
+  TimeRange toMonth() {
     return TimeRange(
       start: this.toFirstDayOfMonth(),
-      end: this,
+      end: this.toLastDayOfMonth(),
     );
   }
 
@@ -203,6 +249,10 @@ class Time extends Equatable {
 
   bool isBefore(Time other) {
     return this < other;
+  }
+
+  bool isBetween(TimeRange range) {
+    return this >= range.start && this <= range.end;
   }
 
   bool isAfterOrEqual(Time other) {

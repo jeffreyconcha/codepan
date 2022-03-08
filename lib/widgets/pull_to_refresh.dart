@@ -52,8 +52,8 @@ class _PullToRefreshState extends State<PullToRefresh> {
           controller: controller,
           enablePullDown: widget.enablePullDown,
           child:
-              widget.isLoading && !controller.isRefresh && widget.itemCount == 0
-                  ? widget.loading ?? widget.child
+              widget.isLoading && !controller.isRefresh
+              ? widget.loading ?? widget.child
                   : widget.itemCount == 0
                       ? widget.placeholder ?? widget.child
                       : widget.child,

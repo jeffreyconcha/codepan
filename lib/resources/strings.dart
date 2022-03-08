@@ -7,6 +7,8 @@ class Strings {
   static const String noAvailableItems = 'No available items.';
   static const String today = 'Today';
   static const String yesterday = 'Yesterday';
+  static const String thisMonth = 'This Month';
+  static const String lastMonth = 'Last Month';
 }
 
 class Errors {
