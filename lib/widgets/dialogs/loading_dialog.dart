@@ -8,6 +8,7 @@ import 'package:codepan/widgets/text.dart';
 import 'package:flutter/material.dart';
 
 class LoadingDialog extends StatelessWidget {
+  final Widget? indicator;
   final bool dismissible;
   final Color fontColor;
   final String? message;
@@ -21,6 +22,7 @@ class LoadingDialog extends StatelessWidget {
     this.height,
     this.dismissible = true,
     this.fontColor = PanColors.text,
+    this.indicator,
   }) : super(key: key);
 
   @override
@@ -34,8 +36,8 @@ class LoadingDialog extends StatelessWidget {
             GestureDetector(
               onTap: dismissible
                   ? () {
-                      context.pop();
-                    }
+                context.pop();
+              }
                   : null,
             ),
             Center(
@@ -54,7 +56,7 @@ class LoadingDialog extends StatelessWidget {
                     alignment: Alignment.center,
                     child: Row(
                       children: <Widget>[
-                        LoadingIndicator(),
+                        indicator ?? LoadingIndicator(),
                         Expanded(
                           child: PanText(
                             text: message,

@@ -15,6 +15,10 @@ extension BuildContextUtils on BuildContext {
     Navigator.of(this).pop(result);
   }
 
+  void popUntil(RoutePredicate predicate) {
+    Navigator.of(this).popUntil(predicate);
+  }
+
   Future<dynamic> push({required Widget page}) {
     return Navigator.of(this).push(
       CupertinoPageRoute(
