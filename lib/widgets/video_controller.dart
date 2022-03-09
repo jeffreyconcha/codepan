@@ -51,7 +51,7 @@ class VideoController extends StatelessWidget {
                     flex: 4,
                     child: SkipButton(
                       direction: Direction.backward,
-                      onPressed: () {
+                      onTap: () {
                         onSeekProgress?.call(current! - 10000);
                       },
                       isInitialized: isInitialized,
@@ -74,7 +74,7 @@ class VideoController extends StatelessWidget {
                         ),
                         splashColor: Colors.white.withOpacity(0.4),
                         highlightColor: Colors.transparent,
-                        onPressed: onPlay,
+                        onTap: onPlay,
                       ),
                     ),
                   ),
@@ -82,7 +82,7 @@ class VideoController extends StatelessWidget {
                     flex: 4,
                     child: SkipButton(
                       direction: Direction.forward,
-                      onPressed: () {
+                      onTap: () {
                         onSeekProgress?.call(current! + 10000);
                       },
                       isInitialized: isInitialized,
@@ -133,7 +133,7 @@ class VideoController extends StatelessWidget {
               size: d.at(30),
               color: Colors.white,
             ),
-            onPressed: onFullScreen,
+            onTap: onFullScreen,
           ),
         ),
       ],
@@ -148,13 +148,13 @@ enum Direction {
 
 class SkipButton extends StatelessWidget {
   final Direction direction;
-  final VoidCallback? onPressed;
+  final VoidCallback? onTap;
   final bool? isInitialized;
 
   const SkipButton({
     Key? key,
     required this.direction,
-    this.onPressed,
+    this.onTap,
     this.isInitialized,
   }) : super(key: key);
 
@@ -193,7 +193,7 @@ class SkipButton extends StatelessWidget {
               )
             ],
           ),
-          onPressed: onPressed,
+          onTap: onTap,
         );
       },
     );

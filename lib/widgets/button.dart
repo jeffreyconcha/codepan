@@ -6,13 +6,13 @@ import 'package:flutter/material.dart';
 class PanButton extends StatelessWidget {
   final Color? fontColor, splashColor, highlightColor, hintFontColor;
   final double? fontSize, fontHeight, width, height;
-  final Color borderColor, background;
+  final VoidCallback? onTap, onLongPress;
   final String? text, fontFamily, hint;
+  final Color borderColor, background;
   final EdgeInsets? margin, padding;
   final BoxConstraints? constraints;
   final double borderWidth, radius;
   final BoxDecoration? decoration;
-  final VoidCallback? onPressed;
   final FontWeight fontWeight;
   final Alignment alignment;
   final FontStyle fontStyle;
@@ -37,7 +37,8 @@ class PanButton extends StatelessWidget {
     this.fontWeight = FontWeight.normal,
     this.hintFontColor,
     this.margin,
-    this.onPressed,
+    this.onTap,
+    this.onLongPress,
     this.padding = EdgeInsets.zero,
     this.radius = 0,
     this.highlightColor = PanColors.highlight,
@@ -57,7 +58,8 @@ class PanButton extends StatelessWidget {
         color: PanColors.none,
         child: InkWell(
           borderRadius: BorderRadius.circular(radius),
-          onTap: onPressed,
+          onTap: onTap,
+          onLongPress: onLongPress,
           splashColor: splashColor,
           highlightColor: highlightColor,
           child: Ink(

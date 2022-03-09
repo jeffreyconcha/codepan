@@ -115,7 +115,7 @@ class _InformationDialogState extends State<InformationDialog> {
                               color: PanColors.text,
                               size: d.at(20),
                             ),
-                            onPressed: () => context.pop(),
+                            onTap: () => context.pop(),
                             margin: EdgeInsets.only(
                               right: d.at(5),
                             ),
@@ -174,7 +174,7 @@ class _InformationDialogState extends State<InformationDialog> {
                                           horizontal: d.at(15),
                                           vertical: d.at(10),
                                         ),
-                                        onPressed: () {
+                                        onTap: () {
                                           if (widget.autoDismiss) {
                                             _detach(context);
                                           }
@@ -199,7 +199,7 @@ class _InformationDialogState extends State<InformationDialog> {
                                           horizontal: d.at(15),
                                           vertical: d.at(10),
                                         ),
-                                        onPressed: () {
+                                        onTap: () {
                                           if (widget.autoDismiss) {
                                             _detach(context);
                                           }

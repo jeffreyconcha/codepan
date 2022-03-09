@@ -115,7 +115,7 @@ class _PanAudioPlayerState extends State<PanAudioPlayer> {
                   size: d.at(40),
                   color: PanColors.text,
                 ),
-                onPressed: play,
+                onTap: play,
               );
             },
             elseBuilder: (context) {
