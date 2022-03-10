@@ -5,6 +5,7 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:time_ago_provider/time_ago_provider.dart' as ago;
+import 'package:codepan/extensions/map.dart';
 
 const String dateFormat = 'yyyy-MM-dd';
 const String timeFormat = 'HH:mm:ss';
@@ -161,6 +162,13 @@ class Time extends Equatable {
     String format(int value) => value < 10 ? '0$value' : '$value';
     final time = '${format(input.hour)}:${format(input.minute)}:00';
     return Time(time: time);
+  }
+
+  factory Time.fromMap(Map<String, dynamic> map) {
+    return Time(
+      date: map.get('date'),
+      time: map.get('time'),
+    );
   }
 
   Map<String, String?> toMap() {
