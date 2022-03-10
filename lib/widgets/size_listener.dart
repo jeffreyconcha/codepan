@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 
-typedef OnWidgetSizeChange = void Function(Size size);
+typedef OnWidgetSizeChange = void Function(Size size, Offset position);
 
 class RenderBox extends RenderProxyBox {
   final OnWidgetSizeChange onSizeChange;
@@ -11,12 +11,13 @@ class RenderBox extends RenderProxyBox {
   @override
   void performLayout() {
     super.performLayout();
-    Size? size = child?.size;
-    if (size != null) {
-      WidgetsBinding.instance?.addPostFrameCallback((_) {
-        onSizeChange(size);
-      });
-    }
+    WidgetsBinding.instance?.addPostFrameCallback((_) {
+      final size = child?.size;
+      final position = child?.localToGlobal(Offset.zero);
+      if (size != null && position != null) {
+        onSizeChange(size, position);
+      }
+    });
   }
 }
 

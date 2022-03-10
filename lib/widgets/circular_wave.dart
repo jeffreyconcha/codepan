@@ -6,6 +6,7 @@ class CircularWave extends StatefulWidget {
   final Duration duration;
   final double radius;
   final int waveCount;
+  final Widget? child;
   final Color color;
 
   const CircularWave({
@@ -13,6 +14,7 @@ class CircularWave extends StatefulWidget {
     required this.radius,
     required this.waveCount,
     required this.color,
+    this.child,
     this.duration = const Duration(seconds: 1),
   }) : super(key: key);
 
@@ -75,13 +77,21 @@ class _CircularWaveState extends State<CircularWave>
   Widget build(BuildContext context) {
     return Material(
       color: Colors.transparent,
-      child: CustomPaint(
-        size: Size.fromRadius(radius),
-        painter: CircularWavePainter(
-          waveRadius: _waveRadius,
-          waveGap: waveGap,
-          color: color,
-        ),
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          CustomPaint(
+            size: Size.fromRadius(radius),
+            painter: CircularWavePainter(
+              waveRadius: _waveRadius,
+              waveGap: waveGap,
+              color: color,
+            ),
+          ),
+          Container(
+            child: widget.child,
+          ),
+        ],
       ),
     );
   }

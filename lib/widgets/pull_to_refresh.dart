@@ -112,7 +112,7 @@ class _PullToRefreshState extends State<PullToRefresh> {
             alignment: Alignment.topCenter,
             child: SizeListener(
               child: floating!,
-              onSizeChange: (size) {
+              onSizeChange: (size, offset) {
                 _size = size;
               },
             ),
