@@ -2,13 +2,13 @@ import 'package:app_settings/app_settings.dart';
 import 'package:codepan/extensions/context.dart';
 import 'package:codepan/extensions/string.dart';
 import 'package:codepan/resources/strings.dart';
-import 'package:codepan/utils/lifecycle_handler.dart';
+import 'package:codepan/widgets/states/lifecycle_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:permission_handler/permission_handler.dart';
 
-abstract class StateWithPermission<T extends StatefulWidget>
-    extends StateWithLifecycle<T> {
+abstract class PermissionState<T extends StatefulWidget>
+    extends LifecycleState<T> {
   bool _isGranted = false;
   bool _hasDialog = false;
 

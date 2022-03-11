@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
-abstract class StateWithLifecycle<T extends StatefulWidget> extends State<T>
+abstract class LifecycleState<T extends StatefulWidget> extends State<T>
     with WidgetsBindingObserver
-    implements LifeCycle {
+    implements Lifecycle {
   @override
   void initState() {
     super.initState();
@@ -55,7 +55,7 @@ abstract class StateWithLifecycle<T extends StatefulWidget> extends State<T>
   }
 }
 
-abstract class LifeCycle {
+abstract class Lifecycle {
   void onResume();
 
   void onPause();

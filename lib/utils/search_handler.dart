@@ -5,8 +5,8 @@ abstract class Searchable {
   List<String?> get searchable;
 }
 
-abstract class StateWithSearch<S extends StatefulWidget, M extends Searchable>
-    extends State<S> {
+mixin SearchHandlerMixin<S extends StatefulWidget, M extends Searchable>
+    on State<S> {
   final Debouncer _debouncer = Debouncer();
   final List<M> _suggestions = [];
   String _search = '';

@@ -5,9 +5,9 @@ import 'package:camera/camera.dart';
 import 'package:codepan/extensions/file.dart';
 import 'package:codepan/resources/dimensions.dart';
 import 'package:codepan/utils/codepan_utils.dart';
-import 'package:codepan/utils/lifecycle_handler.dart';
 import 'package:codepan/utils/text_canvas.dart';
 import 'package:codepan/widgets/if_else_builder.dart';
+import 'package:codepan/widgets/states/lifecycle_state.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart' as p;
 import 'package:system_clock/system_clock.dart';
@@ -42,7 +42,7 @@ class PanCamera extends StatefulWidget {
   State<PanCamera> createState() => _PanCameraState();
 }
 
-class _PanCameraState extends StateWithLifecycle<PanCamera> {
+class _PanCameraState extends LifecycleState<PanCamera> {
   late double _maxWidth, _maxHeight;
   CameraController? _controller;
   double _minAvailableZoom = 1.0;

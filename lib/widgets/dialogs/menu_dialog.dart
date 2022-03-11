@@ -57,11 +57,11 @@ class MenuDialog<T extends Selectable> extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  _MenuDialogState<T> createState() => _MenuDialogState<T>();
+  State<MenuDialog> createState() => _MenuDialogState<T>();
 }
 
-class _MenuDialogState<T extends Selectable>
-    extends StateWithSearch<MenuDialog<T>, T> {
+class _MenuDialogState<T extends Selectable> extends State<MenuDialog<T>>
+    with SearchHandlerMixin<MenuDialog<T>, T> {
   late Orientation _orientation;
   late List<T> _selectedItems;
   Size? _size;

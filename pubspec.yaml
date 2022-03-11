@@ -39,6 +39,8 @@ dependencies:
   google_maps_flutter: ^2.1.1
   shared_preferences: ^2.0.13
   shimmer: ^2.0.0
+  flutter_map: ^0.14.0
+  flutter_map_marker_cluster: ^0.4.4
 
 
 dev_dependencies:
