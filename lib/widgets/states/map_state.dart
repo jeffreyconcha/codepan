@@ -72,13 +72,11 @@ abstract class MapState<T extends StatefulWidget> extends State<T>
       duration: const Duration(milliseconds: 500),
       vsync: this,
     );
-
     final animation = CurvedAnimation(
       parent: controller,
       curve: Curves.fastOutSlowIn,
     );
     animation.addListener(() {
-      // final cz = tween.evaluate(animation);
       final cz = tween.lerp(animation.value);
       _mapController.move(cz.center, cz.zoom);
     });
