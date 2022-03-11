@@ -12,6 +12,7 @@ import 'package:codepan/widgets/line_divider.dart';
 import 'package:codepan/widgets/size_listener.dart';
 import 'package:codepan/widgets/text.dart';
 import 'package:codepan/widgets/text_field.dart';
+import 'package:codepan/widgets/wrapper.dart';
 import 'package:flutter/material.dart';
 
 const _itemMinHeight = 45.0;
@@ -61,6 +62,7 @@ class MenuDialog<T extends Selectable> extends StatefulWidget {
 
 class _MenuDialogState<T extends Selectable>
     extends StateWithSearch<MenuDialog<T>, T> {
+  late Orientation _orientation;
   late List<T> _selectedItems;
   Size? _size;
 
@@ -97,8 +99,9 @@ class _MenuDialogState<T extends Selectable>
       margin: EdgeInsets.all(d.at(10)),
       autoDismiss: false,
       withDivider: true,
-      child: Builder(builder: (context) {
-        final child = Material(
+      child: WrapperBuilder(
+        condition: _size == null || _orientation != d.orientation,
+        child: Material(
           color: Colors.white,
           child: Column(
             children: [
@@ -142,8 +145,9 @@ class _MenuDialogState<T extends Selectable>
                   );
                 },
               ),
-              Builder(builder: (ctx) {
-                final child = IfElseBuilder(
+              WrapperBuilder(
+                condition: _size == null || _orientation != d.orientation,
+                child: IfElseBuilder(
                   condition: allItems.isNotEmpty,
                   ifBuilder: (context) {
                     if (items.isEmpty) {
@@ -174,29 +178,31 @@ class _MenuDialogState<T extends Selectable>
                       child: placeholder,
                     );
                   },
-                );
-
-                if (_size != null) {
+                ),
+                builder: (context, child) {
+                  return Expanded(
+                    child: SizeListener(
+                      child: child,
+                      onSizeChange: (size, position) {
+                        if (size.height > contentHeight) {
+                          setState(() {
+                            _size = size;
+                            _orientation = d.orientation;
+                          });
+                        }
+                      },
+                    ),
+                  );
+                },
+                fallback: (context, child) {
                   return ConstrainedBox(
                     constraints: BoxConstraints(
                       maxHeight: _size!.height,
                     ),
                     child: child,
                   );
-                }
-                return Expanded(
-                  child: SizeListener(
-                    child: child,
-                    onSizeChange: (size, position) {
-                      if (size.height > contentHeight) {
-                        setState(() {
-                          _size = size;
-                        });
-                      }
-                    },
-                  ),
-                );
-              }),
+                },
+              ),
               IfElseBuilder(
                 condition: isMultiple,
                 ifBuilder: (context) {
@@ -205,14 +211,13 @@ class _MenuDialogState<T extends Selectable>
               ),
             ],
           ),
-        );
-        if (_size != null) {
-          return child;
-        }
-        return Expanded(
-          child: child,
-        );
-      }),
+        ),
+        builder: (context, child) {
+          return Expanded(
+            child: child,
+          );
+        },
+      ),
       onPositiveTap: () {
         context.pop();
         widget.onSelectItems?.call(_selectedItems);
