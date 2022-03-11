@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:codepan/resources/dimensions.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_map/flutter_map.dart';
@@ -123,5 +124,18 @@ class _CenterZoomTween extends Tween<CenterZoom> {
     double value,
   ) {
     return begin + (end - begin) * value;
+  }
+}
+
+class CachedTileProvider extends TileProvider {
+  const CachedTileProvider();
+
+  @override
+  ImageProvider<Object> getImage(
+    Coords<num> coords,
+    TileLayerOptions options,
+  ) {
+    final url = getTileUrl(coords, options);
+    return CachedNetworkImageProvider(url);
   }
 }
