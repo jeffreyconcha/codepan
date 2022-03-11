@@ -7,7 +7,7 @@ abstract class MapState<T extends StatefulWidget> extends State<T>
     with SingleTickerProviderStateMixin {
   late AnimationController _animController;
   late MapController _mapController;
-  late CenterZoomTween _tween;
+  late _CenterZoomTween _tween;
 
   List<lt.LatLng> get coordinates;
 
@@ -83,7 +83,7 @@ abstract class MapState<T extends StatefulWidget> extends State<T>
 
   @protected
   void animateCamera(CenterZoom cz) {
-    _tween = CenterZoomTween(
+    _tween = _CenterZoomTween(
       begin: CenterZoom(
         center: _mapController.center,
         zoom: _mapController.zoom,
@@ -95,8 +95,8 @@ abstract class MapState<T extends StatefulWidget> extends State<T>
   }
 }
 
-class CenterZoomTween extends Tween<CenterZoom> {
-  CenterZoomTween({
+class _CenterZoomTween extends Tween<CenterZoom> {
+  _CenterZoomTween({
     required CenterZoom begin,
     required CenterZoom end,
   }) : super(
