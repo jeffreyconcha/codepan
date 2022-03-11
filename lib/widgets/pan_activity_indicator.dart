@@ -31,17 +31,17 @@ class PanActivityIndicator extends StatefulWidget {
 
 class _PanActivityIndicatorState extends State<PanActivityIndicator>
     with SingleTickerProviderStateMixin {
-  AnimationController? _animationController;
+  AnimationController? _animController;
 
   @override
   void initState() {
     super.initState();
-    _animationController = AnimationController(
+    _animController = AnimationController(
       duration: widget.animationDuration,
       vsync: this,
     );
     if (widget.isAnimating) {
-      _animationController!.repeat();
+      _animController!.repeat();
     }
   }
 
@@ -50,16 +50,16 @@ class _PanActivityIndicatorState extends State<PanActivityIndicator>
     super.didUpdateWidget(oldWidget);
     if (widget.isAnimating != oldWidget.isAnimating) {
       if (widget.isAnimating) {
-        _animationController!.repeat();
+        _animController!.repeat();
       } else {
-        _animationController!.stop();
+        _animController!.stop();
       }
     }
   }
 
   @override
   void dispose() {
-    _animationController!.dispose();
+    _animController!.dispose();
     super.dispose();
   }
 
@@ -70,7 +70,7 @@ class _PanActivityIndicatorState extends State<PanActivityIndicator>
       width: widget.radius * 2,
       child: CustomPaint(
         painter: _PanActivityIndicatorPainter(
-          animationController: _animationController,
+          animationController: _animController,
           radius: widget.radius,
           tickCount: widget.tickCount,
           activeColor: widget.activeColor,

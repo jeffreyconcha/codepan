@@ -7,7 +7,6 @@ abstract class MapState<T extends StatefulWidget> extends State<T>
     with TickerProviderStateMixin {
   late AnimationController _animController;
   late MapController _mapController;
-  Tween<double>? _latTween, _lngTween, _zoomTween;
 
   List<lt.LatLng> get coordinates;
 
@@ -40,64 +39,90 @@ abstract class MapState<T extends StatefulWidget> extends State<T>
   @override
   void initState() {
     super.initState();
-    _animController = AnimationController(
-      duration: const Duration(milliseconds: 500),
-      vsync: this,
-    );
-    final animation = CurvedAnimation(
-      parent: _animController,
-      curve: Curves.fastOutSlowIn,
-    );
-    _animController.addListener(() {
-      if (_latTween != null && _lngTween != null && _zoomTween != null) {
-        _mapController.move(
-          lt.LatLng(
-            _latTween!.evaluate(animation),
-            _lngTween!.evaluate(animation),
-          ),
-          _zoomTween!.evaluate(animation),
-        );
-      }
-    });
-    _animController.addStatusListener((status) {
-      if (status == AnimationStatus.completed) {}
-    });
-    _animController.forward();
     _mapController = MapController();
   }
 
   @override
   void dispose() {
-    _animController.dispose();
     super.dispose();
   }
 
   @protected
   void recenterCamera() {
     final d = Dimension.of(context);
-    final point = mapController.centerZoomFitBounds(
+    final cz = mapController.centerZoomFitBounds(
       bounds,
       options: FitBoundsOptions(
         padding: EdgeInsets.all(d.at(20)),
       ),
     );
-    animateCamera(point.center, point.zoom);
+    animateCamera(cz);
   }
 
   @protected
-  void animateCamera(lt.LatLng center, double zoom) {
-    _latTween = Tween<double>(
-      begin: _mapController.center.latitude,
-      end: center.latitude,
+  void animateCamera(CenterZoom cz) {
+    final tween = CenterZoomTween(
+      begin: CenterZoom(
+        center: _mapController.center,
+        zoom: _mapController.zoom,
+      ),
+      end: cz,
     );
-    _lngTween = Tween<double>(
-      begin: _mapController.center.longitude,
-      end: center.longitude,
+    final controller = AnimationController(
+      duration: const Duration(milliseconds: 500),
+      vsync: this,
     );
-    _zoomTween = Tween<double>(
-      begin: _mapController.zoom,
-      end: zoom,
+
+    final animation = CurvedAnimation(
+      parent: controller,
+      curve: Curves.fastOutSlowIn,
     );
-    _animController.forward();
+    animation.addListener(() {
+      // final cz = tween.evaluate(animation);
+      final cz = tween.lerp(animation.value);
+      _mapController.move(cz.center, cz.zoom);
+    });
+    animation.addStatusListener((status) {
+      switch (status) {
+        case AnimationStatus.completed:
+        case AnimationStatus.dismissed:
+          controller.dispose();
+          break;
+        default:
+          break;
+      }
+    });
+    controller.forward();
+  }
+}
+
+class CenterZoomTween extends Tween<CenterZoom> {
+  CenterZoomTween({
+    required CenterZoom begin,
+    required CenterZoom end,
+  }) : super(
+          begin: begin,
+          end: end,
+        );
+
+  @override
+  CenterZoom lerp(double value) {
+    final cs = begin!.center;
+    final ce = end!.center;
+    return CenterZoom(
+      center: lt.LatLng(
+        _lerp(cs.latitude, ce.latitude, value),
+        _lerp(cs.longitude, ce.longitude, value),
+      ),
+      zoom: _lerp(begin!.zoom, end!.zoom, value),
+    );
+  }
+
+  double _lerp(
+    double begin,
+    double end,
+    double value,
+  ) {
+    return begin + (end - begin) * value;
   }
 }
