@@ -4,9 +4,10 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart' as lt;
 
 abstract class MapState<T extends StatefulWidget> extends State<T>
-    with TickerProviderStateMixin {
+    with SingleTickerProviderStateMixin {
   late AnimationController _animController;
   late MapController _mapController;
+  late CenterZoomTween _tween;
 
   List<lt.LatLng> get coordinates;
 
@@ -39,6 +40,27 @@ abstract class MapState<T extends StatefulWidget> extends State<T>
   @override
   void initState() {
     super.initState();
+    _animController = AnimationController(
+      duration: const Duration(milliseconds: 500),
+      vsync: this,
+    );
+    final animation = CurvedAnimation(
+      parent: _animController,
+      curve: Curves.fastOutSlowIn,
+    );
+    _animController.addListener(() {
+      final cz = _tween.lerp(animation.value);
+      _mapController.move(cz.center, cz.zoom);
+    });
+    animation.addStatusListener((status) {
+      switch (status) {
+        case AnimationStatus.completed:
+        case AnimationStatus.dismissed:
+          break;
+        default:
+          break;
+      }
+    });
     _mapController = MapController();
   }
 
@@ -61,36 +83,15 @@ abstract class MapState<T extends StatefulWidget> extends State<T>
 
   @protected
   void animateCamera(CenterZoom cz) {
-    final tween = CenterZoomTween(
+    _tween = CenterZoomTween(
       begin: CenterZoom(
         center: _mapController.center,
         zoom: _mapController.zoom,
       ),
       end: cz,
     );
-    final controller = AnimationController(
-      duration: const Duration(milliseconds: 500),
-      vsync: this,
-    );
-    final animation = CurvedAnimation(
-      parent: controller,
-      curve: Curves.fastOutSlowIn,
-    );
-    animation.addListener(() {
-      final cz = tween.lerp(animation.value);
-      _mapController.move(cz.center, cz.zoom);
-    });
-    animation.addStatusListener((status) {
-      switch (status) {
-        case AnimationStatus.completed:
-        case AnimationStatus.dismissed:
-          controller.dispose();
-          break;
-        default:
-          break;
-      }
-    });
-    controller.forward();
+    _animController.value = 0;
+    _animController.forward();
   }
 }
 
