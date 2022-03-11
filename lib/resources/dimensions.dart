@@ -19,6 +19,8 @@ class Dimension {
 
   double get pixelRatio => data.devicePixelRatio;
 
+  Orientation get orientation => data.orientation;
+
   double at(double dp) {
     final sw = min;
     final ratio = sw <= boundary ? (sw / baseline) : maxRatio;

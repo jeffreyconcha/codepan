@@ -9,9 +9,12 @@ import 'package:codepan/widgets/dialogs/information_dialog.dart';
 import 'package:codepan/widgets/icon.dart';
 import 'package:codepan/widgets/if_else_builder.dart';
 import 'package:codepan/widgets/line_divider.dart';
+import 'package:codepan/widgets/size_listener.dart';
 import 'package:codepan/widgets/text.dart';
 import 'package:codepan/widgets/text_field.dart';
 import 'package:flutter/material.dart';
+
+const _itemMinHeight = 45.0;
 
 typedef MenuSearchBuilder = Widget Function(ValueChanged<String> onSearch);
 
@@ -59,6 +62,7 @@ class MenuDialog<T extends Selectable> extends StatefulWidget {
 class _MenuDialogState<T extends Selectable>
     extends StateWithSearch<MenuDialog<T>, T> {
   late List<T> _selectedItems;
+  Size? _size;
 
   bool get isMultiple => widget.isMultiple;
 
@@ -83,107 +87,132 @@ class _MenuDialogState<T extends Selectable>
   Widget build(BuildContext context) {
     final d = Dimension.of(context);
     final t = Theme.of(context);
-    final itemHeight = d.at(45);
-    final totalHeight = itemHeight * allItems.length;
+    final contentHeight = d.at(_itemMinHeight) * allItems.length;
     return InformationDialog(
       title: widget.title,
       titleFont: widget.titleFont,
       fontColor: widget.fontColor,
       positive: widget.positive,
       negative: widget.negative,
+      margin: EdgeInsets.all(d.at(10)),
       autoDismiss: false,
       withDivider: true,
-      child: Material(
-        color: Colors.white,
-        child: Column(
-          children: [
-            IfElseBuilder(
-              condition: showSuggestions || totalHeight > d.min,
-              ifBuilder: (context) {
-                return Column(
-                  children: [
-                    IfElseBuilder(
-                      condition: widget.searchBuilder != null,
-                      ifBuilder: (context) {
-                        return widget.searchBuilder!.call(onSearch);
-                      },
-                      elseBuilder: (context) {
-                        return PanTextField(
-                          height: d.at(40),
-                          prefixIcon: widget.searchIcon ??
-                              PanIcon(
-                                icon: 'search',
-                                package: 'codepan',
-                                width: d.at(15),
-                                height: d.at(15),
-                                color: widget.fontColor.withOpacity(0.5),
-                              ),
-                          maxLines: 1,
-                          padding: EdgeInsets.zero,
-                          margin: EdgeInsets.all(d.at(10)),
-                          onChanged: onSearch,
-                          textAlignVertical: TextAlignVertical.center,
-                          textInputAction: TextInputAction.done,
-                          borderWidth: d.at(1),
-                          borderColor: PanColors.border,
-                          focusedBorderWidth: d.at(1),
-                          focusedBorderColor: t.primaryColor,
-                          radius: d.at(5),
+      child: Builder(builder: (context) {
+        final child = Material(
+          color: Colors.white,
+          child: Column(
+            children: [
+              IfElseBuilder(
+                condition: showSuggestions || allItems.length > 10,
+                ifBuilder: (context) {
+                  return Column(
+                    children: [
+                      IfElseBuilder(
+                        condition: widget.searchBuilder != null,
+                        ifBuilder: (context) {
+                          return widget.searchBuilder!.call(onSearch);
+                        },
+                        elseBuilder: (context) {
+                          return PanTextField(
+                            height: d.at(40),
+                            prefixIcon: widget.searchIcon ??
+                                PanIcon(
+                                  icon: 'search',
+                                  package: 'codepan',
+                                  width: d.at(15),
+                                  height: d.at(15),
+                                  color: widget.fontColor.withOpacity(0.5),
+                                ),
+                            maxLines: 1,
+                            padding: EdgeInsets.zero,
+                            margin: EdgeInsets.all(d.at(10)),
+                            onChanged: onSearch,
+                            textAlignVertical: TextAlignVertical.center,
+                            textInputAction: TextInputAction.done,
+                            borderWidth: d.at(1),
+                            borderColor: PanColors.border,
+                            focusedBorderWidth: d.at(1),
+                            focusedBorderColor: t.primaryColor,
+                            radius: d.at(5),
+                          );
+                        },
+                      ),
+                      LineDivider(),
+                    ],
+                  );
+                },
+              ),
+              Builder(builder: (ctx) {
+                final child = IfElseBuilder(
+                  condition: allItems.isNotEmpty,
+                  ifBuilder: (context) {
+                    if (items.isEmpty) {
+                      return placeholder;
+                    }
+                    return ListView.builder(
+                      itemCount: items.length,
+                      shrinkWrap: contentHeight < d.min,
+                      itemBuilder: (context, index) {
+                        final item = items[index];
+                        return _MenuItem<T>(
+                          item: item,
+                          fontColor: widget.fontColor,
+                          withDivider: item != items.last,
+                          checkedIcon: widget.checkedIcon,
+                          uncheckedIcon: widget.uncheckedIcon,
+                          isMultiple: isMultiple,
+                          isSelected: _selectedItems.contains(item),
+                          isDisabled: disabledItems?.contains(item) ?? false,
+                          onSelectItem: _onSelectItem,
                         );
                       },
-                    ),
-                    LineDivider(),
-                  ],
+                    );
+                  },
+                  elseBuilder: (context) {
+                    return SizedBox(
+                      height: d.min,
+                      child: placeholder,
+                    );
+                  },
                 );
-              },
-            ),
-            ConstrainedBox(
-              constraints: BoxConstraints(
-                maxHeight: d.min,
-              ),
-              child: IfElseBuilder(
-                condition: allItems.isNotEmpty,
-                ifBuilder: (context) {
-                  if (items.isEmpty) {
-                    return placeholder;
-                  }
-                  return ListView.builder(
-                    itemCount: items.length,
-                    shrinkWrap: totalHeight < d.min,
-                    itemBuilder: (context, index) {
-                      final item = items[index];
-                      return _MenuItem<T>(
-                        item: item,
-                        height: itemHeight,
-                        fontColor: widget.fontColor,
-                        withDivider: item != items.last,
-                        checkedIcon: widget.checkedIcon,
-                        uncheckedIcon: widget.uncheckedIcon,
-                        isMultiple: isMultiple,
-                        isSelected: _selectedItems.contains(item),
-                        isDisabled: disabledItems?.contains(item) ?? false,
-                        onSelectItem: _onSelectItem,
-                      );
+
+                if (_size != null) {
+                  return ConstrainedBox(
+                    constraints: BoxConstraints(
+                      maxHeight: _size!.height,
+                    ),
+                    child: child,
+                  );
+                }
+                return Expanded(
+                  child: SizeListener(
+                    child: child,
+                    onSizeChange: (size, position) {
+                      if (size.height > contentHeight) {
+                        setState(() {
+                          _size = size;
+                        });
+                      }
                     },
-                  );
-                },
-                elseBuilder: (context) {
-                  return SizedBox(
-                    height: d.at(100),
-                    child: placeholder,
-                  );
+                  ),
+                );
+              }),
+              IfElseBuilder(
+                condition: isMultiple,
+                ifBuilder: (context) {
+                  return LineDivider();
                 },
               ),
-            ),
-            IfElseBuilder(
-              condition: isMultiple,
-              ifBuilder: (context) {
-                return LineDivider();
-              },
-            ),
-          ],
-        ),
-      ),
+            ],
+          ),
+        );
+        if (_size != null) {
+          return child;
+        }
+        return Expanded(
+          child: child,
+        );
+      }),
       onPositiveTap: () {
         context.pop();
         widget.onSelectItems?.call(_selectedItems);
@@ -227,13 +256,11 @@ class _MenuItem<T extends Selectable> extends StatelessWidget {
   final Widget? checkedIcon, uncheckedIcon;
   final ValueChanged<T>? onSelectItem;
   final Color fontColor;
-  final double height;
   final T item;
 
   const _MenuItem({
     Key? key,
     required this.item,
-    required this.height,
     this.withDivider = true,
     this.isDisabled = false,
     this.onSelectItem,
@@ -273,16 +300,22 @@ class _MenuItem<T extends Selectable> extends StatelessWidget {
                     );
                   },
                 ),
-                PanText(
-                  height: height,
-                  text: item.title,
-                  fontSize: d.at(13),
-                  fontColor:
-                      isDisabled ? fontColor.withOpacity(0.4) : fontColor,
-                  alignment: Alignment.centerLeft,
-                  textAlign: TextAlign.left,
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
+                Expanded(
+                  child: PanText(
+                    text: item.title,
+                    fontSize: d.at(13),
+                    fontColor:
+                        isDisabled ? fontColor.withOpacity(0.4) : fontColor,
+                    alignment: Alignment.centerLeft,
+                    textAlign: TextAlign.left,
+                    maxLines: 3,
+                    overflow: TextOverflow.ellipsis,
+                    padding: EdgeInsets.symmetric(
+                      vertical: d.at(10),
+                    ),
+                    constraints:
+                        BoxConstraints(minHeight: d.at(_itemMinHeight)),
+                  ),
                 ),
               ],
             ),
