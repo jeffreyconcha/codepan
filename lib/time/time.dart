@@ -94,6 +94,8 @@ class Time extends Equatable {
   int get milliseconds => millisecondsSinceEpoch + millisecondsEpoch;
 
   bool get isToday => this == Time.today();
+  
+  bool get isYesterday => this == Time.yesterday();
 
   int get daysInMonth {
     final start = DateTime(value.year, value.month, 0);
