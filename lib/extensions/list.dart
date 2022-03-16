@@ -113,4 +113,10 @@ extension ListUtils<T> on List<T> {
     }
     return sort ? (list..sort()) : list;
   }
+
+  void addIfAbsent(T element) {
+    if (!this.contains(element)) {
+      add(element);
+    }
+  }
 }

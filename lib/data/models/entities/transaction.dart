@@ -75,16 +75,11 @@ abstract class TransactionData extends EntityData
 
   @override
   int compareTo(TransactionData other) {
-    if (dateCreated != null &&
-        timeCreated != null &&
-        other.dateCreated != null &&
-        other.timeCreated != null) {
-      final dt1 = Time.parse('$dateCreated $timeCreated');
-      final dt2 = Time.parse('${other.dateCreated} ${other.timeCreated}');
-      if (dt1.isBefore(dt2)) {
+    if (createdAt != null && other.createdAt != null) {
+      if (createdAt!.isBefore(other.createdAt!)) {
         return -1;
       }
-      if (dt1.isAfter(dt2)) {
+      if (createdAt!.isAfter(other.createdAt!)) {
         return 1;
       }
     }
