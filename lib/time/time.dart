@@ -1,11 +1,11 @@
 import 'package:codepan/extensions/duration.dart';
+import 'package:codepan/extensions/map.dart';
 import 'package:codepan/resources/strings.dart';
 import 'package:codepan/time/time_range.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:time_ago_provider/time_ago_provider.dart' as ago;
-import 'package:codepan/extensions/map.dart';
 
 const String dateFormat = 'yyyy-MM-dd';
 const String timeFormat = 'HH:mm:ss';
@@ -34,9 +34,7 @@ class Time extends Equatable {
   String get displayTimeWithSeconds => DateFormat.jms(locale).format(value);
 
   String get displayWeekday {
-    return this != Time.today()
-        ? DateFormat.EEEE(locale).format(value)
-        : Strings.today;
+    return isToday ? Strings.today : DateFormat.EEEE(locale).format(value);
   }
 
   String get displayDay => DateFormat.d(locale).format(value);
@@ -56,9 +54,7 @@ class Time extends Equatable {
   }
 
   String get abbrWeekday {
-    return this != Time.today()
-        ? DateFormat.E(locale).format(value)
-        : Strings.today;
+    return isToday ? Strings.today : DateFormat.E(locale).format(value);
   }
 
   String get abbrMonth => DateFormat.MMM(locale).format(value);
@@ -93,9 +89,13 @@ class Time extends Equatable {
 
   int get milliseconds => millisecondsSinceEpoch + millisecondsEpoch;
 
-  bool get isToday => this == Time.today();
-  
-  bool get isYesterday => this == Time.yesterday();
+  bool get isToday => trimmedDate == Time.today();
+
+  bool get isYesterday => trimmedDate == Time.yesterday();
+
+  Time get trimmedDate => Time(date: date);
+
+  Time get trimmedTime => Time(time: time);
 
   int get daysInMonth {
     final start = DateTime(value.year, value.month, 0);

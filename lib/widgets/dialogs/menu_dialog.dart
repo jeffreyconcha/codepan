@@ -147,51 +147,52 @@ class _MenuDialogState<T extends Selectable> extends State<MenuDialog<T>>
               ),
               WrapperBuilder(
                 condition: _size == null || _orientation != d.orientation,
-                child: IfElseBuilder(
-                  condition: allItems.isNotEmpty,
-                  ifBuilder: (context) {
-                    if (items.isEmpty) {
-                      return placeholder;
+                child: SizeListener(
+                  child: IfElseBuilder(
+                    condition: allItems.isNotEmpty,
+                    ifBuilder: (context) {
+                      if (items.isEmpty) {
+                        return placeholder;
+                      }
+                      return ListView.builder(
+                        itemCount: items.length,
+                        shrinkWrap: true,
+                        itemBuilder: (context, index) {
+                          final item = items[index];
+                          return _MenuItem<T>(
+                            item: item,
+                            fontColor: widget.fontColor,
+                            withDivider: item != items.last,
+                            checkedIcon: widget.checkedIcon,
+                            uncheckedIcon: widget.uncheckedIcon,
+                            isMultiple: isMultiple,
+                            isSelected: _selectedItems.contains(item),
+                            isDisabled: disabledItems?.contains(item) ?? false,
+                            onSelectItem: _onSelectItem,
+                          );
+                        },
+                      );
+                    },
+                    elseBuilder: (context) {
+                      return SizedBox(
+                        height: d.min,
+                        child: placeholder,
+                      );
+                    },
+                  ),
+                  onSizeChange: (size, position) {
+                    print('$size vs $contentHeight');
+                    if (size.height > contentHeight) {
+                      setState(() {
+                        _size = size;
+                        _orientation = d.orientation;
+                      });
                     }
-                    return ListView.builder(
-                      itemCount: items.length,
-                      shrinkWrap: contentHeight < d.min,
-                      itemBuilder: (context, index) {
-                        final item = items[index];
-                        return _MenuItem<T>(
-                          item: item,
-                          fontColor: widget.fontColor,
-                          withDivider: item != items.last,
-                          checkedIcon: widget.checkedIcon,
-                          uncheckedIcon: widget.uncheckedIcon,
-                          isMultiple: isMultiple,
-                          isSelected: _selectedItems.contains(item),
-                          isDisabled: disabledItems?.contains(item) ?? false,
-                          onSelectItem: _onSelectItem,
-                        );
-                      },
-                    );
-                  },
-                  elseBuilder: (context) {
-                    return SizedBox(
-                      height: d.min,
-                      child: placeholder,
-                    );
                   },
                 ),
                 builder: (context, child) {
                   return Expanded(
-                    child: SizeListener(
-                      child: child,
-                      onSizeChange: (size, position) {
-                        if (size.height > contentHeight) {
-                          setState(() {
-                            _size = size;
-                            _orientation = d.orientation;
-                          });
-                        }
-                      },
-                    ),
+                    child: child,
                   );
                 },
                 fallback: (context, child) {
