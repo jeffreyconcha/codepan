@@ -181,7 +181,6 @@ class _MenuDialogState<T extends Selectable> extends State<MenuDialog<T>>
                     },
                   ),
                   onSizeChange: (size, position) {
-                    print('$size vs $contentHeight');
                     if (size.height > contentHeight) {
                       setState(() {
                         _size = size;
