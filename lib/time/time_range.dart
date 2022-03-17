@@ -28,6 +28,8 @@ class TimeRange extends Equatable {
     return start.displayDate;
   }
 
+  String get displayTime => '${start.displayTime} - ${end.displayTime}';
+
   String get abbrRange {
     if (start != end) {
       if (start.isSameYear(end)) {
@@ -44,7 +46,11 @@ class TimeRange extends Equatable {
 
   bool get isValid => start <= end;
 
-  bool get isZero => start.isZero || end.isZero;
+  bool get isZero => start.isZero && end.isZero;
+
+  bool get isTimeZero => start.isTimeZero && end.isTimeZero;
+
+  bool get isDateZero => start.isDateZero && end.isDateZero;
 
   bool get isNotZero => !isZero;
 

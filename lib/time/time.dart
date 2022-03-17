@@ -7,18 +7,20 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:time_ago_provider/time_ago_provider.dart' as ago;
 
+const String defaultDate = '0000-00-00';
+const String defaultTime = '00:00:00';
 const String dateFormat = 'yyyy-MM-dd';
 const String timeFormat = 'HH:mm:ss';
 const String locale = 'en_US';
 const int millisecondsEpoch = 62170012800000;
 
 class Time extends Equatable {
-  final String? _date;
-  final String? _time;
+  final String _date;
+  final String _time;
 
-  String? get date => DateFormat(dateFormat, locale).format(value);
+  String get date => DateFormat(dateFormat, locale).format(value);
 
-  String? get time => DateFormat(timeFormat, locale).format(value);
+  String get time => DateFormat(timeFormat, locale).format(value);
 
   @override
   List<Object?> get props => [milliseconds];
@@ -79,7 +81,11 @@ class Time extends Equatable {
 
   String get history => ago.format(value);
 
-  DateTime get value => DateTime.parse('$_date $_time');
+  DateTime get value {
+    final date = _date.isNotEmpty ? _date : defaultDate;
+    final time = _time.isNotEmpty ? _time : defaultTime;
+    return DateTime.parse('$date $time');
+  }
 
   String get timezone => value.timeZoneName;
 
@@ -110,15 +116,15 @@ class Time extends Equatable {
   }
 
   bool? get isNewMinute {
-    final split = _time!.split(':');
+    final split = _time.split(':');
     return split.last == '00';
   }
 
   const Time({
-    String? date = '0000-00-00',
-    String? time = '00:00:00',
-  })  : _date = date,
-        _time = time;
+    String? date = defaultDate,
+    String? time = defaultTime,
+  })  : _date = date ?? defaultDate,
+        _time = time ?? defaultTime;
 
   factory Time.value(DateTime? input) {
     if (input != null) {
@@ -187,6 +193,10 @@ class Time extends Equatable {
   bool get isZero => milliseconds == 0;
 
   bool get isNotZero => !isZero;
+
+  bool get isTimeZero => time == defaultTime;
+
+  bool get isDateZero => date == defaultDate;
 
   Duration difference(Time other) {
     return value.difference(other.value);
