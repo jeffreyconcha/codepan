@@ -3,7 +3,6 @@ import 'package:inflection3/inflection3.dart';
 const _true = <String>['true', 'yes', 'on', '1'];
 const _false = <String>['false', 'no', 'off', '0'];
 const _loweredInTitle = <String>['of', 'and', 'or', 'is', 'are', 'a', 'with'];
-const _punctuations = <String>[',', '.', '?', '!', ';', ':'];
 
 extension StringUtils on String {
   String getInitials([int max = 2]) {
@@ -88,10 +87,10 @@ extension StringUtils on String {
         } else {
           buffer.write(replacement);
         }
-        final code = word.runes.last;
-        final last = String.fromCharCode(code);
-        if (_punctuations.contains(last)) {
-          buffer.write(last);
+        final pattern = RegExp(r'[^A-Za-z-]');
+        if (pattern.hasMatch(word.substring(id.length))) {
+          final index = word.indexOf(pattern, id.length);
+          buffer.write(word.substring(index));
         }
       } else {
         buffer.write(word);
