@@ -3,8 +3,12 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 
 class TimeRange extends Equatable {
-  final Time start;
-  final Time end;
+  final Time _start;
+  final Time _end;
+
+  Time get start => _start;
+
+  Time get end => _end;
 
   @override
   List<Object?> get props {
@@ -65,9 +69,10 @@ class TimeRange extends Equatable {
   }
 
   const TimeRange({
-    required this.start,
-    required this.end,
-  });
+    required Time? start,
+    required Time? end,
+  })  : _start = start ?? Time.zero,
+        _end = end ?? Time.zero;
 
   factory TimeRange.now() {
     final now = Time.now();

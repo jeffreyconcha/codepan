@@ -32,20 +32,22 @@ extension StringUtils on String {
         final buffer = StringBuffer();
         final words = this.split(space);
         for (int i = 0; i < words.length; i++) {
-          final word = words[i];
-          if (_loweredInTitle.contains(word) && i != 0) {
-            buffer.write(word);
-          } else {
-            buffer.write('${word[0].toUpperCase()}${word.substring(1)}');
-          }
-          if (i < words.length - 1) {
-            buffer.write(space);
+          final word = words[i].toLowerCase();
+          if (word.isNotEmpty) {
+            if (_loweredInTitle.contains(word) && i != 0) {
+              buffer.write(word);
+            } else {
+              buffer.write('${word[0].toUpperCase()}${word.substring(1)}');
+            }
+            if (i < words.length - 1) {
+              buffer.write(space);
+            }
           }
         }
         return buffer.toString();
       }
     }
-    return '${this[0].toUpperCase()}${this.substring(1)}';
+    return '${this[0].toUpperCase()}${this.toLowerCase().substring(1)}';
   }
 
   String decapitalize() {

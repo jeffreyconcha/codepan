@@ -79,7 +79,7 @@ class Time extends Equatable {
 
   String get abbrDate => DateFormat.yMMMd(locale).format(value);
 
-  String get history => ago.format(value);
+  String get displayHistory => ago.format(value);
 
   DateTime get value {
     final date = _date.isNotEmpty ? _date : defaultDate;
