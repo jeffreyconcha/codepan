@@ -1,5 +1,6 @@
 import 'package:codepan/resources/colors.dart';
 import 'package:codepan/widgets/if_else_builder.dart';
+import 'package:codepan/widgets/wrapper.dart';
 import 'package:flutter/material.dart';
 
 enum OverflowState {
@@ -19,6 +20,7 @@ class PanText extends StatelessWidget {
   final TextDirection textDirection;
   final BoxConstraints? constraints;
   final OverflowState overflowState;
+  final bool isRequired, isScalable;
   final List<InlineSpan>? children;
   final TextDecoration? decoration;
   final SpannableText? spannable;
@@ -31,7 +33,6 @@ class PanText extends StatelessWidget {
   final TextAlign textAlign;
   final BoxBorder? border;
   final Color background;
-  final bool isRequired;
   final int? maxLines;
 
   const PanText({
@@ -50,6 +51,7 @@ class PanText extends StatelessWidget {
     this.fontWeight = FontWeight.normal,
     this.height,
     this.isRequired = false,
+    this.isScalable = true,
     this.margin,
     this.maxLines,
     this.onTextOverflow,
@@ -70,6 +72,7 @@ class PanText extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final mq = MediaQuery.of(context);
     final hasText = this.text?.isNotEmpty ?? false;
     final style = textStyle ??
         TextStyle(
@@ -78,7 +81,11 @@ class PanText extends StatelessWidget {
           fontStyle: fontStyle,
           fontWeight: fontWeight,
           height: fontHeight,
-          fontSize: fontSize,
+          fontSize: fontSize != null
+              ? isScalable
+                  ? fontSize
+                  : fontSize! / mq.textScaleFactor
+              : null,
           decoration: decoration,
           shadows: shadows,
         );
@@ -122,8 +129,7 @@ class PanText extends StatelessWidget {
     return IfElseBuilder(
       condition: (text != null && text.isNotEmpty) || children != null,
       ifBuilder: (context) {
-        return IfElseBuilder(
-          condition: onTextOverflow != null,
+        return Container(
           width: width,
           height: height,
           margin: margin,
@@ -135,38 +141,39 @@ class PanText extends StatelessWidget {
             border: border,
           ),
           constraints: constraints,
-          ifBuilder: (context) {
-            return LayoutBuilder(
-              builder: (context, constraints) {
-                final painter = TextPainter(
-                  maxLines: maxLines,
-                  textAlign: textAlign,
-                  textDirection: textDirection,
-                  text: span,
-                );
-                painter.layout(maxWidth: constraints.maxWidth);
-                var overflowWidget;
-                if (painter.didExceedMaxLines ||
-                    overflowState == OverflowState.expand) {
-                  final lines = painter.computeLineMetrics();
-                  overflowWidget = onTextOverflow!.call(lines.length);
-                }
-                return Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  children: <Widget>[
-                    rich,
-                    Container(
-                      child: overflowWidget,
-                    ),
-                  ],
-                );
-              },
-            );
-          },
-          elseBuilder: (context) {
-            return rich;
-          },
+          child: WrapperBuilder(
+            condition: onTextOverflow != null,
+            child: rich,
+            builder: (context, child) {
+              return LayoutBuilder(
+                builder: (context, constraints) {
+                  final painter = TextPainter(
+                    maxLines: maxLines,
+                    textAlign: textAlign,
+                    textDirection: textDirection,
+                    text: span,
+                  );
+                  painter.layout(maxWidth: constraints.maxWidth);
+                  var overflowWidget;
+                  if (painter.didExceedMaxLines ||
+                      overflowState == OverflowState.expand) {
+                    final lines = painter.computeLineMetrics();
+                    overflowWidget = onTextOverflow!.call(lines.length);
+                  }
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: <Widget>[
+                      child,
+                      Container(
+                        child: overflowWidget,
+                      ),
+                    ],
+                  );
+                },
+              );
+            },
+          ),
         );
       },
     );
