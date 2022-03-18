@@ -154,7 +154,7 @@ class PanText extends StatelessWidget {
                     text: span,
                   );
                   painter.layout(maxWidth: constraints.maxWidth);
-                  var overflowWidget;
+                  Widget? overflowWidget;
                   if (painter.didExceedMaxLines ||
                       overflowState == OverflowState.expand) {
                     final lines = painter.computeLineMetrics();
