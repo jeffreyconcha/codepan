@@ -14,6 +14,7 @@ import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:intl/intl.dart';
+import 'package:latlong2/latlong.dart' as lt;
 import 'package:path_provider/path_provider.dart';
 
 const _urlPattern =
@@ -238,20 +239,27 @@ class PanUtils {
   }
 
   static Future<String?> getAddress(
-    dynamic position, {
+    dynamic point, {
     List<AddressAttribute>? attrs,
   }) async {
-    if (position is Position) {
+    if (point is Position) {
       return await getAddressFromCoordinates(
-        position.latitude,
-        position.longitude,
+        point.latitude,
+        point.longitude,
         attrs: attrs,
       );
     }
-    if (position is LatLng) {
+    if (point is LatLng) {
       return await getAddressFromCoordinates(
-        position.latitude,
-        position.longitude,
+        point.latitude,
+        point.longitude,
+        attrs: attrs,
+      );
+    }
+    if (point is lt.LatLng) {
+      return await getAddressFromCoordinates(
+        point.latitude,
+        point.longitude,
         attrs: attrs,
       );
     }

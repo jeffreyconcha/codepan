@@ -18,10 +18,13 @@ class TimeRange extends Equatable {
     ];
   }
 
-  String get displayRange {
+  String get displayDate {
     if (start != end) {
       if (start.isSameYear(end)) {
         if (start.isSameMonth(end)) {
+          if (start.trimmedDate == end.trimmedDate) {
+            return start.displayDate;
+          }
           final range = '${start.displayDay} - ${end.displayDay}';
           return '${start.displayMonth} $range, ${start.displayYear}';
         }
@@ -34,10 +37,13 @@ class TimeRange extends Equatable {
 
   String get displayTime => '${start.displayTime} - ${end.displayTime}';
 
-  String get abbrRange {
+  String get abbrDate {
     if (start != end) {
       if (start.isSameYear(end)) {
         if (start.isSameMonth(end)) {
+          if (start.trimmedDate == end.trimmedDate) {
+            return start.abbrDate;
+          }
           final range = '${start.displayDay} - ${end.displayDay}';
           return '${start.abbrMonth} $range, ${start.displayYear}';
         }

@@ -74,7 +74,7 @@ extension MapUtils on Map<String, dynamic> {
         return PanUtils.parseBool(value);
       } else if (value is String) {
         final unescape = HtmlUnescape();
-        return unescape.convert(value);
+        return unescape.convert(value).replaceAll('\n ', '\n');
       }
       return value;
     }
