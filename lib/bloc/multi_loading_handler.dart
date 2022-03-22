@@ -22,6 +22,12 @@ mixin MultiLoadingHandlerMixin<E extends ParentEvent, S extends ParentState>
     if (nextState is FinisherState) {
       final state = nextState as FinisherState;
       _setLoading(state.type, true);
+    } else if (nextState is ErrorState) {
+      final state = nextState as ErrorState;
+      final key = state.type;
+      if (_map.containsKey(key)) {
+        _map.remove(key);
+      }
     } else {
       final key = nextState.runtimeType;
       if (_map.containsKey(key)) {
@@ -34,5 +40,9 @@ mixin MultiLoadingHandlerMixin<E extends ParentEvent, S extends ParentState>
 
 /// S - The finishing state to complete the loading status
 mixin FinisherState<S extends ParentState> {
+  Type get type => S;
+}
+
+mixin ErrorState<S extends ParentState> {
   Type get type => S;
 }

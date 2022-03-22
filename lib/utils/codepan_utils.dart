@@ -208,6 +208,20 @@ class PanUtils {
     return TimeRange.value(data);
   }
 
+  static Future<lt.LatLng?> getCoordinatesFromAddress(String? address) async {
+    if (address?.isNotEmpty ?? false) {
+      final list = await locationFromAddress(address!);
+      if (list.isNotEmpty) {
+        final first = list.first;
+        return lt.LatLng(
+          first.latitude,
+          first.longitude,
+        );
+      }
+    }
+    return null;
+  }
+
   static Future<String> getAddressFromCoordinates(
     double latitude,
     double longitude, {
