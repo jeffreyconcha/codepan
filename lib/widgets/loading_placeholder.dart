@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:shimmer/shimmer.dart';
 
 class LoadingPlaceholder extends StatelessWidget {
+  final Color baseColor, highlightColor;
   final bool isLoading;
   final Widget child;
 
@@ -10,14 +11,16 @@ class LoadingPlaceholder extends StatelessWidget {
     Key? key,
     required this.child,
     this.isLoading = true,
+    this.baseColor = PanColors.grey4,
+    this.highlightColor = PanColors.grey2,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return isLoading
         ? Shimmer.fromColors(
-            baseColor: PanColors.grey4,
-            highlightColor: PanColors.grey2,
+            baseColor: baseColor,
+            highlightColor: highlightColor,
             child: child,
           )
         : child;
