@@ -6,6 +6,7 @@ typedef Creator<K, V> = V Function(K key);
 class CacheAsyncManager<K, V> {
   final AsyncCreator<K, V> creator;
   final _map = <K, V>{};
+  final _queue = <K>[];
 
   CacheAsyncManager({
     required this.creator,
@@ -23,11 +24,16 @@ class CacheAsyncManager<K, V> {
 
   bool contains(K key) => _map.containsKey(key);
 
+  bool inQueue(K key) => _queue.contains(key);
+
   V? tryGet(K key, ValueChanged<V?> onCreated) {
     if (!_map.containsKey(key)) {
-      getCached(key).then((value) {
-        onCreated.call(value);
-      });
+      if (!_queue.contains(key)) {
+        print('create tayo $key');
+        _queue.add(key);
+        getCached(key).then(onCreated);
+      }
+      return null;
     }
     return _map[key];
   }
@@ -37,7 +43,9 @@ class CacheAsyncManager<K, V> {
     if (data != null) {
       return data;
     }
-    return _map[key] = await creator.call(key);
+    final value = await creator.call(key);
+    _queue.remove(key);
+    return _map[key] = value;
   }
 }
 

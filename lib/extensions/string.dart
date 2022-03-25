@@ -148,6 +148,14 @@ extension StringUtils on String {
     return PLURAL.convert(this);
   }
 
+  String noun(int quantity) {
+    return quantity > 1 ? PLURAL.convert(this) : SINGULAR.convert(this);
+  }
+
+  String verb(int quantity) {
+    return quantity > 1 ? SINGULAR.convert(this) : PLURAL.convert(this);
+  }
+
   bool? toBool() {
     if (_true.contains(this)) {
       return true;
