@@ -4,6 +4,7 @@ import 'dart:isolate';
 import 'dart:ui';
 
 import 'package:codepan/extensions/extensions.dart';
+import 'package:codepan/extensions/num.dart';
 import 'package:codepan/resources/colors.dart';
 import 'package:codepan/time/time.dart';
 import 'package:codepan/time/time_range.dart';
@@ -210,14 +211,18 @@ class PanUtils {
 
   static Future<lt.LatLng?> getCoordinatesFromAddress(String? address) async {
     if (address?.isNotEmpty ?? false) {
-      final list = await locationFromAddress(address!);
-      if (list.isNotEmpty) {
-        final first = list.first;
-        final latitude = first.latitude;
-        final longitude = first.longitude;
-        if (isLatLngValid(latitude, longitude)) {
-          return lt.LatLng(latitude, longitude);
+      try {
+        final list = await locationFromAddress(address!);
+        if (list.isNotEmpty) {
+          final first = list.first;
+          final latitude = first.latitude;
+          final longitude = first.longitude;
+          if (isLatLngValid(latitude, longitude)) {
+            return lt.LatLng(latitude, longitude);
+          }
         }
+      } catch (error) {
+        print(error);
       }
     }
     return null;
@@ -229,26 +234,30 @@ class PanUtils {
     List<AddressAttribute>? attrs,
   }) async {
     final buffer = StringBuffer();
-    final places = await placemarkFromCoordinates(latitude, longitude);
-    if (places.isNotEmpty) {
-      final place = places.first;
-      if (attrs?.contains(AddressAttribute.street) ?? true) {
-        buffer.write('${place.street},');
+    try {
+      final places = await placemarkFromCoordinates(latitude, longitude);
+      if (places.isNotEmpty) {
+        final place = places.first;
+        if (attrs?.contains(AddressAttribute.street) ?? true) {
+          buffer.write('${place.street},');
+        }
+        if (attrs?.contains(AddressAttribute.locality) ?? true) {
+          buffer.write(' ${place.locality},');
+        }
+        if (attrs?.contains(AddressAttribute.administrativeArea) ?? true) {
+          buffer.write(' ${place.administrativeArea},');
+        }
+        if (attrs?.contains(AddressAttribute.country) ?? true) {
+          buffer.write(' ${place.country}');
+        }
       }
-      if (attrs?.contains(AddressAttribute.locality) ?? true) {
-        buffer.write(' ${place.locality},');
+      final address = buffer.toString();
+      final index = address.lastIndexOf(',');
+      if (index == address.length - 1) {
+        return address.substring(0, index).trim();
       }
-      if (attrs?.contains(AddressAttribute.administrativeArea) ?? true) {
-        buffer.write(' ${place.administrativeArea},');
-      }
-      if (attrs?.contains(AddressAttribute.country) ?? true) {
-        buffer.write(' ${place.country}');
-      }
-    }
-    final address = buffer.toString();
-    final index = address.lastIndexOf(',');
-    if (index == address.length - 1) {
-      return address.substring(0, index).trim();
+    } catch (error) {
+      print(error);
     }
     return buffer.toString();
   }
@@ -286,10 +295,7 @@ class PanUtils {
     double? longitude,
   ) {
     if (latitude != null && longitude != null) {
-      if ((latitude < -90 || latitude > 90) &&
-          (longitude < -180 || longitude > 180)) {
-        return true;
-      }
+      return latitude.isBetween(-90, 90) && longitude.isBetween(-180, 180);
     }
     return false;
   }
