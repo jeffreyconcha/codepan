@@ -10,13 +10,13 @@ class FutureCachedBuilder<K, V> extends StatefulWidget {
   final CacheAsyncManager<K, V> manager;
   final CacheWidgetBuilder<V> builder;
   final WidgetBuilder? placeholder;
-  final K keys;
+  final K? id;
 
   const FutureCachedBuilder({
     Key? key,
     required this.builder,
     required this.manager,
-    required this.keys,
+    required this.id,
     this.placeholder,
   }) : super(key: key);
 
@@ -31,12 +31,14 @@ class _FutureCachedBuilderState<K, V> extends State<FutureCachedBuilder<K, V>> {
   @override
   void initState() {
     super.initState();
-    _value = manager.tryGet(widget.keys, (value) {
-      _value = value;
-      if (mounted) {
-        setState(() {});
-      }
-    });
+    if (widget.id != null) {
+      _value = manager.tryGet(widget.id!, (value) {
+        _value = value;
+        if (mounted) {
+          setState(() {});
+        }
+      });
+    }
   }
 
   @override
