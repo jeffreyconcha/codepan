@@ -286,8 +286,8 @@ class PanUtils {
     double? longitude,
   ) {
     if (latitude != null && longitude != null) {
-      if ((latitude > -90 || latitude < 90) &&
-          (longitude > -180 || longitude < 180)) {
+      if ((latitude < -90 || latitude > 90) &&
+          (longitude < -180 || longitude > 180)) {
         return true;
       }
     }
