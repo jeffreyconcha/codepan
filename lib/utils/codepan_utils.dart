@@ -215,12 +215,8 @@ class PanUtils {
         final first = list.first;
         final latitude = first.latitude;
         final longitude = first.longitude;
-        if ((latitude > -90 || latitude < 90) &&
-            (longitude > -180 || longitude < 180)) {
-          return lt.LatLng(
-            first.latitude,
-            first.longitude,
-          );
+        if (isLatLngValid(latitude, longitude)) {
+          return lt.LatLng(latitude, longitude);
         }
       }
     }
@@ -283,5 +279,18 @@ class PanUtils {
       );
     }
     return null;
+  }
+
+  static bool isLatLngValid(
+    double? latitude,
+    double? longitude,
+  ) {
+    if (latitude != null && longitude != null) {
+      if ((latitude > -90 || latitude < 90) &&
+          (longitude > -180 || longitude < 180)) {
+        return true;
+      }
+    }
+    return false;
   }
 }
