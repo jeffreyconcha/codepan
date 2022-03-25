@@ -213,10 +213,15 @@ class PanUtils {
       final list = await locationFromAddress(address!);
       if (list.isNotEmpty) {
         final first = list.first;
-        return lt.LatLng(
-          first.latitude,
-          first.longitude,
-        );
+        final latitude = first.latitude;
+        final longitude = first.longitude;
+        if ((latitude > -90 || latitude < 90) &&
+            (longitude > -180 || longitude < 180)) {
+          return lt.LatLng(
+            first.latitude,
+            first.longitude,
+          );
+        }
       }
     }
     return null;
