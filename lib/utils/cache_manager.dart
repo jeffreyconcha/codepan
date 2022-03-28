@@ -29,7 +29,6 @@ class CacheAsyncManager<K, V> {
   V? tryGet(K key, ValueChanged<V?> onCreated) {
     if (!_map.containsKey(key)) {
       if (!_queue.contains(key)) {
-        print('create tayo $key');
         _queue.add(key);
         getCached(key).then(onCreated);
       }

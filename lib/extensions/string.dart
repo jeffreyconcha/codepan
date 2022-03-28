@@ -1,3 +1,4 @@
+import 'package:html_unescape/html_unescape.dart';
 import 'package:inflection3/inflection3.dart';
 
 const _true = <String>['true', 'yes', 'on', '1'];
@@ -61,8 +62,7 @@ extension StringUtils on String {
     return this;
   }
 
-  String complete(
-    dynamic input, {
+  String complete(dynamic input, {
     String? identifier,
     bool withQuotes = false,
     bool isSpannable = false,
@@ -82,7 +82,7 @@ extension StringUtils on String {
       final word = words[i];
       if (word.contains(id) && iterator.moveNext()) {
         final replacement =
-            withQuotes ? '\"${iterator.current}\"' : iterator.current;
+        withQuotes ? '\"${iterator.current}\"' : iterator.current;
 
         if (isSpannable) {
           buffer.write('<s>$replacement</s>');
@@ -207,5 +207,14 @@ extension StringUtils on String {
       return substring(length - 1, length);
     }
     return '';
+  }
+
+  String get unescaped {
+    final converter = HtmlUnescape();
+    return converter
+        .convert(this)
+        .replaceAll('\n ', '\n')
+        .replaceAll('u0022', '"')
+        .replaceAll('u0027', '\'');
   }
 }

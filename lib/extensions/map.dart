@@ -1,6 +1,5 @@
 import 'package:codepan/extensions/extensions.dart';
 import 'package:codepan/utils/codepan_utils.dart';
-import 'package:html_unescape/html_unescape.dart';
 
 const prefixFallbackKey = '\$prefixFallback';
 const fallbackSeparatorKey = '\$fallbackSeparator';
@@ -73,8 +72,7 @@ extension MapUtils on Map<String, dynamic> {
       if (boolPrefixes.contains(split.first)) {
         return PanUtils.parseBool(value);
       } else if (value is String) {
-        final unescape = HtmlUnescape();
-        return unescape.convert(value).replaceAll('\n ', '\n');
+        return value.unescaped;
       }
       return value;
     }
