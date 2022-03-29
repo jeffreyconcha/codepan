@@ -12,7 +12,7 @@ typedef ListItemCallback<T> = void Function(
 );
 
 class ReorderableAnimatedList<T> extends StatefulWidget {
-  final ListItemCallback<T>? onRemoveItem, onInsertItem;
+  final ListItemCallback<T>? onRemoveItem, onAddItem;
   final AnimatedListController<T> itemController;
   final ScrollController? scrollController;
   final ListItemBuilder<T> itemBuilder;
@@ -27,7 +27,7 @@ class ReorderableAnimatedList<T> extends StatefulWidget {
     required this.itemBuilder,
     required this.items,
     this.onRemoveItem,
-    this.onInsertItem,
+    this.onAddItem,
     this.scrollController,
     this.padding,
   }) : super(key: key);
@@ -65,7 +65,7 @@ class _ReorderableAnimatedListState<T>
           index: index,
           item: item,
           onRemoveItem: widget.onRemoveItem,
-          onInsertItem: widget.onInsertItem,
+          onAddItem: widget.onAddItem,
           itemController: itemController,
           visibility: itemController.willInsert(item)
               ? Visibility.gone
@@ -77,7 +77,7 @@ class _ReorderableAnimatedListState<T>
 }
 
 class AnimatedListItem<T> extends StatefulWidget {
-  final ListItemCallback<T>? onRemoveItem, onInsertItem;
+  final ListItemCallback<T>? onRemoveItem, onAddItem;
   final AnimatedListController<T> itemController;
   final Visibility visibility;
   final Widget child;
@@ -92,7 +92,7 @@ class AnimatedListItem<T> extends StatefulWidget {
     required this.item,
     this.visibility = Visibility.visible,
     this.onRemoveItem,
-    this.onInsertItem,
+    this.onAddItem,
   }) : super(key: key);
 
   @override
@@ -138,7 +138,7 @@ class _AnimatedListItemState<T> extends State<AnimatedListItem<T>>
           _visibility = Visibility.gone;
           break;
         case AnimationStatus.completed:
-          widget.onInsertItem?.call(item);
+          widget.onAddItem?.call(item);
           _visibility = Visibility.visible;
           break;
         default:
