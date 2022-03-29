@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 
-typedef WrapperCallback = Widget Function(BuildContext contexrt, Widget child);
+typedef WrapperCallback = Widget Function(BuildContext context, Widget child);
 
 class WrapperBuilder extends StatelessWidget {
   final WrapperCallback? fallback;

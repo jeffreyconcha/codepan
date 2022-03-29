@@ -50,7 +50,9 @@ class _TextPlaceholderState extends State<TextPlaceholder>
       ),
     ]);
     _controller = AnimationController(
-      duration: const Duration(milliseconds: 3000),
+      duration: const Duration(
+        milliseconds: 3000,
+      ),
       vsync: this,
     )..repeat();
     super.initState();
