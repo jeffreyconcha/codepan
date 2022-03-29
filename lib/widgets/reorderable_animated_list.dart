@@ -7,27 +7,32 @@ typedef ListItemBuilder<T> = Widget Function(
   int index,
 );
 
-typedef ListItemCallback<T> = void Function(
+typedef ItemChangeNotifier<T> = void Function(
   T item,
 );
 
+typedef ReorderNotifier<T> = void Function(
+  T item,
+  int newIndex,
+);
+
 class ReorderableAnimatedList<T> extends StatefulWidget {
-  final ListItemCallback<T>? onRemoveItem, onAddItem;
+  final ItemChangeNotifier<T>? onRemoveItem, onAddItem;
   final AnimatedListController<T> itemController;
   final ScrollController? scrollController;
   final ListItemBuilder<T> itemBuilder;
-  final ReorderCallback onReorder;
+  final ReorderNotifier<T>? onReorder;
   final EdgeInsets? padding;
   final List<T> items;
 
   const ReorderableAnimatedList({
     Key? key,
     required this.itemController,
-    required this.onReorder,
     required this.itemBuilder,
     required this.items,
-    this.onRemoveItem,
+    this.onReorder,
     this.onAddItem,
+    this.onRemoveItem,
     this.scrollController,
     this.padding,
   }) : super(key: key);
@@ -54,7 +59,6 @@ class _ReorderableAnimatedListState<T>
   @override
   Widget build(BuildContext context) {
     return ReorderableListView(
-      onReorder: widget.onReorder,
       padding: widget.padding,
       scrollController: widget.scrollController,
       children: widget.items.transform<Widget>((item, index) {
@@ -72,12 +76,17 @@ class _ReorderableAnimatedListState<T>
               : Visibility.visible,
         );
       }),
+      onReorder: (oldIndex, newIndex) {
+        final item = widget.items[oldIndex];
+        final _newIndex = oldIndex > newIndex ? newIndex : newIndex - 1;
+        widget.onReorder?.call(item, _newIndex);
+      },
     );
   }
 }
 
 class AnimatedListItem<T> extends StatefulWidget {
-  final ListItemCallback<T>? onRemoveItem, onAddItem;
+  final ItemChangeNotifier<T>? onRemoveItem, onAddItem;
   final AnimatedListController<T> itemController;
   final Visibility visibility;
   final Widget child;
