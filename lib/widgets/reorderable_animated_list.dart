@@ -21,6 +21,7 @@ typedef ItemChangeNotifier<T> = void Function(
 typedef ReorderNotifier<T> = void Function(
   T item,
   int newIndex,
+  int headerCount,
 );
 
 class ReorderableAnimatedList<T> extends StatefulWidget {
@@ -119,8 +120,9 @@ class _ReorderableAnimatedListState<T>
           }
         });
         final key = _children[oldIndex].key as ValueKey<T>;
-        final _newIndex = oldIndex > newIndex ? newIndex : newIndex - 1;
-        widget.onReorder?.call(key.value, _newIndex - headerCount);
+        final index = oldIndex > newIndex ? newIndex : newIndex - 1;
+        final itemIndex = index - headerCount;
+        widget.onReorder?.call(key.value, itemIndex, headerCount);
       },
     );
   }
