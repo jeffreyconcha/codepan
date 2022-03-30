@@ -55,6 +55,8 @@ class ReorderableAnimatedList<T> extends StatefulWidget {
 
 class _ReorderableAnimatedListState<T>
     extends State<ReorderableAnimatedList<T>> {
+  late List<Widget> _children;
+
   AnimatedListController<T> get itemController => widget.itemController;
 
   @override
@@ -65,6 +67,7 @@ class _ReorderableAnimatedListState<T>
         setState(() {});
       }
     });
+    _children = [];
   }
 
   @override
@@ -72,7 +75,7 @@ class _ReorderableAnimatedListState<T>
     return ReorderableListView(
       padding: widget.padding,
       scrollController: widget.scrollController,
-      children: widget.items.unevenTransform<Widget>((item, index) {
+      children: _children = widget.items.unevenTransform<Widget>((item, index) {
         final list = <Widget>[];
         if (widget.isHeader?.call(item) ?? false) {
           final header = widget.headerBuilder?.call(context, item);
@@ -91,7 +94,7 @@ class _ReorderableAnimatedListState<T>
         final child = widget.itemBuilder.call(context, item, index);
         list.add(
           AnimatedListItem<T>(
-            key: child.key,
+            key: ValueKey<T>(item),
             child: child,
             index: index,
             item: item,
@@ -106,9 +109,18 @@ class _ReorderableAnimatedListState<T>
         return list;
       }),
       onReorder: (oldIndex, newIndex) {
-        final item = widget.items[oldIndex];
+        int headerCount = 0;
+        _children.loop((child, index) {
+          final key = child.key;
+          if (key is UniqueKey) {
+            if (index < newIndex) {
+              headerCount++;
+            }
+          }
+        });
+        final key = _children[oldIndex].key as ValueKey<T>;
         final _newIndex = oldIndex > newIndex ? newIndex : newIndex - 1;
-        widget.onReorder?.call(item, _newIndex);
+        widget.onReorder?.call(key.value, _newIndex - headerCount);
       },
     );
   }
