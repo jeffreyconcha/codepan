@@ -7,6 +7,13 @@ typedef ListItemBuilder<T> = Widget Function(
   int index,
 );
 
+typedef HeaderBuilder<T> = Widget Function(
+  BuildContext context,
+  T item,
+);
+
+typedef HeaderChecker<T> = bool Function(T item);
+
 typedef ItemChangeNotifier<T> = void Function(
   T item,
 );
@@ -20,8 +27,10 @@ class ReorderableAnimatedList<T> extends StatefulWidget {
   final ItemChangeNotifier<T>? onRemoveItem, onAddItem;
   final AnimatedListController<T> itemController;
   final ScrollController? scrollController;
+  final HeaderBuilder<T>? headerBuilder;
   final ListItemBuilder<T> itemBuilder;
   final ReorderNotifier<T>? onReorder;
+  final HeaderChecker<T>? isHeader;
   final EdgeInsets? padding;
   final List<T> items;
 
@@ -34,6 +43,8 @@ class ReorderableAnimatedList<T> extends StatefulWidget {
     this.onAddItem,
     this.onRemoveItem,
     this.scrollController,
+    this.headerBuilder,
+    this.isHeader,
     this.padding,
   }) : super(key: key);
 
@@ -61,20 +72,38 @@ class _ReorderableAnimatedListState<T>
     return ReorderableListView(
       padding: widget.padding,
       scrollController: widget.scrollController,
-      children: widget.items.transform<Widget>((item, index) {
+      children: widget.items.unevenTransform<Widget>((item, index) {
+        final list = <Widget>[];
+        if (widget.isHeader?.call(item) ?? false) {
+          final header = widget.headerBuilder?.call(context, item);
+          if (header != null) {
+            list.add(
+              GestureDetector(
+                key: UniqueKey(),
+                child: header,
+                onLongPress: () {
+                  print('long press cancelled');
+                },
+              ),
+            );
+          }
+        }
         final child = widget.itemBuilder.call(context, item, index);
-        return AnimatedListItem<T>(
-          key: child.key,
-          child: child,
-          index: index,
-          item: item,
-          onRemoveItem: widget.onRemoveItem,
-          onAddItem: widget.onAddItem,
-          itemController: itemController,
-          visibility: itemController.willInsert(item)
-              ? Visibility.gone
-              : Visibility.visible,
+        list.add(
+          AnimatedListItem<T>(
+            key: child.key,
+            child: child,
+            index: index,
+            item: item,
+            onRemoveItem: widget.onRemoveItem,
+            onAddItem: widget.onAddItem,
+            itemController: itemController,
+            visibility: itemController.willInsert(item)
+                ? Visibility.gone
+                : Visibility.visible,
+          ),
         );
+        return list;
       }),
       onReorder: (oldIndex, newIndex) {
         final item = widget.items[oldIndex];

@@ -3,6 +3,7 @@ import 'package:codepan/data/models/entities/transaction.dart';
 
 typedef AsyncTypeConverter<T, N> = Future<N?> Function(T item, int index);
 typedef TypeConverter<T, N> = N? Function(T item, int index);
+typedef UnevenTypeConverter<T, N> = List<N>? Function(T item, int index);
 typedef AsyncLooper<T> = Future<void> Function(T item, int index);
 typedef Looper<T> = void Function(T item, int index);
 typedef Validator<T> = num Function(T item);
@@ -92,6 +93,22 @@ extension ListUtils<T> on List<T> {
       final transformed = action(element, index);
       if (transformed != null) {
         list.add(transformed);
+      }
+      index++;
+    }
+    return sort ? (list..sort()) : list;
+  }
+
+  List<N> unevenTransform<N>(
+    UnevenTypeConverter<T, N> action, {
+    bool sort = false,
+  }) {
+    final list = <N>[];
+    int index = 0;
+    for (T element in this) {
+      final transformed = action(element, index);
+      if (transformed != null) {
+        list.addAll(transformed);
       }
       index++;
     }
