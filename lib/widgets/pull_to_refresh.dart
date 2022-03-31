@@ -4,21 +4,24 @@ import 'package:flutter/material.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 class PullToRefresh extends StatefulWidget {
-  final Widget? header, loading, placeholder, floating;
+  final WidgetBuilder? loadingBuilder, placeholderBuilder, errorBuilder;
   final VoidCallback? onRefresh, onLoading, onScrollToMax;
-  final bool isLoading, enablePullDown;
+  final bool isLoading, isError, enablePullDown;
   final RefreshController controller;
+  final Widget? header, floating;
+  final WidgetBuilder builder;
   final int? itemCount;
-  final Widget child;
 
   const PullToRefresh({
     Key? key,
     required this.controller,
-    required this.child,
-    this.placeholder,
+    required this.builder,
+    this.placeholderBuilder,
+    this.loadingBuilder,
+    this.errorBuilder,
     this.header,
-    this.loading,
     this.isLoading = false,
+    this.isError = false,
     this.enablePullDown = true,
     this.itemCount,
     this.onRefresh,
@@ -32,6 +35,7 @@ class PullToRefresh extends StatefulWidget {
 }
 
 class _PullToRefreshState extends State<PullToRefresh> {
+  late bool _isError;
   double _offset = 0;
   double _pixels = 0;
   Size? _size;
@@ -43,6 +47,12 @@ class _PullToRefreshState extends State<PullToRefresh> {
   double get height => _size?.height ?? 0;
 
   @override
+  void initState() {
+    super.initState();
+    _isError = widget.isError;
+  }
+
+  @override
   Widget build(BuildContext context) {
     final d = Dimension.of(context);
     final children = <Widget>[
@@ -51,12 +61,7 @@ class _PullToRefreshState extends State<PullToRefresh> {
           header: widget.header,
           controller: controller,
           enablePullDown: widget.enablePullDown,
-          child:
-              widget.isLoading && !controller.isRefresh
-              ? widget.loading ?? widget.child
-                  : widget.itemCount == 0
-                      ? widget.placeholder ?? widget.child
-                      : widget.child,
+          child: _buildChild(context),
           physics: widget.isLoading && controller.isRefresh
               ? NeverScrollableScrollPhysics()
               : null,
@@ -121,5 +126,23 @@ class _PullToRefreshState extends State<PullToRefresh> {
       );
     }
     return Stack(children: children);
+  }
+
+  Widget _buildChild(BuildContext context) {
+    final child = widget.builder(context);
+    if ((widget.isLoading && !controller.isRefresh) ||
+        (controller.isRefresh && _isError)) {
+      return widget.loadingBuilder?.call(context) ?? child;
+    } else {
+      if (widget.isError) {
+        return widget.errorBuilder?.call(context) ?? child;
+      } else {
+        if (widget.itemCount == 0) {
+          return widget.placeholderBuilder?.call(context) ?? child;
+        }
+      }
+      _isError = widget.isError;
+    }
+    return child;
   }
 }

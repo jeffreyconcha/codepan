@@ -51,8 +51,10 @@ mixin ErrorState<S extends ParentState> {
 
   Object get error;
 
+  bool get isNetwork => error is SocketException;
+
   String get message {
-    if (error is SocketException) {
+    if (isNetwork) {
       return Errors.unableToConnectToServer;
     }
     return error.toString();
