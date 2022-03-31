@@ -135,14 +135,15 @@ class _PullToRefreshState extends State<PullToRefresh> {
       return widget.loadingBuilder?.call(context) ?? child;
     } else {
       if (widget.isError) {
+        _isError = true;
         return widget.errorBuilder?.call(context) ?? child;
       } else {
         if (widget.itemCount == 0) {
           return widget.placeholderBuilder?.call(context) ?? child;
         }
       }
-      _isError = widget.isError;
     }
+    _isError = false;
     return child;
   }
 }
