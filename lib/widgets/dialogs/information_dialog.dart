@@ -140,6 +140,12 @@ class _InformationDialogState extends State<InformationDialog> {
                           fontColor: widget.fontColor,
                           alignment: Alignment.centerLeft,
                           textAlign: TextAlign.left,
+                          spannable: SpannableText(
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                            ),
+                            identifiers: ['<s>', '</s>'],
+                          ),
                           margin: EdgeInsets.only(
                             left: d.at(20),
                             right: d.at(20),
