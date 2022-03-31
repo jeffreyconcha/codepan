@@ -3,8 +3,10 @@ import 'package:codepan/bloc/parent_state.dart';
 import 'package:codepan/utils/codepan_utils.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import 'bloc_handler.dart';
+
 abstract class ParentBloc<Event extends ParentEvent, State extends ParentState>
-    extends Bloc<Event, State> {
+    extends Bloc<Event, State> with BlocHandlerMixin<Event, State> {
   final Event? initialEvent;
 
   ParentBloc({

@@ -1,11 +1,13 @@
+import 'dart:io';
+
 import 'package:bloc/bloc.dart';
-import 'package:codepan/bloc/parent_bloc.dart';
 import 'package:codepan/bloc/parent_event.dart';
 import 'package:codepan/bloc/parent_state.dart';
+import 'package:codepan/resources/strings.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-mixin MultiLoadingHandlerMixin<E extends ParentEvent, S extends ParentState>
-    on ParentBloc<E, S> {
+mixin BlocHandlerMixin<E extends ParentEvent, S extends ParentState>
+    on Bloc<E, S> {
   final Map<Type, bool> _map = {};
 
   bool isLoading<S>() {
@@ -43,6 +45,16 @@ mixin FinisherState<S extends ParentState> {
   Type get type => S;
 }
 
+/// S - The finishing state to stop the loading status
 mixin ErrorState<S extends ParentState> {
   Type get type => S;
+
+  Object get error;
+
+  String get message {
+    if (error is SocketException) {
+      return Errors.unableToConnectToServer;
+    }
+    return error.toString();
+  }
 }

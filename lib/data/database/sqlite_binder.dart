@@ -48,7 +48,6 @@ class SQLiteBinder {
   Future<T> transact<T>({
     required BinderBody body,
     bool showLog = false,
-    bool autoFinish = true,
   }) async {
     if (!db.inTransaction) {
       this._batch = db.batch();
@@ -60,11 +59,13 @@ class SQLiteBinder {
       db.setBinder(this);
     }
     try {
-      if (autoFinish) {
+      if (T == bool) {
         await body.call(this);
         return await finish() as T;
       } else {
-        return await body.call(this) as T;
+        final result = await body.call(this);
+        await finish();
+        return result as T;
       }
     } catch (error) {
       db.removeBinder();

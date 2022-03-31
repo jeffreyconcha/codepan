@@ -159,8 +159,9 @@ class ProgressController extends ValueNotifier<ProgressData> {
     _isInitialized = true;
   }
 
-  void _reset() {
+  void reset() {
     _isInitialized = false;
+    setProgress(ProgressData.zero);
   }
 
   bool get hasValue => value.current != 0 || value.max != 0;
