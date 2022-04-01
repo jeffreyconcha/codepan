@@ -71,13 +71,16 @@ abstract class MapState<T extends StatefulWidget> extends State<T>
   }
 
   @protected
-  void recenterCamera() {
+  void recenterCamera({
+    FitBoundsOptions? options,
+  }) {
     final d = Dimension.of(context);
     final cz = mapController.centerZoomFitBounds(
       bounds,
-      options: FitBoundsOptions(
-        padding: EdgeInsets.all(d.at(20)),
-      ),
+      options: options ??
+          FitBoundsOptions(
+            padding: EdgeInsets.all(d.at(20)),
+          ),
     );
     animateCamera(cz);
   }
@@ -101,9 +104,9 @@ class _CenterZoomTween extends Tween<CenterZoom> {
     required CenterZoom begin,
     required CenterZoom end,
   }) : super(
-    begin: begin,
-    end: end,
-  );
+          begin: begin,
+          end: end,
+        );
 
   @override
   CenterZoom lerp(double value) {
@@ -118,9 +121,11 @@ class _CenterZoomTween extends Tween<CenterZoom> {
     );
   }
 
-  double _lerp(double begin,
-      double end,
-      double value,) {
+  double _lerp(
+    double begin,
+    double end,
+    double value,
+  ) {
     return begin + (end - begin) * value;
   }
 }
@@ -129,8 +134,10 @@ class CachedTileProvider extends TileProvider {
   const CachedTileProvider();
 
   @override
-  ImageProvider<Object> getImage(Coords<num> coords,
-      TileLayerOptions options,) {
+  ImageProvider<Object> getImage(
+    Coords<num> coords,
+    TileLayerOptions options,
+  ) {
     final url = getTileUrl(coords, options);
     return CachedNetworkImageProvider(url);
   }

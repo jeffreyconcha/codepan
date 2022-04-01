@@ -3,11 +3,13 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 
 class Rotating extends StatefulWidget {
+  final Duration? duration;
   final Widget child;
 
   const Rotating({
     Key? key,
     required this.child,
+    this.duration = const Duration(seconds: 1)
   }) : super(key: key);
 
   @override
@@ -22,7 +24,7 @@ class _RotatingState extends State<Rotating>
   void initState() {
     _controller = AnimationController(
       vsync: this,
-      duration: Duration(seconds: 1),
+      duration: widget.duration,
     );
     _controller.repeat();
     super.initState();
