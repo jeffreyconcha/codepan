@@ -62,7 +62,8 @@ extension StringUtils on String {
     return this;
   }
 
-  String complete(dynamic input, {
+  String complete(
+    dynamic input, {
     String? identifier,
     bool withQuotes = false,
     bool isSpannable = false,
@@ -70,10 +71,10 @@ extension StringUtils on String {
     final buffer = StringBuffer();
     final id = identifier ?? '\$';
     final separator = ' ';
-    final list = <String>[];
+    final list = <String?>[];
     if (input is String) {
       list.add(input);
-    } else if (input is List<String>) {
+    } else if (input is List<String> || input is List<String?>) {
       list.addAll(input);
     }
     final iterator = list.iterator;
@@ -82,8 +83,7 @@ extension StringUtils on String {
       final word = words[i];
       if (word.contains(id) && iterator.moveNext()) {
         final replacement =
-        withQuotes ? '\"${iterator.current}\"' : iterator.current;
-
+            withQuotes ? '\"${iterator.current}\"' : iterator.current;
         if (isSpannable) {
           buffer.write('<s>$replacement</s>');
         } else {
