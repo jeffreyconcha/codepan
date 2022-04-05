@@ -2,6 +2,7 @@ import 'dart:io';
 import 'dart:typed_data';
 import 'dart:ui';
 
+import 'package:codepan/extensions/double.dart';
 import 'package:codepan/extensions/file.dart';
 import 'package:codepan/utils/codepan_utils.dart';
 import 'package:codepan/utils/debouncer.dart';
@@ -99,6 +100,16 @@ class StoredNetworkImage extends ImageProvider<StoredNetworkImage> {
           }
         }
       }
+      int count = 0;
+      double size = 0;
+      for (final entity in entities) {
+        if (await entity.exists()) {
+          final file = File(entity.path);
+          size += await file.length();
+          count++;
+        }
+      }
+      debugPrint('Total Tiles: $count @${size.toCompact()}B ');
     });
     return data;
   }

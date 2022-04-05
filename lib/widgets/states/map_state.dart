@@ -70,7 +70,7 @@ abstract class MapState<T extends StatefulWidget> extends State<T>
       }
     });
     _mapController = MapController();
-    _debouncer = Debouncer();
+    _debouncer = Debouncer(milliseconds: 250);
   }
 
   @override
@@ -164,7 +164,7 @@ class StoredNetworkImageTileProvider extends TileProvider {
     return StoredNetworkImage(
       getTileUrl(coords, options),
       folder: _folder,
-      fileLimit: 1000,
+      fileLimit: 10000,
       debouncer: debouncer,
     );
   }
