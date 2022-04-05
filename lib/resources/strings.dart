@@ -17,6 +17,10 @@ class Errors {
   static const String failedToRefresh = 'Failed to refresh.';
   static const String unableToConnectToServer =
       'Unable to connect to server. Please check your network connection and try again.';
+  static const String requestTimedOut =
+      'Your request has timed out. Please check your network connection and try again.';
+  static const String somethingWentWrong =
+      'Something went wrong. Please try again later.';
 }
 
 class PermissionInfo {

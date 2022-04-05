@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:bloc/bloc.dart';
@@ -56,7 +57,11 @@ mixin ErrorState<S extends ParentState> {
   String get message {
     if (isNetwork) {
       return Errors.unableToConnectToServer;
+    } else if (error is TimeoutException) {
+      return Errors.requestTimedOut;
+    } else if (error is String) {
+      return error.toString();
     }
-    return error.toString();
+    return Errors.somethingWentWrong;
   }
 }
