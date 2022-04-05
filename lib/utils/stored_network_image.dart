@@ -75,7 +75,14 @@ class StoredNetworkImage extends ImageProvider<StoredNetworkImage> {
     }
     final uri = Uri.parse(imageUrl);
     final response = await retryClient.get(uri);
-    return _saveImage(response.bodyBytes);
+    try {
+      return _saveImage(response.bodyBytes);
+    } catch (error) {
+      print('$_tag: Error downloading $imageUrl');
+      rethrow;
+    } finally {
+      retryClient.close();
+    }
   }
 
   Uint8List _saveImage(Uint8List data) {
@@ -109,7 +116,7 @@ class StoredNetworkImage extends ImageProvider<StoredNetworkImage> {
           count++;
         }
       }
-      debugPrint('Total Tiles: $count @${size.toCompact()}B ');
+      debugPrint('$_tag: Total Tiles: $count @${size.toCompact()}B ');
     });
     return data;
   }
