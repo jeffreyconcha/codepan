@@ -20,6 +20,8 @@ class CacheAsyncManager<K, V> {
     _map.clear();
   }
 
+  int get length => _map.length;
+
   V? get(K key) => _map[key];
 
   bool contains(K key) => _map.containsKey(key);
@@ -37,7 +39,7 @@ class CacheAsyncManager<K, V> {
     return _map[key];
   }
 
-  Future<V?> getCached(K key) async {
+  Future<V> getCached(K key) async {
     final data = _map[key];
     if (data != null) {
       return data;
@@ -63,6 +65,8 @@ class CacheManager<K, V> {
   void clear() {
     _map.clear();
   }
+
+  int get length => _map.length;
 
   V? get(K key) => _map[key];
 

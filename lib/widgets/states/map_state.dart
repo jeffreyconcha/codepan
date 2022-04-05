@@ -1,19 +1,26 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:codepan/resources/dimensions.dart';
+import 'package:codepan/utils/debouncer.dart';
+import 'package:codepan/utils/stored_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart' as lt;
+
+const _folder = 'MapTiles';
 
 abstract class MapState<T extends StatefulWidget> extends State<T>
     with SingleTickerProviderStateMixin {
   late AnimationController _animController;
   late MapController _mapController;
   late _CenterZoomTween _tween;
+  late Debouncer _debouncer;
 
   List<lt.LatLng> get coordinates;
 
   @protected
   MapController get mapController => _mapController;
+
+  Debouncer get tileDebouncer => _debouncer;
 
   @protected
   LatLngBounds get bounds {
@@ -63,6 +70,7 @@ abstract class MapState<T extends StatefulWidget> extends State<T>
       }
     });
     _mapController = MapController();
+    _debouncer = Debouncer();
   }
 
   @override
@@ -140,5 +148,24 @@ class CachedTileProvider extends TileProvider {
   ) {
     final url = getTileUrl(coords, options);
     return CachedNetworkImageProvider(url);
+  }
+}
+
+class StoredNetworkImageTileProvider extends TileProvider {
+  final Debouncer debouncer;
+
+  StoredNetworkImageTileProvider(this.debouncer);
+
+  @override
+  ImageProvider<Object> getImage(
+    Coords<num> coords,
+    TileLayerOptions options,
+  ) {
+    return StoredNetworkImage(
+      getTileUrl(coords, options),
+      folder: _folder,
+      fileLimit: 1000,
+      debouncer: debouncer,
+    );
   }
 }

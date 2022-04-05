@@ -16,12 +16,14 @@ typedef PainterBuilder = CustomPainter Function(
   double scale,
 );
 
-extension FileUtils on File {
+extension FileSystemEntityUtils on FileSystemEntity {
   String get name {
     final separator = Platform.pathSeparator;
     return this.path.split(separator).last;
   }
+}
 
+extension FileUtils on File {
   Future<File> cropImage({
     required double preferredWidth,
     required double preferredHeight,
