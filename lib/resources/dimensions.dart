@@ -1,18 +1,25 @@
+import 'dart:math' as m;
+
+import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
-const double baseline = 360;
-const double boundary = 480;
-const double maxRatio = 480 / 360;
+const double defaultWidthBaseline = 375;
+const double defaultWidthBoundary = 480;
 
 class Dimension {
+  final double baseline, boundary;
   final BuildContext context;
   final bool isSafeArea;
 
   MediaQueryData get data => MediaQuery.of(context);
 
+  double get maxRatio => boundary / baseline;
+
   const Dimension.of(
     this.context, {
     this.isSafeArea = false,
+    this.baseline = defaultWidthBaseline,
+    this.boundary = defaultWidthBoundary,
   });
 
   double get deviceRatio => max / min;
@@ -27,9 +34,7 @@ class Dimension {
     return dp * ratio;
   }
 
-  double scale(double dp) {
-    return at(dp) * data.textScaleFactor;
-  }
+  double scale(double dp) => at(dp) * data.textScaleFactor;
 
   double viewPortFraction(double fraction) {
     final sw = min;
@@ -44,17 +49,9 @@ class Dimension {
 
   double get bottomPadding => data.padding.bottom;
 
-  double get max {
-    final mw = maxWidth;
-    final mh = maxHeight;
-    return mh > mw ? mh : mw;
-  }
+  double get max => m.max(maxWidth, maxHeight);
 
-  double get min {
-    final mw = maxWidth;
-    final mh = maxHeight;
-    return mh < mw ? mh : mw;
-  }
+  double get min => m.min(maxWidth, maxHeight);
 
   double get maxHeight {
     final padding = isSafeArea ? data.padding.top : 0;
