@@ -1,2 +1,2 @@
-const double dialogRadius = 7;
+const double dialogRadius = 10;
 const double dialogMargin = 20;

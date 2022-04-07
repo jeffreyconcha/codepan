@@ -4,6 +4,7 @@ import 'package:codepan/resources/colors.dart';
 import 'package:codepan/resources/dimensions.dart';
 import 'package:codepan/resources/strings.dart';
 import 'package:codepan/widgets/elevated.dart';
+import 'package:codepan/widgets/line_divider.dart';
 import 'package:codepan/widgets/linear_progress_bar.dart';
 import 'package:codepan/widgets/text.dart';
 import 'package:flutter/material.dart';
@@ -70,59 +71,63 @@ class _ProgressDialogState extends State<ProgressDialog> {
                   height: widget.height,
                   radius: d.at(dialogRadius),
                   margin: EdgeInsets.all(dialogMargin),
-                  padding: EdgeInsets.only(
-                    top: d.at(20),
-                    left: d.at(20),
-                    right: d.at(20),
-                    bottom: d.at(10),
-                  ),
                   child: Column(
                     children: <Widget>[
                       PanText(
                         text: widget.title,
                         fontSize: d.at(15),
                         fontFamily: widget.titleFont ?? titleFont,
-                        fontWeight: FontWeight.bold,
+                        fontWeight: FontWeight.w600,
                         fontColor: widget.fontColor,
                         alignment: Alignment.centerLeft,
                         textAlign: TextAlign.left,
-                      ),
-                      PanText(
-                        text: widget.message,
-                        fontColor: widget.fontColor,
-                        fontSize: d.at(13),
-                        textAlign: TextAlign.left,
-                        alignment: Alignment.centerLeft,
-                        margin: EdgeInsets.symmetric(
-                          vertical: d.at(15),
+                        padding: EdgeInsets.symmetric(
+                          horizontal: d.at(20),
+                          vertical: d.at(13),
                         ),
                       ),
-                      LinearProgressBar(
-                        progress: progress!.current,
-                        max: progress!.max,
-                        showPercentage: false,
-                      ),
-                      Row(
-                        children: [
-                          Expanded(
-                            flex: 1,
-                            child: PanText(
-                              text: progress!.value,
+                      LineDivider(),
+                      Padding(
+                        padding: EdgeInsets.only(
+                          top: d.at(20),
+                          left: d.at(20),
+                          right: d.at(20),
+                          bottom: d.at(15),
+                        ),
+                        child: Column(
+                          children: [
+                            PanText(
+                              text: widget.message,
                               fontColor: widget.fontColor,
-                              fontSize: d.at(11),
+                              fontSize: d.at(13),
+                              textAlign: TextAlign.left,
                               alignment: Alignment.centerLeft,
                             ),
-                          ),
-                          Expanded(
-                            flex: 1,
-                            child: PanText(
-                              text: progress!.percentValue,
-                              fontColor: widget.fontColor,
-                              fontSize: d.at(11),
-                              alignment: Alignment.centerRight,
+                            SizedBox(
+                              height: d.at(15),
                             ),
-                          ),
-                        ],
+                            LinearProgressBar(
+                              progress: progress!.current,
+                              max: progress!.max,
+                              showPercentage: false,
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                PanText(
+                                  text: progress!.value,
+                                  fontColor: widget.fontColor,
+                                  fontSize: d.at(11),
+                                ),
+                                PanText(
+                                  text: progress!.percentValue,
+                                  fontColor: widget.fontColor,
+                                  fontSize: d.at(11),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
                       ),
                     ],
                   ),
