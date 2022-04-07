@@ -53,7 +53,6 @@ class LoadingDialog extends StatelessWidget {
                       vertical: d.at(10),
                       horizontal: d.at(15),
                     ),
-                    alignment: Alignment.center,
                     child: Row(
                       children: <Widget>[
                         indicator ?? LoadingIndicator(),

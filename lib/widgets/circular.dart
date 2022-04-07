@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 
 class Circular extends StatelessWidget {
   final EdgeInsets? margin, padding;
-  final Alignment alignment;
   final double? diameter;
   final Widget? child;
   final Color? color;
@@ -16,7 +15,6 @@ class Circular extends StatelessWidget {
     this.margin,
     this.padding,
     this.border,
-    this.alignment = Alignment.center,
   }) : super(key: key);
 
   @override
@@ -26,7 +24,6 @@ class Circular extends StatelessWidget {
       height: diameter,
       margin: margin,
       padding: padding,
-      alignment: alignment,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
         color: color,

@@ -76,7 +76,6 @@ class _ProgressDialogState extends State<ProgressDialog> {
                     right: d.at(20),
                     bottom: d.at(10),
                   ),
-                  alignment: Alignment.center,
                   child: Column(
                     children: <Widget>[
                       PanText(
