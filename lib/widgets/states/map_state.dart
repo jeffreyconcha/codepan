@@ -7,20 +7,23 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart' as lt;
 
 const _folder = 'MapTiles';
+const _tileCacheLimit = 15000;
 
 abstract class MapState<T extends StatefulWidget> extends State<T>
     with SingleTickerProviderStateMixin {
+  late StoredNetworkImageTileProvider _tileProvider;
   late AnimationController _animController;
   late MapController _mapController;
   late _CenterZoomTween _tween;
-  late Debouncer _debouncer;
 
   List<lt.LatLng> get coordinates;
 
   @protected
   MapController get mapController => _mapController;
 
-  Debouncer get tileDebouncer => _debouncer;
+  StoredNetworkImageTileProvider get tileProvider => _tileProvider;
+
+  int get tileCacheLimit => _tileCacheLimit;
 
   @protected
   LatLngBounds get bounds {
@@ -70,7 +73,11 @@ abstract class MapState<T extends StatefulWidget> extends State<T>
       }
     });
     _mapController = MapController();
-    _debouncer = Debouncer(milliseconds: 250);
+    final debouncer = Debouncer(milliseconds: 250);
+    _tileProvider = StoredNetworkImageTileProvider(
+      debouncer: debouncer,
+      tileCacheLimit: tileCacheLimit,
+    );
   }
 
   @override
@@ -153,8 +160,12 @@ class CachedTileProvider extends TileProvider {
 
 class StoredNetworkImageTileProvider extends TileProvider {
   final Debouncer debouncer;
+  final int tileCacheLimit;
 
-  StoredNetworkImageTileProvider(this.debouncer);
+  const StoredNetworkImageTileProvider({
+    required this.debouncer,
+    required this.tileCacheLimit,
+  });
 
   @override
   ImageProvider<Object> getImage(
@@ -164,7 +175,7 @@ class StoredNetworkImageTileProvider extends TileProvider {
     return StoredNetworkImage(
       getTileUrl(coords, options),
       folder: _folder,
-      fileLimit: 10000,
+      fileLimit: tileCacheLimit,
       debouncer: debouncer,
     );
   }

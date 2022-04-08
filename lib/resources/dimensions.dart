@@ -3,7 +3,7 @@ import 'dart:math' as m;
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
-const double defaultWidthBaseline = 375;
+const double defaultWidthBaseline = 360;
 const double defaultWidthBoundary = 480;
 
 class Dimension {

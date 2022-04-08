@@ -9,7 +9,7 @@ enum DividerType {
 }
 
 class LineDivider extends StatelessWidget {
-  final Alignment alignment;
+  final Alignment? alignment;
   final EdgeInsets? margin;
   final double? thickness;
   final DividerType type;
@@ -21,7 +21,7 @@ class LineDivider extends StatelessWidget {
     this.margin,
     this.thickness,
     this.type = DividerType.horizontal,
-    this.alignment = Alignment.center,
+    this.alignment,
   }) : super(key: key);
 
   @override
