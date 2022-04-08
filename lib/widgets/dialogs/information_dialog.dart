@@ -143,7 +143,10 @@ class _InformationDialogState extends State<InformationDialog> {
                             ),
                             identifiers: ['<s>', '</s>'],
                           ),
-                          margin: EdgeInsets.all(d.at(20)),
+                          margin: EdgeInsets.symmetric(
+                            horizontal: d.at(20),
+                            vertical: d.at(13),
+                          ),
                           children: widget.children,
                         );
                       },

@@ -88,11 +88,9 @@ class _ProgressDialogState extends State<ProgressDialog> {
                       ),
                       LineDivider(),
                       Padding(
-                        padding: EdgeInsets.only(
-                          top: d.at(20),
-                          left: d.at(20),
-                          right: d.at(20),
-                          bottom: d.at(15),
+                        padding: EdgeInsets.symmetric(
+                          horizontal: d.at(20),
+                          vertical: d.at(13),
                         ),
                         child: Column(
                           children: [
