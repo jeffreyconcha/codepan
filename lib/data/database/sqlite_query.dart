@@ -236,7 +236,6 @@ class SQLiteQuery with QueryProperties {
             type: type,
           );
           if ((_recursive?.canJoin ?? false) && schema.foreignKeys.isNotEmpty) {
-            print('depanot yes can join');
             joinForeignKeys(
               foreignKeys: schema.foreignKeys,
               table: foreignTable,
