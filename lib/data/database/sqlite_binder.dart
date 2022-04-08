@@ -358,13 +358,15 @@ class SQLiteBinder {
     addStatement(stmt.resetTable(table));
   }
 
-  void delete(String table, dynamic id) {
-    final sql = SQLiteStatement().delete(table, id);
+  void delete(dynamic table, dynamic id) {
+    final name = _getTableName(table);
+    final sql = SQLiteStatement().delete(name, id);
     addStatement(sql);
   }
 
-  void deleteWithConditions(String table, SQLiteStatement stmt) {
-    final sql = stmt.deleteWithConditions(table);
+  void deleteWithConditions(dynamic table, SQLiteStatement stmt) {
+    final name = _getTableName(table);
+    final sql = stmt.deleteWithConditions(name);
     addStatement(sql);
   }
 
@@ -383,9 +385,10 @@ class SQLiteBinder {
     addStatement(sql);
   }
 
-  void dropTable(String table) {
+  void dropTable(dynamic table) {
     final stmt = SQLiteStatement();
-    final sql = stmt.dropTable(table);
+    final name = _getTableName(table);
+    final sql = stmt.dropTable(name);
     addStatement(sql);
   }
 

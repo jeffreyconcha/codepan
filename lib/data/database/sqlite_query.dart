@@ -11,6 +11,12 @@ enum JoinType {
   inner,
   outer,
 }
+
+enum JoinOption {
+  all,
+  none,
+}
+
 enum Order {
   ascending,
   descending,
@@ -18,6 +24,7 @@ enum Order {
 
 class SQLiteQuery with QueryProperties {
   List<SQLiteQuery>? _joinList;
+  RecursiveJoin? _recursive;
   List<Field>? _orderList;
   List<Field>? _groupList;
   TableSchema? _schema;
@@ -59,6 +66,7 @@ class SQLiteQuery with QueryProperties {
     List<dynamic>? orderBy,
     List<dynamic>? groupBy,
     bool randomOrder = false,
+    RecursiveJoin? recursive,
     int? limit,
   }) {
     if (from is tb.Table) {
@@ -76,6 +84,7 @@ class SQLiteQuery with QueryProperties {
     _addOrders(orderBy, table: _table);
     _addGroups(groupBy, table: _table);
     this._randomOrder = randomOrder;
+    this._recursive = recursive;
     this._limit = limit;
   }
 
@@ -87,6 +96,7 @@ class SQLiteQuery with QueryProperties {
     bool randomOrder = false,
     int? limit,
     JoinType type = JoinType.inner,
+    RecursiveJoin? recursive,
   }) {
     return SQLiteQuery(
       select: schema.fields,
@@ -96,7 +106,10 @@ class SQLiteQuery with QueryProperties {
       groupBy: groupBy,
       randomOrder: randomOrder,
       limit: limit,
-    )..joinAllForeignKeys(type: type);
+      recursive: recursive,
+    )..joinAllForeignKeys(
+        type: type,
+      );
   }
 
   void _addOrders(List<dynamic>? input, {tb.Table? table}) {
@@ -184,11 +197,14 @@ class SQLiteQuery with QueryProperties {
 
   void joinAllForeignKeys({
     JoinType type = JoinType.inner,
+    JoinOption option = JoinOption.all,
   }) {
     if (schema != null) {
       joinForeignKeys(
         foreignKeys: schema!.foreignKeys,
+        table: _table,
         type: type,
+        option: option,
       );
     } else {
       throw SQLiteException(SQLiteException.noSchemaFoundInQuery);
@@ -197,24 +213,37 @@ class SQLiteQuery with QueryProperties {
 
   void joinForeignKeys({
     required Iterable<Field> foreignKeys,
+    tb.Table? table,
     JoinType type = JoinType.inner,
+    JoinOption option = JoinOption.all,
   }) {
     if (foreignKeys.isNotEmpty) {
+      _recursive?.useJoin();
+      final localTable = table ?? this._table;
       if (schema != null) {
         final all = schema!.databaseSchema;
         for (final field in foreignKeys) {
-          final table = field.reference!;
-          final schema = all.of(table.entity);
+          final foreignTable = field.reference!;
+          final schema = all.of(foreignTable.entity);
           join(
             query: SQLiteQuery(
-              select: schema.fields,
-              from: table,
+              select: option == JoinOption.all ? schema.fields : [],
+              from: foreignTable,
               where: {
-                'id': _table.field(field.field),
+                'id': localTable.field(field.field),
               },
             ),
             type: type,
           );
+          if ((_recursive?.canJoin ?? false) && schema.foreignKeys.isNotEmpty) {
+            print('depanot yes can join');
+            joinForeignKeys(
+              foreignKeys: schema.foreignKeys,
+              table: foreignTable,
+              option: option,
+              type: type,
+            );
+          }
         }
       } else {
         throw SQLiteException(SQLiteException.noSchemaFoundInQuery);
@@ -270,4 +299,20 @@ class SQLiteQuery with QueryProperties {
     }
     throw SQLiteException.noFieldsInQuery;
   }
+}
+
+class RecursiveJoin {
+  late int _limit;
+
+  RecursiveJoin({
+    required int levelLimit,
+  }) : _limit = levelLimit;
+
+  void useJoin() {
+    if (_limit != 0) {
+      _limit--;
+    }
+  }
+
+  bool get canJoin => _limit != 0;
 }
