@@ -7,7 +7,7 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart' as lt;
 
 const _folder = 'MapTiles';
-const _tileCacheLimit = 15000;
+const _tileCacheLimit = 20000;
 
 abstract class MapState<T extends StatefulWidget> extends State<T>
     with SingleTickerProviderStateMixin {
