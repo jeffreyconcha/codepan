@@ -4,7 +4,6 @@ import 'package:codepan/resources/colors.dart';
 import 'package:codepan/resources/dimensions.dart';
 import 'package:codepan/resources/strings.dart';
 import 'package:codepan/widgets/elevated.dart';
-import 'package:codepan/widgets/line_divider.dart';
 import 'package:codepan/widgets/linear_progress_bar.dart';
 import 'package:codepan/widgets/text.dart';
 import 'package:flutter/material.dart';
@@ -86,11 +85,13 @@ class _ProgressDialogState extends State<ProgressDialog> {
                           vertical: d.at(13),
                         ),
                       ),
-                      LineDivider(),
+                      // LineDivider(),
                       Padding(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: d.at(20),
-                          vertical: d.at(13),
+                        padding: EdgeInsets.only(
+                          top: d.at(7),
+                          left: d.at(20),
+                          right: d.at(20),
+                          bottom: d.at(13),
                         ),
                         child: Column(
                           children: [

@@ -33,7 +33,7 @@ class InformationDialog extends StatefulWidget {
     this.onPositiveTap,
     this.positive,
     this.title,
-    this.withDivider = true,
+    this.withDivider = false,
     this.titleFont,
     this.fontColor = PanColors.text,
     this.margin,
@@ -143,10 +143,17 @@ class _InformationDialogState extends State<InformationDialog> {
                             ),
                             identifiers: ['<s>', '</s>'],
                           ),
-                          margin: EdgeInsets.symmetric(
-                            horizontal: d.at(20),
-                            vertical: d.at(13),
-                          ),
+                          margin: widget.withDivider
+                              ? EdgeInsets.symmetric(
+                                  horizontal: d.at(20),
+                                  vertical: d.at(13),
+                                )
+                              : EdgeInsets.only(
+                                  top: d.at(7),
+                                  left: d.at(20),
+                                  right: d.at(20),
+                                  bottom: d.at(13),
+                                ),
                           children: widget.children,
                         );
                       },
