@@ -1,14 +1,16 @@
 import 'package:codepan/resources/dimensions.dart';
 import 'package:codepan/widgets/elevated.dart';
+import 'package:codepan/widgets/if_else_builder.dart';
+import 'package:codepan/widgets/line_divider.dart';
 import 'package:flutter/material.dart';
 
 class HeaderBody extends StatelessWidget {
   final Color? headerColor, backgroundColor, shadowColor;
   final double? headerHeight, shadowBlurRadius;
+  final bool isElevated, withDivider;
   final Offset? shadowOffset;
   final Widget header;
   final Widget? body;
-  final bool elevated;
 
   const HeaderBody({
     Key? key,
@@ -16,7 +18,8 @@ class HeaderBody extends StatelessWidget {
     this.body,
     this.headerHeight,
     this.headerColor = Colors.white,
-    this.elevated = true,
+    this.isElevated = true,
+    this.withDivider = false,
     this.backgroundColor,
     this.shadowColor,
     this.shadowBlurRadius,
@@ -26,6 +29,7 @@ class HeaderBody extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final d = Dimension.of(context);
+    final t = Theme.of(context);
     final height = headerHeight ?? d.at(60);
     return Stack(
       children: [
@@ -41,11 +45,23 @@ class HeaderBody extends StatelessWidget {
           child: Elevated(
             color: headerColor,
             height: headerHeight ?? d.at(60),
-            shadowBlurRadius: elevated ? shadowBlurRadius ?? d.at(3) : 0,
+            shadowBlurRadius: isElevated ? shadowBlurRadius ?? d.at(3) : 0,
             shadowOffset:
-                elevated ? shadowOffset ?? Offset(0, d.at(3)) : Offset.zero,
+                isElevated ? shadowOffset ?? Offset(0, d.at(3)) : Offset.zero,
             spreadRadius: 0,
-            child: header,
+            child: Column(
+              children: [
+                Expanded(
+                  child: header,
+                ),
+                IfElseBuilder(
+                  condition: withDivider,
+                  ifBuilder: (context) {
+                    return LineDivider();
+                  },
+                ),
+              ],
+            ),
           ),
         ),
       ],
