@@ -19,7 +19,9 @@ extension BuildContextUtils on BuildContext {
     Navigator.of(this).popUntil(predicate);
   }
 
-  Future<dynamic> push({required Widget page}) {
+  Future<dynamic> push({
+    required Widget page,
+  }) {
     return Navigator.of(this).push(
       CupertinoPageRoute(
         builder: (context) {
@@ -29,26 +31,37 @@ extension BuildContextUtils on BuildContext {
     );
   }
 
-  Future<dynamic> replace({required Widget page}) {
+  Future<dynamic> replace({
+    required Widget page,
+    Duration? duration,
+  }) {
     return Navigator.of(this).pushReplacement(
       FadeRoute(
         enter: page,
+        duration: duration,
       ),
     );
   }
 
-  Future<dynamic> fadeIn({required Widget page}) {
+  Future<dynamic> fadeIn({
+    required Widget page,
+    Duration? duration,
+  }) {
     return Navigator.of(this).push(
       FadeRoute(
         enter: page,
+        duration: duration,
       ),
     );
   }
 
-  void slideToTop({required Widget page}) {
+  void slideToTop({
+    required Widget page,
+    Duration? duration,
+  }) {
     showGeneralDialog(
       context: this,
-      transitionDuration: Duration(milliseconds: 250),
+      transitionDuration: duration ?? delay,
       pageBuilder: (context, anim1, anim2) {
         return page;
       },
