@@ -103,6 +103,11 @@ class Time extends Equatable {
 
   bool get isYesterday => trimmedDate == Time.yesterday();
 
+  bool get isThisMonth {
+    final now = Time.now();
+    return this.isBetween(now.toMonth());
+  }
+
   Time get trimmedDate => Time(date: date);
 
   Time get trimmedTime => Time(time: time);
