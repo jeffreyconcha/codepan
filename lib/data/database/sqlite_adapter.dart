@@ -23,6 +23,7 @@ class SQLiteAdapter implements DatabaseExecutor {
   final OnDatabaseVersionChange? onUpgrade;
   final OnDatabaseCreate? onCreate;
   final DatabaseSchema schema;
+  late final String _path;
   final String? password;
   final String name;
   final int version;
@@ -36,6 +37,8 @@ class SQLiteAdapter implements DatabaseExecutor {
     }
     return _db;
   }
+
+  String get path => _path;
 
   bool get inTransaction => _binder != null && _inTransaction;
 
@@ -59,9 +62,9 @@ class SQLiteAdapter implements DatabaseExecutor {
       bool isDowngraded = false;
       int _oldVersion = 0;
       final directory = await getDatabasesPath();
-      final path = join(directory, name);
+      this._path = join(directory, name);
       this._db = await openDatabase(
-        path,
+        _path,
         version: version,
         password: password,
         onCreate: (db, version) {
