@@ -72,4 +72,9 @@ class KeyManager {
     );
     return utf8.decode(data);
   }
+
+  factory KeyManager.fromByte(List<int> data) {
+    final seed = utf8.decode(data).toString();
+    return KeyManager(seed);
+  }
 }
