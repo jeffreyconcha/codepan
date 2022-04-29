@@ -78,6 +78,7 @@ class BottomModalRoute extends PageRouteBuilder {
     this.settings = const RouteSettings(name: 'modal'),
   }) : super(
           opaque: false,
+          barrierColor: Colors.black45,
           barrierDismissible: true,
           transitionDuration: duration ?? delay,
           pageBuilder: (context, animation1, animation2) => enter,
@@ -87,6 +88,10 @@ class BottomModalRoute extends PageRouteBuilder {
                 Tween(
                   begin: Offset(0, 1),
                   end: Offset.zero,
+                ).chain(
+                  CurveTween(
+                    curve: Curves.easeInOut,
+                  ),
                 ),
               ),
               child: child,
