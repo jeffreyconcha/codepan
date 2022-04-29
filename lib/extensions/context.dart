@@ -55,25 +55,15 @@ extension BuildContextUtils on BuildContext {
     );
   }
 
-  void slideToTop({
+  Future<dynamic> slideToTop({
     required Widget page,
     Duration? duration,
   }) {
-    showGeneralDialog(
-      context: this,
-      transitionDuration: duration ?? delay,
-      pageBuilder: (context, anim1, anim2) {
-        return page;
-      },
-      transitionBuilder: (context, anim1, anim2, child) {
-        return SlideTransition(
-          position: Tween(
-            begin: Offset(0, 1),
-            end: Offset(0, 0),
-          ).animate(anim1),
-          child: child,
-        );
-      },
+    return Navigator.of(this).push(
+      BottomModalRoute(
+        enter: page,
+        duration: duration,
+      ),
     );
   }
 

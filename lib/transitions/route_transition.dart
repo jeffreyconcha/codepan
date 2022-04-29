@@ -20,8 +20,14 @@ class SlideRoute extends PageRouteBuilder {
           transitionDuration: duration ?? delay,
           pageBuilder: (context, animation1, animation2) => enter,
           transitionsBuilder: (context, animation1, animation2, child) {
-            var t1 = Tween<Offset>(begin: Offset.zero, end: Offset(-0.25, 0));
-            var t2 = Tween<Offset>(begin: Offset(1, 0), end: Offset.zero);
+            var t1 = Tween<Offset>(
+              begin: Offset.zero,
+              end: Offset(-0.25, 0),
+            );
+            var t2 = Tween<Offset>(
+              begin: Offset(1, 0),
+              end: Offset.zero,
+            );
             return Stack(
               children: [
                 SlideTransition(
@@ -54,6 +60,35 @@ class FadeRoute extends PageRouteBuilder {
           transitionsBuilder: (context, animation1, animation2, child) {
             return FadeTransition(
               opacity: animation1,
+              child: child,
+            );
+          },
+          settings: settings,
+        );
+}
+
+class BottomModalRoute extends PageRouteBuilder {
+  final RouteSettings settings;
+  final Duration? duration;
+  final Widget enter;
+
+  BottomModalRoute({
+    required this.enter,
+    this.duration,
+    this.settings = const RouteSettings(name: 'modal'),
+  }) : super(
+          opaque: false,
+          barrierDismissible: true,
+          transitionDuration: duration ?? delay,
+          pageBuilder: (context, animation1, animation2) => enter,
+          transitionsBuilder: (context, animation1, animation2, child) {
+            return SlideTransition(
+              position: animation1.drive(
+                Tween(
+                  begin: Offset(0, 1),
+                  end: Offset.zero,
+                ),
+              ),
               child: child,
             );
           },
