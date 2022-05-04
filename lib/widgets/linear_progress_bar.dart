@@ -50,8 +50,8 @@ class LinearProgressBar extends StatelessWidget {
                 borderRadius: BorderRadius.circular(radius ?? d.at(10)),
                 child: FAProgressBar(
                   backgroundColor: backgroundColor,
-                  currentValue: progress!,
-                  maxValue: max != 0 ? max! : 1,
+                  currentValue: progress!.toDouble(),
+                  maxValue: max != 0 ? max!.toDouble() : 1,
                   progressColor: progressColor ?? t.primaryColor,
                   borderRadius: BorderRadius.zero,
                 ),

@@ -77,4 +77,32 @@ class KeyManager {
     final seed = utf8.decode(data).toString();
     return KeyManager(seed);
   }
+
+  static String prepare(String input, [int maxCol = 20]) {
+    final buffer = StringBuffer('{');
+    buffer.write('\n\t');
+    bool alternate = true;
+    int counter = 0;
+    final units = List.from(input.codeUnits);
+    while (units.isNotEmpty) {
+      if (alternate) {
+        buffer.write(units.first);
+        units.removeAt(0);
+        alternate = false;
+      } else {
+        buffer.write(units.last);
+        units.removeLast();
+        alternate = true;
+      }
+      if (units.isNotEmpty) {
+        buffer.write(', ');
+      }
+      if (counter++ == maxCol) {
+        buffer.write('\n\t');
+        counter = 0;
+      }
+    }
+    buffer.write('\n}');
+    return buffer.toString();
+  }
 }

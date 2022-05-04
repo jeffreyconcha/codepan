@@ -56,7 +56,8 @@ extension MapUtils on Map<String, dynamic> {
       final value = getValue(key);
       if (value is String) {
         for (final element in values) {
-          if (value.snake == element.snake) {
+          if (value.snake.replaceAll('_', '') ==
+              element.snake.replaceAll('_', '')) {
             return element;
           }
         }
