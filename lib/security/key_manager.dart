@@ -54,12 +54,25 @@ class KeyManager {
     final mac = base64.encode(box.mac.bytes);
     if (showLog) {
       debugPrint('encrypted: $encrypted');
-      debugPrint('mac: $mac}');
+      debugPrint('mac: $mac');
     }
     return encrypted;
   }
 
-  Future<String> decrypt(String text, String mac) async {
+  Future<String> decryptBytes({
+    required List<int> text,
+    required List<int> mac,
+  }) async {
+    return decrypt(
+      text: utf8.decode(text),
+      mac: utf8.decode(mac),
+    );
+  }
+
+  Future<String> decrypt({
+    required String text,
+    required String mac,
+  }) async {
     final decoded = base64.decode(text);
     final box = SecretBox(
       decoded,
@@ -73,7 +86,7 @@ class KeyManager {
     return utf8.decode(data);
   }
 
-  factory KeyManager.fromByte(List<int> data) {
+  factory KeyManager.fromBytes(List<int> data) {
     final seed = utf8.decode(data).toString();
     return KeyManager(seed);
   }
@@ -97,7 +110,7 @@ class KeyManager {
       if (units.isNotEmpty) {
         buffer.write(', ');
       }
-      if (counter++ == maxCol) {
+      if (counter++ == maxCol - 1) {
         buffer.write('\n\t');
         counter = 0;
       }
