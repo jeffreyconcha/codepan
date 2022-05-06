@@ -202,6 +202,18 @@ extension StringUtils on String {
     return int.parse(numeric);
   }
 
+  bool get hasLetters {
+    return this.contains(RegExp('[A-Za-z]'));
+  }
+
+  bool get hasNumbers {
+    return this.contains(RegExp('[0-9]'));
+  }
+
+  bool get hasSymbols {
+    return this.contains(RegExp('[^A-Za-z0-9]'));
+  }
+
   String get last {
     if (this.isNotEmpty) {
       return substring(length - 1, length);
