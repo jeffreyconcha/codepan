@@ -201,12 +201,12 @@ extension StringUtils on String {
 
   int get numbers {
     final numeric = this.replaceAll(RegExp(r'[^0-9]'), '');
-    return PanUtils.parseInt(numeric);
+    return PanUtils.parseInt(numeric) ?? 0;
   }
 
   double get decimalNumbers {
     final numeric = this.replaceAll(RegExp(r'[^\d+(\.\d+)?$]'), '');
-    return double.parse(numeric);
+    return PanUtils.parseDouble(numeric) ?? 0;
   }
 
   bool get hasLetters {
