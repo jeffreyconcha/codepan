@@ -128,7 +128,7 @@ class PanUtils {
       return input;
     } else if (input is int) {
       final binary = parseInt(input);
-      return binary?.toBool();
+      return binary.toBool();
     } else if (input is String) {
       return input.toBool();
     }
