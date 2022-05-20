@@ -1,6 +1,8 @@
 import 'package:html_unescape/html_unescape.dart';
 import 'package:inflection3/inflection3.dart';
 
+import '../utils/codepan_utils.dart';
+
 const _true = <String>['true', 'yes', 'on', '1'];
 const _false = <String>['false', 'no', 'off', '0'];
 const _loweredInTitle = <String>['of', 'and', 'or', 'is', 'are', 'a', 'with'];
@@ -199,7 +201,12 @@ extension StringUtils on String {
 
   int get numbers {
     final numeric = this.replaceAll(RegExp(r'[^0-9]'), '');
-    return int.parse(numeric);
+    return PanUtils.parseInt(numeric);
+  }
+
+  double get decimalNumbers {
+    final numeric = this.replaceAll(RegExp(r'[^\d+(\.\d+)?$]'), '');
+    return double.parse(numeric);
   }
 
   bool get hasLetters {

@@ -49,6 +49,7 @@ List<int> range(int min, int max) {
 
 enum AddressAttribute {
   street,
+  subLocality,
   locality,
   administrativeArea,
   country,
@@ -114,12 +115,12 @@ class PanUtils {
     }
   }
 
-  static int? parseInt(dynamic input) {
-    return input is int ? input : int.tryParse(input.toString());
+  static int parseInt(dynamic input) {
+    return input is int ? input : int.tryParse(input.toString()) ?? 0;
   }
 
-  static double? parseDouble(dynamic input) {
-    return input is double ? input : double.tryParse(input.toString());
+  static double parseDouble(dynamic input) {
+    return input is double ? input : double.tryParse(input.toString()) ?? 0;
   }
 
   static bool? parseBool(dynamic input) {
@@ -231,40 +232,105 @@ class PanUtils {
   static Future<String> getAddressFromCoordinates(
     double latitude,
     double longitude, {
-    List<AddressAttribute>? attrs,
+    List<AddressAttribute> attrs = AddressAttribute.values,
   }) async {
     final buffer = StringBuffer();
     try {
       final places = await placemarkFromCoordinates(latitude, longitude);
       if (places.isNotEmpty) {
         final place = places.first;
-        if (attrs?.contains(AddressAttribute.street) ?? true) {
-          buffer.write('${place.street},');
-        }
-        if (attrs?.contains(AddressAttribute.locality) ?? true) {
-          buffer.write(' ${place.locality},');
-        }
-        if (attrs?.contains(AddressAttribute.administrativeArea) ?? true) {
-          buffer.write(' ${place.administrativeArea},');
-        }
-        if (attrs?.contains(AddressAttribute.country) ?? true) {
-          buffer.write(' ${place.country}');
+        for (final attr in attrs) {
+          switch (attr) {
+            case AddressAttribute.street:
+              if (place.street?.isNotEmpty ?? false) {
+                buffer.write(place.street);
+                if (_hasNextAttribute(attr, attrs, place)) {
+                  buffer.write(', ');
+                }
+              }
+              break;
+            case AddressAttribute.subLocality:
+              if (place.subLocality?.isNotEmpty ?? false) {
+                buffer.write(place.subLocality);
+                if (_hasNextAttribute(attr, attrs, place)) {
+                  buffer.write(', ');
+                }
+              }
+              break;
+            case AddressAttribute.locality:
+              if (place.locality?.isNotEmpty ?? false) {
+                buffer.write(place.locality);
+                if (_hasNextAttribute(attr, attrs, place)) {
+                  buffer.write(', ');
+                }
+              }
+              break;
+            case AddressAttribute.administrativeArea:
+              if (place.administrativeArea?.isNotEmpty ?? false) {
+                buffer.write(place.administrativeArea);
+                if (_hasNextAttribute(attr, attrs, place)) {
+                  buffer.write(', ');
+                }
+              }
+              break;
+            case AddressAttribute.country:
+              if (place.country?.isNotEmpty ?? false) {
+                buffer.write(place.country);
+                if (_hasNextAttribute(attr, attrs, place)) {
+                  buffer.write(', ');
+                }
+              }
+              break;
+          }
         }
       }
-      final address = buffer.toString();
-      final index = address.lastIndexOf(',');
-      if (index == address.length - 1) {
-        return address.substring(0, index).trim();
-      }
-    } catch (error) {
-      print(error);
+    } catch (error, stackTrace) {
+      printError(error, stackTrace);
     }
     return buffer.toString();
   }
 
+  static bool _hasNextAttribute(
+    AddressAttribute attr,
+    List<AddressAttribute> attrs,
+    Placemark place,
+  ) {
+    if (attr != attrs.last) {
+      final nextIndex = attrs.indexOf(attr) + 1;
+      switch (attrs[nextIndex]) {
+        case AddressAttribute.street:
+          if (place.street?.isNotEmpty ?? false) {
+            return true;
+          }
+          break;
+        case AddressAttribute.subLocality:
+          if (place.subLocality?.isNotEmpty ?? false) {
+            return true;
+          }
+          break;
+        case AddressAttribute.locality:
+          if (place.locality?.isNotEmpty ?? false) {
+            return true;
+          }
+          break;
+        case AddressAttribute.administrativeArea:
+          if (place.administrativeArea?.isNotEmpty ?? false) {
+            return true;
+          }
+          break;
+        case AddressAttribute.country:
+          if (place.country?.isNotEmpty ?? false) {
+            return true;
+          }
+          break;
+      }
+    }
+    return false;
+  }
+
   static Future<String?> getAddress(
     dynamic point, {
-    List<AddressAttribute>? attrs,
+    List<AddressAttribute> attrs = AddressAttribute.values,
   }) async {
     if (point is Position) {
       return await getAddressFromCoordinates(
