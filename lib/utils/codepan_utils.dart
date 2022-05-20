@@ -115,12 +115,12 @@ class PanUtils {
     }
   }
 
-  static int parseInt(dynamic input) {
-    return input is int ? input : int.tryParse(input.toString()) ?? 0;
+  static int? parseInt(dynamic input) {
+    return input is int ? input : int.tryParse(input.toString());
   }
 
-  static double parseDouble(dynamic input) {
-    return input is double ? input : double.tryParse(input.toString()) ?? 0;
+  static double? parseDouble(dynamic input) {
+    return input is double ? input : double.tryParse(input.toString());
   }
 
   static bool? parseBool(dynamic input) {
@@ -128,7 +128,7 @@ class PanUtils {
       return input;
     } else if (input is int) {
       final binary = parseInt(input);
-      return binary.toBool();
+      return binary?.toBool();
     } else if (input is String) {
       return input.toBool();
     }
