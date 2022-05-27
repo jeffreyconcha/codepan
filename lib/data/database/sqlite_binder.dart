@@ -34,13 +34,22 @@ class SqliteBinder {
   bool _showLog = false;
   bool _chain = false;
 
-  SqliteBinder._(this.db) : _map = {};
+  SqliteBinder._(
+    this.db,
+    Batch batch,
+  )   : _map = {},
+        _batch = batch;
 
-  factory SqliteBinder.of(SqliteAdapter db) {
+  factory SqliteBinder.chain(SqliteAdapter db) {
     if (db.inTransaction) {
       return db.binder!..chain();
     }
-    return SqliteBinder._(db);
+    return SqliteBinder.of(db);
+  }
+
+  factory SqliteBinder.of(SqliteAdapter db) {
+    final batch = db.batch();
+    return SqliteBinder._(db, batch);
   }
 
   /// [body] - Enclosed in try catch to automatically remove the binder or
@@ -49,17 +58,12 @@ class SqliteBinder {
     required BinderBody body,
     bool showLog = false,
   }) async {
-    if (!db.inTransaction) {
-      this._batch = db.batch();
-      this._showLog = showLog;
-      if (_showLog) {
-        _time = DateTime.now();
-        debugPrint('$tag: BEGIN TRANSACTION');
-      }
-      db.setBinder(this);
+    this._showLog = showLog;
+    if (_showLog) {
+      _time = DateTime.now();
+      debugPrint('$tag: BEGIN TRANSACTION');
     }
-    else {
-    }
+    db.setBinder(this);
     try {
       if (T == bool) {
         await body.call(this);
@@ -115,6 +119,7 @@ class SqliteBinder {
         return result;
       } else {
         chain(false);
+        print('depanot next time');
         return true;
       }
     }
@@ -122,6 +127,7 @@ class SqliteBinder {
   }
 
   void chain([bool chain = true]) {
+    print('depanot chain');
     _chain = chain;
   }
 
