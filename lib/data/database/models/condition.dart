@@ -29,7 +29,7 @@ enum Scan {
   between,
 }
 
-class Condition extends SQLiteModel {
+class Condition extends SqliteModel {
   dynamic _value, _start, _end;
   List<Condition>? orList;
   List<Condition>? andList;
@@ -50,8 +50,8 @@ class Condition extends SQLiteModel {
     if (_value != null) {
       if (_value is bool) {
         return _value
-            ? SQLiteStatement.trueValue.toString()
-            : SQLiteStatement.falseValue.toString();
+            ? SqliteStatement.trueValue.toString()
+            : SqliteStatement.falseValue.toString();
       } else if (_value is String) {
         final text = _value as String?;
         if (_operator == Operator.like && _scan != null) {
@@ -68,8 +68,8 @@ class Condition extends SQLiteModel {
       } else if (_value is Field) {
         final field = _value as Field;
         return field.field;
-      } else if (_value is SQLiteQuery) {
-        final query = _value as SQLiteQuery;
+      } else if (_value is SqliteQuery) {
+        final query = _value as SqliteQuery;
         return query.build();
       } else if (_value is List<dynamic>) {
         final buffer = StringBuffer();
@@ -92,7 +92,7 @@ class Condition extends SQLiteModel {
         return _value.toString();
       }
     }
-    return SQLiteStatement.nullValue;
+    return SqliteStatement.nullValue;
   }
 
   List<Operator> get _noValueOperators {
@@ -135,13 +135,13 @@ class Condition extends SQLiteModel {
 
   Condition.or(this.orList) : super('') {
     if (hasAndList) {
-      throw SQLiteException(SQLiteException.invalidConditionList);
+      throw SqliteException(SqliteException.invalidConditionList);
     }
   }
 
   Condition.and(this.andList) : super('') {
     if (hasOrList) {
-      throw SQLiteException(SQLiteException.invalidConditionList);
+      throw SqliteException(SqliteException.invalidConditionList);
     }
   }
 
@@ -272,7 +272,7 @@ class Condition extends SQLiteModel {
 
   factory Condition.inQuery(
     String field,
-    SQLiteQuery query,
+    SqliteQuery query,
   ) {
     return Condition(
       field,
@@ -283,7 +283,7 @@ class Condition extends SQLiteModel {
 
   factory Condition.notInQuery(
     String field,
-    SQLiteQuery query,
+    SqliteQuery query,
   ) {
     return Condition(
       field,

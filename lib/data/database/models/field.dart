@@ -24,7 +24,7 @@ enum DataType {
   blob,
 }
 
-class Field extends SQLiteModel {
+class Field extends SqliteModel {
   bool? _collate, _inUniqueGroup, _withDateTrigger, _withTimeTrigger, _isIndex;
   List<Constraint>? _constraintList;
   Function? _function;
@@ -109,7 +109,7 @@ class Field extends SQLiteModel {
     this._inUniqueGroup = inUniqueGroup;
   }
 
-  Field.primaryKey([String field = SQLiteStatement.id]) : super(field) {
+  Field.primaryKey([String field = SqliteStatement.id]) : super(field) {
     _addConstraint(Constraint.primaryKey);
     this._type = DataType.integer;
   }
@@ -245,7 +245,7 @@ class Field extends SQLiteModel {
               break;
             case Constraint.foreignKey:
               buffer.write(
-                  ' REFERENCES ${reference!.name}(${SQLiteStatement.id})');
+                  ' REFERENCES ${reference!.name}(${SqliteStatement.id})');
               break;
             case Constraint.unique:
               buffer.write(' UNIQUE');

@@ -9,16 +9,16 @@ import 'package:path/path.dart';
 import 'package:sqflite_sqlcipher/sqflite.dart';
 
 typedef OnDatabaseCreate = FutureOr<void> Function(
-  SQLiteAdapter db,
+  SqliteAdapter db,
   int version,
 );
 typedef OnDatabaseVersionChange = FutureOr<void> Function(
-  SQLiteAdapter db,
+  SqliteAdapter db,
   int oldVersion,
   int newVersion,
 );
 
-class SQLiteAdapter implements DatabaseExecutor {
+class SqliteAdapter implements DatabaseExecutor {
   final OnDatabaseVersionChange? onDowngrade;
   final OnDatabaseVersionChange? onUpgrade;
   final OnDatabaseCreate? onCreate;
@@ -27,12 +27,12 @@ class SQLiteAdapter implements DatabaseExecutor {
   final String? password;
   final String name;
   final int version;
-  SQLiteBinder? _binder;
+  SqliteBinder? _binder;
   Database? _db;
 
   Database? get instance {
     if (_db == null || !_db!.isOpen) {
-      throw SQLiteException(SQLiteException.databaseNotOpened);
+      throw SqliteException(SqliteException.databaseNotOpened);
     }
     return _db;
   }
@@ -41,9 +41,9 @@ class SQLiteAdapter implements DatabaseExecutor {
 
   bool get inTransaction => _binder != null;
 
-  SQLiteBinder? get binder => _binder;
+  SqliteBinder? get binder => _binder;
 
-  SQLiteAdapter({
+  SqliteAdapter({
     required this.name,
     required this.version,
     required this.schema,
@@ -120,10 +120,10 @@ class SQLiteAdapter implements DatabaseExecutor {
     required TableSchema schema,
     required int id,
   }) async {
-    final query = SQLiteQuery.all(
+    final query = SqliteQuery.all(
       schema: schema,
       where: {
-        SQLiteStatement.id: id,
+        SqliteStatement.id: id,
       },
       type: JoinType.left,
     );
@@ -172,7 +172,7 @@ class SQLiteAdapter implements DatabaseExecutor {
     print('$name at version: $version');
   }
 
-  void setBinder(SQLiteBinder binder) {
+  void setBinder(SqliteBinder binder) {
     _binder = binder;
   }
 

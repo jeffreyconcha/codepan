@@ -1,6 +1,6 @@
 import 'package:codepan/data/database/models/table.dart';
 
-class SQLiteModel {
+class SqliteModel {
   String _field;
   Table? table;
 
@@ -14,7 +14,7 @@ class SQLiteModel {
     return name == _field;
   }
 
-  SQLiteModel(this._field, {this.table});
+  SqliteModel(this._field, {this.table});
 
   void setTable(Table? table) {
     this.table = table;

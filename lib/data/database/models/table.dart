@@ -77,7 +77,7 @@ class Table<T> {
         } else {
           final singular = SINGULAR.convert(word);
           buffer.write('${singular.capitalize()}');
-          buffer.write('${SQLiteStatement.id.capitalize()}');
+          buffer.write('${SqliteStatement.id.capitalize()}');
         }
       }
       return buffer.toString().decapitalize();

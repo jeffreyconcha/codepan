@@ -67,8 +67,8 @@ abstract class TransactionData extends EntityData
 
   bool get hasId => id != null && id != 0;
 
-  SQLiteStatement toStatement() {
-    return SQLiteStatement.fromMap(toMap());
+  SqliteStatement toStatement() {
+    return SqliteStatement.fromMap(toMap());
   }
 
   Map<String, dynamic> toMap();
@@ -96,7 +96,7 @@ abstract class TransactionData extends EntityData
   });
 
   Future<T> insertForId<T extends TransactionData>(
-    SQLiteBinder binder, {
+    SqliteBinder binder, {
     UpdatePriority priority = UpdatePriority.unique,
   }) {
     return binder.insertForId(
@@ -106,7 +106,7 @@ abstract class TransactionData extends EntityData
   }
 
   Future<int?> insert(
-    SQLiteBinder binder, {
+    SqliteBinder binder, {
     UpdatePriority priority = UpdatePriority.unique,
     bool ignoreId = false,
   }) {

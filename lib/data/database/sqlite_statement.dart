@@ -6,26 +6,26 @@ import 'package:codepan/data/database/models/sqlite_model.dart';
 import 'package:codepan/data/database/sqlite_exception.dart';
 import 'package:codepan/data/database/sqlite_query.dart';
 
-class SQLiteStatement with QueryProperties {
+class SqliteStatement with QueryProperties {
   static const String id = 'id';
   static const String nullValue = 'NULL';
   static const int trueValue = 1;
   static const int falseValue = 0;
   List<FieldValue>? _fieldValueList;
 
-  SQLiteStatement();
+  SqliteStatement();
 
   /// Constructor for field value list.
-  SQLiteStatement.fromMap(Map<String, dynamic> map) {
+  SqliteStatement.fromMap(Map<String, dynamic> map) {
     addFieldsAndValues(map);
   }
 
   /// Constructor for field list.
-  SQLiteStatement.fromList(List<dynamic> list) {
+  SqliteStatement.fromList(List<dynamic> list) {
     addFields(list);
   }
 
-  SQLiteStatement.from({
+  SqliteStatement.from({
     List<dynamic>? fields,
     Map<String, dynamic>? fieldsAndValues,
     dynamic conditions,
@@ -47,7 +47,7 @@ class SQLiteStatement with QueryProperties {
   bool get hasFieldValues =>
       _fieldValueList != null && _fieldValueList!.isNotEmpty;
 
-  SQLiteStatement clearAll() {
+  SqliteStatement clearAll() {
     if (hasFieldValues) _fieldValueList!.clear();
     clearConditionList();
     clearFieldList();
@@ -84,7 +84,7 @@ class SQLiteStatement with QueryProperties {
 
   String insert(String? table, {dynamic unique}) {
     final buffer = StringBuffer();
-    if (!hasFieldValues) throw SQLiteException(SQLiteException.noFieldValues);
+    if (!hasFieldValues) throw SqliteException(SqliteException.noFieldValues);
     final f = StringBuffer();
     final v = StringBuffer();
     for (final fv in fieldValueList!) {
@@ -119,19 +119,19 @@ class SQLiteStatement with QueryProperties {
   }
 
   String update(String? table, dynamic id) {
-    if (!hasFieldValues) throw SQLiteException(SQLiteException.noFieldValues);
-    return 'UPDATE $table SET $fieldValues WHERE ${SQLiteStatement.id} = ${id.toString()}';
+    if (!hasFieldValues) throw SqliteException(SqliteException.noFieldValues);
+    return 'UPDATE $table SET $fieldValues WHERE ${SqliteStatement.id} = ${id.toString()}';
   }
 
   String updateWithConditions(String table) {
-    if (!hasFieldValues) throw SQLiteException(SQLiteException.noFieldValues);
-    if (!hasConditions) throw SQLiteException(SQLiteException.noConditions);
+    if (!hasFieldValues) throw SqliteException(SqliteException.noFieldValues);
+    if (!hasConditions) throw SqliteException(SqliteException.noConditions);
     return 'UPDATE $table SET $fieldValues WHERE $conditions';
   }
 
   String updateFromStatement(String? table) {
     final buffer = StringBuffer();
-    if (!hasFieldValues) throw SQLiteException(SQLiteException.noFieldValues);
+    if (!hasFieldValues) throw SqliteException(SqliteException.noFieldValues);
     buffer.write('UPDATE $table SET $fieldValues');
     if (hasConditions) {
       buffer.write(' WHERE $conditions');
@@ -144,13 +144,13 @@ class SQLiteStatement with QueryProperties {
     dynamic id,
   ]) {
     if (id != null) {
-      return 'DELETE FROM $table WHERE ${SQLiteStatement.id} = ${id.toString()}';
+      return 'DELETE FROM $table WHERE ${SqliteStatement.id} = ${id.toString()}';
     }
     return 'DELETE FROM $table';
   }
 
   String deleteWithConditions(String table) {
-    if (!hasConditions) throw SQLiteException(SQLiteException.noConditions);
+    if (!hasConditions) throw SqliteException(SqliteException.noConditions);
     return 'DELETE FROM $table WHERE $conditions';
   }
 
@@ -178,7 +178,7 @@ class SQLiteStatement with QueryProperties {
     return '''CREATE TRIGGER IF NOT EXISTS $trg 
       AFTER INSERT ON $table 
       BEGIN
-        UPDATE $table SET $fieldValues WHERE ${SQLiteStatement.id} = NEW.id AND $conditions;
+        UPDATE $table SET $fieldValues WHERE ${SqliteStatement.id} = NEW.id AND $conditions;
       END''';
   }
 
@@ -203,7 +203,7 @@ class SQLiteStatement with QueryProperties {
   }
 
   String select(String table) {
-    final query = SQLiteQuery(
+    final query = SqliteQuery(
       select: fieldList,
       from: table,
       where: conditionList,
@@ -216,7 +216,7 @@ class SQLiteStatement with QueryProperties {
     _fieldValueList!.add(fv);
   }
 
-  void add(SQLiteModel entity) {
+  void add(SqliteModel entity) {
     if (entity is FieldValue) {
       addFieldValue(entity);
     } else if (entity is Condition) {
@@ -224,7 +224,7 @@ class SQLiteStatement with QueryProperties {
     } else if (entity is Field) {
       addField(entity);
     } else {
-      throw SQLiteException(SQLiteException.invalidSQLiteEntity);
+      throw SqliteException(SqliteException.invalidSqliteEntity);
     }
   }
 }

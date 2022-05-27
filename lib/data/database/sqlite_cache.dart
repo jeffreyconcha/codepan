@@ -1,17 +1,17 @@
 import 'package:codepan/data/database/initializer.dart';
 import 'package:codepan/data/database/sqlite_adapter.dart';
 
-class SQLiteCache {
-  static final Map<String, SQLiteAdapter> cache = Map();
+class SqliteCache {
+  static final Map<String, SqliteAdapter> cache = Map();
 
-  static Future<SQLiteAdapter> getDatabase({
+  static Future<SqliteAdapter> getDatabase({
     required String name,
     required String password,
     required int version,
     required DatabaseInitializer initializer,
   }) async {
     if (!cache.containsKey(name)) {
-      final db = SQLiteAdapter(
+      final db = SqliteAdapter(
           name: name,
           password: password,
           version: version,

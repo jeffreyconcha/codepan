@@ -22,8 +22,8 @@ enum Order {
   descending,
 }
 
-class SQLiteQuery with QueryProperties {
-  List<SQLiteQuery>? _joinList;
+class SqliteQuery with QueryProperties {
+  List<SqliteQuery>? _joinList;
   RecursiveJoin? _recursive;
   List<Field>? _orderList;
   List<Field>? _groupList;
@@ -39,7 +39,7 @@ class SQLiteQuery with QueryProperties {
 
   TableSchema? get schema => _schema;
 
-  List<SQLiteQuery>? get joinList => _joinList;
+  List<SqliteQuery>? get joinList => _joinList;
 
   List<Field>? get groupList => _groupList;
 
@@ -59,7 +59,7 @@ class SQLiteQuery with QueryProperties {
   /// table - Can only be a type of String, Table or TableSchema.
   /// orderBy - Can only be a list of String or Field.
   /// groupBy - Can only be a list of String or Field.
-  SQLiteQuery({
+  SqliteQuery({
     required List<dynamic>? select,
     required dynamic from,
     dynamic where,
@@ -77,7 +77,7 @@ class SQLiteQuery with QueryProperties {
       this._table = from.table;
       this._schema = from;
     } else {
-      throw SQLiteException(SQLiteException.invalidTableType);
+      throw SqliteException(SqliteException.invalidTableType);
     }
     addFields(select, table: _table);
     addConditions(where, table: _table);
@@ -88,7 +88,7 @@ class SQLiteQuery with QueryProperties {
     this._limit = limit;
   }
 
-  factory SQLiteQuery.all({
+  factory SqliteQuery.all({
     required TableSchema schema,
     dynamic where,
     List<dynamic>? orderBy,
@@ -98,7 +98,7 @@ class SQLiteQuery with QueryProperties {
     JoinType type = JoinType.inner,
     RecursiveJoin? recursive,
   }) {
-    return SQLiteQuery(
+    return SqliteQuery(
       select: schema.fields,
       from: schema,
       where: where,
@@ -153,7 +153,7 @@ class SQLiteQuery with QueryProperties {
   }
 
   void join({
-    required SQLiteQuery query,
+    required SqliteQuery query,
     JoinType type = JoinType.inner,
   }) {
     query._setJoinType(type);
@@ -207,7 +207,7 @@ class SQLiteQuery with QueryProperties {
         option: option,
       );
     } else {
-      throw SQLiteException(SQLiteException.noSchemaFoundInQuery);
+      throw SqliteException(SqliteException.noSchemaFoundInQuery);
     }
   }
 
@@ -226,7 +226,7 @@ class SQLiteQuery with QueryProperties {
           final foreignTable = field.reference!;
           final schema = all.of(foreignTable.entity);
           join(
-            query: SQLiteQuery(
+            query: SqliteQuery(
               select: option == JoinOption.all ? schema.fields : [],
               from: foreignTable,
               where: {
@@ -245,7 +245,7 @@ class SQLiteQuery with QueryProperties {
           }
         }
       } else {
-        throw SQLiteException(SQLiteException.noSchemaFoundInQuery);
+        throw SqliteException(SqliteException.noSchemaFoundInQuery);
       }
     }
   }
@@ -296,7 +296,7 @@ class SQLiteQuery with QueryProperties {
       }
       return buffer.toString();
     }
-    throw SQLiteException.noFieldsInQuery;
+    throw SqliteException.noFieldsInQuery;
   }
 }
 

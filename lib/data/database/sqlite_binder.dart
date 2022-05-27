@@ -20,27 +20,27 @@ enum UpdatePriority {
 }
 
 const tag = 'DATABASE BINDER';
-const primaryKey = SQLiteStatement.id;
+const primaryKey = SqliteStatement.id;
 
 typedef BinderBody = Future<dynamic> Function(
-  SQLiteBinder binder,
+  SqliteBinder binder,
 );
 
-class SQLiteBinder {
+class SqliteBinder {
   late Map<String, int> _map;
   late DateTime _time;
   late Batch _batch;
-  final SQLiteAdapter db;
+  final SqliteAdapter db;
   bool _showLog = false;
   bool _chain = false;
 
-  SQLiteBinder(this.db) : _map = {};
+  SqliteBinder._(this.db) : _map = {};
 
-  factory SQLiteBinder.of(SQLiteAdapter db) {
+  factory SqliteBinder.of(SqliteAdapter db) {
     if (db.inTransaction) {
       return db.binder!..chain();
     }
-    return SQLiteBinder(db);
+    return SqliteBinder._(db);
   }
 
   /// [body] - Enclosed in try catch to automatically remove the binder or
@@ -126,7 +126,7 @@ class SQLiteBinder {
   }
 
   Future<int> _mapId(
-    SQLiteStatement stmt,
+    SqliteStatement stmt,
     String table,
     dynamic unique,
   ) async {
@@ -148,7 +148,7 @@ class SQLiteBinder {
   }
 
   String? _getKeyFromUnique(
-    SQLiteStatement stmt,
+    SqliteStatement stmt,
     String table,
     dynamic unique,
   ) {
@@ -174,12 +174,12 @@ class SQLiteBinder {
   }
 
   Future<int?> _queryIdFromUnique(
-    SQLiteStatement stmt,
+    SqliteStatement stmt,
     String table,
     dynamic unique,
   ) async {
     final map = stmt.map!;
-    final query = SQLiteQuery(
+    final query = SqliteQuery(
       select: [
         primaryKey,
       ],
@@ -213,7 +213,7 @@ class SQLiteBinder {
   }
 
   Future<int> _queryLastId(String table) async {
-    final query = SQLiteQuery(
+    final query = SqliteQuery(
       select: [
         primaryKey,
       ],
@@ -276,7 +276,7 @@ class SQLiteBinder {
   /// table - Can only be a type of String, Table or TableSchema.
   Future<int?> insert(
     dynamic table,
-    SQLiteStatement stmt, {
+    SqliteStatement stmt, {
     dynamic unique,
     bool ignoreId = false,
   }) async {
@@ -296,7 +296,7 @@ class SQLiteBinder {
   /// table - Can only be a type of String, Table or TableSchema.
   void updateRecord(
     dynamic table,
-    SQLiteStatement stmt,
+    SqliteStatement stmt,
     dynamic id,
   ) {
     final name = _getTableName(table);
@@ -307,7 +307,7 @@ class SQLiteBinder {
   @deprecated
   void updateWithConditions(
     String table,
-    SQLiteStatement stmt,
+    SqliteStatement stmt,
   ) {
     final sql = stmt.updateWithConditions(table);
     addStatement(sql);
@@ -316,7 +316,7 @@ class SQLiteBinder {
   /// table - Can only be a type of String, Table or TableSchema.
   void update({
     required dynamic table,
-    required SQLiteStatement stmt,
+    required SqliteStatement stmt,
   }) {
     final name = _getTableName(table);
     final sql = stmt.updateFromStatement(name);
@@ -329,7 +329,7 @@ class SQLiteBinder {
     required String column,
     bool value = false,
   }) {
-    final stmt = SQLiteStatement.from(
+    final stmt = SqliteStatement.from(
       fieldsAndValues: {
         column: value,
       },
@@ -350,64 +350,64 @@ class SQLiteBinder {
     } else if (table is TableSchema) {
       return table.tableName;
     } else {
-      throw SQLiteException(SQLiteException.invalidTableType);
+      throw SqliteException(SqliteException.invalidTableType);
     }
   }
 
   void truncate(String table) {
-    final stmt = SQLiteStatement();
+    final stmt = SqliteStatement();
     addStatement(stmt.delete(table));
     addStatement(stmt.resetTable(table));
   }
 
   void delete(dynamic table, dynamic id) {
     final name = _getTableName(table);
-    final sql = SQLiteStatement().delete(name, id);
+    final sql = SqliteStatement().delete(name, id);
     addStatement(sql);
   }
 
-  void deleteWithConditions(dynamic table, SQLiteStatement stmt) {
+  void deleteWithConditions(dynamic table, SqliteStatement stmt) {
     final name = _getTableName(table);
     final sql = stmt.deleteWithConditions(name);
     addStatement(sql);
   }
 
-  void createTable(String table, SQLiteStatement stmt) {
+  void createTable(String table, SqliteStatement stmt) {
     final sql = stmt.createTable(table);
     addStatement(sql);
   }
 
-  void createIndex(String idx, String table, SQLiteStatement stmt) {
+  void createIndex(String idx, String table, SqliteStatement stmt) {
     final sql = stmt.createIndex(idx, table);
     addStatement(sql);
   }
 
-  void createTimeTrigger(String trg, String table, SQLiteStatement stmt) {
+  void createTimeTrigger(String trg, String table, SqliteStatement stmt) {
     final sql = stmt.createTimeTrigger(trg, table);
     addStatement(sql);
   }
 
   void dropTable(dynamic table) {
-    final stmt = SQLiteStatement();
+    final stmt = SqliteStatement();
     final name = _getTableName(table);
     final sql = stmt.dropTable(name);
     addStatement(sql);
   }
 
   void dropIndex(String idx) {
-    final stmt = SQLiteStatement();
+    final stmt = SqliteStatement();
     final sql = stmt.dropIndex(idx);
     addStatement(sql);
   }
 
   void renameTable(String oldName, String newName) {
-    final stmt = SQLiteStatement();
+    final stmt = SqliteStatement();
     final sql = stmt.renameTable(oldName, newName);
     addStatement(sql);
   }
 
   void addColumn(String table, Field field) {
-    final stmt = SQLiteStatement();
+    final stmt = SqliteStatement();
     final sql = stmt.addColumn(table, field);
     addStatement(sql);
   }

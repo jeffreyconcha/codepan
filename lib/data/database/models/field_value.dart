@@ -8,15 +8,15 @@ enum Value {
   timeNow,
 }
 
-class FieldValue extends SQLiteModel {
+class FieldValue extends SqliteModel {
   final dynamic _value;
 
   String get value {
     if (_value != null) {
       if (_value is bool) {
         return _value
-            ? SQLiteStatement.trueValue.toString()
-            : SQLiteStatement.falseValue.toString();
+            ? SqliteStatement.trueValue.toString()
+            : SqliteStatement.falseValue.toString();
       } else if (_value is String) {
         return "'${_value.replaceAll("'", "''")}'";
       } else if (_value is Value) {
@@ -32,14 +32,14 @@ class FieldValue extends SQLiteModel {
         return _value.toString();
       }
     } else {
-      return SQLiteStatement.nullValue;
+      return SqliteStatement.nullValue;
     }
   }
 
   dynamic get rawValue {
     if (_value != null) {
       if (_value is bool) {
-        return _value ? SQLiteStatement.trueValue : SQLiteStatement.falseValue;
+        return _value ? SqliteStatement.trueValue : SqliteStatement.falseValue;
       }
       return _value;
     }

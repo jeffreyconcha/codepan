@@ -10,16 +10,16 @@ abstract class DatabaseInitializer {
 
   DatabaseInitializer(this.schema);
 
-  Future<void> onCreate(SQLiteAdapter db, int version);
+  Future<void> onCreate(SqliteAdapter db, int version);
 
   Future<void> onUpgrade(
-    SQLiteAdapter db,
+    SqliteAdapter db,
     int oldVersion,
     int newVersion,
   );
 
   Future<void> onDowngrade(
-    SQLiteAdapter db,
+    SqliteAdapter db,
     int oldVersion,
     int newVersion,
   );
@@ -29,8 +29,8 @@ class DefaultDatabaseInitializer extends DatabaseInitializer {
   DefaultDatabaseInitializer(DatabaseSchema schema) : super(schema);
 
   @override
-  Future<void> onCreate(SQLiteAdapter db, int version) async {
-    final binder = SQLiteBinder(db);
+  Future<void> onCreate(SqliteAdapter db, int version) async {
+    final binder = SqliteBinder.of(db);
     try {
       await binder.transact<bool>(
         body: (binder) async {
@@ -40,18 +40,18 @@ class DefaultDatabaseInitializer extends DatabaseInitializer {
         },
       );
     } catch (error) {
-      final message = "${SQLiteException.initializationFailed}\n$error";
-      throw SQLiteException(message);
+      final message = "${SqliteException.initializationFailed}\n$error";
+      throw SqliteException(message);
     }
   }
 
   @override
   Future<void> onDowngrade(
-    SQLiteAdapter db,
+    SqliteAdapter db,
     int oldVersion,
     int newVersion,
   ) async {
-    final binder = SQLiteBinder(db);
+    final binder = SqliteBinder.of(db);
     try {
       await binder.transact<bool>(
         body: (binder) async {
@@ -64,18 +64,18 @@ class DefaultDatabaseInitializer extends DatabaseInitializer {
       );
     } catch (error) {
       await db.instance!.setVersion(oldVersion);
-      final message = "${SQLiteException.initializationFailed}\n$error";
-      throw SQLiteException(message);
+      final message = "${SqliteException.initializationFailed}\n$error";
+      throw SqliteException(message);
     }
   }
 
   @override
   Future<void> onUpgrade(
-    SQLiteAdapter db,
+    SqliteAdapter db,
     int oldVersion,
     int newVersion,
   ) async {
-    final binder = SQLiteBinder(db);
+    final binder = SqliteBinder.of(db);
     try {
       await binder.transact<bool>(
         body: (binder) async {
@@ -88,15 +88,15 @@ class DefaultDatabaseInitializer extends DatabaseInitializer {
       );
     } catch (error) {
       await db.instance!.setVersion(oldVersion);
-      final message = "${SQLiteException.initializationFailed}\n$error";
-      throw SQLiteException(message);
+      final message = "${SqliteException.initializationFailed}\n$error";
+      throw SqliteException(message);
     }
   }
 
-  Future<void> _createTables(SQLiteBinder binder) async {
+  Future<void> _createTables(SqliteBinder binder) async {
     for (final tb in schema.entities) {
       final entity = schema.of(tb);
-      final stmt = SQLiteStatement.fromList(entity.fields);
+      final stmt = SqliteStatement.fromList(entity.fields);
       if (stmt.hasFields) {
         binder.createTable(entity.tableName, stmt);
       }
@@ -104,11 +104,11 @@ class DefaultDatabaseInitializer extends DatabaseInitializer {
     await binder.apply();
   }
 
-  Future<void> _createIndices(SQLiteBinder binder) async {
+  Future<void> _createIndices(SqliteBinder binder) async {
     for (final tb in schema.entities) {
       final entity = schema.of(tb);
       final table = entity.tableName;
-      final stmt = SQLiteStatement.fromList(entity.indices);
+      final stmt = SqliteStatement.fromList(entity.indices);
       if (stmt.hasFields) {
         binder.createTable(table, stmt);
         final idx = entity.indexName;
@@ -118,11 +118,11 @@ class DefaultDatabaseInitializer extends DatabaseInitializer {
     await binder.apply();
   }
 
-  Future<void> _createTimeTriggers(SQLiteBinder binder) async {
+  Future<void> _createTimeTriggers(SqliteBinder binder) async {
     for (final tb in schema.entities) {
       final entity = schema.of(tb);
       final table = entity.tableName;
-      final stmt = SQLiteStatement.fromList(entity.triggers);
+      final stmt = SqliteStatement.fromList(entity.triggers);
       if (stmt.hasFields) {
         binder.createTable(table, stmt);
         final trg = entity.triggerName;
@@ -132,12 +132,12 @@ class DefaultDatabaseInitializer extends DatabaseInitializer {
     await binder.apply();
   }
 
-  Future<void> _updateTables(SQLiteBinder binder) async {
+  Future<void> _updateTables(SqliteBinder binder) async {
     final db = binder.db;
     for (final tb in schema.entities) {
       final entity = schema.of(tb);
       final table = entity.tableName;
-      final stmt = SQLiteStatement.fromList(entity.fields);
+      final stmt = SqliteStatement.fromList(entity.fields);
       if (stmt.hasFields) {
         final fieldList = stmt.fieldList!;
         final columnList = await db.getColumnList(table);
@@ -154,12 +154,12 @@ class DefaultDatabaseInitializer extends DatabaseInitializer {
     await binder.apply();
   }
 
-  Future<void> _updateIndices(SQLiteBinder binder) async {
+  Future<void> _updateIndices(SqliteBinder binder) async {
     final db = binder.db;
     for (final tb in schema.entities) {
       final entity = schema.of(tb);
       final table = entity.tableName;
-      final stmt = SQLiteStatement.fromList(entity.indices);
+      final stmt = SqliteStatement.fromList(entity.indices);
       if (stmt.hasFields) {
         final idx = entity.indexName;
         final int count = await db.getIndexColumnCount(idx);
