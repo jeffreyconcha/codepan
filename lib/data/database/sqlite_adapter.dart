@@ -27,7 +27,6 @@ class SQLiteAdapter implements DatabaseExecutor {
   final String? password;
   final String name;
   final int version;
-  bool _inTransaction = false;
   SQLiteBinder? _binder;
   Database? _db;
 
@@ -40,7 +39,7 @@ class SQLiteAdapter implements DatabaseExecutor {
 
   String get path => _path;
 
-  bool get inTransaction => _binder != null && _inTransaction;
+  bool get inTransaction => _binder != null;
 
   SQLiteBinder? get binder => _binder;
 
@@ -175,12 +174,12 @@ class SQLiteAdapter implements DatabaseExecutor {
 
   void setBinder(SQLiteBinder binder) {
     _binder = binder;
-    _inTransaction = true;
   }
 
   void removeBinder() {
-    _inTransaction = false;
-    _binder = null;
+    if (_binder != null) {
+      _binder = null;
+    }
   }
 
   @override

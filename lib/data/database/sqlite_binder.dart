@@ -36,7 +36,7 @@ class SQLiteBinder {
 
   SQLiteBinder(this.db) : _map = {};
 
-  factory SQLiteBinder.chain(SQLiteAdapter db) {
+  factory SQLiteBinder.of(SQLiteAdapter db) {
     if (db.inTransaction) {
       return db.binder!..chain();
     }
@@ -57,6 +57,8 @@ class SQLiteBinder {
         debugPrint('$tag: BEGIN TRANSACTION');
       }
       db.setBinder(this);
+    }
+    else {
     }
     try {
       if (T == bool) {
