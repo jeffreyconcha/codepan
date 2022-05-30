@@ -417,4 +417,13 @@ class SqliteBinder {
     final sql = stmt.addColumn(table, field);
     addStatement(sql);
   }
+
+  void recreateTable(dynamic entity) {
+    final schema = db.schema.of(entity);
+    dropTable(schema);
+    final stmt = SqliteStatement.fromList(schema.fields);
+    if (stmt.hasFields) {
+      createTable(schema.tableName, stmt);
+    }
+  }
 }
