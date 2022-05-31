@@ -64,8 +64,7 @@ extension StringUtils on String {
     return this;
   }
 
-  String complete(
-    dynamic input, {
+  String complete(dynamic input, {
     String? identifier,
     bool withQuotes = false,
     bool isSpannable = false,
@@ -85,7 +84,7 @@ extension StringUtils on String {
       final word = words[i];
       if (word.contains(id) && iterator.moveNext()) {
         final replacement =
-            withQuotes ? '\"${iterator.current}\"' : iterator.current;
+        withQuotes ? '\"${iterator.current}\"' : iterator.current;
         if (isSpannable) {
           buffer.write('<s>$replacement</s>');
         } else {
@@ -113,7 +112,9 @@ extension StringUtils on String {
   String _wordToPast(String word) {
     final dash = '-';
     if (word.contains(dash)) {
-      final first = word.split(dash).first;
+      final first = word
+          .split(dash)
+          .first;
       final past = PAST.convert(first);
       return word.replaceAll(first, past);
     }
@@ -219,6 +220,16 @@ extension StringUtils on String {
 
   bool get hasSymbols {
     return this.contains(RegExp('[^A-Za-z0-9]'));
+  }
+
+  bool containsKeys(List<String> keys) {
+    for (final key in keys) {
+      final lowercase = key.toLowerCase();
+      if (this.toLowerCase().contains(lowercase)) {
+        return true;
+      }
+    }
+    return false;
   }
 
   String get last {
