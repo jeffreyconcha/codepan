@@ -248,10 +248,23 @@ class Time extends Equatable {
     return Time.value(time);
   }
 
+  Time toLastDayOfThisMonth() {
+    final first = toFirstDayOfThisMonth();
+    return first.add(
+      Duration(days: first.noOfDaysInMonth - 1),
+    );
+  }
+
   Time toFirstDayOfLastMonth() {
+    int month = value.month - 1;
+    int year = value.year;
+    if (month == 0) {
+      month = 1;
+      year -= 1;
+    }
     final time = DateTime.utc(
-      value.year,
-      value.month - 1,
+      year,
+      month,
       1,
       value.hour,
       value.minute,
@@ -260,35 +273,11 @@ class Time extends Equatable {
     return Time.value(time);
   }
 
-  Time toLastDayOfThisMonth() {
-    final time = DateTime.utc(
-      value.year,
-      value.month,
-      noOfDaysInMonth,
-      value.hour,
-      value.minute,
-      value.second,
-    );
-    return Time.value(time);
-  }
-
   Time toLastDayOfLastMonth() {
-    final last = toFirstDayOfLastMonth();
-    int month = value.month - 1;
-    int year = value.year;
-    if (month != 0) {
-      month = 1;
-      year -= 1;
-    }
-    final time = DateTime.utc(
-      year,
-      month,
-      last.noOfDaysInMonth,
-      value.hour,
-      value.minute,
-      value.second,
+    final first = toFirstDayOfLastMonth();
+    return first.add(
+      Duration(days: first.noOfDaysInMonth - 1),
     );
-    return Time.value(time);
   }
 
   TimeRange toPastWeek() {
