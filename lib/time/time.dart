@@ -319,6 +319,11 @@ class Time extends Equatable {
           start: toFirstDayOfLastMonth(),
           end: toLastDayOfLastMonth(),
         );
+      default:
+        return TimeRange(
+          start: this,
+          end: this,
+        );
     }
   }
 

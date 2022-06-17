@@ -1,4 +1,7 @@
+import 'package:codepan/extensions/dynamic.dart';
+import 'package:codepan/extensions/string.dart';
 import 'package:codepan/time/time.dart';
+import 'package:codepan/widgets/dialogs/menu_dialog.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 
@@ -6,6 +9,7 @@ enum TimePeriod {
   thisWeek,
   thisMonth,
   lastMonth,
+  custom,
 }
 
 class TimeRange extends Equatable {
@@ -142,4 +146,21 @@ class TimeRangeController extends ValueNotifier<TimeRange> {
     this.value = range;
     notifyListeners();
   }
+}
+
+class TimePeriodWrapper implements Selectable {
+  final TimePeriod period;
+
+  const TimePeriodWrapper({
+    required this.period,
+  });
+
+  @override
+  dynamic get identifier => period;
+
+  @override
+  List<String?> get searchable => [title];
+
+  @override
+  String? get title => period.toWords().capitalize(true);
 }
