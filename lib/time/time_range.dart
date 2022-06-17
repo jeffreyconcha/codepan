@@ -2,6 +2,12 @@ import 'package:codepan/time/time.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 
+enum TimePeriod {
+  thisWeek,
+  thisMonth,
+  lastMonth,
+}
+
 class TimeRange extends Equatable {
   final Time _start;
   final Time _end;
@@ -107,6 +113,13 @@ class TimeRange extends Equatable {
       start: Time.value(range?.start),
       end: Time.value(range?.end),
     );
+  }
+
+  factory TimeRange.period({
+    required TimePeriod period,
+    required Time time,
+  }) {
+    return time.toPeriod(period);
   }
 
   List<Time> toList() {

@@ -2,6 +2,7 @@ import 'package:codepan/extensions/duration.dart';
 import 'package:codepan/extensions/map.dart';
 import 'package:codepan/resources/strings.dart';
 import 'package:codepan/time/time_range.dart';
+import 'package:codepan/utils/codepan_utils.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -67,7 +68,7 @@ class Time extends Equatable {
 
   String get abbrMonthYear {
     final today = Time.today();
-    final first = today.toFirstDayOfMonth();
+    final first = today.toFirstDayOfThisMonth();
     final last = first.subtract(Duration(days: 1));
     if (this.isBetween(today.toMonth())) {
       return Strings.thisMonth;
@@ -112,13 +113,13 @@ class Time extends Equatable {
 
   Time get trimmedTime => Time(time: time);
 
-  int get daysInMonth {
+  int get noOfDaysInMonth {
     final start = DateTime(value.year, value.month, 0);
     final end = DateTime(value.year, value.month + 1, 0);
     return end.difference(start).inDays;
   }
 
-  int get daysInYear {
+  int get noOfDaysInYear {
     final start = DateTime(value.year, 0, 0);
     final end = DateTime(value.year + 1, 0, 0);
     return end.difference(start).inDays;
@@ -223,8 +224,20 @@ class Time extends Equatable {
     return Time.value(first);
   }
 
-  Time toFirstDayOfMonth() {
-    final first = DateTime.utc(
+  Time toFirstDayOfThisWeek() {
+    late Time time;
+    for (final d in range(0, 6)) {
+      final date = this.subtract(Duration(days: d));
+      if (date.abbrWeekday.toLowerCase() == 'mon') {
+        time = date;
+        break;
+      }
+    }
+    return time;
+  }
+
+  Time toFirstDayOfThisMonth() {
+    final time = DateTime.utc(
       value.year,
       value.month,
       1,
@@ -232,19 +245,50 @@ class Time extends Equatable {
       value.minute,
       value.second,
     );
-    return Time.value(first);
+    return Time.value(time);
   }
 
-  Time toLastDayOfMonth() {
-    final first = DateTime.utc(
+  Time toFirstDayOfLastMonth() {
+    final time = DateTime.utc(
       value.year,
-      value.month,
-      daysInMonth,
+      value.month - 1,
+      1,
       value.hour,
       value.minute,
       value.second,
     );
-    return Time.value(first);
+    return Time.value(time);
+  }
+
+  Time toLastDayOfThisMonth() {
+    final time = DateTime.utc(
+      value.year,
+      value.month,
+      noOfDaysInMonth,
+      value.hour,
+      value.minute,
+      value.second,
+    );
+    return Time.value(time);
+  }
+
+  Time toLastDayOfLastMonth() {
+    final last = toFirstDayOfLastMonth();
+    int month = value.month - 1;
+    int year = value.year;
+    if (month != 0) {
+      month = 1;
+      year -= 1;
+    }
+    final time = DateTime.utc(
+      year,
+      month,
+      last.noOfDaysInMonth,
+      value.hour,
+      value.minute,
+      value.second,
+    );
+    return Time.value(time);
   }
 
   TimeRange toPastWeek() {
@@ -253,9 +297,29 @@ class Time extends Equatable {
 
   TimeRange toMonth() {
     return TimeRange(
-      start: this.toFirstDayOfMonth(),
-      end: this.toLastDayOfMonth(),
+      start: toFirstDayOfThisMonth(),
+      end: toLastDayOfThisMonth(),
     );
+  }
+
+  TimeRange toPeriod(TimePeriod period) {
+    switch (period) {
+      case TimePeriod.thisWeek:
+        return TimeRange(
+          start: toFirstDayOfThisWeek(),
+          end: this,
+        );
+      case TimePeriod.thisMonth:
+        return TimeRange(
+          start: toFirstDayOfThisMonth(),
+          end: this,
+        );
+      case TimePeriod.lastMonth:
+        return TimeRange(
+          start: toFirstDayOfLastMonth(),
+          end: toLastDayOfLastMonth(),
+        );
+    }
   }
 
   TimeRange toRange({
