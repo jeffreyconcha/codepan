@@ -24,6 +24,7 @@ class PanText extends StatelessWidget {
   final List<InlineSpan>? children;
   final TextDecoration? decoration;
   final SpannableText? spannable;
+  final int? maxLines, maxLength;
   final TextOverflow? overflow;
   final FontWeight fontWeight;
   final List<Shadow>? shadows;
@@ -33,7 +34,6 @@ class PanText extends StatelessWidget {
   final TextAlign textAlign;
   final BoxBorder? border;
   final Color background;
-  final int? maxLines;
 
   const PanText({
     Key? key,
@@ -54,6 +54,7 @@ class PanText extends StatelessWidget {
     this.isScalable = true,
     this.margin,
     this.maxLines,
+    this.maxLength,
     this.onTextOverflow,
     this.overflow,
     this.overflowState = OverflowState.initial,
@@ -73,7 +74,13 @@ class PanText extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final mq = MediaQuery.of(context);
-    final hasText = this.text?.isNotEmpty ?? false;
+    String? _text = this.text;
+    final hasText = _text?.isNotEmpty ?? false;
+    if (maxLength != null && _text != null) {
+      if (_text.length > maxLength!) {
+        _text = '${_text.substring(0, maxLength)}...';
+      }
+    }
     final style = textStyle ??
         TextStyle(
           color: hasText ? fontColor : hintFontColor,
@@ -92,7 +99,7 @@ class PanText extends StatelessWidget {
     List<InlineSpan>? spanList;
     if (spannable != null) {
       spanList = [];
-      spanList.addAll(spannable!.toSpanList(this.text));
+      spanList.addAll(spannable!.toSpanList(_text));
     }
     if (children != null) {
       spanList ??= [];
@@ -109,7 +116,7 @@ class PanText extends StatelessWidget {
         ),
       );
     }
-    final text = hasText ? this.text : hint;
+    final text = hasText ? _text : hint;
     final span = TextSpan(
       text: spannable != null ? null : text ?? '',
       style: style,
