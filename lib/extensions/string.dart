@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:html_unescape/html_unescape.dart';
 import 'package:inflection3/inflection3.dart';
 
@@ -64,7 +66,8 @@ extension StringUtils on String {
     return this;
   }
 
-  String complete(dynamic input, {
+  String complete(
+    dynamic input, {
     String? identifier,
     bool withQuotes = false,
     bool isSpannable = false,
@@ -84,7 +87,7 @@ extension StringUtils on String {
       final word = words[i];
       if (word.contains(id) && iterator.moveNext()) {
         final replacement =
-        withQuotes ? '\"${iterator.current}\"' : iterator.current;
+            withQuotes ? '\"${iterator.current}\"' : iterator.current;
         if (isSpannable) {
           buffer.write('<s>$replacement</s>');
         } else {
@@ -112,9 +115,7 @@ extension StringUtils on String {
   String _wordToPast(String word) {
     final dash = '-';
     if (word.contains(dash)) {
-      final first = word
-          .split(dash)
-          .first;
+      final first = word.split(dash).first;
       final past = PAST.convert(first);
       return word.replaceAll(first, past);
     }
@@ -246,5 +247,13 @@ extension StringUtils on String {
         .replaceAll('\n ', '\n')
         .replaceAll('u0022', '"')
         .replaceAll('u0027', '\'');
+  }
+
+  Color get hexColor {
+    String _hex = this.toUpperCase().replaceAll('#', '');
+    if (_hex.length == 6) {
+      _hex = 'FF$_hex';
+    }
+    return Color(int.parse(_hex, radix: 16));
   }
 }
