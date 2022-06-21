@@ -50,6 +50,8 @@ class Time extends Equatable {
 
   String get displayMonthDay => DateFormat.MMMMd(locale).format(value);
 
+  String get numericDate => DateFormat('M/d/yy').format(value);
+
   String get displayMonthYear {
     final today = Time.today();
     if (this.isBetween(today.toMonth())) {
