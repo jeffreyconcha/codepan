@@ -295,6 +295,8 @@ class Time extends Equatable {
 
   TimeRange toPeriod(TimePeriod period) {
     switch (period) {
+      case TimePeriod.today:
+        return TimeRange.today();
       case TimePeriod.thisWeek:
         return TimeRange(
           start: toFirstDayOfThisWeek(),
