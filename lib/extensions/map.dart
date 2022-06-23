@@ -131,10 +131,23 @@ extension MapUtils on Map<String, dynamic> {
   }
 
   void setPrefixFallback(
-    String prefix, {
+    dynamic prefix, {
     String separator = '.',
   }) {
-    this[prefixFallbackKey] = prefix;
+    assert(prefix is String || prefix is List<String>,
+        'Prefix should only be a type of String or List<String>');
+    if (prefix is String) {
+      this[prefixFallbackKey] = prefix;
+    } else if (prefix is List<String>) {
+      final buffer = StringBuffer();
+      prefix.loop((item, index) {
+        buffer.write(item);
+        if (index < prefix.length - 1) {
+          buffer.write(',');
+        }
+      });
+      this[prefixFallbackKey] = buffer.toString();
+    }
     this[fallbackSeparatorKey] = separator;
   }
 
@@ -160,7 +173,16 @@ extension MapUtils on Map<String, dynamic> {
     if (this.containsKey(prefixFallbackKey)) {
       final prefix = this[prefixFallbackKey];
       final separator = this[fallbackSeparatorKey];
-      if (prefix != null) {
+      if (prefix is String) {
+        if (prefix.contains(',')) {
+          final prefixes = prefix.split(',');
+          for (final p in prefixes) {
+            final fk = '$p$separator$key';
+            if (this.containsKey(fk)) {
+              return fk;
+            }
+          }
+        }
         return '$prefix$separator$key';
       }
     }
