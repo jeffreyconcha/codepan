@@ -137,3 +137,18 @@ extension ListUtils<T> on List<T> {
     }
   }
 }
+
+extension MasterListUtils<T extends MasterData> on List<T> {
+  Map<int, T> toCachedMap([
+    bool useLocalId = true,
+  ]) {
+    final map = <int, T>{};
+    this.loop((item, index) {
+      final id = useLocalId ? item.id : item.webId;
+      if (id != null) {
+        map.putIfAbsent(id, () => item);
+      }
+    });
+    return map;
+  }
+}
