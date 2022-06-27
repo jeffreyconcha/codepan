@@ -138,13 +138,13 @@ extension ListUtils<T> on List<T> {
   }
 }
 
+typedef Identifier<K, T> = K? Function(T item);
+
 extension MasterListUtils<T extends MasterData> on List<T> {
-  Map<int, T> toCachedMap([
-    bool useLocalId = true,
-  ]) {
-    final map = <int, T>{};
+  Map<K, T> toCachedMap<K>(Identifier<K, T> identifier) {
+    final map = <K, T>{};
     this.loop((item, index) {
-      final id = useLocalId ? item.id : item.webId;
+      final id = identifier.call(item);
       if (id != null) {
         map.putIfAbsent(id, () => item);
       }
