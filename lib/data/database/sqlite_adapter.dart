@@ -166,6 +166,16 @@ class SqliteAdapter implements DatabaseExecutor {
     return cursor.length;
   }
 
+  Future<bool> hasRecord(dynamic entity) async {
+    final schema = this.schema.of(entity);
+    final sql = "SELECT COUNT(*) FROM ${schema.tableName}";
+    final record = await getRecord(sql);
+    if (record != null) {
+      return record.values.first > 0;
+    }
+    return false;
+  }
+
   Future<void> checkVersion() async {
     final sql = "PRAGMA user_version";
     int? version = await getValue(sql);
