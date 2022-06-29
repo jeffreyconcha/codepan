@@ -76,4 +76,9 @@ abstract class MasterData extends TransactionData implements Selectable {
     int? webId,
     String? name,
   });
+
+  @override
+  String toString() {
+    return '${this.runtimeType}($id, $webId, $name)';
+  }
 }
