@@ -200,7 +200,7 @@ extension MapUtils on Map<String, dynamic> {
   }
 }
 
-extension MapStringUtils on Map<String, String?> {
+extension MapStringUtils on Map {
   void clean() {
     this.removeWhere((key, value) => value == null);
   }

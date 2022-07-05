@@ -1,6 +1,7 @@
 import 'package:codepan/data/database/sqlite_binder.dart';
 import 'package:codepan/data/database/sqlite_statement.dart';
 import 'package:codepan/data/models/entities/entity.dart';
+import 'package:codepan/extensions/map.dart';
 import 'package:codepan/time/time.dart';
 import 'package:flutter/foundation.dart';
 
@@ -39,10 +40,7 @@ abstract class TransactionData extends EntityData
   Map<String, dynamic> filtered([Map<String, dynamic>? map]) {
     final filtered = map ?? <String, dynamic>{};
     filtered.addAll(this.map);
-    filtered.removeWhere((key, value) {
-      return value == null;
-    });
-    return filtered;
+    return filtered..clean();
   }
 
   Time? get createdAt {

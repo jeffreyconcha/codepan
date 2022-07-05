@@ -424,6 +424,7 @@ class SqliteBinder {
     final stmt = SqliteStatement.fromList(schema.fields);
     if (stmt.hasFields) {
       createTable(schema.tableName, stmt);
+      createTimeTrigger(schema.triggerName, schema.tableName, stmt);
     }
   }
 }
