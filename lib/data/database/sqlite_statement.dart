@@ -190,6 +190,10 @@ class SqliteStatement with QueryProperties {
     return 'DROP INDEX IF EXISTS $idx';
   }
 
+  String dropTrigger(String trg) {
+    return 'DROP TRIGGER IF EXISTS $trg';
+  }
+
   String renameTable(String oldName, String newName) {
     return 'ALTER TABLE $oldName RENAME TO $newName';
   }

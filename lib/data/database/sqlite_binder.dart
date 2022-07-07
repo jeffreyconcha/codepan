@@ -393,6 +393,12 @@ class SqliteBinder {
     addStatement(sql);
   }
 
+  void createTimeTriggerFromSchema(TableSchema schema) {
+    final stmt = SqliteStatement.fromList(schema.triggers);
+    final sql = stmt.createTimeTrigger(schema.triggerName, schema.tableName);
+    addStatement(sql);
+  }
+
   void dropTable(dynamic table) {
     final stmt = SqliteStatement();
     final name = _getTableName(table);
@@ -400,9 +406,15 @@ class SqliteBinder {
     addStatement(sql);
   }
 
-  void dropIndex(String idx) {
+  void dropIndex(String name) {
     final stmt = SqliteStatement();
-    final sql = stmt.dropIndex(idx);
+    final sql = stmt.dropIndex(name);
+    addStatement(sql);
+  }
+
+  void dropTrigger(String name) {
+    final stmt = SqliteStatement();
+    final sql = stmt.dropTrigger(name);
     addStatement(sql);
   }
 
@@ -421,10 +433,12 @@ class SqliteBinder {
   void recreateTable(dynamic entity) {
     final schema = db.schema.of(entity);
     dropTable(schema);
+    dropIndex(schema.indexName);
+    dropTrigger(schema.triggerName);
     final stmt = SqliteStatement.fromList(schema.fields);
     if (stmt.hasFields) {
       createTable(schema.tableName, stmt);
-      createTimeTrigger(schema.triggerName, schema.tableName, stmt);
+      createTimeTriggerFromSchema(schema);
     }
   }
 }
