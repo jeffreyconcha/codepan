@@ -11,7 +11,7 @@ class RenderBox extends RenderProxyBox {
   @override
   void performLayout() {
     super.performLayout();
-    WidgetsBinding.instance?.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       final size = child?.size;
       final position = child?.localToGlobal(Offset.zero);
       if (size != null && position != null) {
