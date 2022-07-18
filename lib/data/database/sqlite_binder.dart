@@ -399,6 +399,12 @@ class SqliteBinder {
     addStatement(sql);
   }
 
+  void createIndexFromSchema(TableSchema schema) {
+    final stmt = SqliteStatement.fromList(schema.indices);
+    final sql = stmt.createIndex(schema.indexName, schema.tableName);
+    addStatement(sql);
+  }
+
   void dropTable(dynamic table) {
     final stmt = SqliteStatement();
     final name = _getTableName(table);
@@ -438,6 +444,7 @@ class SqliteBinder {
     final stmt = SqliteStatement.fromList(schema.fields);
     if (stmt.hasFields) {
       createTable(schema.tableName, stmt);
+      createIndexFromSchema(schema);
       createTimeTriggerFromSchema(schema);
     }
   }
