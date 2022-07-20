@@ -394,15 +394,19 @@ class SqliteBinder {
   }
 
   void createTimeTriggerFromSchema(TableSchema schema) {
-    final stmt = SqliteStatement.fromList(schema.triggers);
-    final sql = stmt.createTimeTrigger(schema.triggerName, schema.tableName);
-    addStatement(sql);
+    if(schema.triggers.isNotEmpty) {
+      final stmt = SqliteStatement.fromList(schema.triggers);
+      final sql = stmt.createTimeTrigger(schema.triggerName, schema.tableName);
+      addStatement(sql);
+    }
   }
 
   void createIndexFromSchema(TableSchema schema) {
-    final stmt = SqliteStatement.fromList(schema.indices);
-    final sql = stmt.createIndex(schema.indexName, schema.tableName);
-    addStatement(sql);
+    if(schema.indices.isNotEmpty) {
+      final stmt = SqliteStatement.fromList(schema.indices);
+      final sql = stmt.createIndex(schema.indexName, schema.tableName);
+      addStatement(sql);
+    }
   }
 
   void dropTable(dynamic table) {
