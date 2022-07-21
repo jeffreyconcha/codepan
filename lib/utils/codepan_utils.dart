@@ -17,6 +17,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:latlong2/latlong.dart' as lt;
 import 'package:path_provider/path_provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 const _urlPattern =
     r'(https?|http)://([-A-Z0-9.]+)(/[-A-Z0-9+&@#/%=~_|!:,.;]*)?(\?[A-Z0-9+&@#/%=~_|!:‌​,.;]*)?';
@@ -364,5 +365,20 @@ class PanUtils {
       return latitude.isBetween(-90, 90) && longitude.isBetween(-180, 180);
     }
     return false;
+  }
+
+  static void redirect(String? link) async {
+    if (link?.isNotEmpty ?? false) {
+      final url = link!.contains('http') ? link : 'https://$link';
+      final uri = Uri.parse(url);
+      try {
+        await launchUrl(
+          uri,
+          mode: LaunchMode.externalApplication,
+        );
+      } catch (e, s) {
+        printError(e, s);
+      }
+    }
   }
 }
