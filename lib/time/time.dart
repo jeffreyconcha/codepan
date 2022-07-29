@@ -26,7 +26,7 @@ class Time extends Equatable {
   @override
   List<Object?> get props => [milliseconds];
 
-  String get display => DateFormat.yMMMMd(locale).add_jm().format(value);
+  String get display => '$displayDate, $displayTime';
 
   String get displayDate => DateFormat.yMMMMd(locale).format(value);
 
@@ -50,7 +50,7 @@ class Time extends Equatable {
 
   String get displayMonthDay => DateFormat.MMMMd(locale).format(value);
 
-  String get numericDate => DateFormat('M/d/yy').format(value);
+  String get displayNumeric => DateFormat('M/d/yy - h:mm a').format(value);
 
   String get displayMonthYear {
     final today = Time.today();
@@ -79,6 +79,8 @@ class Time extends Equatable {
     }
     return '$abbrMonth $displayYear';
   }
+
+  String get abbr => '$abbrDate, $displayTime';
 
   String get abbrWeekdayDate => '$abbrWeekday, $abbrDate';
 
