@@ -79,10 +79,15 @@ class SqliteBinder {
     }
   }
 
-  Future<bool> apply() async {
+  Future<bool> apply([
+    bool continueOnError = false,
+  ]) async {
     if (db.inTransaction) {
       try {
-        await _batch.commit(noResult: true);
+        await _batch.commit(
+          noResult: true,
+          continueOnError: continueOnError,
+        );
         return true;
       } catch (error, stacktrace) {
         printError(error, stacktrace);
@@ -119,7 +124,6 @@ class SqliteBinder {
         return result;
       } else {
         chain(false);
-        print('depanot next time');
         return true;
       }
     }
@@ -127,7 +131,6 @@ class SqliteBinder {
   }
 
   void chain([bool chain = true]) {
-    print('depanot chain');
     _chain = chain;
   }
 

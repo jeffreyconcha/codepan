@@ -66,26 +66,26 @@ class SqliteAdapter implements DatabaseExecutor {
         _path,
         version: version,
         password: password,
-        onCreate: (db, version) {
+        onCreate: (db, version) async {
           isCreated = true;
         },
-        onUpgrade: (db, oldVersion, newVersion) {
+        onUpgrade: (db, oldVersion, newVersion) async {
           isUpgraded = true;
           _oldVersion = oldVersion;
         },
-        onDowngrade: (db, oldVersion, newVersion) {
+        onDowngrade: (db, oldVersion, newVersion) async {
           isDowngraded = true;
           _oldVersion = oldVersion;
         },
       );
       if (isCreated) {
-        onCreate?.call(this, version);
+        await onCreate?.call(this, version);
       }
       if (isUpgraded) {
-        onUpgrade?.call(this, _oldVersion, version);
+        await onUpgrade?.call(this, _oldVersion, version);
       }
       if (isDowngraded) {
-        onDowngrade?.call(this, _oldVersion, version);
+        await onDowngrade?.call(this, _oldVersion, version);
       }
     }
   }

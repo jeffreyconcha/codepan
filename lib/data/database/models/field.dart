@@ -226,7 +226,8 @@ class Field extends SqliteModel {
   /// Call this method if you want this field to be included in the unique group. <br/>
   /// If the same record has the same unique group fields it will update the
   /// existing record instead of inserting new record thus eliminating duplicates.<br/>
-  /// Will only be applied to a non-unique constraint.
+  /// Will only be applied to a non-unique constraint.<br/><br/>
+  /// <b>Note:</b> If you added a column to an existing table with this constraint, it is advisable to recreate the table instead.
   void ug() {
     if (!hasConstraints || !_constraintList!.contains(Constraint.unique)) {
       this._inUniqueGroup = true;
