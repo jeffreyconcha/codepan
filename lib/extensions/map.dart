@@ -38,10 +38,10 @@ extension MapUtils on Map<String, dynamic> {
     return null;
   }
 
-  List? getList(String key) {
+  List<T>? getList<T>(String key) {
     if (hasKey(key)) {
       final value = getValue(key);
-      if (value is List) {
+      if (value is List<T>) {
         return value;
       }
     }

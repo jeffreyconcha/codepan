@@ -19,6 +19,8 @@ const _itemMinHeight = 45.0;
 
 typedef MenuSearchBuilder = Widget Function(ValueChanged<String> onSearch);
 
+typedef MenuAsyncItemBuilder<T extends Selectable> = Future<List<T>> Function();
+
 abstract class Selectable implements Searchable {
   dynamic get identifier;
 
