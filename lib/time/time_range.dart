@@ -67,11 +67,11 @@ class TimeRange extends Equatable {
   }
 
   String get displayPeriod {
-    return period?.toCapitalizedWords() ?? displayDate;
+    return period?.toWords().capitalize(true) ?? displayDate;
   }
 
   String get abbrPeriod {
-    return period?.toCapitalizedWords() ?? abbrDate;
+    return period?.toWords().capitalize(true) ?? abbrDate;
   }
 
   bool get isValid => start <= end;
