@@ -14,6 +14,7 @@ enum TimePeriod {
 }
 
 class TimeRange extends Equatable {
+  final TimePeriod? period;
   final Time _start;
   final Time _end;
 
@@ -65,6 +66,14 @@ class TimeRange extends Equatable {
     return start.abbrDate;
   }
 
+  String get displayPeriod {
+    return period?.toCapitalizedWords() ?? displayDate;
+  }
+
+  String get abbrPeriod {
+    return period?.toCapitalizedWords() ?? abbrDate;
+  }
+
   bool get isValid => start <= end;
 
   bool get isZero => start.isZero && end.isZero;
@@ -88,6 +97,7 @@ class TimeRange extends Equatable {
   const TimeRange({
     required Time? start,
     required Time? end,
+    this.period,
   })  : _start = start ?? Time.zero,
         _end = end ?? Time.zero;
 

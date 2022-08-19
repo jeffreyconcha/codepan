@@ -303,16 +303,19 @@ class Time extends Equatable {
         return TimeRange(
           start: toFirstDayOfThisWeek(),
           end: this,
+          period: period,
         );
       case TimePeriod.thisMonth:
         return TimeRange(
           start: toFirstDayOfThisMonth(),
           end: this,
+          period: period,
         );
       case TimePeriod.lastMonth:
         return TimeRange(
           start: toFirstDayOfLastMonth(),
           end: toLastDayOfLastMonth(),
+          period: period,
         );
       default:
         return TimeRange(
