@@ -41,8 +41,12 @@ extension MapUtils on Map<String, dynamic> {
   List<T>? getList<T>(String key) {
     if (hasKey(key)) {
       final value = getValue(key);
-      if (value is List<T>) {
-        return value;
+      if (value is List) {
+        final list = <T>[];
+        value.loop((item, index) {
+          list.add(item as T);
+        });
+        return list;
       }
     }
     return null;
