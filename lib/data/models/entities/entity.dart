@@ -12,3 +12,7 @@ abstract class EntityData extends Equatable {
 
   List<String>? get uniqueGroup => schemaInstance.uniqueGroup;
 }
+
+abstract class ParentToChild<P> {
+  T toChild<T extends P>(T child);
+}
