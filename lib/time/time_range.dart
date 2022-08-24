@@ -1,5 +1,6 @@
 import 'package:codepan/extensions/dynamic.dart';
 import 'package:codepan/extensions/string.dart';
+import 'package:codepan/resources/strings.dart';
 import 'package:codepan/time/time.dart';
 import 'package:codepan/widgets/dialogs/menu_dialog.dart';
 import 'package:equatable/equatable.dart';
@@ -71,7 +72,13 @@ class TimeRange extends Equatable {
   }
 
   String get abbrPeriod {
-    return period?.toWords().capitalize(true) ?? abbrDate;
+    if (period != null) {
+      return period.toWords().capitalize(true);
+    }
+    if (this == TimeRange.today()) {
+      return Strings.today;
+    }
+    return abbrDate;
   }
 
   bool get isValid => start <= end;
