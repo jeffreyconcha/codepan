@@ -74,12 +74,7 @@ abstract class TransactionData extends EntityData
   @override
   int compareTo(TransactionData other) {
     if (createdAt != null && other.createdAt != null) {
-      if (createdAt!.isBefore(other.createdAt!)) {
-        return -1;
-      }
-      if (createdAt!.isAfter(other.createdAt!)) {
-        return 1;
-      }
+      return other.createdAt!.difference(createdAt!).inMilliseconds;
     }
     return 0;
   }
