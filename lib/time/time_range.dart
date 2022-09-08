@@ -95,23 +95,29 @@ class TimeRange extends Equatable {
   }
 
   String get displayPeriod {
-    switch (period) {
-      case TimePeriod.today:
-      case TimePeriod.yesterday:
-        return '${period?.title}, $displayDate';
-      default:
-        return '${period?.title} (${displayDate.split(',').first})';
+    if (period != null) {
+      switch (period) {
+        case TimePeriod.today:
+        case TimePeriod.yesterday:
+          return '${period?.title}, $displayDate';
+        default:
+          return '${period?.title} (${displayDate.split(',').first})';
+      }
     }
+    return displayDate;
   }
 
   String get abbrPeriod {
-    switch (period) {
-      case TimePeriod.today:
-      case TimePeriod.yesterday:
-        return '${period?.title}, $abbrDate';
-      default:
-        return '${period?.title} (${abbrDate.split(',').first})';
+    if (period != null) {
+      switch (period) {
+        case TimePeriod.today:
+        case TimePeriod.yesterday:
+          return '${period?.title}, $abbrDate';
+        default:
+          return '${period?.title} (${abbrDate.split(',').first})';
+      }
     }
+    return abbrDate;
   }
 
   bool get isValid => start <= end;
