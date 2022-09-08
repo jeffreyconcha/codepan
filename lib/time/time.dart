@@ -299,6 +299,8 @@ class Time extends Equatable {
     switch (period) {
       case TimePeriod.today:
         return TimeRange.today();
+      case TimePeriod.yesterday:
+        return TimeRange.yesterday();
       case TimePeriod.thisWeek:
         return TimeRange(
           start: toFirstDayOfThisWeek(),
@@ -311,16 +313,47 @@ class Time extends Equatable {
           end: this,
           period: period,
         );
+      case TimePeriod.lastWeek:
+        final date = this.subtract(
+          const Duration(days: 7),
+        );
+        final start = date.toFirstDayOfThisWeek();
+        return TimeRange(
+          start: start,
+          end: start.add(
+            const Duration(days: 6),
+          ),
+          period: period,
+        );
       case TimePeriod.lastMonth:
         return TimeRange(
           start: toFirstDayOfLastMonth(),
           end: toLastDayOfLastMonth(),
           period: period,
         );
+      case TimePeriod.last7Days:
+        final start = this.subtract(
+          const Duration(days: 6),
+        );
+        return TimeRange(
+          start: start,
+          end: this,
+          period: period,
+        );
+      case TimePeriod.last30Days:
+        final start = this.subtract(
+          const Duration(days: 29),
+        );
+        return TimeRange(
+          start: start,
+          end: this,
+          period: period,
+        );
       default:
         return TimeRange(
           start: this,
           end: this,
+          period: period,
         );
     }
   }

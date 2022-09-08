@@ -7,8 +7,13 @@ class Strings {
   static const String noAvailableItems = 'No available items.';
   static const String today = 'Today';
   static const String yesterday = 'Yesterday';
-  static const String thisMonth = 'This Month';
-  static const String lastMonth = 'Last Month';
+  static const String thisWeek = 'This week';
+  static const String thisMonth = 'This month';
+  static const String lastWeek = 'Last week';
+  static const String lastMonth = 'Last month';
+  static const String last7Days = 'Last 7 days';
+  static const String last30Days = 'Last 30 days';
+  static const String custom = 'Custom';
 }
 
 class Errors {

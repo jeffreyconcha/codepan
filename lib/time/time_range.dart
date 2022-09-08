@@ -1,5 +1,3 @@
-import 'package:codepan/extensions/dynamic.dart';
-import 'package:codepan/extensions/string.dart';
 import 'package:codepan/resources/strings.dart';
 import 'package:codepan/time/time.dart';
 import 'package:codepan/widgets/dialogs/menu_dialog.dart';
@@ -8,10 +6,39 @@ import 'package:flutter/material.dart';
 
 enum TimePeriod {
   today,
+  yesterday,
   thisWeek,
   thisMonth,
+  lastWeek,
   lastMonth,
+  last7Days,
+  last30Days,
   custom,
+}
+
+extension TimePeriodExt on TimePeriod {
+  String get title {
+    switch (this) {
+      case TimePeriod.today:
+        return Strings.today;
+      case TimePeriod.yesterday:
+        return Strings.yesterday;
+      case TimePeriod.thisWeek:
+        return Strings.thisWeek;
+      case TimePeriod.thisMonth:
+        return Strings.thisMonth;
+      case TimePeriod.lastWeek:
+        return Strings.lastWeek;
+      case TimePeriod.lastMonth:
+        return Strings.lastMonth;
+      case TimePeriod.last7Days:
+        return Strings.last7Days;
+      case TimePeriod.last30Days:
+        return Strings.last30Days;
+      case TimePeriod.custom:
+        return Strings.custom;
+    }
+  }
 }
 
 class TimeRange extends Equatable {
@@ -68,17 +95,23 @@ class TimeRange extends Equatable {
   }
 
   String get displayPeriod {
-    return period?.toWords().capitalize(true) ?? displayDate;
+    switch (period) {
+      case TimePeriod.today:
+      case TimePeriod.yesterday:
+        return '${period?.title}, $displayDate';
+      default:
+        return '${period?.title} (${displayDate.split(',').first})';
+    }
   }
 
   String get abbrPeriod {
-    if (period != null) {
-      return period.toWords().capitalize(true);
+    switch (period) {
+      case TimePeriod.today:
+      case TimePeriod.yesterday:
+        return '${period?.title}, $abbrDate';
+      default:
+        return '${period?.title} (${abbrDate.split(',').first})';
     }
-    if (this == TimeRange.today()) {
-      return Strings.today;
-    }
-    return abbrDate;
   }
 
   bool get isValid => start <= end;
@@ -121,6 +154,16 @@ class TimeRange extends Equatable {
     return TimeRange(
       start: today,
       end: today,
+      period: TimePeriod.today,
+    );
+  }
+
+  factory TimeRange.yesterday() {
+    final yesterday = Time.yesterday();
+    return TimeRange(
+      start: yesterday,
+      end: yesterday,
+      period: TimePeriod.yesterday,
     );
   }
 
@@ -180,5 +223,5 @@ class TimePeriodWrapper implements Selectable {
   List<String?> get searchable => [title];
 
   @override
-  String? get title => period.toWords().capitalize(true);
+  String? get title => period.title;
 }

@@ -204,7 +204,7 @@ class SpannableText {
     final standard = '\$';
     String? _text = text;
     for (final identifier in identifiers) {
-      _text = _text!.replaceAll(identifier, standard);
+      _text = _text?.replaceAll(identifier, standard);
     }
     final clean = _text?.replaceAll(standard, '');
     final buffer = StringBuffer();
