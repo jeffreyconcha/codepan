@@ -72,7 +72,7 @@ class CacheManager<K, V> {
 
   bool contains(K key) => _map.containsKey(key);
 
-  V? getCached(K key) {
+  V getCached(K key) {
     final data = _map[key];
     if (data != null) {
       return data;
