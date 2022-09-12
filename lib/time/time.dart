@@ -229,15 +229,13 @@ class Time extends Equatable {
   }
 
   Time toFirstDayOfThisWeek() {
-    late Time time;
     for (final d in range(0, 6)) {
       final date = this.subtract(Duration(days: d));
       if (date.abbrWeekday.toLowerCase() == 'mon') {
-        time = date;
-        break;
+        return date;
       }
     }
-    return time;
+    return this;
   }
 
   Time toFirstDayOfThisMonth() {
