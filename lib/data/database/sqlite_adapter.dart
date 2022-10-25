@@ -1,12 +1,17 @@
 import 'dart:async';
+import 'dart:ffi';
+import 'dart:io';
 
 import 'package:codepan/data/database/schema.dart';
 import 'package:codepan/data/database/sqlite_binder.dart';
 import 'package:codepan/data/database/sqlite_exception.dart';
 import 'package:codepan/data/database/sqlite_query.dart';
 import 'package:codepan/data/database/sqlite_statement.dart';
+import 'package:flutter/foundation.dart';
 import 'package:path/path.dart';
+import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:sqflite_sqlcipher/sqflite.dart';
+import 'package:sqlite3/open.dart';
 
 typedef OnDatabaseCreate = FutureOr<void> Function(
   SqliteAdapter db,
@@ -19,14 +24,16 @@ typedef OnDatabaseVersionChange = FutureOr<void> Function(
 );
 
 class SqliteAdapter implements DatabaseExecutor {
+  late final String _path;
   final OnDatabaseVersionChange? onDowngrade;
   final OnDatabaseVersionChange? onUpgrade;
   final OnDatabaseCreate? onCreate;
   final DatabaseSchema schema;
-  late final String _path;
-  final String? password;
+  final String? libraryPath;
+  final String password;
   final String name;
   final int version;
+  DatabaseFactory? _factory;
   SqliteBinder? _binder;
   Database? _db;
 
@@ -47,11 +54,16 @@ class SqliteAdapter implements DatabaseExecutor {
     required this.name,
     required this.version,
     required this.schema,
-    this.password,
+    required this.password,
+    this.libraryPath,
     this.onCreate,
     this.onUpgrade,
     this.onDowngrade,
-  });
+  }) {
+    if (Platform.isWindows || Platform.isMacOS) {
+      _factory = createDatabaseFactoryFfi(ffiInit: _ffiInit);
+    }
+  }
 
   /// Always use await when opening a database
   Future<void> openConnection() async {
@@ -60,10 +72,7 @@ class SqliteAdapter implements DatabaseExecutor {
       bool isUpgraded = false;
       bool isDowngraded = false;
       int _oldVersion = 0;
-      final directory = await getDatabasesPath();
-      this._path = join(directory, name);
-      this._db = await openDatabase(
-        _path,
+      this._db = await _openDatabase(
         version: version,
         password: password,
         onCreate: (db, version) async {
@@ -87,7 +96,55 @@ class SqliteAdapter implements DatabaseExecutor {
       if (isDowngraded) {
         await onDowngrade?.call(this, _oldVersion, version);
       }
+      debugPrint('Database Path: $_path');
     }
+  }
+
+  Future<Database> _openDatabase({
+    required String password,
+    required int version,
+    required OnDatabaseCreateFn onCreate,
+    required OnDatabaseVersionChangeFn onUpgrade,
+    required OnDatabaseVersionChangeFn onDowngrade,
+  }) async {
+    if (_factory != null) {
+      // For desktop apps (Windows/MacOS)
+      return await _factory!.openDatabase(
+        _path = '${Directory.current.path}/$name',
+        options: OpenDatabaseOptions(
+          version: version,
+          onConfigure: (db) async {
+            await db.rawQuery("PRAGMA KEY = '$password'");
+          },
+          onCreate: onCreate,
+          onUpgrade: onUpgrade,
+          onDowngrade: onDowngrade,
+        ),
+      );
+    } else {
+      // For mobile apps (Android/iOS)
+      final directory = await getDatabasesPath();
+      debugPrint('Database Path: $path');
+      return await openDatabase(
+        _path = join(directory, name),
+        version: version,
+        password: password,
+        onCreate: onCreate,
+        onUpgrade: onUpgrade,
+        onDowngrade: onDowngrade,
+      );
+    }
+  }
+
+  void _ffiInit() {
+    open.overrideFor(OperatingSystem.windows, () {
+      if (libraryPath != null) {
+        return DynamicLibrary.open(libraryPath!);
+      }
+      throw SqliteException(
+        'Please provide the path for the compiled sqlite3.dll file.',
+      );
+    });
   }
 
   Future<List<Map<String, dynamic>>> read(String sql) {

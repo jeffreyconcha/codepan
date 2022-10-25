@@ -9,12 +9,14 @@ class SqliteCache {
     required String password,
     required int version,
     required DatabaseInitializer initializer,
+    String? libraryPath,
   }) async {
     if (!cache.containsKey(name)) {
       final db = SqliteAdapter(
           name: name,
           password: password,
           version: version,
+          libraryPath: libraryPath,
           schema: initializer.schema,
           onCreate: (db, version) async {
             await initializer.onCreate(db, version);
