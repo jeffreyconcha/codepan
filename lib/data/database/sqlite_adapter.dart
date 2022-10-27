@@ -317,4 +317,30 @@ class SqliteAdapter implements DatabaseExecutor {
         whereArgs: whereArgs,
         conflictAlgorithm: conflictAlgorithm);
   }
+
+  @override
+  Future<QueryCursor> queryCursor(
+    String table, {
+    bool? distinct,
+    List<String>? columns,
+    String? where,
+    List<Object?>? whereArgs,
+    String? groupBy,
+    String? having,
+    String? orderBy,
+    int? limit,
+    int? offset,
+    int? bufferSize,
+  }) {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<QueryCursor> rawQueryCursor(
+    String sql,
+    List<Object?>? arguments, {
+    int? bufferSize,
+  }) {
+    throw UnimplementedError();
+  }
 }

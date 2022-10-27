@@ -8,7 +8,7 @@ import 'package:codepan/extensions/num.dart';
 import 'package:codepan/resources/colors.dart';
 import 'package:codepan/time/time.dart';
 import 'package:codepan/time/time_range.dart';
-import 'package:connectivity/connectivity.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/material.dart' as dp;
 import 'package:geocoding/geocoding.dart';

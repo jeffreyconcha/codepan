@@ -13,10 +13,12 @@ enum Constraint {
   timeFormatted,
   notNull,
 }
-enum Function {
+
+enum SqliteFunction {
   count,
   sum,
 }
+
 enum DataType {
   integer,
   text,
@@ -27,7 +29,7 @@ enum DataType {
 class Field extends SqliteModel {
   bool? _collate, _inUniqueGroup, _withDateTrigger, _withTimeTrigger, _isIndex;
   List<Constraint>? _constraintList;
-  Function? _function;
+  SqliteFunction? _function;
   DataType? _type;
   dynamic _value;
   Table? _reference;
@@ -209,17 +211,17 @@ class Field extends SqliteModel {
 
   Field.function(
     String field, {
-    required Function function,
+    required SqliteFunction function,
   }) : super(field) {
     this._function = function;
   }
 
   Field.countOf(String field) : super(field) {
-    this._function = Function.count;
+    this._function = SqliteFunction.count;
   }
 
   Field.sumOf(String field) : super(field) {
-    this._function = Function.sum;
+    this._function = SqliteFunction.sum;
   }
 
   /// Short for "<b>Unique Group</b>" <br/>
@@ -255,7 +257,8 @@ class Field extends SqliteModel {
               buffer.write(' DEFAULT $defaultValue');
               break;
             case Constraint.dateFormatted:
-              buffer.write(' CHECK ($field IS DATE($field) OR $field = \'0000-00-00\')');
+              buffer.write(
+                  ' CHECK ($field IS DATE($field) OR $field = \'0000-00-00\')');
               break;
             case Constraint.timeFormatted:
               buffer.write(' CHECK ($field IS TIME($field))');
@@ -277,10 +280,10 @@ class Field extends SqliteModel {
         buffer.write(' $direction');
       } else if (isFunction) {
         switch (_function) {
-          case Function.count:
+          case SqliteFunction.count:
             buffer.write('COUNT($field)');
             break;
-          case Function.sum:
+          case SqliteFunction.sum:
             buffer.write('SUM($field)');
             break;
           default:
