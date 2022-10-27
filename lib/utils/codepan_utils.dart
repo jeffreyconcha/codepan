@@ -96,8 +96,14 @@ class PanUtils {
 
   static Future<bool> hasInternet() async {
     final result = await Connectivity().checkConnectivity();
-    return result == ConnectivityResult.wifi ||
-        result == ConnectivityResult.mobile;
+    switch(result) {
+      case ConnectivityResult.wifi:
+      case ConnectivityResult.mobile:
+      case ConnectivityResult.ethernet:
+        return true;
+      default:
+        return false;
+    }
   }
 
   static bool isValidUrl(String url) {
