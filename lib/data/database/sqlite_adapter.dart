@@ -33,7 +33,6 @@ class SqliteAdapter implements DatabaseExecutor {
   final String password;
   final String name;
   final int version;
-  DatabaseFactory? _factory;
   SqliteBinder? _binder;
   Database? _db;
 
@@ -59,11 +58,7 @@ class SqliteAdapter implements DatabaseExecutor {
     this.onCreate,
     this.onUpgrade,
     this.onDowngrade,
-  }) {
-    if (Platform.isWindows || Platform.isMacOS) {
-      _factory = createDatabaseFactoryFfi(ffiInit: _ffiInit);
-    }
-  }
+  });
 
   /// Always use await when opening a database
   Future<void> openConnection() async {
@@ -107,9 +102,9 @@ class SqliteAdapter implements DatabaseExecutor {
     required OnDatabaseVersionChangeFn onUpgrade,
     required OnDatabaseVersionChangeFn onDowngrade,
   }) async {
-    if (_factory != null) {
-      // For desktop apps (Windows/MacOS)
-      return await _factory!.openDatabase(
+    if (Platform.isWindows || Platform.isMacOS) {
+      final factory = createDatabaseFactoryFfi(ffiInit: _ffiInit);
+      return await factory!.openDatabase(
         _path = '${Directory.current.path}/$name',
         options: OpenDatabaseOptions(
           version: version,
@@ -122,9 +117,7 @@ class SqliteAdapter implements DatabaseExecutor {
         ),
       );
     } else {
-      // For mobile apps (Android/iOS)
       final directory = await getDatabasesPath();
-      debugPrint('Database Path: $path');
       return await openDatabase(
         _path = join(directory, name),
         version: version,
