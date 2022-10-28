@@ -76,6 +76,7 @@ class _ReorderableAnimatedListState<T>
     return ReorderableListView(
       padding: widget.padding,
       scrollController: widget.scrollController,
+      buildDefaultDragHandles: false,
       children: _children = widget.items.unevenTransform<Widget>((item, index) {
         final list = <Widget>[];
         if (widget.isHeader?.call(item) ?? false) {

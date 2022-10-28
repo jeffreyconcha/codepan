@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:app_settings/app_settings.dart';
 import 'package:codepan/extensions/context.dart';
 import 'package:codepan/extensions/string.dart';
@@ -56,8 +58,12 @@ abstract class PermissionState<T extends StatefulWidget>
     for (final permission in permissions) {
       if (request) {
         try {
-          final status = await permission.request();
-          _isGranted = status.isGranted;
+          if (Platform.isAndroid || Platform.isIOS) {
+            final status = await permission.request();
+            _isGranted = status.isGranted;
+          } else {
+            _isGranted = true;
+          }
         } on PlatformException catch (error) {
           debugPrint(error.toString());
         }
