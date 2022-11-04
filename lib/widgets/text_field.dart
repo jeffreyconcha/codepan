@@ -27,6 +27,7 @@ class PanTextField extends StatefulWidget {
       enableInteractiveSelection,
       isPassword,
       showCursor,
+      expands,
       enabled;
   final List<TextInputFormatter>? inputFormatters;
   final ValueChanged<String>? onFieldSubmitted;
@@ -96,6 +97,7 @@ class PanTextField extends StatefulWidget {
     this.textCapitalization = TextCapitalization.none,
     this.textInputAction = TextInputAction.done,
     this.width,
+    this.expands = false,
   }) : super(key: key);
 
   @override
@@ -169,7 +171,7 @@ class _PanTextFieldState extends State<PanTextField> {
       ),
       child: Focus(
         child: TextFormField(
-          expands: true,
+          expands: widget.expands,
           autofocus: widget.autofocus,
           initialValue: widget.text,
           enabled: widget.enabled,
