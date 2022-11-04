@@ -169,6 +169,7 @@ class _PanTextFieldState extends State<PanTextField> {
       ),
       child: Focus(
         child: TextFormField(
+          expands: true,
           autofocus: widget.autofocus,
           initialValue: widget.text,
           enabled: widget.enabled,
