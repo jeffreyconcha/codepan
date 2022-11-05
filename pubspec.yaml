@@ -9,45 +9,47 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  connectivity_plus:
   app_settings: ^4.1.0
   audioplayers: ^0.20.1
   cached_network_image: ^3.2.0
-  equatable: ^2.0.0
+  camera: ^0.9.4+5
+  connectivity_plus:
+  cryptography: ^2.0.5
+  equatable: ^2.0.3
   exif: ^3.0.0
-  flutter_bloc: ^7.3.1
+  flutter_animation_progress_bar: ^2.0.0
+  flutter_bloc: ^7.3.3
+  flutter_map: ^0.14.0
+  flutter_map_marker_cluster: ^0.4.4
   flutter_native_image: ^0.0.6
   flutter_svg: ^1.0.1
+  geocoding: ^2.0.2
+  geolocator: ^8.2.1
+  google_maps_flutter: ^2.1.1
   html_unescape: ^2.0.0
   image: ^3.0.2
   inflection3: ^0.5.3+2
   intl: ^0.17.0
+  location: ^4.3.0
   path_provider: ^2.0.1
   permission_handler: ^10.2.0
   pull_to_refresh: ^2.0.0
-  sqflite_sqlcipher: ^2.1.1
-  sqflite_common_ffi: ^2.2.0+1
-  time_ago_provider: ^4.0.0
-  video_player: ^2.1.1
-  visibility_detector: ^0.2.0
-  flutter_animation_progress_bar: ^2.0.0
-  system_clock: ^1.2.0
-  camera: ^0.9.4+5
-  geocoding: ^2.0.2
-  geolocator: ^8.1.1
-  location: ^4.3.0
-  google_maps_flutter: ^2.1.1
   shared_preferences: ^2.0.13
   shimmer: ^2.0.0
-  flutter_map: ^0.14.0
-  flutter_map_marker_cluster: ^0.4.4
-  uuid: ^3.0.6
-  cryptography: ^2.0.5
+  sqflite_common_ffi: ^2.2.0+1
+  sqflite_sqlcipher: ^2.1.1
+  system_clock: ^1.2.0
+  time_ago_provider: ^4.0.0
   url_launcher: ^6.1.4
+  uuid: ^3.0.6
+  video_player: ^2.1.1
+  visibility_detector: ^0.2.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
+
+  flutter_lints: ^2.0.0
 
   # For information on the generic Dart part of this file, see the
   # following page: https://dart.dev/tools/pub/pubspec
