@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'dart:typed_data';
 import 'dart:ui';
 
 import 'package:codepan/extensions/double.dart';
@@ -51,9 +50,9 @@ class StoredNetworkImage extends ImageProvider<StoredNetworkImage> {
   }
 
   @override
-  ImageStreamCompleter load(
+  ImageStreamCompleter loadBuffer(
     StoredNetworkImage key,
-    DecoderCallback decode,
+    DecoderBufferCallback decode,
   ) {
     return MultiFrameImageStreamCompleter(
       codec: _loadAsync(key, decode),
@@ -123,17 +122,17 @@ class StoredNetworkImage extends ImageProvider<StoredNetworkImage> {
 
   Future<Codec> _loadAsync(
     StoredNetworkImage key,
-    DecoderCallback decode,
+    DecoderBufferCallback decode,
   ) async {
     assert(key == this);
     final data = await getImageData();
     if (data.isEmpty) {
-      PaintingBinding.instance!.imageCache!.evict(key);
+      PaintingBinding.instance.imageCache.evict(key);
       throw StateError(
         '${key.imageUrl} cannot be loaded as an image.',
       );
     }
-    return decode(data);
+    return decode(await ImmutableBuffer.fromUint8List(data));
   }
 
   @override

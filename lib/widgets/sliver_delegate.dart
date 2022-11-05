@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 
 class SliverTabBarDelegate extends SliverPersistentHeaderDelegate {
   final double? height, elevation;

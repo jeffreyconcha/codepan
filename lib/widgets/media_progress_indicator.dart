@@ -129,7 +129,6 @@ class MediaProgressIndicator extends StatelessWidget {
 }
 
 class TrackShape extends RectangularSliderTrackShape {
-  @override
   double get disabledThumbGapWidth => 0;
 
   @override

@@ -5,7 +5,6 @@ import 'package:codepan/widgets/line_divider.dart';
 import 'package:codepan/widgets/text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/widgets.dart';
 
 class PanTextField extends StatefulWidget {
   final Color? borderColor,

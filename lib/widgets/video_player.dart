@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:codepan/extensions/extensions.dart';
 import 'package:codepan/media/media.dart';
 import 'package:codepan/resources/dimensions.dart';
 import 'package:codepan/resources/strings.dart';
@@ -358,7 +359,7 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
       _enterFullScreen();
     } else {
       _exitFullScreen();
-      Navigator.of(context).pop();
+      context.pop();
     }
     _autoHideController();
   }
@@ -368,7 +369,7 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
       DeviceOrientation.landscapeLeft,
       DeviceOrientation.landscapeRight,
     ]);
-    await SystemChrome.setEnabledSystemUIOverlays([]);
+    await SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual);
     Navigator.of(context).push(
       FadeRoute(
         enter: WillPopScope(
@@ -395,8 +396,9 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
       DeviceOrientation.portraitUp,
       DeviceOrientation.portraitDown,
     ]);
-    await SystemChrome.setEnabledSystemUIOverlays(
-      SystemUiOverlay.values,
+    await SystemChrome.setEnabledSystemUIMode(
+      SystemUiMode.manual,
+      overlays: SystemUiOverlay.values,
     );
     _orientationChanged = true;
   }

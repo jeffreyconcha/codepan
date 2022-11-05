@@ -29,7 +29,6 @@ class HeaderBody extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final d = Dimension.of(context);
-    final t = Theme.of(context);
     final height = headerHeight ?? d.at(60);
     return Stack(
       children: [
