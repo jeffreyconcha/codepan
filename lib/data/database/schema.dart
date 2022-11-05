@@ -2,7 +2,15 @@ import 'package:codepan/data/database/models/field.dart';
 import 'package:codepan/data/database/models/table.dart';
 import 'package:codepan/extensions/extensions.dart';
 
-abstract class DatabaseSchema<T> {
+abstract class Entity {
+  String get dbName;
+
+  int get version;
+
+  int get count;
+}
+
+abstract class DatabaseSchema<T extends Entity> {
   static const String tableSuffix = '_tb';
   static const String indexSuffix = '_idx';
   static const String triggerSuffix = '_trg';
@@ -87,15 +95,15 @@ abstract class DatabaseSchema<T> {
 
   Table at(T entity) => Table(tableName(entity), entity);
 
-  TableSchema of(T? entity) {
-    return TableSchema<T?>(this, entity);
+  TableSchema of(T entity) {
+    return TableSchema<T>(this, entity);
   }
 
   String _name(T entity, String suffix) =>
       '${entity.enumValue.toSnake()}$suffix';
 }
 
-class TableSchema<T> {
+class TableSchema<T extends Entity> {
   final DatabaseSchema databaseSchema;
   final T entity;
 
