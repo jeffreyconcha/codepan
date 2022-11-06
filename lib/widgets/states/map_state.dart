@@ -116,12 +116,9 @@ abstract class MapState<T extends StatefulWidget> extends State<T>
 
 class _CenterZoomTween extends Tween<CenterZoom> {
   _CenterZoomTween({
-    required CenterZoom begin,
-    required CenterZoom end,
-  }) : super(
-          begin: begin,
-          end: end,
-        );
+    required super.begin,
+    required super.end,
+  });
 
   @override
   CenterZoom lerp(double value) {

@@ -19,7 +19,7 @@ class SqliteException extends DatabaseException {
       'Invalid table type, table can only be a type of String, Table or TableSchema.';
   static const String noFieldsInQuery = 'No fields found in query.';
 
-  SqliteException(String message) : super(message);
+  SqliteException(super.message);
 
   @override
   noSuchMethod(Invocation invocation) {

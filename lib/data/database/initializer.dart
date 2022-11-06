@@ -47,20 +47,17 @@ abstract class DatabaseInitializer {
 
 class DefaultDatabaseInitializer extends DatabaseInitializer {
   DefaultDatabaseInitializer(
-    DatabaseSchema schema, {
-    DatabaseCreateNotifier? createNotifier,
-    DatabaseUpdateNotifier? updateNotifier,
-  }) : super(
-          schema,
-          createNotifier: createNotifier,
-          updateNotifier: updateNotifier,
-        );
+    super.schema, {
+    super.createNotifier,
+    super.updateNotifier,
+  });
 
   @override
   Future<void> onCreate(SqliteAdapter db, int version) async {
     final binder = SqliteBinder.of(db);
     try {
       await binder.transact<bool>(
+        showLog: true,
         body: (binder) async {
           await _createTables(binder);
           await _createIndices(binder);

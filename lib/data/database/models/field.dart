@@ -94,7 +94,7 @@ class Field extends SqliteModel {
     dynamic value,
     bool? collate,
     bool? isIndex,
-    bool? isUniqueGroup,
+    bool? inUniqueGroup,
     bool? withDateTrigger,
     bool? withTimeTrigger,
     SqliteFunction? function,
@@ -109,7 +109,7 @@ class Field extends SqliteModel {
       value: value ?? this.value,
       collate: collate ?? this.collate,
       isIndex: isIndex ?? this.isIndex,
-      inUniqueGroup: isUniqueGroup ?? this.inUniqueGroup,
+      inUniqueGroup: inUniqueGroup ?? this.inUniqueGroup,
       withDateTrigger: withDateTrigger ?? this.withDateTrigger,
       withTimeTrigger: withTimeTrigger ?? this.withTimeTrigger,
       function: function ?? this.function,
@@ -231,9 +231,9 @@ class Field extends SqliteModel {
   /// Will only be applied to a non-unique constraint.<br/><br/>
   /// <b>Note:</b> If you added a column to an existing table with this constraint, it is advisable to recreate the table instead.
   Field ug() {
-    if (constraints?.contains(Constraint.unique) ?? false) {
+    if (!(constraints?.contains(Constraint.unique) ?? false)) {
       return this.copyWith(
-        isUniqueGroup: true,
+        inUniqueGroup: true,
       );
     }
     return this;
