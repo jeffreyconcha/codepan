@@ -36,7 +36,7 @@ class ReorderableAnimatedList<T> extends StatefulWidget {
   final List<T> items;
 
   const ReorderableAnimatedList({
-    Key? key,
+    super.key,
     required this.itemController,
     required this.itemBuilder,
     required this.items,
@@ -47,7 +47,7 @@ class ReorderableAnimatedList<T> extends StatefulWidget {
     this.headerBuilder,
     this.isHeader,
     this.padding,
-  }) : super(key: key);
+  });
 
   @override
   State<ReorderableAnimatedList<T>> createState() =>
@@ -138,7 +138,7 @@ class AnimatedListItem<T> extends StatefulWidget {
   final T item;
 
   const AnimatedListItem({
-    Key? key,
+    super.key,
     required this.child,
     required this.index,
     required this.itemController,
@@ -146,7 +146,7 @@ class AnimatedListItem<T> extends StatefulWidget {
     this.visibility = Visibility.visible,
     this.onRemoveItem,
     this.onAddItem,
-  }) : super(key: key);
+  });
 
   @override
   State<AnimatedListItem<T>> createState() => _AnimatedListItemState<T>();

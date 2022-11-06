@@ -21,7 +21,7 @@ class InformationDialog extends StatefulWidget {
   final Widget? child;
 
   const InformationDialog({
-    Key? key,
+    super.key,
     this.child,
     this.children,
     this.controller,
@@ -38,7 +38,7 @@ class InformationDialog extends StatefulWidget {
     this.fontColor = PanColors.text,
     this.margin,
     this.autoDismiss = true,
-  }) : super(key: key);
+  });
 
   @override
   _InformationDialogState createState() => _InformationDialogState();

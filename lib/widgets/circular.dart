@@ -8,14 +8,14 @@ class Circular extends StatelessWidget {
   final Border? border;
 
   const Circular({
-    Key? key,
+    super.key,
     this.child,
     this.color,
     this.diameter,
     this.margin,
     this.padding,
     this.border,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

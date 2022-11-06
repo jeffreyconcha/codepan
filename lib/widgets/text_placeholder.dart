@@ -10,7 +10,7 @@ class TextPlaceholder extends StatefulWidget {
   final Color color;
 
   const TextPlaceholder({
-    Key? key,
+    super.key,
     required this.noOfLines,
     this.noOfParagraph = 1,
     this.withTitle = true,
@@ -18,7 +18,7 @@ class TextPlaceholder extends StatefulWidget {
     this.titleHeight,
     this.lineHeight,
     this.color = PanColors.grey1,
-  }) : super(key: key);
+  });
 
   @override
   _TextPlaceholderState createState() => _TextPlaceholderState();

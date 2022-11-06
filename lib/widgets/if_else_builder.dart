@@ -12,7 +12,7 @@ class IfElseBuilder extends StatelessWidget {
   final Color? color;
 
   const IfElseBuilder({
-    Key? key,
+    super.key,
     this.ifChild,
     this.elseChild,
     this.ifBuilder,
@@ -26,7 +26,7 @@ class IfElseBuilder extends StatelessWidget {
     this.alignment,
     this.decoration,
     this.constraints,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

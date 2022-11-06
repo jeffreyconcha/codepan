@@ -15,7 +15,7 @@ class LinearProgressBar extends StatelessWidget {
   final int? progress, max;
 
   const LinearProgressBar({
-    Key? key,
+    super.key,
     required this.progress,
     required this.max,
     this.width,
@@ -27,7 +27,7 @@ class LinearProgressBar extends StatelessWidget {
     this.progressColor,
     this.margin,
     this.padding,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

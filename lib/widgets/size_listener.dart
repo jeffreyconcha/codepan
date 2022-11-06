@@ -25,13 +25,10 @@ class SizeListener extends SingleChildRenderObjectWidget {
   final OnWidgetSizeChange onSizeChange;
 
   const SizeListener({
-    Key? key,
+    super.key,
+    required super.child,
     required this.onSizeChange,
-    required Widget child,
-  }) : super(
-          key: key,
-          child: child,
-        );
+  });
 
   @override
   RenderObject createRenderObject(BuildContext context) {

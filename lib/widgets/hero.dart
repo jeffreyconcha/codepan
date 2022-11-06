@@ -10,7 +10,7 @@ class PanHero extends StatelessWidget {
   final Widget child;
 
   const PanHero({
-    Key? key,
+    super.key,
     required this.child,
     required this.tag,
     this.tween,
@@ -18,7 +18,7 @@ class PanHero extends StatelessWidget {
     this.flightShuttleBuilder,
     this.placeholderBuilder,
     this.transitionOnUserGestures = false,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

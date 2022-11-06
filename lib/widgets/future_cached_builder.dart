@@ -13,12 +13,12 @@ class FutureCachedBuilder<K, V> extends StatefulWidget {
   final K? id;
 
   const FutureCachedBuilder({
-    Key? key,
+    super.key,
     required this.builder,
     required this.manager,
     required this.id,
     this.placeholder,
-  }) : super(key: key);
+  });
 
   @override
   State<FutureCachedBuilder<K, V>> createState() => _FutureCachedBuilderState<K, V>();

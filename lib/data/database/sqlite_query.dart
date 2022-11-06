@@ -56,7 +56,7 @@ class SqliteQuery with QueryProperties {
   bool get hasLimit => _limit != null && _limit != 0;
 
   /// select - Can only be a list of String or Field.
-  /// table - Can only be a type of String, Table or TableSchema.
+  /// table - Can only be a type of Table or TableSchema.
   /// orderBy - Can only be a list of String or Field.
   /// groupBy - Can only be a list of String or Field.
   SqliteQuery({
@@ -123,12 +123,13 @@ class SqliteQuery with QueryProperties {
     });
   }
 
-  void _addOrder(Field f, {tb.Table? table}) {
-    if (!f.hasAlias) {
-      f.setTable(table);
-    }
+  void _addOrder(
+    Field f, {
+    tb.Table? table,
+  }) {
+    final field = !f.hasAlias ? f.copyWith(table: table) : f;
     _orderList ??= [];
-    _orderList!.add(f);
+    _orderList!.add(field);
   }
 
   void _addGroups(List<dynamic>? input, {tb.Table? table}) {
@@ -136,16 +137,22 @@ class SqliteQuery with QueryProperties {
       if (field is Field) {
         _addGroup(field, table: table);
       } else if (field is String) {
-        final f = Field(field);
+        final f = Field(
+          field: field,
+        );
         _addGroup(f, table: table);
       }
     });
   }
 
-  void _addGroup(Field f, {tb.Table? table}) {
-    f.setTable(table);
+  void _addGroup(
+    Field f, {
+    tb.Table? table,
+  }) {
     _groupList ??= [];
-    _groupList!.add(f);
+    _groupList!.add(f.copyWith(
+      table: table,
+    ));
   }
 
   void _setJoinType(JoinType type) {
@@ -221,10 +228,10 @@ class SqliteQuery with QueryProperties {
       _recursive?.useJoin();
       final localTable = table ?? this._table;
       if (schema != null) {
-        final all = schema!.databaseSchema;
+        final all = schema!.dbSchema;
         for (final field in foreignKeys) {
           final foreignTable = field.reference!;
-          final schema = all.of(foreignTable.entity);
+          final schema = all.of(foreignTable.entity!);
           join(
             query: SqliteQuery(
               select: option == JoinOption.all ? schema.fields : [],

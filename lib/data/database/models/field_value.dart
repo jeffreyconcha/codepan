@@ -46,5 +46,9 @@ class FieldValue extends SqliteModel {
     return null;
   }
 
-  FieldValue(String _field, this._value) : super(_field);
+  const FieldValue(
+    String field,
+    dynamic value,
+  )   : _value = value,
+        super(field: field);
 }

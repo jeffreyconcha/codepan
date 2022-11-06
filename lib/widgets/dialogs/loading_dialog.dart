@@ -16,14 +16,14 @@ class LoadingDialog extends StatelessWidget {
   final double? height;
 
   const LoadingDialog({
-    Key? key,
+    super.key,
     this.message = Strings.loading,
     this.width,
     this.height,
     this.dismissible = true,
     this.fontColor = PanColors.text,
     this.indicator,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

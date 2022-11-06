@@ -12,7 +12,8 @@ mixin QueryProperties {
 
   bool get hasFields => _fieldList != null && fieldList!.isNotEmpty;
 
-  bool get hasConditions => _conditionList != null && _conditionList!.isNotEmpty;
+  bool get hasConditions =>
+      _conditionList != null && _conditionList!.isNotEmpty;
 
   void clearFieldList() {
     if (hasFields) _fieldList!.clear();
@@ -67,9 +68,10 @@ mixin QueryProperties {
     Field f, {
     Table? table,
   }) {
-    f.setTable(table);
     _fieldList ??= [];
-    _fieldList!.add(f);
+    _fieldList!.add(f.copyWith(
+      table: table,
+    ));
   }
 
   void addFields(
@@ -80,7 +82,7 @@ mixin QueryProperties {
       if (field is Field) {
         addField(field, table: table);
       } else if (field is String) {
-        final f = Field(field);
+        final f = Field(field: field);
         addField(f, table: table);
       }
     });
@@ -91,11 +93,9 @@ mixin QueryProperties {
     Table? table,
   }) {
     if (c.isValid) {
-      if (!c.field.contains('.')) {
-        c.setTable(table);
-      }
+      final condition = !c.field.contains('.') ? c.copyWith(table: table) : c;
       _conditionList ??= [];
-      _conditionList!.add(c);
+      _conditionList!.add(condition);
     } else if (c.hasOrList) {
       _conditionList ??= [];
       _conditionList!.add(c);

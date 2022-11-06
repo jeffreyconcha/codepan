@@ -8,12 +8,12 @@ class LoadingPlaceholder extends StatelessWidget {
   final Widget child;
 
   const LoadingPlaceholder({
-    Key? key,
+    super.key,
     required this.child,
     this.isLoading = true,
     this.baseColor = PanColors.grey4,
     this.highlightColor = PanColors.grey2,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

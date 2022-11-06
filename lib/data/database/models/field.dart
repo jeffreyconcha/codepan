@@ -4,6 +4,18 @@ import 'package:codepan/data/database/sqlite_query.dart';
 import 'package:codepan/data/database/sqlite_statement.dart';
 import 'package:codepan/extensions/dynamic.dart';
 
+DataType _getDataType(dynamic value) {
+  if (value is int || value is bool) {
+    return DataType.integer;
+  } else if (value is double) {
+    return DataType.real;
+  } else if (value is String) {
+    return DataType.text;
+  } else {
+    return DataType.blob;
+  }
+}
+
 enum Constraint {
   primaryKey,
   foreignKey,
@@ -27,201 +39,189 @@ enum DataType {
 }
 
 class Field extends SqliteModel {
-  bool? _collate, _inUniqueGroup, _withDateTrigger, _withTimeTrigger, _isIndex;
-  List<Constraint>? _constraintList;
-  SqliteFunction? _function;
-  DataType? _type;
-  dynamic _value;
-  Table? _reference;
-  Order? _order;
+  final bool collate, isIndex, inUniqueGroup, withDateTrigger, withTimeTrigger;
+  final List<Constraint>? constraints;
+  final SqliteFunction? function;
+  final Table? reference;
+  final DataType? type;
+  final Order? order;
+  final dynamic value;
 
-  dynamic get value => _value;
+  bool get isForeignKey {
+    return constraints?.contains(Constraint.foreignKey) ?? false;
+  }
 
-  DataType? get type => _type;
+  bool get isUnique {
+    return constraints?.contains(Constraint.unique) ?? false;
+  }
 
-  Table? get reference => _reference;
-
-  Order? get order => _order;
-
-  bool get inUniqueGroup => _inUniqueGroup ?? false;
-
-  bool get isFunction => _function != null;
-
-  bool? get collate => _collate;
-
-  bool get hasConstraints => _constraintList?.isNotEmpty ?? false;
-
-  bool get hasDataType => _type != null;
-
-  bool get isOrder => _order != null;
-
-  bool get withDateTrigger => _withDateTrigger ?? false;
-
-  bool get withTimeTrigger => _withTimeTrigger ?? false;
-
-  bool get isIndex => _isIndex ?? false;
-
-  bool get isForeignKey => hasConstraint(Constraint.foreignKey);
-
-  bool get isUnique => hasConstraint(Constraint.unique);
-
-  String? get dataType => hasDataType ? _type.toString().split('.').last : null;
+  bool get isFunction => function != null;
 
   String? get defaultValue {
-    if (_value != null) {
-      if (_value is bool) {
-        return _value ? '1' : '0';
+    if (value != null) {
+      if (value is bool) {
+        return value ? '1' : '0';
       } else {
-        return _value.toString();
+        return value.toString();
       }
     }
     return null;
   }
 
-  Field(
-    String _field, {
+  const Field({
+    required super.field,
+    super.table,
+    this.type,
+    this.constraints,
+    this.reference,
+    this.value,
+    this.collate = false,
+    this.isIndex = false,
+    this.inUniqueGroup = false,
+    this.withDateTrigger = false,
+    this.withTimeTrigger = false,
+    this.function,
+    this.order,
+  });
+
+  @override
+  Field copyWith({
+    String? field,
+    Table? table,
     DataType? type,
-    Constraint? constraint,
+    List<Constraint>? constraints,
+    Table? reference,
     dynamic value,
-    bool inUniqueGroup = false,
-    bool withDateTrigger = false,
-    bool withTimeTrigger = false,
-    bool isIndex = false,
-  }) : super(_field) {
-    if (value != null) {
-      _addConstraint(Constraint.defaultField);
-      this._type = _getDataType(value);
-    } else {
-      _addConstraint(constraint);
-      this._type = type;
-    }
-    this._value = value;
-    this._inUniqueGroup = inUniqueGroup;
-    this._withDateTrigger = withDateTrigger;
-    this._withTimeTrigger = withTimeTrigger;
-    this._isIndex = isIndex;
+    bool? collate,
+    bool? isIndex,
+    bool? isUniqueGroup,
+    bool? withDateTrigger,
+    bool? withTimeTrigger,
+    SqliteFunction? function,
+    Order? order,
+  }) {
+    return Field(
+      field: field ?? this.field,
+      table: table ?? this.table,
+      type: type ?? this.type,
+      constraints: constraints ?? this.constraints,
+      reference: reference ?? this.reference,
+      value: value ?? this.value,
+      collate: collate ?? this.collate,
+      isIndex: isIndex ?? this.isIndex,
+      inUniqueGroup: isUniqueGroup ?? this.inUniqueGroup,
+      withDateTrigger: withDateTrigger ?? this.withDateTrigger,
+      withTimeTrigger: withTimeTrigger ?? this.withTimeTrigger,
+      function: function ?? this.function,
+      order: order ?? this.order,
+    );
   }
 
-  Field.column(
-    String field, {
-    required DataType type,
-    bool inUniqueGroup = false,
-  }) : super(field) {
-    this._type = type;
-    this._inUniqueGroup = inUniqueGroup;
+  //Constructor for table creation.
+
+  factory Field.primaryKey([
+    String field = SqliteStatement.id,
+  ]) {
+    return Field(
+      field: field,
+      type: DataType.integer,
+      constraints: [Constraint.primaryKey],
+    );
   }
 
-  Field.primaryKey([String field = SqliteStatement.id]) : super(field) {
-    _addConstraint(Constraint.primaryKey);
-    this._type = DataType.integer;
-  }
-
-  Field.foreignKey(
+  factory Field.foreignKey(
     String field, {
     required Table at,
-    bool inUniqueGroup = false,
-  }) : super(field) {
-    _addConstraint(Constraint.foreignKey);
-    this._type = DataType.integer;
-    this._reference = at;
-    this._inUniqueGroup = inUniqueGroup;
+  }) {
+    return Field(
+      field: field,
+      reference: at,
+      type: DataType.integer,
+      constraints: [Constraint.foreignKey],
+    );
   }
 
-  Field.unique(
+  factory Field.column(
+    String field, {
+    required DataType type,
+  }) {
+    return Field(
+      field: field,
+      type: type,
+    );
+  }
+
+  factory Field.unique(
     String field, {
     DataType type = DataType.integer,
-  }) : super(field) {
-    _addConstraint(Constraint.unique);
-    this._type = type;
+  }) {
+    return Field(
+      field: field,
+      type: type,
+      constraints: [Constraint.unique],
+    );
   }
 
-  Field.defaultValue(
+  factory Field.defaultValue(
     String field, {
     required dynamic value,
-    bool inUniqueGroup = false,
-  }) : super(field) {
-    _addConstraint(Constraint.defaultField);
-    this._type = _getDataType(value);
-    this._inUniqueGroup = inUniqueGroup;
-    this._value = value;
+  }) {
+    return Field(
+      field: field,
+      value: value,
+      constraints: [Constraint.defaultField],
+      type: _getDataType(value),
+    );
   }
 
-  Field.autoDate(String field) : super(field) {
-    _addConstraint(Constraint.dateFormatted);
-    this._type = DataType.text;
-    this._withDateTrigger = true;
+  factory Field.date(String field) {
+    return Field(
+      field: field,
+      type: DataType.text,
+      constraints: [Constraint.dateFormatted],
+    );
   }
 
-  Field.autoTime(String field) : super(field) {
-    _addConstraint(Constraint.timeFormatted);
-    this._type = DataType.text;
-    this._withTimeTrigger = true;
+  factory Field.time(String field) {
+    return Field(
+      field: field,
+      type: DataType.text,
+      constraints: [Constraint.timeFormatted],
+    );
   }
 
-  Field.uniqueDate(String field) : super(field) {
-    _addConstraint(Constraint.unique);
-    _addConstraint(Constraint.dateFormatted);
-    this._type = DataType.text;
+  factory Field.autoDate(String field) {
+    return Field.date(field).copyWith(
+      withDateTrigger: true,
+    );
   }
 
-  Field.uniqueTime(String field) : super(field) {
-    _addConstraint(Constraint.unique);
-    _addConstraint(Constraint.timeFormatted);
-    this._type = DataType.text;
+  factory Field.autoTime(String field) {
+    return Field.time(field).copyWith(
+      withTimeTrigger: true,
+    );
   }
 
-  Field.date(String field) : super(field) {
-    _addConstraint(Constraint.dateFormatted);
-    this._type = DataType.text;
+  factory Field.uniqueDate(String field) {
+    return Field(
+      field: field,
+      type: DataType.text,
+      constraints: [
+        Constraint.dateFormatted,
+        Constraint.unique,
+      ],
+    );
   }
 
-  Field.time(String field) : super(field) {
-    _addConstraint(Constraint.timeFormatted);
-    this._type = DataType.text;
-  }
-
-  /// Shorthand for instantiating foreign keys. <br/><br/>
-  /// Note: Must only be used in queries.
-  Field.reference({
-    required String field,
-    required Table reference,
-  }) : super(field) {
-    _addConstraint(Constraint.foreignKey);
-    this._reference = reference;
-  }
-
-  Field.index(
-    String field, {
-    DataType type = DataType.integer,
-    Constraint? constraint,
-  }) : super(field) {
-    this._type = type;
-    this._isIndex = true;
-    _addConstraint(constraint);
-  }
-
-  Field.order({
-    required String field,
-    Order order = Order.ascending,
-    bool collate = false,
-  }) : super(field) {
-    this._order = order;
-    this._collate = collate;
-  }
-
-  Field.function(
-    String field, {
-    required SqliteFunction function,
-  }) : super(field) {
-    this._function = function;
-  }
-
-  Field.countOf(String field) : super(field) {
-    this._function = SqliteFunction.count;
-  }
-
-  Field.sumOf(String field) : super(field) {
-    this._function = SqliteFunction.sum;
+  factory Field.uniqueTime(String field) {
+    return Field(
+      field: field,
+      type: DataType.text,
+      constraints: [
+        Constraint.timeFormatted,
+        Constraint.unique,
+      ],
+    );
   }
 
   /// Short for "<b>Unique Group</b>" <br/>
@@ -230,18 +230,81 @@ class Field extends SqliteModel {
   /// existing record instead of inserting new record thus eliminating duplicates.<br/>
   /// Will only be applied to a non-unique constraint.<br/><br/>
   /// <b>Note:</b> If you added a column to an existing table with this constraint, it is advisable to recreate the table instead.
-  void ug() {
-    if (!hasConstraints || !_constraintList!.contains(Constraint.unique)) {
-      this._inUniqueGroup = true;
+  Field ug() {
+    if (constraints?.contains(Constraint.unique) ?? false) {
+      return this.copyWith(
+        isUniqueGroup: true,
+      );
     }
+    return this;
+  }
+
+  // Constructors for queries.
+
+  factory Field.reference({
+    required String field,
+    required Table reference,
+  }) {
+    return Field(
+      field: field,
+      reference: reference,
+      constraints: [
+        Constraint.foreignKey,
+      ],
+    );
+  }
+
+  factory Field.order({
+    required String field,
+    Order order = Order.ascending,
+    bool collate = false,
+    Table? table,
+  }) {
+    return Field(
+      field: field,
+      order: order,
+      collate: collate,
+      table: table,
+    );
+  }
+
+  factory Field.function(
+    String field, {
+    required SqliteFunction function,
+  }) {
+    return Field(
+      field: field,
+      function: function,
+    );
+  }
+
+  factory Field.count(String field) {
+    return Field.function(
+      field,
+      function: SqliteFunction.count,
+    );
+  }
+
+  factory Field.sum(String field) {
+    return Field.function(
+      field,
+      function: SqliteFunction.sum,
+    );
+  }
+
+  bool hasConstraint(Constraint constraint) {
+    if (constraints?.isNotEmpty ?? false) {
+      return constraints!.contains(constraint);
+    }
+    return false;
   }
 
   String asString() {
-    final buffer = new StringBuffer();
-    if (hasDataType) {
-      buffer.write('$field $dataType');
-      if (hasConstraints) {
-        for (final constraint in _constraintList!) {
+    final buffer = StringBuffer();
+    if (type != null) {
+      buffer.write('$field ${type.enumValue}');
+      if (constraints?.isNotEmpty ?? false) {
+        for (final constraint in constraints!) {
           switch (constraint) {
             case Constraint.primaryKey:
               buffer.write(' PRIMARY KEY NOT NULL');
@@ -270,16 +333,16 @@ class Field extends SqliteModel {
         }
       }
     } else {
-      if (isOrder) {
+      if (order != null) {
         buffer.write('$field');
-        if (collate!) {
+        if (collate) {
           buffer.write(' COLLATE NOCASE');
         }
         final value = order.enumValue;
         final direction = value.replaceAll('ending', '').toUpperCase();
         buffer.write(' $direction');
-      } else if (isFunction) {
-        switch (_function) {
+      } else if (function != null) {
+        switch (function) {
           case SqliteFunction.count:
             buffer.write('COUNT($field)');
             break;
@@ -292,31 +355,5 @@ class Field extends SqliteModel {
       }
     }
     return buffer.toString();
-  }
-
-  DataType _getDataType(dynamic value) {
-    if (value is int || value is bool) {
-      return DataType.integer;
-    } else if (value is double) {
-      return DataType.real;
-    } else if (value is String) {
-      return DataType.text;
-    } else {
-      return DataType.blob;
-    }
-  }
-
-  bool hasConstraint(Constraint constraint) {
-    if (hasConstraints) {
-      return _constraintList!.contains(constraint);
-    }
-    return false;
-  }
-
-  void _addConstraint(Constraint? constraint) {
-    if (constraint != null) {
-      _constraintList ??= [];
-      _constraintList!.add(constraint);
-    }
   }
 }

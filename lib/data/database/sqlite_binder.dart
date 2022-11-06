@@ -397,7 +397,7 @@ class SqliteBinder {
   }
 
   void createTimeTriggerFromSchema(TableSchema schema) {
-    if(schema.triggers.isNotEmpty) {
+    if (schema.triggers.isNotEmpty) {
       final stmt = SqliteStatement.fromList(schema.triggers);
       final sql = stmt.createTimeTrigger(schema.triggerName, schema.tableName);
       addStatement(sql);
@@ -405,7 +405,7 @@ class SqliteBinder {
   }
 
   void createIndexFromSchema(TableSchema schema) {
-    if(schema.indices.isNotEmpty) {
+    if (schema.indices.isNotEmpty) {
       final stmt = SqliteStatement.fromList(schema.indices);
       final sql = stmt.createIndex(schema.indexName, schema.tableName);
       addStatement(sql);
@@ -443,7 +443,7 @@ class SqliteBinder {
     addStatement(sql);
   }
 
-  void recreateTable(dynamic entity) {
+  void recreateTable<E extends DatabaseEntity>(E entity) {
     final schema = db.schema.of(entity);
     dropTable(schema);
     dropIndex(schema.indexName);

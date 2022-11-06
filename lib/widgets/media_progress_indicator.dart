@@ -30,7 +30,7 @@ class MediaProgressIndicator extends StatelessWidget {
   }
 
   const MediaProgressIndicator({
-    Key? key,
+    super.key,
     this.buffered = 0,
     this.max = 0,
     this.current = 0,
@@ -41,7 +41,7 @@ class MediaProgressIndicator extends StatelessWidget {
     this.timerColor = Colors.white,
     this.withShadow = true,
     this.onSeekProgress,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

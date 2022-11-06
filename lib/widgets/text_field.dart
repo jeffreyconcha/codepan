@@ -49,7 +49,7 @@ class PanTextField extends StatefulWidget {
   final Color background;
 
   const PanTextField({
-    Key? key,
+    super.key,
     this.alignment = Alignment.center,
     this.autofocus = false,
     this.background = PanColors.none,
@@ -97,7 +97,7 @@ class PanTextField extends StatefulWidget {
     this.textInputAction = TextInputAction.done,
     this.width,
     this.expands = false,
-  }) : super(key: key);
+  });
 
   @override
   _PanTextFieldState createState() => _PanTextFieldState();
@@ -250,14 +250,14 @@ class AutocompleteHandler<T extends Selectable> extends StatefulWidget {
   final Color color;
 
   const AutocompleteHandler({
-    Key? key,
+    super.key,
     required this.onLoadSuggestions,
     required this.fieldBuilder,
     this.listItem,
     this.listDivider,
     this.color = PanColors.grey2,
     this.onSelected,
-  }) : super(key: key);
+  });
 
   @override
   _AutocompleteHandlerState<T> createState() => _AutocompleteHandlerState<T>();

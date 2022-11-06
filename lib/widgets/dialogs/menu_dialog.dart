@@ -40,7 +40,7 @@ class MenuDialog<T extends Selectable> extends StatefulWidget {
   final List<T> items;
 
   const MenuDialog({
-    Key? key,
+    super.key,
     required this.items,
     this.disabledItems,
     this.selectedItems,
@@ -56,7 +56,7 @@ class MenuDialog<T extends Selectable> extends StatefulWidget {
     this.positive,
     this.negative,
     this.isMultiple = false,
-  }) : super(key: key);
+  });
 
   @override
   State<MenuDialog> createState() => _MenuDialogState<T>();
@@ -266,7 +266,7 @@ class _MenuItem<T extends Selectable> extends StatelessWidget {
   final T item;
 
   const _MenuItem({
-    Key? key,
+    super.key,
     required this.item,
     this.withDivider = true,
     this.isDisabled = false,
@@ -276,7 +276,7 @@ class _MenuItem<T extends Selectable> extends StatelessWidget {
     this.uncheckedIcon,
     this.isMultiple = false,
     this.isSelected = false,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

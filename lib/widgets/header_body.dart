@@ -13,7 +13,7 @@ class HeaderBody extends StatelessWidget {
   final Widget? body;
 
   const HeaderBody({
-    Key? key,
+    super.key,
     required this.header,
     this.body,
     this.headerHeight,
@@ -24,7 +24,7 @@ class HeaderBody extends StatelessWidget {
     this.shadowColor,
     this.shadowBlurRadius,
     this.shadowOffset,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

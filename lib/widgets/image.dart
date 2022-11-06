@@ -8,7 +8,7 @@ class PanImage extends StatelessWidget {
   final BoxFit? fit;
 
   const PanImage({
-    Key? key,
+    super.key,
     required this.image,
     this.width,
     this.height,
@@ -16,7 +16,7 @@ class PanImage extends StatelessWidget {
     this.margin,
     this.padding,
     this.alignment,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

@@ -18,7 +18,7 @@ class ProgressDialog extends StatefulWidget {
   final Color fontColor;
 
   const ProgressDialog({
-    Key? key,
+    super.key,
     required this.controller,
     this.title,
     this.message = Strings.loading,
@@ -27,7 +27,7 @@ class ProgressDialog extends StatefulWidget {
     this.height,
     this.titleFont,
     this.fontColor = PanColors.text,
-  }) : super(key: key);
+  });
 
   @override
   _ProgressDialogState createState() => _ProgressDialogState();

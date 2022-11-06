@@ -28,7 +28,7 @@ class PanCamera extends StatefulWidget {
   final String folder;
 
   const PanCamera({
-    Key? key,
+    super.key,
     required this.controller,
     required this.folder,
     required this.onCapture,
@@ -36,7 +36,7 @@ class PanCamera extends StatefulWidget {
     this.leftWatermark,
     this.rightWatermark,
     this.lensDirection = CameraLensDirection.back,
-  }) : super(key: key);
+  });
 
   @override
   State<PanCamera> createState() => _PanCameraState();

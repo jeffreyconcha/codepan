@@ -34,7 +34,7 @@ class PageBlocBuilder<E extends ParentEvent, B extends ParentBloc<E, S>,
   final bool extendBody;
 
   const PageBlocBuilder({
-    Key? key,
+    super.key,
     required this.creator,
     required this.observer,
     required this.builder,
@@ -47,7 +47,7 @@ class PageBlocBuilder<E extends ParentEvent, B extends ParentBloc<E, S>,
     this.bottomNavigationBar,
     this.persistentFooterButtons,
     this.extendBody = true,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -104,7 +104,7 @@ class PageBuilder extends StatelessWidget {
   final bool extendBody;
 
   const PageBuilder({
-    Key? key,
+    super.key,
     required this.builder,
     this.background,
     this.brightness,
@@ -115,7 +115,7 @@ class PageBuilder extends StatelessWidget {
     this.bottomNavigationBar,
     this.persistentFooterButtons,
     this.extendBody = true,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

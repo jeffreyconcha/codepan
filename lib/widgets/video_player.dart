@@ -36,7 +36,7 @@ class PanVideoPlayer extends StatefulWidget {
   final String? thumbnailUrl;
 
   PanVideoPlayer({
-    Key? key,
+    super.key,
     required this.data,
     this.color,
     this.width,
@@ -49,7 +49,7 @@ class PanVideoPlayer extends StatefulWidget {
     this.isFullScreen = false,
     this.showBuffer = true,
     this.thumbnailUrl,
-  }) : super(key: key);
+  });
 
   @override
   _PanVideoPlayerState createState() => _PanVideoPlayerState();

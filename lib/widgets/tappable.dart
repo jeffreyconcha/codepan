@@ -9,7 +9,7 @@ class Tappable extends StatelessWidget {
   final Color color;
 
   const Tappable({
-    Key? key,
+    super.key,
     this.child,
     this.color = Colors.transparent,
     this.padding,
@@ -21,7 +21,7 @@ class Tappable extends StatelessWidget {
     this.highlightColor,
     this.hoverColor,
     this.borderRadius,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

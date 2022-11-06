@@ -20,7 +20,7 @@ class PanButton extends StatelessWidget {
   final Widget? child;
 
   const PanButton({
-    Key? key,
+    super.key,
     this.width,
     this.height,
     this.alignment = Alignment.center,
@@ -47,7 +47,7 @@ class PanButton extends StatelessWidget {
     this.textAlign = TextAlign.center,
     this.hint,
     this.decoration,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

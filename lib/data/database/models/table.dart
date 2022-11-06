@@ -2,15 +2,14 @@ import 'package:codepan/data/database/models/field.dart';
 import 'package:codepan/data/database/schema.dart';
 import 'package:codepan/data/database/sqlite_query.dart';
 import 'package:codepan/data/database/sqlite_statement.dart';
+import 'package:codepan/extensions/dynamic.dart';
 import 'package:codepan/extensions/string.dart';
 import 'package:inflection3/inflection3.dart';
 
-class Table<T> {
+class Table<T extends DatabaseEntity> {
   final String name;
   final T? entity;
   int? joinIndex;
-
-  bool get hasEntity => entity != null;
 
   String get alias {
     final int max = 3;
@@ -43,7 +42,10 @@ class Table<T> {
   }
 
   Field field(String name) {
-    return Field(name)..setTable(this);
+    return Field(
+      field: name,
+      table: this,
+    );
   }
 
   Field order({
@@ -55,33 +57,34 @@ class Table<T> {
       field: field,
       order: order,
       collate: collate,
-    )..setTable(this);
+      table: this,
+    );
   }
 
-  Table(this.name, [this.entity]);
+  Table(
+    this.name, {
+    this.entity,
+  });
 
   void setJoinNumber(int joinIndex) {
     this.joinIndex = joinIndex;
   }
 
   String? asForeignKey() {
-    if (entity != null) {
-      final buffer = StringBuffer();
-      final name = entity.toString().split('.').last;
-      final snake = SNAKE_CASE.convert(name);
-      final words = snake.split('_');
-      for (int i = 0; i < words.length; i++) {
-        final word = words[i];
-        if (i < words.length - 1) {
-          buffer.write('${word.capitalize()}');
-        } else {
-          final singular = SINGULAR.convert(word);
-          buffer.write('${singular.capitalize()}');
-          buffer.write('${SqliteStatement.id.capitalize()}');
-        }
+    final buffer = StringBuffer();
+    final name = entity.enumValue;
+    final snake = SNAKE_CASE.convert(name);
+    final words = snake.split('_');
+    for (int i = 0; i < words.length; i++) {
+      final word = words[i];
+      if (i < words.length - 1) {
+        buffer.write('${word.capitalize()}');
+      } else {
+        final singular = SINGULAR.convert(word);
+        buffer.write('${singular.capitalize()}');
+        buffer.write('${SqliteStatement.id.capitalize()}');
       }
-      return buffer.toString().decapitalize();
     }
-    return null;
+    return buffer.toString().decapitalize();
   }
 }

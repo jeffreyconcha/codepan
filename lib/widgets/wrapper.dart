@@ -9,12 +9,12 @@ class WrapperBuilder extends StatelessWidget {
   final bool condition;
 
   const WrapperBuilder({
-    Key? key,
+    super.key,
     required this.child,
     required this.condition,
     required this.builder,
     this.fallback,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

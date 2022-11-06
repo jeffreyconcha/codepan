@@ -11,7 +11,7 @@ class PanScrollView extends StatelessWidget {
   final EdgeInsets? padding;
 
   const PanScrollView({
-    Key? key,
+    super.key,
     this.child,
     this.enablePullDown,
     this.header,
@@ -20,7 +20,7 @@ class PanScrollView extends StatelessWidget {
     this.refreshController,
     this.scrollController,
     this.scrollDirection = Axis.vertical,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

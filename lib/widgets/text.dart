@@ -36,7 +36,7 @@ class PanText extends StatelessWidget {
   final Color background;
 
   const PanText({
-    Key? key,
+    super.key,
     this.alignment,
     this.background = PanColors.none,
     this.border,
@@ -69,7 +69,7 @@ class PanText extends StatelessWidget {
     this.textStyle,
     this.hintFontColor,
     this.hint,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

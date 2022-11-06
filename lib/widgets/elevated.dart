@@ -13,7 +13,7 @@ class Elevated extends StatelessWidget {
   final Widget child;
 
   const Elevated({
-    Key? key,
+    super.key,
     required this.child,
     this.shadowColor,
     this.shadowBlurRadius,
@@ -28,7 +28,7 @@ class Elevated extends StatelessWidget {
     this.borderRadius,
     this.boxShadow,
     this.boxShape = BoxShape.rectangle,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

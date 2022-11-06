@@ -13,7 +13,7 @@ class PullToRefresh extends StatefulWidget {
   final int? itemCount;
 
   const PullToRefresh({
-    Key? key,
+    super.key,
     required this.controller,
     required this.builder,
     this.placeholderBuilder,
@@ -28,7 +28,7 @@ class PullToRefresh extends StatefulWidget {
     this.onLoading,
     this.onScrollToMax,
     this.floating,
-  }) : super(key: key);
+  });
 
   @override
   State<PullToRefresh> createState() => _PullToRefreshState();

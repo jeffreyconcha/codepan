@@ -1,6 +1,6 @@
 import 'package:codepan/data/database/models/field.dart';
 import 'package:codepan/data/database/models/sqlite_model.dart';
-import 'package:codepan/data/database/sqlite_exception.dart';
+import 'package:codepan/data/database/models/table.dart';
 import 'package:codepan/data/database/sqlite_query.dart';
 import 'package:codepan/data/database/sqlite_statement.dart';
 import 'package:codepan/data/models/entities/transaction.dart';
@@ -23,6 +23,7 @@ enum Operator {
   inside,
   notInside,
 }
+
 enum Scan {
   start,
   end,
@@ -30,17 +31,29 @@ enum Scan {
 }
 
 class Condition extends SqliteModel {
-  dynamic _value, _start, _end;
-  List<Condition>? orList;
-  List<Condition>? andList;
-  Operator? _operator;
-  Scan? _scan;
+  final dynamic _value, _start, _end;
+  final List<Condition>? andList;
+  final List<Condition>? orList;
+  final Operator? _operator;
+  final Scan? _scan;
+
+  Operator? get operator {
+    if (_value is Operator) {
+      return _value;
+    }
+    return _operator;
+  }
+
+  Scan? get scan {
+    if (operator == Operator.like) {
+      return _scan;
+    }
+    return null;
+  }
 
   String get start => _getValue(_start);
 
   String get end => _getValue(_end);
-
-  Operator? get operator => _operator;
 
   bool get hasOrList => orList?.isNotEmpty ?? false;
 
@@ -54,8 +67,8 @@ class Condition extends SqliteModel {
             : SqliteStatement.falseValue.toString();
       } else if (_value is String) {
         final text = _value as String?;
-        if (_operator == Operator.like && _scan != null) {
-          switch (_scan!) {
+        if (scan != null) {
+          switch (scan!) {
             case Scan.start:
               return '\'%$text\'';
             case Scan.end:
@@ -106,43 +119,59 @@ class Condition extends SqliteModel {
   }
 
   bool get _isNoValueOperator {
-    return _operator != null && _noValueOperators.contains(_operator);
+    return operator != null && _noValueOperators.contains(operator);
   }
 
   bool get hasValue => _value != null;
 
   bool get isValid => hasValue || _isNoValueOperator;
 
-  Condition(
-    String _field,
-    this._value, {
+  const Condition(
+    String field,
+    dynamic value, {
+    super.table,
     dynamic start,
     dynamic end,
-    Operator operator = Operator.equals,
-    Scan scan = Scan.between,
-  }) : super(_field) {
-    this._start = start;
-    this._end = end;
-    if (_value is Operator) {
-      this._operator = _value;
-    } else {
-      this._operator = operator;
-    }
-    if (operator == Operator.like) {
-      this._scan = scan;
-    }
+    Operator? operator = Operator.equals,
+    Scan? scan = Scan.between,
+    this.orList,
+    this.andList,
+  })  : _value = value,
+        _start = start,
+        _end = end,
+        _operator = operator,
+        _scan = scan,
+        super(field: field);
+
+  @override
+  Condition copyWith({
+    String? field,
+    dynamic value,
+    Table? table,
+    dynamic start,
+    dynamic end,
+    Operator? operator,
+    Scan? scan,
+    List<Condition>? orList,
+    List<Condition>? andList,
+  }) {
+    return Condition(
+      field ?? super.field,
+      value ?? _value,
+      table: table ?? super.table,
+      start: start ?? _start,
+      end: end ?? _end,
+      operator: operator ?? _operator,
+      scan: scan ?? _scan,
+    );
   }
 
-  Condition.or(this.orList) : super('') {
-    if (hasAndList) {
-      throw SqliteException(SqliteException.invalidConditionList);
-    }
+  factory Condition.or(List<Condition> orList) {
+    return Condition('', null, orList: orList);
   }
 
-  Condition.and(this.andList) : super('') {
-    if (hasOrList) {
-      throw SqliteException(SqliteException.invalidConditionList);
-    }
+  factory Condition.and(List<Condition> andList) {
+    return Condition('', null, andList: andList);
   }
 
   factory Condition.equals(

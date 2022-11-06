@@ -7,10 +7,10 @@ class DefaultBuilder extends StatelessWidget {
   final WidgetBuilder fallback;
 
   const DefaultBuilder({
-    Key? key,
+    super.key,
     required this.builder,
     required this.fallback,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

@@ -16,13 +16,13 @@ class LineDivider extends StatelessWidget {
   final Color color;
 
   const LineDivider({
-    Key? key,
+    super.key,
     this.color = PanColors.divider,
     this.margin,
     this.thickness,
     this.type = DividerType.horizontal,
     this.alignment,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

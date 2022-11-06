@@ -6,11 +6,10 @@ class Rotating extends StatefulWidget {
   final Duration? duration;
   final Widget child;
 
-  const Rotating({
-    Key? key,
-    required this.child,
-    this.duration = const Duration(seconds: 1)
-  }) : super(key: key);
+  const Rotating(
+      {super.key,
+      required this.child,
+      this.duration = const Duration(seconds: 1)});
 
   @override
   State<Rotating> createState() => _RotatingState();

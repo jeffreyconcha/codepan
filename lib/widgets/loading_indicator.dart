@@ -17,7 +17,7 @@ class LoadingIndicator extends StatelessWidget {
   final bool isPlatformDependent;
 
   const LoadingIndicator({
-    Key? key,
+    super.key,
     this.width,
     this.height,
     this.radius,
@@ -25,7 +25,7 @@ class LoadingIndicator extends StatelessWidget {
     this.margin,
     this.color = Colors.grey,
     this.isPlatformDependent = false,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

@@ -10,13 +10,13 @@ class CircularWave extends StatefulWidget {
   final Color color;
 
   const CircularWave({
-    Key? key,
+    super.key,
     required this.radius,
     required this.waveCount,
     required this.color,
     this.child,
     this.duration = const Duration(seconds: 1),
-  }) : super(key: key);
+  });
 
   @override
   _CircularWaveState createState() => _CircularWaveState();

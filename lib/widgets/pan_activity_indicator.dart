@@ -13,7 +13,7 @@ class PanActivityIndicator extends StatefulWidget {
   final int tickCount;
 
   const PanActivityIndicator({
-    Key? key,
+    super.key,
     this.isAnimating = true,
     this.radius = 10,
     this.startRatio = 0.5,
@@ -23,7 +23,7 @@ class PanActivityIndicator extends StatefulWidget {
     this.inactiveColor = const Color(0xFFE5E5EA),
     this.animationDuration = const Duration(seconds: 1),
     this.relativeWidth = 1,
-  }) : super(key: key);
+  });
 
   @override
   _PanActivityIndicatorState createState() => _PanActivityIndicatorState();

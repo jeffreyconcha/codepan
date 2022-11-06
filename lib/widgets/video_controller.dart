@@ -21,7 +21,7 @@ class VideoController extends StatelessWidget {
   final double? max;
 
   const VideoController({
-    Key? key,
+    super.key,
     this.isLoading,
     this.isInitialized,
     this.isPlaying,
@@ -33,7 +33,7 @@ class VideoController extends StatelessWidget {
     this.onSeekProgress,
     this.onFullScreen,
     this.onPlay,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -152,11 +152,11 @@ class SkipButton extends StatelessWidget {
   final bool? isInitialized;
 
   const SkipButton({
-    Key? key,
+    super.key,
     required this.direction,
     this.onTap,
     this.isInitialized,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

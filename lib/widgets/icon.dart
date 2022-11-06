@@ -12,7 +12,7 @@ class PanIcon extends StatelessWidget {
   final BoxFit fit;
 
   const PanIcon({
-    Key? key,
+    super.key,
     required this.icon,
     this.alignment = Alignment.center,
     this.background,
@@ -24,7 +24,7 @@ class PanIcon extends StatelessWidget {
     this.margin,
     this.package,
     this.padding,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

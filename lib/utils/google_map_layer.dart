@@ -30,11 +30,11 @@ class GoogleMapLayer extends StatefulWidget {
   final MapState state;
 
   const GoogleMapLayer({
-    Key? key,
+    super.key,
     required this.options,
     required this.state,
     required this.stream,
-  }) : super(key: key);
+});
 
   @override
   State<GoogleMapLayer> createState() => _GoogleMapLayerState();

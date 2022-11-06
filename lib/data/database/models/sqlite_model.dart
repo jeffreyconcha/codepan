@@ -1,8 +1,8 @@
 import 'package:codepan/data/database/models/table.dart';
 
 class SqliteModel {
-  String _field;
-  Table? table;
+  final String _field;
+  final Table? table;
 
   String? get alias => table?.alias;
 
@@ -14,9 +14,18 @@ class SqliteModel {
     return name == _field;
   }
 
-  SqliteModel(this._field, {this.table});
+  const SqliteModel({
+    required String field,
+    this.table,
+  }) : _field = field;
 
-  void setTable(Table? table) {
-    this.table = table;
+  SqliteModel copyWith({
+    String? field,
+    Table? table,
+  }) {
+    return SqliteModel(
+      field: field ?? this._field,
+      table: table ?? this.table,
+    );
   }
 }

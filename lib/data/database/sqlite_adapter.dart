@@ -216,7 +216,7 @@ class SqliteAdapter implements DatabaseExecutor {
     return cursor.length;
   }
 
-  Future<bool> hasRecord(dynamic entity) async {
+  Future<bool> hasRecord<E extends DatabaseEntity>(E entity) async {
     final schema = this.schema.of(entity);
     final sql = "SELECT COUNT(*) FROM ${schema.tableName}";
     final record = await getRecord(sql);
