@@ -28,7 +28,6 @@ class PanIcon extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final _package = isInternal ? 'codepan' : null;
     return Container(
       width: width,
       height: height,
@@ -43,7 +42,7 @@ class PanIcon extends StatelessWidget {
           width: width,
           height: height,
           alignment: alignment,
-          package: package ?? _package,
+          package: package ?? (isInternal ? 'codepan' : null),
         ),
       ),
     );

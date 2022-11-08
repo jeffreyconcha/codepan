@@ -52,7 +52,7 @@ class PageBlocBuilder<E extends ParentEvent, B extends ParentBloc<E, S>,
   @override
   Widget build(BuildContext context) {
     final t = Theme.of(context);
-    final _background = background ?? t.backgroundColor;
+    final backgroundColor = background ?? t.backgroundColor;
     return BlocProvider<B>(
       create: creator as B Function(BuildContext),
       child: BlocListener<B, S>(
@@ -60,12 +60,12 @@ class PageBlocBuilder<E extends ParentEvent, B extends ParentBloc<E, S>,
         child: BlocBuilder<B, S>(
           builder: (context, state) {
             return Scaffold(
-              backgroundColor: _background,
+              backgroundColor: backgroundColor,
               appBar: PreferredSize(
                 preferredSize: Size.fromHeight(0),
                 child: AppBar(
                   elevation: 0,
-                  backgroundColor: statusBarColor ?? _background,
+                  backgroundColor: statusBarColor ?? backgroundColor,
                 ),
               ),
               body: Builder(
