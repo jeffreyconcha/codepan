@@ -3,16 +3,18 @@ import 'dart:async';
 import 'package:flutter/cupertino.dart';
 
 class PeriodicTimer {
+  final ValueChanged<Timer>? runner;
   final Duration interval;
-  final ValueChanged<Timer> runner;
   Timer? _timer;
   int _tick = 0;
 
   int get tick => _tick;
 
+  bool get isActive => _timer?.isActive ?? false;
+
   PeriodicTimer({
     required this.interval,
-    required this.runner,
+    this.runner,
     bool autoStart = true,
   }) {
     if (autoStart) {
@@ -22,7 +24,7 @@ class PeriodicTimer {
 
   void _initialize() {
     _timer = Timer.periodic(interval, (timer) {
-      runner(timer);
+      runner?.call(timer);
       _tick++;
     });
   }
@@ -33,7 +35,9 @@ class PeriodicTimer {
   }
 
   void start() {
-    _initialize();
+    if (!(_timer?.isActive ?? false)) {
+      _initialize();
+    }
   }
 
   void stop() {
