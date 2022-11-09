@@ -29,9 +29,11 @@ class PeriodicTimer {
     });
   }
 
-  void reset() {
+  void reset([bool autoStart = true]) {
     _tick = 0;
-    _initialize();
+    if (autoStart) {
+      _initialize();
+    }
   }
 
   void start() {

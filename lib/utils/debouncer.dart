@@ -13,10 +13,13 @@ class Debouncer {
     this.statusNotifier,
   });
 
-  void run(VoidCallback action) {
+  void run([VoidCallback? action]) {
     cancel();
-    _timer = Timer(Duration(milliseconds: milliseconds), () {
-      action.call();
+    _timer = Timer(
+        Duration(
+          milliseconds: milliseconds,
+        ), () {
+      action?.call();
       statusNotifier?.call(false);
       _isActive = false;
     });
