@@ -167,11 +167,19 @@ class Condition extends SqliteModel {
   }
 
   factory Condition.or(List<Condition> orList) {
-    return Condition('', null, orList: orList);
+    return Condition(
+      '',
+      null,
+      orList: orList,
+    );
   }
 
   factory Condition.and(List<Condition> andList) {
-    return Condition('', null, andList: andList);
+    return Condition(
+      '',
+      null,
+      andList: andList,
+    );
   }
 
   factory Condition.equals(
@@ -352,8 +360,26 @@ class Condition extends SqliteModel {
   }
 
   String? asString() {
-    final type = hasValue && _value is Operator ? _value : operator;
-    if (type != null) {
+    if (hasOrList) {
+      final b = StringBuffer();
+      for (final condition in orList!) {
+        b.write(condition.asString());
+        if (condition != orList!.last) {
+          b.write(" OR ");
+        }
+      }
+      return '(${b.toString()})';
+    } else if (hasAndList) {
+      final b = StringBuffer();
+      for (final condition in andList!) {
+        b.write(condition.asString());
+        if (condition != andList!.last) {
+          b.write(" AND ");
+        }
+      }
+      return '(${b.toString()})';
+    } else {
+      final type = hasValue && _value is Operator ? _value : operator;
       switch (type) {
         case Operator.equals:
           return "$field = $value";
@@ -383,26 +409,6 @@ class Condition extends SqliteModel {
           return "$field IN ($value)";
         case Operator.notInside:
           return "$field NOT IN ($value)";
-      }
-    } else {
-      if (hasOrList) {
-        final b = StringBuffer();
-        for (final condition in orList!) {
-          b.write(condition.asString());
-          if (condition != orList!.last) {
-            b.write(" OR ");
-          }
-        }
-        return '(${b.toString()})';
-      } else if (hasAndList) {
-        final b = StringBuffer();
-        for (final condition in andList!) {
-          b.write(condition.asString());
-          if (condition != andList!.last) {
-            b.write(" AND ");
-          }
-        }
-        return '(${b.toString()})';
       }
     }
     return null;
