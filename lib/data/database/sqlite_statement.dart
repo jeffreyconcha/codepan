@@ -177,7 +177,7 @@ class SqliteStatement with QueryProperties {
     return '''CREATE TRIGGER IF NOT EXISTS $trg  
       AFTER UPDATE ON $table 
       BEGIN
-        UPDATE $table SET $fieldValues WHERE ${SqliteStatement.id} = NEW.id 
+        UPDATE $table SET $fieldValues WHERE ${SqliteStatement.id} = NEW.id; 
       END''';
   }
 
