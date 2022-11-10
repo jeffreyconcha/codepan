@@ -1,3 +1,4 @@
+import 'package:codepan/data/database/models/field_value.dart';
 import 'package:codepan/data/database/models/sqlite_model.dart';
 import 'package:codepan/data/database/models/table.dart';
 import 'package:codepan/data/database/sqlite_query.dart';
@@ -61,6 +62,8 @@ class Field extends SqliteModel {
     if (value != null) {
       if (value is bool) {
         return value ? '1' : '0';
+      } else if (value is SqliteTime) {
+        return '(${(value as SqliteTime).value})';
       } else {
         return value.toString();
       }
@@ -190,13 +193,37 @@ class Field extends SqliteModel {
     );
   }
 
-  factory Field.autoDate(String field) {
+  factory Field.defaultDate(String field) {
+    return Field(
+      field: field,
+      type: DataType.text,
+      constraints: [
+        Constraint.dateFormatted,
+        Constraint.defaultField,
+      ],
+      value: SqliteTime.dateNow,
+    );
+  }
+
+  factory Field.defaultTime(String field) {
+    return Field(
+      field: field,
+      type: DataType.text,
+      constraints: [
+        Constraint.timeFormatted,
+        Constraint.defaultField,
+      ],
+      value: SqliteTime.timeNow,
+    );
+  }
+
+  factory Field.autoUpdateDate(String field) {
     return Field.date(field).copyWith(
       withDateTrigger: true,
     );
   }
 
-  factory Field.autoTime(String field) {
+  factory Field.autoUpdateTime(String field) {
     return Field.time(field).copyWith(
       withTimeTrigger: true,
     );

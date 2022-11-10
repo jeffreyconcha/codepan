@@ -3,9 +3,13 @@ import 'package:codepan/data/database/sqlite_statement.dart';
 import 'package:codepan/utils/codepan_utils.dart';
 import 'package:inflection3/inflection3.dart';
 
-enum Value {
-  dateNow,
-  timeNow,
+enum SqliteTime {
+  dateNow('date(\'now\', \'localtime\')'),
+  timeNow('time(\'now\', \'localtime\')');
+
+  final String value;
+
+  const SqliteTime(this.value);
 }
 
 class FieldValue extends SqliteModel {
@@ -19,12 +23,8 @@ class FieldValue extends SqliteModel {
             : SqliteStatement.falseValue.toString();
       } else if (_value is String) {
         return "'${_value.replaceAll("'", "''")}'";
-      } else if (_value is Value) {
-        if (_value == Value.dateNow) {
-          return 'date(\'now\', \'localtime\')';
-        } else {
-          return 'time(\'now\', \'localtime\')';
-        }
+      } else if (_value is SqliteTime) {
+        return (_value as SqliteTime).value;
       } else if (PanUtils.isEnum(_value)) {
         final value = PanUtils.enumValue(_value);
         return '\'${SNAKE_CASE.convert(value)}\'';

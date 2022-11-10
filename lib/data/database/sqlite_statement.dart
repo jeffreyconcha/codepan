@@ -166,19 +166,18 @@ class SqliteStatement with QueryProperties {
     if (hasFields) {
       for (final f in fieldList!) {
         if (f.withDateTrigger) {
-          final fv = FieldValue(f.field, Value.dateNow);
+          final fv = FieldValue(f.field, SqliteTime.dateNow);
           addFieldValue(fv);
         } else if (f.withTimeTrigger) {
-          final fv = FieldValue(f.field, Value.timeNow);
+          final fv = FieldValue(f.field, SqliteTime.timeNow);
           addFieldValue(fv);
         }
-        addCondition(Condition.isNull(f.field));
       }
     }
-    return '''CREATE TRIGGER IF NOT EXISTS $trg 
-      AFTER INSERT ON $table 
+    return '''CREATE TRIGGER IF NOT EXISTS $trg  
+      AFTER UPDATE ON $table 
       BEGIN
-        UPDATE $table SET $fieldValues WHERE ${SqliteStatement.id} = NEW.id AND $conditions;
+        UPDATE $table SET $fieldValues WHERE ${SqliteStatement.id} = NEW.id 
       END''';
   }
 

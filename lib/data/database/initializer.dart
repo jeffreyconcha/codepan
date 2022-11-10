@@ -137,7 +137,6 @@ class DefaultDatabaseInitializer extends DatabaseInitializer {
       final table = entity.tableName;
       final stmt = SqliteStatement.fromList(entity.indices);
       if (stmt.hasFields) {
-        binder.createTable(table, stmt);
         final idx = entity.indexName;
         binder.createIndex(idx, table, stmt);
       }
