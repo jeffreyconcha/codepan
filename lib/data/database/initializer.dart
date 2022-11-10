@@ -57,7 +57,6 @@ class DefaultDatabaseInitializer extends DatabaseInitializer {
     final binder = SqliteBinder.of(db);
     try {
       await binder.transact<bool>(
-        showLog: true,
         body: (binder) async {
           await _createTables(binder);
           await _createIndices(binder);

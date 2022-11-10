@@ -16,6 +16,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:latlong2/latlong.dart' as lt;
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -69,11 +70,17 @@ class PanUtils {
     return nf.format(input);
   }
 
+  static Future<Directory> getAppDirectory() async {
+    final info = await PackageInfo.fromPlatform();
+    final root = await getApplicationDocumentsDirectory();
+    return Directory('${root.path}/${info.appName}');
+  }
+
   static Future<File> getFile({
     String? folder,
     required String fileName,
   }) async {
-    final root = await getApplicationDocumentsDirectory();
+    final root = await getAppDirectory();
     if (folder != null) {
       final dir = Directory('${root.path}/$folder');
       if (!await dir.exists()) {
@@ -96,7 +103,7 @@ class PanUtils {
 
   static Future<bool> hasInternet() async {
     final result = await Connectivity().checkConnectivity();
-    switch(result) {
+    switch (result) {
       case ConnectivityResult.wifi:
       case ConnectivityResult.mobile:
       case ConnectivityResult.ethernet:
