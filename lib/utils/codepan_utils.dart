@@ -81,20 +81,22 @@ class PanUtils {
     required String fileName,
   }) async {
     final root = await getAppDirectory();
+    final slash = Platform.pathSeparator;
     if (folder != null) {
-      final dir = Directory('${root.path}/$folder');
+      final dir = Directory('${root.path}$slash$folder');
       if (!await dir.exists()) {
         await dir.create();
       }
-      return File('${dir.path}/$fileName');
+      return File('${dir.path}$slash$fileName');
     } else {
-      return File('${root.path}/$fileName');
+      return File('${root.path}$slash$fileName');
     }
   }
 
   static Future<Directory> getDirectory(String folder) async {
+    final slash = Platform.pathSeparator;
     final root = await getApplicationDocumentsDirectory();
-    final dir = Directory('${root.path}/$folder');
+    final dir = Directory('${root.path}$slash$folder');
     if (!await dir.exists()) {
       await dir.create();
     }

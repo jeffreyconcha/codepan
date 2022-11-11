@@ -106,8 +106,9 @@ class SqliteAdapter implements DatabaseExecutor {
     if (Platform.isWindows || Platform.isMacOS) {
       final factory = createDatabaseFactoryFfi(ffiInit: _ffiInit);
       final directory = await PanUtils.getAppDirectory();
+      final slash = Platform.pathSeparator;
       return await factory.openDatabase(
-        _path = '${directory.path}/data/$name',
+        _path = '${directory.path}${slash}data$slash$name',
         options: OpenDatabaseOptions(
           version: version,
           onConfigure: (db) async {
