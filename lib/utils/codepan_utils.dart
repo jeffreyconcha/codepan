@@ -71,9 +71,10 @@ class PanUtils {
   }
 
   static Future<Directory> getAppDirectory() async {
+    final slash = Platform.pathSeparator;
     final info = await PackageInfo.fromPlatform();
     final root = await getApplicationDocumentsDirectory();
-    return Directory('${root.path}/${info.appName}');
+    return Directory('${root.path}$slash${info.appName}');
   }
 
   static Future<File> getFile({
