@@ -10,6 +10,7 @@ import 'package:codepan/data/database/sqlite_query.dart';
 import 'package:codepan/data/database/sqlite_statement.dart';
 import 'package:codepan/data/models/entities/transaction.dart';
 import 'package:codepan/extensions/duration.dart';
+import 'package:codepan/time/time.dart';
 import 'package:codepan/utils/codepan_utils.dart';
 import 'package:flutter/foundation.dart';
 import 'package:sqflite_sqlcipher/sqflite.dart';
@@ -249,11 +250,14 @@ class SqliteBinder {
     required TransactionData data,
     UpdatePriority priority = UpdatePriority.unique,
   }) async {
+    final now = Time.now();
     return data.copyWith(
       id: await insertData(
         data: data,
         priority: priority,
       ),
+      dateCreated: now.date,
+      timeCreated: now.time,
     ) as T;
   }
 
