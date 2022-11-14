@@ -95,12 +95,12 @@ class PanUtils {
       final buffer = StringBuffer(root.path);
       for (final folder in folders) {
         buffer.write('$slash$folder');
-        final dir = Directory(buffer.toString());
-        if (!await dir.exists()) {
-          await dir.create();
-        }
       }
-      return File('${buffer.toString()}$slash$fileName');
+      final dir = Directory(buffer.toString());
+      if (!await dir.exists()) {
+        await dir.create();
+      }
+      return dir.file(fileName);
     } else {
       return File('${root.path}$slash$fileName');
     }

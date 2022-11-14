@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:camera/camera.dart';
+import 'package:codepan/extensions/directory.dart';
 import 'package:codepan/extensions/file.dart';
 import 'package:codepan/resources/dimensions.dart';
 import 'package:codepan/utils/codepan_utils.dart';
@@ -9,7 +10,6 @@ import 'package:codepan/utils/text_canvas.dart';
 import 'package:codepan/widgets/if_else_builder.dart';
 import 'package:codepan/widgets/states/lifecycle_state.dart';
 import 'package:flutter/material.dart';
-import 'package:path_provider/path_provider.dart' as p;
 import 'package:system_clock/system_clock.dart';
 
 enum PanCameraEvents {
@@ -251,8 +251,8 @@ class _PanCameraState extends LifecycleState<PanCamera> {
       controller._isTakingPhoto = true;
       final elapsed = SystemClock.elapsedRealtime().inMilliseconds;
       final stamp = DateTime.now().millisecondsSinceEpoch;
-      final private = await p.getApplicationDocumentsDirectory();
-      final dir = Directory('${private.path}/${widget.folder}');
+      final private = await PanUtils.getAppDirectory();
+      final dir = private.of(widget.folder);
       if (!await dir.exists()) {
         await dir.create(recursive: true);
       }
