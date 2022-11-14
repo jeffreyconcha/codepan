@@ -9,6 +9,7 @@ import 'package:codepan/resources/dimensions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_native_image/flutter_native_image.dart';
 import 'package:image/image.dart' as i;
+import 'package:image_compression_flutter/image_compression_flutter.dart';
 
 typedef PainterBuilder = CustomPainter Function(
   int width,
@@ -130,5 +131,22 @@ extension FileUtils on File {
     final image = await getRotatedImage();
     final encoded = i.encodePng(image);
     return Uint8List.fromList(encoded);
+  }
+
+  Future<void> compressImage({
+    int quality = 80,
+  }) async {
+    final image = ImageFile(
+      filePath: path,
+      rawBytes: await readAsBytes(),
+    );
+    await compressor.compress(
+      ImageFileConfiguration(
+        input: image,
+        config: Configuration(
+          quality: quality,
+        ),
+      ),
+    );
   }
 }
