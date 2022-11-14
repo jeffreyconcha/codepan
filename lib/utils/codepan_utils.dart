@@ -74,7 +74,11 @@ class PanUtils {
     final slash = Platform.pathSeparator;
     final info = await PackageInfo.fromPlatform();
     final root = await getApplicationDocumentsDirectory();
-    return Directory('${root.path}$slash${info.appName}');
+    if (Platform.isWindows || Platform.isMacOS) {
+      return Directory('${root.path}$slash${info.appName}');
+    } else {
+      return root;
+    }
   }
 
   static Future<File> getFile({
