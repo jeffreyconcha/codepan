@@ -134,13 +134,13 @@ extension FileUtils on File {
   }
 
   Future<void> compressImage({
-    int quality = 80,
+    int quality = 90,
   }) async {
     final image = ImageFile(
       filePath: path,
       rawBytes: await readAsBytes(),
     );
-    await compressor.compress(
+    final compressed = await compressor.compress(
       ImageFileConfiguration(
         input: image,
         config: Configuration(
@@ -148,5 +148,6 @@ extension FileUtils on File {
         ),
       ),
     );
+    await writeAsBytes(compressed.rawBytes);
   }
 }
