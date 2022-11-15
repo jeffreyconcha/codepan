@@ -12,15 +12,17 @@ import 'package:image/image.dart' as i;
 import 'package:image_compression_flutter/image_compression_flutter.dart';
 
 typedef PainterBuilder = CustomPainter Function(
-  int width,
-  int height,
-  double scale,
-);
+    int width,
+    int height,
+    double scale,
+    );
 
 extension FileSystemEntityUtils on FileSystemEntity {
   String get name {
     final separator = Platform.pathSeparator;
-    return this.path.split(separator).last;
+    return this.path
+        .split(separator)
+        .last;
   }
 }
 

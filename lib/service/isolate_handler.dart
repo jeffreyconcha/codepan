@@ -1,27 +1,40 @@
 import 'dart:isolate';
 import 'dart:ui';
 
-import 'package:codepan/utils/codepan_utils.dart';
+import 'package:codepan/extensions/extensions.dart';
 
-typedef IsolateImplementation = void Function(SendPort msp);
+typedef IsolateRunner<T extends MainPort> = void Function(T port);
 
-abstract class IsolateHandler {
+abstract class MainPort {
+  final SendPort msp;
+
+  const MainPort({
+    required this.msp,
+  });
+
+  void send(Object? message) {
+    msp.send(message);
+  }
+}
+
+abstract class IsolateHandler<T extends MainPort> {
+  final ReceivePort mrp;
   final String name;
+  final T port;
   Isolate? _isolate;
-  late ReceivePort _mrp;
   SendPort? _isp;
 
-  IsolateImplementation get implementation;
+  IsolateRunner<T> get runner;
 
-  IsolateHandler(this.name);
+  IsolateHandler({
+    required this.name,
+    required this.mrp,
+    required this.port,
+  });
 
   Future<void> start() async {
-    this._mrp = ReceivePort();
-    this._isolate = await Isolate.spawn(
-      implementation,
-      _mrp.sendPort,
-    );
-    _mrp.listen(_listener);
+    _isolate = await Isolate.spawn<T>(runner, port);
+    mrp.listen(_listener);
   }
 
   void stop() {
@@ -29,15 +42,14 @@ abstract class IsolateHandler {
   }
 
   void bindPort(SendPort sp) {
-    PanUtils.bindIsolatePort(sp, name);
+    sp.bindIsolate(name);
   }
 
   void _listener(dynamic data) {
     if (data is SendPort) {
       this._isp = data;
     } else {
-      final sp = IsolateNameServer.lookupPortByName(name);
-      sp?.send(data);
+      IsolateNameServer.lookupPortByName(name)?.send(data);
       receiveFromIsolate(data);
     }
   }

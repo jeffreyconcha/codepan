@@ -9,3 +9,4 @@ export 'list.dart';
 export 'map.dart';
 export 'painter.dart';
 export 'string.dart';
+export 'isolate.dart';
