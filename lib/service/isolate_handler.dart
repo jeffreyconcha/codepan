@@ -5,6 +5,8 @@ import 'package:codepan/extensions/extensions.dart';
 
 typedef IsolateRunner<T extends MainPort> = void Function(T port);
 
+typedef PortCreator<T extends MainPort> = T Function(SendPort msp);
+
 abstract class MainPort {
   final SendPort msp;
 
@@ -18,9 +20,9 @@ abstract class MainPort {
 }
 
 abstract class IsolateHandler<T extends MainPort> {
-  final ReceivePort mrp;
+  late final ReceivePort _mrp;
+  final PortCreator<T> creator;
   final String name;
-  final T port;
   Isolate? _isolate;
   SendPort? _isp;
 
@@ -28,13 +30,15 @@ abstract class IsolateHandler<T extends MainPort> {
 
   IsolateHandler({
     required this.name,
-    required this.mrp,
-    required this.port,
-  });
+    required this.creator,
+  }) : _mrp = ReceivePort();
 
   Future<void> start() async {
-    _isolate = await Isolate.spawn<T>(runner, port);
-    mrp.listen(_listener);
+    _isolate = await Isolate.spawn<T>(
+      runner,
+      creator(_mrp.sendPort),
+    );
+    _mrp.listen(_listener);
   }
 
   void stop() {
