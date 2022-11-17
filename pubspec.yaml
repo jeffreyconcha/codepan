@@ -12,7 +12,8 @@ dependencies:
   app_settings: ^4.1.0
   audioplayers: ^0.20.1
   cached_network_image: ^3.2.0
-  camera: ^0.9.4+5
+  camera: ^0.10.0+4
+  camera_platform_interface: ^2.3.0
   connectivity_plus:
   cryptography: ^2.0.5
   equatable: ^2.0.3

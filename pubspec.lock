@@ -84,14 +84,14 @@ packages:
       name: camera
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.9.8+1"
+    version: "0.10.0+4"
   camera_android:
     dependency: transitive
     description:
       name: camera_android
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.9.8+3"
+    version: "0.10.0+4"
   camera_avfoundation:
     dependency: transitive
     description:
@@ -100,7 +100,7 @@ packages:
     source: hosted
     version: "0.9.8+6"
   camera_platform_interface:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: camera_platform_interface
       url: "https://pub.dartlang.org"
@@ -112,7 +112,7 @@ packages:
       name: camera_web
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.2.1+6"
+    version: "0.3.0+1"
   characters:
     dependency: transitive
     description:
@@ -792,7 +792,7 @@ packages:
       name: rxdart
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.27.6"
+    version: "0.27.7"
   shared_preferences:
     dependency: "direct main"
     description:
