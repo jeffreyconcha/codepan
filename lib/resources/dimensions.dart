@@ -26,6 +26,10 @@ class Dimension {
 
   double get pixelRatio => data.devicePixelRatio;
 
+  Size get size => data.size;
+
+  bool get isLandscape => data.orientation == Orientation.landscape;
+
   Orientation get orientation => data.orientation;
 
   double at(double dp) {
