@@ -84,16 +84,17 @@ class PanUtils {
   static Future<File> getFile({
     required String fileName,
     String? folder,
-    List<String> folders = const [],
+    List<String>? folders,
   }) async {
     final root = await getAppDirectory();
     final slash = Platform.pathSeparator;
+    final list = folders ?? <String>[];
     if (folder != null) {
-      folders.add(folder);
+      list.add(folder);
     }
-    if (folders.isNotEmpty) {
+    if (list.isNotEmpty) {
       final buffer = StringBuffer(root.path);
-      for (final folder in folders) {
+      for (final folder in list) {
         buffer.write('$slash$folder');
       }
       final dir = Directory(buffer.toString());
