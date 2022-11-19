@@ -265,7 +265,6 @@ class _PanCameraState extends LifecycleState<PanCamera> {
         !value!.isTakingPicture &&
         !controller.isTakingPhoto()) {
       controller._isTakingPhoto = true;
-      final d = Dimension.of(context);
       final elapsed = SystemClock.elapsedRealtime().inMilliseconds;
       final stamp = DateTime.now().millisecondsSinceEpoch;
       final private = await PanUtils.getAppDirectory();
