@@ -19,9 +19,19 @@ enum PanCameraEvents {
   initializeCamera,
 }
 
+enum LensDirection {
+  front(CameraLensDirection.front),
+  back(CameraLensDirection.back),
+  external(CameraLensDirection.external);
+
+  final CameraLensDirection value;
+
+  const LensDirection(this.value);
+}
+
 class PanCamera extends StatefulWidget {
   final String? leftWatermark, rightWatermark;
-  final CameraLensDirection lensDirection;
+  final LensDirection lensDirection;
   final PanCameraController controller;
   final ValueChanged<File> onCapture;
   final ValueChanged<String> onError;
@@ -35,7 +45,7 @@ class PanCamera extends StatefulWidget {
     required this.onError,
     this.leftWatermark,
     this.rightWatermark,
-    this.lensDirection = CameraLensDirection.back,
+    this.lensDirection = LensDirection.back,
   });
 
   @override
@@ -72,10 +82,10 @@ class _PanCameraState extends LifecycleState<PanCamera> {
             if (isInitialized) {
               switch (camera!.lensDirection) {
                 case CameraLensDirection.front:
-                  _resetCamera(CameraLensDirection.back);
+                  _resetCamera(LensDirection.back);
                   break;
                 default:
-                  _resetCamera(CameraLensDirection.front);
+                  _resetCamera(LensDirection.front);
                   break;
               }
             }
@@ -91,6 +101,9 @@ class _PanCameraState extends LifecycleState<PanCamera> {
         controller.value = PanCameraEvents.idle;
       }
     });
+    if (isDesktop) {
+      _resetCamera(widget.lensDirection);
+    }
   }
 
   @override
@@ -124,8 +137,11 @@ class _PanCameraState extends LifecycleState<PanCamera> {
           alignment: Alignment.center,
           condition: isInitialized,
           ifBuilder: (context) {
+            final pr = value!.aspectRatio;
             return Transform.scale(
-              scale: d.deviceRatio / value!.aspectRatio,
+              scale: isDesktop
+                  ? 1 / (d.size.aspectRatio / pr)
+                  : d.deviceRatio / pr,
               child: Listener(
                 onPointerDown: (event) {
                   _pointers++;
@@ -200,10 +216,10 @@ class _PanCameraState extends LifecycleState<PanCamera> {
     }
   }
 
-  void _resetCamera(CameraLensDirection lensDirection) async {
+  void _resetCamera(LensDirection lensDirection) async {
     final cameras = await availableCameras();
     for (final camera in cameras) {
-      if (camera.lensDirection == lensDirection) {
+      if (camera.lensDirection == lensDirection.value) {
         _loadNewCamera(camera);
         break;
       }

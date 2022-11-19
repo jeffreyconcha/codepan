@@ -41,6 +41,10 @@ void _printLarge(String text) {
   pattern.allMatches(text).forEach((match) => print(match.group(0)));
 }
 
+bool get isDesktop {
+  return Platform.isWindows || Platform.isMacOS || Platform.isLinux;
+}
+
 List<int> range(int min, int max) {
   final list = <int>[];
   for (int i = min; i <= max; i++) {
