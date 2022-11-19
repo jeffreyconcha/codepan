@@ -23,7 +23,7 @@ extension FileSystemEntityUtils on FileSystemEntity {
 }
 
 extension ImageUtils on File {
-  Future<File> cropImage2({
+  Future<File> cropImage({
     required double preferredWidth,
     required double preferredHeight,
   }) async {
@@ -54,7 +54,7 @@ extension ImageUtils on File {
     return await this.writeAsBytes(data);
   }
 
-  Future<File> stampImage2({
+  Future<File> stampImage({
     required PainterBuilder builder,
     required BuildContext context,
   }) async {

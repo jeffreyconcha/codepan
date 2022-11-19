@@ -15,6 +15,7 @@ import 'package:system_clock/system_clock.dart';
 enum PanCameraEvents {
   idle,
   capture,
+  rotate,
   switchCamera,
   initializeCamera,
 }
@@ -60,6 +61,7 @@ class _PanCameraState extends LifecycleState<PanCamera> {
   double _maxAvailableZoom = 1.0;
   double _currentScale = 1.0;
   double _baseScale = 1.0;
+  int _rotation = 0;
   int _pointers = 0;
 
   PanCameraController get controller => widget.controller;
@@ -74,20 +76,19 @@ class _PanCameraState extends LifecycleState<PanCamera> {
   void initState() {
     super.initState();
     controller.addListener(() {
-      if (mounted) {
+      if (mounted && isInitialized) {
         switch (controller.value) {
           case PanCameraEvents.capture:
             _capture();
             break;
           case PanCameraEvents.switchCamera:
-            if (isInitialized) {
-              _switchCamera(_controller!.description);
-            }
+            _switchCamera(_controller!.description);
             break;
           case PanCameraEvents.initializeCamera:
-            if (!isInitialized) {
-              _resetCamera(widget.lensDirection);
-            }
+            _resetCamera(widget.lensDirection);
+            break;
+          case PanCameraEvents.rotate:
+            _rotate();
             break;
           default:
             break;
@@ -132,26 +133,29 @@ class _PanCameraState extends LifecycleState<PanCamera> {
           condition: isInitialized,
           ifBuilder: (context) {
             final pr = value!.aspectRatio;
-            return Transform.scale(
-              scale: isDesktop
-                  ? 1 / (d.size.aspectRatio / pr)
-                  : d.deviceRatio / pr,
-              child: Listener(
-                onPointerDown: (event) {
-                  _pointers++;
-                },
-                onPointerUp: (event) {
-                  _pointers--;
-                },
-                child: CameraPreview(
-                  _controller!,
-                  child: GestureDetector(
-                    behavior: HitTestBehavior.opaque,
-                    onScaleStart: _handleScaleStart,
-                    onScaleUpdate: _handleScaleUpdate,
-                    onTapDown: (details) {
-                      onViewFinderTap(details, constraints);
-                    },
+            return RotatedBox(
+              quarterTurns: _rotation,
+              child: Transform.scale(
+                scale: isDesktop
+                    ? 1 / (d.size.aspectRatio / pr)
+                    : d.deviceRatio / pr,
+                child: Listener(
+                  onPointerDown: (event) {
+                    _pointers++;
+                  },
+                  onPointerUp: (event) {
+                    _pointers--;
+                  },
+                  child: CameraPreview(
+                    _controller!,
+                    child: GestureDetector(
+                      behavior: HitTestBehavior.opaque,
+                      onScaleStart: _handleScaleStart,
+                      onScaleUpdate: _handleScaleUpdate,
+                      onTapDown: (details) {
+                        onViewFinderTap(details, constraints);
+                      },
+                    ),
                   ),
                 ),
               ),
@@ -163,7 +167,7 @@ class _PanCameraState extends LifecycleState<PanCamera> {
   }
 
   void _loadNewCamera(CameraDescription description) async {
-    if(_controller != null) {
+    if (_controller != null) {
       _controller!.dispose();
     }
     _controller = _CameraController(
@@ -233,12 +237,18 @@ class _PanCameraState extends LifecycleState<PanCamera> {
     }
   }
 
+  void _rotate() {
+    setState(() {
+      _rotation += 1;
+    });
+  }
+
   Future<File> _stampImage({
     required File file,
     required String watermark,
   }) async {
     final d = Dimension.of(context);
-    return await file.stampImage2(
+    return await file.stampImage(
       context: context,
       builder: (width, height, scale) {
         final lineCount = watermark.split('\n').length;
@@ -285,7 +295,7 @@ class _PanCameraState extends LifecycleState<PanCamera> {
         final captured = await _controller!.takePicture();
         final file = File(captured.path);
         final copied = await file.copy(path);
-        final cropped = await copied.cropImage2(
+        final cropped = await copied.cropImage(
           preferredWidth: _maxWidth,
           preferredHeight: _maxHeight,
         );
@@ -324,6 +334,10 @@ class PanCameraController extends ValueNotifier<PanCameraEvents> {
 
   void switchCamera() {
     value = PanCameraEvents.switchCamera;
+  }
+
+  void rotate() {
+    value = PanCameraEvents.rotate;
   }
 
   void initializeCamera() {
