@@ -19,52 +19,60 @@ extension BuildContextUtils on BuildContext {
     Navigator.of(this).popUntil(predicate);
   }
 
-  Future<dynamic> push({
+  void push({
     required Widget page,
+    ValueChanged<Object?>? onExit,
   }) {
-    return Navigator.of(this).push(
-      CupertinoPageRoute(
-        builder: (context) {
-          return page;
-        },
-      ),
+    final route = CupertinoPageRoute(
+      builder: (context) {
+        return page;
+      },
     );
+    Navigator.of(this).push(route).then((value) {
+      onExit?.call(value);
+    });
   }
 
-  Future<dynamic> replace({
+  void replace({
     required Widget page,
     Duration? duration,
+    ValueChanged<Object?>? onExit,
   }) {
-    return Navigator.of(this).pushReplacement(
-      FadeRoute(
-        enter: page,
-        duration: duration,
-      ),
+    final route = FadeRoute(
+      enter: page,
+      duration: duration,
     );
+    Navigator.of(this).pushReplacement(route).then((value) {
+      onExit?.call(value);
+    });
   }
 
-  Future<dynamic> fadeIn({
+  void fadeIn({
     required Widget page,
     Duration? duration,
+    ValueChanged<Object?>? onExit,
   }) {
-    return Navigator.of(this).push(
-      FadeRoute(
-        enter: page,
-        duration: duration,
-      ),
+    final route = FadeRoute(
+      enter: page,
+      duration: duration,
     );
+    Navigator.of(this).push(route).then((value) {
+      onExit?.call(value);
+    });
   }
 
-  Future<dynamic> slideToTop({
+  void slideToTop({
     required Widget page,
     Duration? duration,
+    ValueChanged<Object?>? onExit,
   }) {
-    return Navigator.of(this).push(
-      BottomModalRoute(
-        enter: page,
-        duration: duration,
-      ),
+    final route = BottomModalRoute(
+      enter: page,
+      duration: duration,
     );
+    Navigator.of(this).push(route).then((value) {
+      onExit?.call(value);
+    });
   }
 
   void hideKeyboard() {
