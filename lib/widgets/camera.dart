@@ -53,8 +53,9 @@ class PanCamera extends StatefulWidget {
 }
 
 class _PanCameraState extends LifecycleState<PanCamera> {
+  late List<CameraDescription> _cameras;
   late double _maxWidth, _maxHeight;
-  CameraController? _controller;
+  _CameraController? _controller;
   double _minAvailableZoom = 1.0;
   double _maxAvailableZoom = 1.0;
   double _currentScale = 1.0;
@@ -80,14 +81,7 @@ class _PanCameraState extends LifecycleState<PanCamera> {
             break;
           case PanCameraEvents.switchCamera:
             if (isInitialized) {
-              switch (camera!.lensDirection) {
-                case CameraLensDirection.front:
-                  _resetCamera(LensDirection.back);
-                  break;
-                default:
-                  _resetCamera(LensDirection.front);
-                  break;
-              }
+              _switchCamera(_controller!.description);
             }
             break;
           case PanCameraEvents.initializeCamera:
@@ -169,7 +163,10 @@ class _PanCameraState extends LifecycleState<PanCamera> {
   }
 
   void _loadNewCamera(CameraDescription description) async {
-    _controller = CameraController(
+    if(_controller != null) {
+      _controller!.dispose();
+    }
+    _controller = _CameraController(
       description,
       ResolutionPreset.high,
       enableAudio: false,
@@ -218,11 +215,21 @@ class _PanCameraState extends LifecycleState<PanCamera> {
 
   void _resetCamera(LensDirection lensDirection) async {
     final cameras = await availableCameras();
+    _cameras = List.of(cameras);
     for (final camera in cameras) {
       if (camera.lensDirection == lensDirection.value) {
         _loadNewCamera(camera);
         break;
       }
+    }
+  }
+
+  void _switchCamera(CameraDescription current) async {
+    if (current != _cameras.last) {
+      final index = _cameras.indexOf(current);
+      _loadNewCamera(_cameras[index + 1]);
+    } else {
+      _loadNewCamera(_cameras.first);
     }
   }
 
@@ -321,5 +328,79 @@ class PanCameraController extends ValueNotifier<PanCameraEvents> {
 
   void initializeCamera() {
     value = PanCameraEvents.initializeCamera;
+  }
+}
+
+class _CameraController extends CameraController {
+  _CameraController(
+    super.description,
+    super.resolutionPreset, {
+    super.enableAudio = true,
+    super.imageFormatGroup,
+  });
+
+  @override
+  Future<void> unlockCaptureOrientation() async {
+    if (!isDesktop) {
+      return super.unlockCaptureOrientation();
+    }
+  }
+
+  @override
+  Future<void> setFlashMode(FlashMode mode) async {
+    if (!isDesktop) {
+      return super.setFlashMode(mode);
+    }
+  }
+
+  @override
+  Future<void> setExposurePoint(Offset? point) async {
+    if (!isDesktop) {
+      return super.setExposurePoint(point);
+    }
+  }
+
+  @override
+  Future<void> setExposureMode(ExposureMode mode) async {
+    if (!isDesktop) {
+      return super.setExposureMode(mode);
+    }
+  }
+
+  @override
+  Future<void> setFocusPoint(Offset? point) async {
+    if (!isDesktop) {
+      return super.setFocusPoint(point);
+    }
+  }
+
+  @override
+  Future<void> setFocusMode(FocusMode mode) async {
+    if (!isDesktop) {
+      return super.setFocusMode(mode);
+    }
+  }
+
+  @override
+  Future<void> setZoomLevel(double zoom) async {
+    if (!isDesktop) {
+      return super.setZoomLevel(zoom);
+    }
+  }
+
+  @override
+  Future<double> getMinZoomLevel() async {
+    if (!isDesktop) {
+      return super.getMinZoomLevel();
+    }
+    return 0;
+  }
+
+  @override
+  Future<double> getMaxZoomLevel() async {
+    if (!isDesktop) {
+      return super.getMaxZoomLevel();
+    }
+    return 0;
   }
 }
