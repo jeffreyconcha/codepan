@@ -215,7 +215,7 @@ class _PanCameraState extends LifecycleState<PanCamera> {
     required String watermark,
   }) async {
     final d = Dimension.of(context);
-    return await file.stampImage(
+    return await file.stampImage2(
       context: context,
       builder: (width, height, scale) {
         final lineCount = watermark.split('\n').length;
@@ -249,6 +249,7 @@ class _PanCameraState extends LifecycleState<PanCamera> {
         !value!.isTakingPicture &&
         !controller.isTakingPhoto()) {
       controller._isTakingPhoto = true;
+      final d = Dimension.of(context);
       final elapsed = SystemClock.elapsedRealtime().inMilliseconds;
       final stamp = DateTime.now().millisecondsSinceEpoch;
       final private = await PanUtils.getAppDirectory();
@@ -262,7 +263,7 @@ class _PanCameraState extends LifecycleState<PanCamera> {
         final captured = await _controller!.takePicture();
         final file = File(captured.path);
         final copied = await file.copy(path);
-        final cropped = await copied.cropImage(
+        final cropped = await copied.cropImage2(
           preferredWidth: _maxWidth,
           preferredHeight: _maxHeight,
         );

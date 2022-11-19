@@ -1,126 +1,86 @@
 import 'dart:async';
 import 'dart:io';
-import 'dart:math' as m;
 import 'dart:typed_data';
 import 'dart:ui';
 
 import 'package:codepan/extensions/painter.dart';
 import 'package:codepan/resources/dimensions.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_native_image/flutter_native_image.dart';
 import 'package:image/image.dart' as i;
 import 'package:image_compression_flutter/image_compression_flutter.dart';
 
 typedef PainterBuilder = CustomPainter Function(
-    int width,
-    int height,
-    double scale,
-    );
+  int width,
+  int height,
+  double scale,
+);
 
 extension FileSystemEntityUtils on FileSystemEntity {
   String get name {
     final separator = Platform.pathSeparator;
-    return this.path
-        .split(separator)
-        .last;
+    return this.path.split(separator).last;
   }
 }
 
-extension FileUtils on File {
-  Future<File> cropImage({
+extension ImageUtils on File {
+  Future<File> cropImage2({
     required double preferredWidth,
     required double preferredHeight,
   }) async {
     final image = i.decodeImage(this.readAsBytesSync())!;
-    final preferredRatio = preferredWidth / preferredHeight;
-    final min = m.min(image.width, image.height);
-    final max = m.max(image.width, image.height);
-    final imageRatio = min / max;
-    File cropped;
-    if (await isLandscape()) {
-      if (preferredRatio < imageRatio) {
-        final width = max;
-        final height = (width * preferredRatio).toInt();
-        final originX = 0;
-        final originY = (min - height) ~/ 2;
-        cropped = await FlutterNativeImage.cropImage(
-            this.path, originX, originY, width, height);
-      } else {
-        final height = min;
-        final width = height ~/ preferredRatio;
-        final originY = 0;
-        final originX = (max - width) ~/ 2;
-        cropped = await FlutterNativeImage.cropImage(
-            this.path, originX, originY, width, height);
-      }
+    final pr = preferredWidth / preferredHeight;
+    final ir = image.width / image.height;
+    print('crop size: $preferredWidth x $preferredHeight'); // 784 x 561 @1.40
+    print('image size: ${image.width} x ${image.height}'); //1280 x 720 @1.78
+    print('orientation: ${image.exif.hasOrientation}');
+    i.Image cropped;
+    if (ir > pr) {
+      final nh = image.height; //720
+      final nw = (nh * pr).toInt(); // 1008
+      final x = (image.width - nw) ~/ 2;
+      final y = 0;
+      print('new size: $x, $y, $nw, $nh');
+      cropped = i.copyCrop(image, x, y, nw, nh);
     } else {
-      if (preferredRatio < imageRatio) {
-        final height = max;
-        final width = (height * preferredRatio).toInt();
-        final originY = 0;
-        final originX = (min - width) ~/ 2;
-        cropped = await FlutterNativeImage.cropImage(
-            this.path, originX, originY, width, height);
-      } else {
-        final width = min;
-        final height = width ~/ preferredRatio;
-        final originX = 0;
-        final originY = (max - height) ~/ 2;
-        cropped = await FlutterNativeImage.cropImage(
-            this.path, originX, originY, width, height);
-      }
+      final nw = image.width;
+      final nh = (nw * pr).toInt();
+      final x = 0;
+      final y = (image.height - nh) ~/ 2;
+      print('new size: $x, $y, $nw, $nh');
+      cropped = i.copyCrop(image, x, y, nw, nh);
     }
-    return cropped;
+    final encoded = i.encodeJpg(cropped);
+    final data = Uint8List.fromList(encoded);
+    return await this.writeAsBytes(data);
   }
 
-  Future<File> stampImage({
+  Future<File> stampImage2({
     required PainterBuilder builder,
     required BuildContext context,
   }) async {
     final d = Dimension.of(context);
-    final rotation = await getImageRotation();
-    final rotated = await getRotatedImage();
-    final min = m.min(rotated.width, rotated.height);
-    final max = m.max(rotated.width, rotated.height);
-    final scale = min / d.min;
-    final painter = builder.call(min, max, scale);
+    final raw = i.decodeImage(this.readAsBytesSync())!;
+    final image = i.bakeOrientation(raw);
+    final rotation = image.exif.hasOrientation ? image.exif.orientation : 0;
+    final scale = image.width / d.maxWidth;
+    final painter = builder.call(image.width, image.height, scale);
     final rendered = await painter.renderImage(
-      width: min,
-      height: max,
+      width: image.width,
+      height: image.height,
     );
     final byte = await rendered.toByteData(format: ImageByteFormat.png);
     final watermark = i.decodeImage(byte!.buffer.asUint8List())!;
-    final stamp = i.copyRotate(watermark, rotation);
-    final stamped = i.drawImage(rotated, stamp);
+    final rotated = i.copyRotate(watermark, rotation);
+    final stamped = i.drawImage(image, rotated);
     final original = i.copyRotate(stamped, 360 - rotation);
     final encoded = i.encodeJpg(original);
     final data = Uint8List.fromList(encoded);
     return await this.writeAsBytes(data);
   }
 
-  Future<bool> isLandscape() async {
-    final properties = await FlutterNativeImage.getImageProperties(path);
-    return properties.width! > properties.height!;
-  }
-
-  Future<int> getImageRotation() async {
-    final properties = await FlutterNativeImage.getImageProperties(path);
-    switch (properties.orientation) {
-      case ImageOrientation.rotate90:
-        return 90;
-      case ImageOrientation.rotate180:
-        return 180;
-      case ImageOrientation.rotate270:
-        return 270;
-      default:
-    }
-    return 0;
-  }
-
   Future<i.Image> getRotatedImage() async {
     final image = i.decodeImage(this.readAsBytesSync())!;
-    final rotation = await getImageRotation();
-    return i.copyRotate(image, rotation);
+    return i.bakeOrientation(image);
   }
 
   Future<Uint8List> get jpegData async {

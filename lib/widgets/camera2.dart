@@ -12,6 +12,7 @@ import 'package:codepan/utils/text_canvas.dart';
 import 'package:codepan/widgets/if_else_builder.dart';
 import 'package:codepan/widgets/states/lifecycle_state.dart';
 import 'package:flutter/material.dart';
+import 'package:image_compression_flutter/image_compression_flutter.dart';
 import 'package:system_clock/system_clock.dart';
 
 enum PanCameraEvents {
@@ -125,48 +126,46 @@ class _PanCamera2State extends LifecycleState<PanCamera2> {
   @override
   Widget build(BuildContext context) {
     final d = Dimension.of(context);
-    return LayoutBuilder(
-        builder: (context, constraints) {
-          _maxWidth = constraints.maxWidth;
-          _maxHeight = constraints.maxHeight;
-          return IfElseBuilder(
-            alignment: Alignment.center,
-            condition: isInitialized,
-            ifBuilder: (context) {
-              final scale = 1 / (d.size.aspectRatio / _controller!.aspectRatio);
-              return Listener(
-                onPointerDown: (event) {
-                  _pointers++;
-                },
-                onPointerUp: (event) {
-                  _pointers--;
-                },
-                child: Transform.scale(
-                  scale: scale,
-                  alignment: Alignment.center,
-                  child: Stack(
-                    alignment: Alignment.center,
-                    children: [
-                      AspectRatio(
-                        aspectRatio: _controller!.aspectRatio,
-                        child: _controller!.buildPreview(),
-                      ),
-                      GestureDetector(
-                        behavior: HitTestBehavior.opaque,
-                        onScaleStart: _handleScaleStart,
-                        onScaleUpdate: _handleScaleUpdate,
-                        onTapDown: (details) {
-                          onViewFinderTap(details);
-                        },
-                      ),
-                    ],
-                  ),
-                ),
-              );
+    return LayoutBuilder(builder: (context, constraints) {
+      _maxWidth = constraints.maxWidth;
+      _maxHeight = constraints.maxHeight;
+      return IfElseBuilder(
+        alignment: Alignment.center,
+        condition: isInitialized,
+        ifBuilder: (context) {
+          final scale = 1 / (d.size.aspectRatio / _controller!.aspectRatio);
+          return Listener(
+            onPointerDown: (event) {
+              _pointers++;
             },
+            onPointerUp: (event) {
+              _pointers--;
+            },
+            child: Transform.scale(
+              scale: scale,
+              alignment: Alignment.center,
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  AspectRatio(
+                    aspectRatio: _controller!.aspectRatio,
+                    child: _controller!.buildPreview(),
+                  ),
+                  GestureDetector(
+                    behavior: HitTestBehavior.opaque,
+                    onScaleStart: _handleScaleStart,
+                    onScaleUpdate: _handleScaleUpdate,
+                    onTapDown: (details) {
+                      onViewFinderTap(details);
+                    },
+                  ),
+                ],
+              ),
+            ),
           );
-        }
-    );
+        },
+      );
+    });
   }
 
   void _loadNewCamera(CameraDescription description) async {
@@ -245,14 +244,12 @@ class _PanCamera2State extends LifecycleState<PanCamera2> {
     required String watermark,
   }) async {
     final d = Dimension.of(context);
-    return await file.stampImage(
+    return await file.stampImage2(
       context: context,
       builder: (width, height, scale) {
-        final lineCount = watermark
-            .split('\n')
-            .length;
+        final lineCount = watermark.split('\n').length;
         final fontSize = d.at(11);
-        final margin = d.at(8);
+        final margin = d.at(10);
         final contentHeight = (fontSize * scale * lineCount) + margin;
         final dx = margin;
         final dy = height.toDouble() - contentHeight;
@@ -279,31 +276,34 @@ class _PanCamera2State extends LifecycleState<PanCamera2> {
   Future<void> _capture() async {
     if (isInitialized && !controller.isTakingPhoto()) {
       controller._isTakingPhoto = true;
-      final elapsed = SystemClock
-          .elapsedRealtime()
-          .inMilliseconds;
-      final stamp = DateTime
-          .now()
-          .millisecondsSinceEpoch;
+      final d = Dimension.of(context);
+      final elapsed = SystemClock.elapsedRealtime().inMilliseconds;
+      final stamp = DateTime.now().millisecondsSinceEpoch;
       final private = await PanUtils.getAppDirectory();
       final dir = private.of(widget.folder);
       if (!await dir.exists()) {
         await dir.create(recursive: true);
       }
+      final slash = Platform.pathSeparator;
       final fileName = '$elapsed-$stamp.jpg';
-      final path = '${dir.path}/$fileName';
+      final path = '${dir.path}$slash$fileName';
       try {
         final captured = await _controller!.takePicture();
         final file = File(captured.path);
         final copied = await file.copy(path);
-        final cropped = await copied.cropImage(
+        print('$_maxWidth x $_maxHeight}');
+        print('${_controller!.previewSize.width} x ${_controller!.previewSize.height}');
+        print(d.isLandscape);
+        final cropped = await copied.cropImage2(
           preferredWidth: _maxWidth,
           preferredHeight: _maxHeight,
         );
         final watermark = widget.leftWatermark;
         if (watermark != null) {
-          final stamped =
-          await _stampImage(file: cropped, watermark: watermark);
+          final stamped = await _stampImage(
+            file: cropped,
+            watermark: watermark,
+          );
           final photo = await copied.writeAsBytes(stamped.readAsBytesSync());
           widget.onCapture(photo);
         } else {
@@ -344,12 +344,13 @@ class PlatformCameraController extends ValueNotifier<CameraDescription> {
 
   int get cameraId => _cameraId;
 
-  PlatformCameraController(this.description,
-      this.resolutionPreset, {
-        this.enableAudio = false,
-        this.onClose,
-        this.onError,
-      }) : super(description);
+  PlatformCameraController(
+    this.description,
+    this.resolutionPreset, {
+    this.enableAudio = false,
+    this.onClose,
+    this.onError,
+  }) : super(description);
 
   @override
   void dispose() {
@@ -374,9 +375,7 @@ class PlatformCameraController extends ValueNotifier<CameraDescription> {
         final closingStream = platform.onCameraClosing(cameraId);
         _closeStream = closingStream.listen(onClose);
       }
-      final future = platform
-          .onCameraInitialized(cameraId)
-          .first;
+      final future = platform.onCameraInitialized(cameraId).first;
       await platform.initializeCamera(cameraId);
       final event = await future;
       _previewSize = Size(
