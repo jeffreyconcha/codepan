@@ -36,8 +36,8 @@ class LoadingDialog extends StatelessWidget {
             GestureDetector(
               onTap: dismissible
                   ? () {
-                context.pop();
-              }
+                      context.pop();
+                    }
                   : null,
             ),
             Center(

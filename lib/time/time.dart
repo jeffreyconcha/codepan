@@ -34,12 +34,18 @@ class Time extends Equatable {
 
   String get displayWeekdayDate => '$displayWeekday, $displayDate';
 
+  String get displayRealWeekdayDate => '$displayRealWeekday, $displayDate';
+
   String get displayTime => DateFormat.jm(locale).format(value);
 
   String get displayTimeWithSeconds => DateFormat.jms(locale).format(value);
 
   String get displayWeekday {
-    return isToday ? Strings.today : DateFormat.EEEE(locale).format(value);
+    return isToday ? Strings.today : displayRealWeekday;
+  }
+
+  String get displayRealWeekday {
+    return DateFormat.EEEE(locale).format(value);
   }
 
   String get displayDay => DateFormat.d(locale).format(value);
@@ -61,7 +67,11 @@ class Time extends Equatable {
   }
 
   String get abbrWeekday {
-    return isToday ? Strings.today : DateFormat.E(locale).format(value);
+    return isToday ? Strings.today : abbrRealWeekday;
+  }
+
+  String get abbrRealWeekday {
+    return DateFormat.E(locale).format(value);
   }
 
   String get abbrMonth => DateFormat.MMM(locale).format(value);
@@ -83,6 +93,8 @@ class Time extends Equatable {
   String get abbr => '$abbrDate, $displayTime';
 
   String get abbrWeekdayDate => '$abbrWeekday, $abbrDate';
+
+  String get abbrRealWeekdayDate => '$abbrRealWeekday, $abbrDate';
 
   String get abbrDate => DateFormat.yMMMd(locale).format(value);
 

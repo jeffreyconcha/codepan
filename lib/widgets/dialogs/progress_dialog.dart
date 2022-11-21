@@ -8,7 +8,7 @@ import 'package:codepan/widgets/linear_progress_bar.dart';
 import 'package:codepan/widgets/text.dart';
 import 'package:flutter/material.dart';
 
-import 'dialog_config.dart';
+import 'dialog.dart';
 
 class ProgressDialog extends StatefulWidget {
   final String? title, message, titleFont;
@@ -65,10 +65,9 @@ class _ProgressDialogState extends State<ProgressDialog> {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
-                Elevated(
+                DialogContainer(
                   width: widget.width,
                   height: widget.height,
-                  radius: d.at(dialogRadius),
                   margin: EdgeInsets.all(dialogMargin),
                   child: Column(
                     children: <Widget>[
