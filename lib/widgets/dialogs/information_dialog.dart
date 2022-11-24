@@ -72,161 +72,148 @@ class _InformationDialogState extends State<InformationDialog> {
     final d = Dimension.of(context);
     final t = Theme.of(context);
     final titleFont = t.dialogTheme.titleTextStyle?.fontFamily;
-    return WillPopScope(
-      child: Material(
-        color: Colors.transparent,
-        child: Stack(
-          children: <Widget>[
-            GestureDetector(
-              onTap: widget.dismissible ? () => _detach(context) : null,
-            ),
-            DialogContainer(
-              margin: widget.margin ?? EdgeInsets.all(d.at(dialogMargin)),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: <Widget>[
-                  Row(
-                    children: [
-                      Expanded(
-                        child: PanText(
-                          text: widget.title,
-                          fontSize: d.at(15),
-                          fontFamily: widget.titleFont ?? titleFont,
-                          fontWeight: FontWeight.w600,
-                          fontColor: widget.fontColor,
-                          alignment: Alignment.centerLeft,
-                          textAlign: TextAlign.left,
-                          padding: EdgeInsets.symmetric(
-                            horizontal: d.at(20),
-                            vertical: d.at(13),
-                          ),
-                        ),
+    return DialogContainer(
+      dismissible: widget.dismissible,
+      onDetach: widget.onDetach,
+      margin: widget.margin,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          Row(
+            children: [
+              Expanded(
+                child: PanText(
+                  text: widget.title,
+                  fontSize: d.at(15),
+                  fontFamily: widget.titleFont ?? titleFont,
+                  fontWeight: FontWeight.w600,
+                  fontColor: widget.fontColor,
+                  alignment: Alignment.centerLeft,
+                  textAlign: TextAlign.left,
+                  padding: EdgeInsets.symmetric(
+                    horizontal: d.at(20),
+                    vertical: d.at(13),
+                  ),
+                ),
+              ),
+              PanButton(
+                width: d.at(40),
+                height: d.at(40),
+                radius: d.at(20),
+                child: Icon(
+                  Icons.close,
+                  color: PanColors.text,
+                  size: d.at(20),
+                ),
+                onTap: () => context.pop(),
+                margin: EdgeInsets.only(
+                  right: d.at(5),
+                ),
+              ),
+            ],
+          ),
+          IfElseBuilder(
+            condition: widget.withDivider,
+            ifBuilder: (context) {
+              return LineDivider();
+            },
+          ),
+          IfElseBuilder(
+            condition: widget.child != null,
+            ifBuilder: (context) => widget.child!,
+            elseBuilder: (context) {
+              return PanText(
+                text: message,
+                fontSize: d.at(13),
+                fontColor: widget.fontColor,
+                alignment: Alignment.centerLeft,
+                textAlign: TextAlign.left,
+                spannable: SpannableText(
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                  ),
+                  identifiers: ['<s>', '</s>'],
+                ),
+                margin: widget.withDivider
+                    ? EdgeInsets.symmetric(
+                        horizontal: d.at(20),
+                        vertical: d.at(13),
+                      )
+                    : EdgeInsets.only(
+                        top: d.at(7),
+                        left: d.at(20),
+                        right: d.at(20),
+                        bottom: d.at(13),
                       ),
-                      PanButton(
-                        width: d.at(40),
-                        height: d.at(40),
-                        radius: d.at(20),
-                        child: Icon(
-                          Icons.close,
-                          color: PanColors.text,
-                          size: d.at(20),
-                        ),
-                        onTap: () => context.pop(),
-                        margin: EdgeInsets.only(
-                          right: d.at(5),
-                        ),
+                children: widget.children,
+              );
+            },
+          ),
+          IfElseBuilder(
+              color: Colors.white,
+              condition: positive != null || negative != null,
+              ifBuilder: (context) {
+                return Padding(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: d.at(20),
+                    vertical: d.at(7),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      IfElseBuilder(
+                        condition: positive != null,
+                        ifBuilder: (context) {
+                          return PanButton(
+                            text: widget.positive,
+                            fontColor: t.primaryColor,
+                            fontSize: d.at(13),
+                            fontWeight: FontWeight.w600,
+                            radius: d.at(3),
+                            padding: EdgeInsets.symmetric(
+                              horizontal: d.at(15),
+                              vertical: d.at(10),
+                            ),
+                            onTap: () {
+                              if (widget.autoDismiss) {
+                                _detach(context);
+                              }
+                              widget.onPositiveTap?.call();
+                            },
+                          );
+                        },
+                      ),
+                      SizedBox(
+                        width: d.at(10),
+                      ),
+                      IfElseBuilder(
+                        condition: negative != null,
+                        ifBuilder: (context) {
+                          return PanButton(
+                            text: widget.negative,
+                            fontColor: widget.fontColor,
+                            fontSize: d.at(13),
+                            fontWeight: FontWeight.w600,
+                            radius: d.at(3),
+                            padding: EdgeInsets.symmetric(
+                              horizontal: d.at(15),
+                              vertical: d.at(10),
+                            ),
+                            onTap: () {
+                              if (widget.autoDismiss) {
+                                _detach(context);
+                              }
+                              widget.onNegativeTap?.call();
+                            },
+                          );
+                        },
                       ),
                     ],
                   ),
-                  IfElseBuilder(
-                    condition: widget.withDivider,
-                    ifBuilder: (context) {
-                      return LineDivider();
-                    },
-                  ),
-                  IfElseBuilder(
-                    condition: widget.child != null,
-                    ifBuilder: (context) => widget.child!,
-                    elseBuilder: (context) {
-                      return PanText(
-                        text: message,
-                        fontSize: d.at(13),
-                        fontColor: widget.fontColor,
-                        alignment: Alignment.centerLeft,
-                        textAlign: TextAlign.left,
-                        spannable: SpannableText(
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                          ),
-                          identifiers: ['<s>', '</s>'],
-                        ),
-                        margin: widget.withDivider
-                            ? EdgeInsets.symmetric(
-                                horizontal: d.at(20),
-                                vertical: d.at(13),
-                              )
-                            : EdgeInsets.only(
-                                top: d.at(7),
-                                left: d.at(20),
-                                right: d.at(20),
-                                bottom: d.at(13),
-                              ),
-                        children: widget.children,
-                      );
-                    },
-                  ),
-                  IfElseBuilder(
-                      color: Colors.white,
-                      condition: positive != null || negative != null,
-                      ifBuilder: (context) {
-                        return Padding(
-                          padding: EdgeInsets.symmetric(
-                            horizontal: d.at(20),
-                            vertical: d.at(7),
-                          ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: [
-                              IfElseBuilder(
-                                condition: positive != null,
-                                ifBuilder: (context) {
-                                  return PanButton(
-                                    text: widget.positive,
-                                    fontColor: t.primaryColor,
-                                    fontSize: d.at(13),
-                                    fontWeight: FontWeight.w600,
-                                    radius: d.at(3),
-                                    padding: EdgeInsets.symmetric(
-                                      horizontal: d.at(15),
-                                      vertical: d.at(10),
-                                    ),
-                                    onTap: () {
-                                      if (widget.autoDismiss) {
-                                        _detach(context);
-                                      }
-                                      widget.onPositiveTap?.call();
-                                    },
-                                  );
-                                },
-                              ),
-                              SizedBox(
-                                width: d.at(10),
-                              ),
-                              IfElseBuilder(
-                                condition: negative != null,
-                                ifBuilder: (context) {
-                                  return PanButton(
-                                    text: widget.negative,
-                                    fontColor: widget.fontColor,
-                                    fontSize: d.at(13),
-                                    fontWeight: FontWeight.w600,
-                                    radius: d.at(3),
-                                    padding: EdgeInsets.symmetric(
-                                      horizontal: d.at(15),
-                                      vertical: d.at(10),
-                                    ),
-                                    onTap: () {
-                                      if (widget.autoDismiss) {
-                                        _detach(context);
-                                      }
-                                      widget.onNegativeTap?.call();
-                                    },
-                                  );
-                                },
-                              ),
-                            ],
-                          ),
-                        );
-                      }),
-                ],
-              ),
-            ),
-          ],
-        ),
+                );
+              }),
+        ],
       ),
-      onWillPop: () {
-        return Future.value(widget.dismissible);
-      },
     );
   }
 

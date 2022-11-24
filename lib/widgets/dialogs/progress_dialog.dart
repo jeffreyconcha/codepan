@@ -1,9 +1,7 @@
 import 'package:codepan/data/models/progress.dart';
-import 'package:codepan/extensions/extensions.dart';
 import 'package:codepan/resources/colors.dart';
 import 'package:codepan/resources/dimensions.dart';
 import 'package:codepan/resources/strings.dart';
-import 'package:codepan/widgets/elevated.dart';
 import 'package:codepan/widgets/linear_progress_bar.dart';
 import 'package:codepan/widgets/text.dart';
 import 'package:flutter/material.dart';
@@ -53,91 +51,71 @@ class _ProgressDialogState extends State<ProgressDialog> {
     final d = Dimension.of(context);
     final t = Theme.of(context);
     final titleFont = t.dialogTheme.titleTextStyle?.fontFamily;
-    return WillPopScope(
-      child: Material(
-        color: Colors.transparent,
-        child: Stack(
-          children: <Widget>[
-            GestureDetector(
-              onTap: widget.dismissible ? () => context.pop() : null,
+    return DialogContainer(
+      width: widget.width,
+      height: widget.height,
+      dismissible: widget.dismissible,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          PanText(
+            text: widget.title,
+            fontSize: d.at(15),
+            fontFamily: widget.titleFont ?? titleFont,
+            fontWeight: FontWeight.w600,
+            fontColor: widget.fontColor,
+            alignment: Alignment.centerLeft,
+            textAlign: TextAlign.left,
+            padding: EdgeInsets.symmetric(
+              horizontal: d.at(20),
+              vertical: d.at(13),
             ),
-            Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: <Widget>[
-                DialogContainer(
-                  width: widget.width,
-                  height: widget.height,
-                  margin: EdgeInsets.all(dialogMargin),
-                  child: Column(
-                    children: <Widget>[
-                      PanText(
-                        text: widget.title,
-                        fontSize: d.at(15),
-                        fontFamily: widget.titleFont ?? titleFont,
-                        fontWeight: FontWeight.w600,
-                        fontColor: widget.fontColor,
-                        alignment: Alignment.centerLeft,
-                        textAlign: TextAlign.left,
-                        padding: EdgeInsets.symmetric(
-                          horizontal: d.at(20),
-                          vertical: d.at(13),
-                        ),
-                      ),
-                      // LineDivider(),
-                      Padding(
-                        padding: EdgeInsets.only(
-                          top: d.at(7),
-                          left: d.at(20),
-                          right: d.at(20),
-                          bottom: d.at(13),
-                        ),
-                        child: Column(
-                          children: [
-                            PanText(
-                              text: widget.message,
-                              fontColor: widget.fontColor,
-                              fontSize: d.at(13),
-                              textAlign: TextAlign.left,
-                              alignment: Alignment.centerLeft,
-                            ),
-                            SizedBox(
-                              height: d.at(15),
-                            ),
-                            LinearProgressBar(
-                              progress: progress!.current,
-                              max: progress!.max,
-                              showPercentage: false,
-                            ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                PanText(
-                                  text: progress!.value,
-                                  fontColor: widget.fontColor,
-                                  fontSize: d.at(11),
-                                ),
-                                PanText(
-                                  text: progress!.percentValue,
-                                  fontColor: widget.fontColor,
-                                  fontSize: d.at(11),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
+          ),
+          // LineDivider(),
+          Padding(
+            padding: EdgeInsets.only(
+              top: d.at(7),
+              left: d.at(20),
+              right: d.at(20),
+              bottom: d.at(13),
+            ),
+            child: Column(
+              children: [
+                PanText(
+                  text: widget.message,
+                  fontColor: widget.fontColor,
+                  fontSize: d.at(13),
+                  textAlign: TextAlign.left,
+                  alignment: Alignment.centerLeft,
+                ),
+                SizedBox(
+                  height: d.at(15),
+                ),
+                LinearProgressBar(
+                  progress: progress!.current,
+                  max: progress!.max,
+                  showPercentage: false,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    PanText(
+                      text: progress!.value,
+                      fontColor: widget.fontColor,
+                      fontSize: d.at(11),
+                    ),
+                    PanText(
+                      text: progress!.percentValue,
+                      fontColor: widget.fontColor,
+                      fontSize: d.at(11),
+                    ),
+                  ],
                 ),
               ],
             ),
-          ],
-        ),
+          ),
+        ],
       ),
-      onWillPop: () {
-        return Future.value(widget.dismissible);
-      },
     );
   }
 }
