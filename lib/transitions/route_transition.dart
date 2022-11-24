@@ -56,6 +56,8 @@ class FadeRoute extends PageRouteBuilder {
   }) : super(
           transitionDuration: duration ?? delay,
           pageBuilder: (context, animation1, animation2) => enter,
+          opaque: false,
+          barrierColor: Colors.black.withOpacity(0.5),
           transitionsBuilder: (context, animation1, animation2, child) {
             return FadeTransition(
               opacity: animation1,
