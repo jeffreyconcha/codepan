@@ -289,8 +289,9 @@ class _PanCameraState extends LifecycleState<PanCamera> {
       if (!await dir.exists()) {
         await dir.create(recursive: true);
       }
+      final slash = Platform.pathSeparator;
       final fileName = '$elapsed-$stamp.jpg';
-      final path = '${dir.path}/$fileName';
+      final path = '${dir.path}$slash$fileName';
       try {
         final captured = await _controller!.takePicture();
         final file = File(captured.path);
