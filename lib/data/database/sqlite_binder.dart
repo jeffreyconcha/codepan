@@ -83,52 +83,46 @@ class SqliteBinder {
   Future<bool> apply([
     bool continueOnError = false,
   ]) async {
-    if (db.inTransaction) {
-      try {
-        await _batch.commit(
-          noResult: true,
-          continueOnError: continueOnError,
-        );
-        return true;
-      } catch (error, stacktrace) {
-        printError(error, stacktrace);
-        rethrow;
-      }
+    try {
+      await _batch.commit(
+        noResult: true,
+        continueOnError: continueOnError,
+      );
+      return true;
+    } catch (error, stacktrace) {
+      printError(error, stacktrace);
+      rethrow;
     }
-    return false;
   }
 
   Future<bool> finish({
     bool clearMap = true,
   }) async {
-    if (db.inTransaction) {
-      if (!_chain) {
-        bool result = false;
-        if (clearMap) {
-          _map.clear();
-        }
-        try {
-          await _batch.commit(noResult: true);
-          if (_showLog) {
-            final duration = DateTime.now().difference(_time);
-            final formatted = duration.format(isReadable: true);
-            debugPrint('$tag: TRANSACTION SUCCESSFUL');
-            debugPrint('$tag: FINISHED AT $formatted');
-          }
-          result = true;
-        } catch (error, stacktrace) {
-          printError(error, stacktrace);
-          rethrow;
-        } finally {
-          db.removeBinder();
-        }
-        return result;
-      } else {
-        chain(false);
-        return true;
+    if (!_chain) {
+      bool result = false;
+      if (clearMap) {
+        _map.clear();
       }
+      try {
+        await _batch.commit(noResult: true);
+        if (_showLog) {
+          final duration = DateTime.now().difference(_time);
+          final formatted = duration.format(isReadable: true);
+          debugPrint('$tag: TRANSACTION SUCCESSFUL');
+          debugPrint('$tag: FINISHED AT $formatted');
+        }
+        result = true;
+      } catch (error, stacktrace) {
+        printError(error, stacktrace);
+        rethrow;
+      } finally {
+        db.removeBinder();
+      }
+      return result;
+    } else {
+      chain(false);
+      return true;
     }
-    return false;
   }
 
   void chain([bool chain = true]) {
