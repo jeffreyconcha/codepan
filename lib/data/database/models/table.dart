@@ -37,10 +37,20 @@ class Table<T extends DatabaseEntity> {
     return buffer.toString();
   }
 
+  /// Reference the field of the table when using condition in queries.
+  /// It automatically adds the prefix for joining multiple tables.
+  /// <br/><br/>
+  /// Only use this as the __field__ part of the condition
+  /// and not as _value_ part.
   String rawField(String name) {
     return field(name).field;
   }
 
+  /// Reference the field of the table when using condition in queries.
+  /// It automatically adds the prefix for joining multiple tables.
+  /// <br/><br/>
+  /// Only use this as the __value__ part of the condition
+  /// and not as _field_ part.
   Field field(String name) {
     return Field(
       field: name,
