@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:camera/camera.dart';
-import 'package:codepan/extensions/directory.dart';
 import 'package:codepan/extensions/file.dart';
 import 'package:codepan/resources/dimensions.dart';
 import 'package:codepan/utils/codepan_utils.dart';
@@ -36,12 +35,12 @@ class PanCamera extends StatefulWidget {
   final PanCameraController controller;
   final ValueChanged<File> onCapture;
   final ValueChanged<String> onError;
-  final String folder;
+  final Directory directory;
 
   const PanCamera({
     super.key,
     required this.controller,
-    required this.folder,
+    required this.directory,
     required this.onCapture,
     required this.onError,
     this.leftWatermark,
@@ -284,8 +283,7 @@ class _PanCameraState extends LifecycleState<PanCamera> {
       controller._isTakingPhoto = true;
       final elapsed = SystemClock.elapsedRealtime().inMilliseconds;
       final stamp = DateTime.now().millisecondsSinceEpoch;
-      final private = await PanUtils.getAppDirectory();
-      final dir = private.of(widget.folder);
+      final dir = widget.directory;
       if (!await dir.exists()) {
         await dir.create(recursive: true);
       }
