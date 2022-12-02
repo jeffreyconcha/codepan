@@ -415,6 +415,10 @@ class Time extends Equatable {
     return value.year == other.value.year;
   }
 
+  bool isSameDate(Time other) {
+    return date == other.date;
+  }
+
   Time add(Duration duration) {
     final result = value.add(duration);
     return Time.value(result);
