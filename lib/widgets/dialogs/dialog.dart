@@ -8,7 +8,6 @@ const double dialogRadius = 10;
 const double dialogMargin = 20;
 
 class DialogContainer extends StatelessWidget {
-  final VoidCallback? onDetach;
   final double? width, height;
   final EdgeInsets? margin;
   final bool dismissible;
@@ -21,7 +20,6 @@ class DialogContainer extends StatelessWidget {
     this.width,
     this.height,
     this.dismissible = true,
-    this.onDetach,
   });
 
   @override
@@ -36,7 +34,7 @@ class DialogContainer extends StatelessWidget {
         child: Stack(
           children: [
             GestureDetector(
-              onTap: dismissible ? () => _detach(context) : null,
+              onTap: dismissible ? () => context.pop() : null,
             ),
             Center(
               child: Elevated(
@@ -51,10 +49,5 @@ class DialogContainer extends StatelessWidget {
         ),
       ),
     );
-  }
-
-  void _detach(BuildContext context) {
-    context.pop();
-    onDetach?.call();
   }
 }

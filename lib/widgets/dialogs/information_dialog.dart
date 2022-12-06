@@ -11,7 +11,7 @@ import 'dialog.dart';
 
 class InformationDialog extends StatefulWidget {
   final String? title, message, positive, negative, titleFont;
-  final VoidCallback? onPositiveTap, onNegativeTap, onDetach;
+  final VoidCallback? onPositiveTap, onNegativeTap;
   final bool dismissible, withDivider, autoDismiss;
   final InformationController? controller;
   final List<InlineSpan>? children;
@@ -27,7 +27,6 @@ class InformationDialog extends StatefulWidget {
     this.dismissible = true,
     this.message,
     this.negative,
-    this.onDetach,
     this.onNegativeTap,
     this.onPositiveTap,
     this.positive,
@@ -74,7 +73,6 @@ class _InformationDialogState extends State<InformationDialog> {
     final titleFont = t.dialogTheme.titleTextStyle?.fontFamily;
     return DialogContainer(
       dismissible: widget.dismissible,
-      onDetach: widget.onDetach,
       margin: widget.margin,
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -176,7 +174,7 @@ class _InformationDialogState extends State<InformationDialog> {
                             ),
                             onTap: () {
                               if (widget.autoDismiss) {
-                                _detach(context);
+                                context.pop();
                               }
                               widget.onPositiveTap?.call();
                             },
@@ -201,7 +199,7 @@ class _InformationDialogState extends State<InformationDialog> {
                             ),
                             onTap: () {
                               if (widget.autoDismiss) {
-                                _detach(context);
+                                context.pop();
                               }
                               widget.onNegativeTap?.call();
                             },
@@ -215,11 +213,6 @@ class _InformationDialogState extends State<InformationDialog> {
         ],
       ),
     );
-  }
-
-  void _detach(BuildContext context) {
-    context.pop();
-    widget.onDetach?.call();
   }
 }
 
