@@ -94,19 +94,24 @@ class _InformationDialogState extends State<InformationDialog> {
                   ),
                 ),
               ),
-              PanButton(
-                width: d.at(40),
-                height: d.at(40),
-                radius: d.at(20),
-                child: Icon(
-                  Icons.close,
-                  color: PanColors.text,
-                  size: d.at(20),
-                ),
-                onTap: () => context.pop(),
-                margin: EdgeInsets.only(
-                  right: d.at(5),
-                ),
+              IfElseBuilder(
+                condition: widget.dismissible,
+                ifBuilder: (context) {
+                  return PanButton(
+                    width: d.at(40),
+                    height: d.at(40),
+                    radius: d.at(20),
+                    child: Icon(
+                      Icons.close,
+                      color: PanColors.text,
+                      size: d.at(20),
+                    ),
+                    onTap: () => context.pop(),
+                    margin: EdgeInsets.only(
+                      right: d.at(5),
+                    ),
+                  );
+                },
               ),
             ],
           ),
