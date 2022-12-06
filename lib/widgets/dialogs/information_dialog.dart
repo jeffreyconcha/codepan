@@ -11,7 +11,7 @@ import 'dialog.dart';
 
 class InformationDialog extends StatefulWidget {
   final String? title, message, positive, negative, titleFont;
-  final VoidCallback? onPositiveTap, onNegativeTap;
+  final VoidCallback? onPositiveTap, onNegativeTap, onDispose;
   final bool dismissible, withDivider, autoDismiss;
   final InformationController? controller;
   final List<InlineSpan>? children;
@@ -29,6 +29,7 @@ class InformationDialog extends StatefulWidget {
     this.negative,
     this.onNegativeTap,
     this.onPositiveTap,
+    this.onDispose,
     this.positive,
     this.title,
     this.withDivider = false,
@@ -64,6 +65,12 @@ class _InformationDialogState extends State<InformationDialog> {
       }
     });
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    widget.onDispose?.call();
   }
 
   @override
