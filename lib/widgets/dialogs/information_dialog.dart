@@ -95,7 +95,7 @@ class _InformationDialogState extends State<InformationDialog> {
                 ),
               ),
               IfElseBuilder(
-                condition: widget.dismissible,
+                condition: !widget.dismissible,
                 ifBuilder: (context) {
                   return PanButton(
                     width: d.at(40),
