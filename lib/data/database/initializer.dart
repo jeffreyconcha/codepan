@@ -128,7 +128,6 @@ class DefaultDatabaseInitializer extends DatabaseInitializer {
         binder.createTable(entity.tableName, stmt);
       }
     }
-    await binder.apply();
   }
 
   Future<void> _createIndices(SqliteBinder binder) async {
@@ -141,7 +140,6 @@ class DefaultDatabaseInitializer extends DatabaseInitializer {
         binder.createIndex(idx, table, stmt);
       }
     }
-    await binder.apply();
   }
 
   Future<void> _createTimeTriggers(SqliteBinder binder) async {
@@ -155,7 +153,6 @@ class DefaultDatabaseInitializer extends DatabaseInitializer {
         binder.createTimeTrigger(trg, table, stmt);
       }
     }
-    await binder.apply();
   }
 
   Future<void> _updateTables(SqliteBinder binder) async {
@@ -177,7 +174,6 @@ class DefaultDatabaseInitializer extends DatabaseInitializer {
         }
       }
     }
-    await binder.apply();
   }
 
   Future<void> _updateIndices(SqliteBinder binder) async {
@@ -195,6 +191,5 @@ class DefaultDatabaseInitializer extends DatabaseInitializer {
         }
       }
     }
-    await binder.apply();
   }
 }
