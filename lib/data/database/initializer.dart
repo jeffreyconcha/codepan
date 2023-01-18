@@ -126,6 +126,7 @@ class DefaultDatabaseInitializer extends DatabaseInitializer {
       final stmt = SqliteStatement.fromList(entity.fields);
       if (stmt.hasFields) {
         binder.createTable(entity.tableName, stmt);
+        binder.apply();
       }
     }
   }
@@ -138,6 +139,7 @@ class DefaultDatabaseInitializer extends DatabaseInitializer {
       if (stmt.hasFields) {
         final idx = entity.indexName;
         binder.createIndex(idx, table, stmt);
+        binder.apply();
       }
     }
   }
@@ -151,6 +153,7 @@ class DefaultDatabaseInitializer extends DatabaseInitializer {
         binder.createTable(table, stmt);
         final trg = entity.triggerName;
         binder.createTimeTrigger(trg, table, stmt);
+        binder.apply();
       }
     }
   }
@@ -172,6 +175,7 @@ class DefaultDatabaseInitializer extends DatabaseInitializer {
             }
           });
         }
+        binder.apply();
       }
     }
   }
@@ -189,6 +193,7 @@ class DefaultDatabaseInitializer extends DatabaseInitializer {
           binder.dropIndex(idx);
           binder.createIndex(idx, table, stmt);
         }
+        binder.apply();
       }
     }
   }

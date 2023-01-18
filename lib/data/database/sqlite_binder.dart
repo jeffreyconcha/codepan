@@ -88,6 +88,7 @@ class SqliteBinder {
         noResult: true,
         continueOnError: continueOnError,
       );
+      _batch = db.batch();
       return true;
     } catch (error, stacktrace) {
       printError(error, stacktrace);
