@@ -48,32 +48,33 @@ class _PanAudioPlayerState extends State<PanAudioPlayer> {
   @override
   void initState() {
     _audio = AudioPlayer();
-    _onPositionChanged = _audio.onAudioPositionChanged.listen((time) {
+    _onPositionChanged = _audio.onPositionChanged.listen((time) {
       final value = time.inMilliseconds.roundToDouble();
       _setCurrent(value);
       widget.onProgressChanged?.call(value, _max);
     });
-    _onPlayerStateChanged = _audio.onPlayerStateChanged.listen((state) {
+    _onPlayerStateChanged = _audio.onPlayerStateChanged.listen((state) async {
       switch (state) {
-        case PlayerState.PLAYING:
-          setState(() async {
-            _max = (await _audio.getDuration()).toDouble();
+        case PlayerState.playing:
+          final duration = await _audio.getDuration();
+          setState(() {
+            _max = duration?.inMilliseconds.toDouble() ?? 0;
           });
           _setPlaying(true);
           _setLoading(false);
           break;
-        case PlayerState.PAUSED:
+        case PlayerState.paused:
           _setPlaying(false);
           _setLoading(false);
           break;
-        case PlayerState.COMPLETED:
+        case PlayerState.completed:
           widget.onCompleted?.call();
           _setPlaying(false);
           setState(() {
             _current = _max;
           });
           break;
-        case PlayerState.STOPPED:
+        case PlayerState.stopped:
           _setPlaying(false);
           break;
       }
@@ -160,7 +161,8 @@ class _PanAudioPlayerState extends State<PanAudioPlayer> {
         await _audio.play(data);
       } else if (data is File) {
         final file = data as File;
-        await _audio.play(file.path, isLocal: true);
+        final source = BytesSource(await file.readAsBytes());
+        await _audio.play(source);
       } else {
         throw ArgumentError(invalidArgument);
       }

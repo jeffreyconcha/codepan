@@ -143,12 +143,10 @@ class _CenterZoomTween extends Tween<CenterZoom> {
 }
 
 class CachedTileProvider extends TileProvider {
-  const CachedTileProvider();
-
   @override
   ImageProvider<Object> getImage(
     Coords<num> coords,
-    TileLayerOptions options,
+    TileLayer options,
   ) {
     final url = getTileUrl(coords, options);
     return CachedNetworkImageProvider(url);
@@ -159,7 +157,7 @@ class StoredNetworkImageTileProvider extends TileProvider {
   final Debouncer debouncer;
   final int tileCacheLimit;
 
-  const StoredNetworkImageTileProvider({
+  StoredNetworkImageTileProvider({
     required this.debouncer,
     required this.tileCacheLimit,
   });
@@ -167,7 +165,7 @@ class StoredNetworkImageTileProvider extends TileProvider {
   @override
   ImageProvider<Object> getImage(
     Coords<num> coords,
-    TileLayerOptions options,
+    TileLayer options,
   ) {
     return StoredNetworkImage(
       getTileUrl(coords, options),

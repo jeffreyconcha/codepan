@@ -44,6 +44,9 @@ class SqliteAdapter implements DatabaseExecutor {
     return _db;
   }
 
+  @override
+  Database get database => instance!;
+
   String get path => _path;
 
   bool get inTransaction => _binder != null;

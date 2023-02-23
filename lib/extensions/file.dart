@@ -30,9 +30,6 @@ extension ImageUtils on File {
     final image = i.decodeImage(this.readAsBytesSync())!;
     final pr = preferredWidth / preferredHeight;
     final ir = image.width / image.height;
-    print('crop size: $preferredWidth x $preferredHeight'); // 784 x 561 @1.40
-    print('image size: ${image.width} x ${image.height}'); //1280 x 720 @1.78
-    print('orientation: ${image.exif.hasOrientation}');
     i.Image cropped;
     if (ir > pr) {
       final nh = image.height; //720
@@ -61,7 +58,8 @@ extension ImageUtils on File {
     final d = Dimension.of(context);
     final raw = i.decodeImage(this.readAsBytesSync())!;
     final image = i.bakeOrientation(raw);
-    final rotation = image.exif.hasOrientation ? image.exif.orientation : 0;
+    final exif = image.exif.exifIfd;
+    final rotation = (exif.hasOrientation ? exif.Orientation : 0) as num;
     final scale = image.width / d.maxWidth;
     final painter = builder.call(image.width, image.height, scale);
     final rendered = await painter.renderImage(

@@ -4,6 +4,7 @@ import 'package:codepan/data/database/sqlite_binder.dart';
 import 'package:codepan/data/database/sqlite_exception.dart';
 import 'package:codepan/data/database/sqlite_statement.dart';
 import 'package:flutter/foundation.dart';
+import 'package:sqflite_sqlcipher/sqflite.dart';
 
 typedef DatabaseCreateNotifier = Future<void> Function(
   SqliteAdapter db,
