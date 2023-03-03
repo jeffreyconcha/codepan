@@ -9,7 +9,6 @@ abstract class MasterData extends TransactionData implements Selectable {
   @override
   List<Object?> get props {
     return [
-      id,
       webId,
     ];
   }
