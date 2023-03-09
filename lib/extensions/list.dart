@@ -139,9 +139,19 @@ extension ListUtils<T> on List<T> {
 
   void update(T element) {
     final index = this.indexOf(element);
-    if(index != -1) {
+    if (index != -1) {
       this[index] = element;
     }
+  }
+
+  List<T> maxOf(int length) {
+    final list = <T>[];
+    loop((item, index) {
+      if (index < length) {
+        list.add(item);
+      }
+    });
+    return list;
   }
 }
 
