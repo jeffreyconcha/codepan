@@ -102,6 +102,9 @@ class Time extends Equatable {
 
   String get displayHistory => ago.format(value);
 
+  String get displayFromNow =>
+      ago.format(value, enableFromNow: true).replaceAll('from now', '');
+
   DateTime get value {
     final date = _date.isNotEmpty ? _date : defaultDate;
     final time = _time.isNotEmpty ? _time : defaultTime;
