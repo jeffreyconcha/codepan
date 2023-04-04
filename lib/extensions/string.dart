@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:ui';
 
 import 'package:html_unescape/html_unescape.dart';
@@ -110,7 +109,7 @@ extension StringUtils on String {
   }
 
   String toSnake() {
-    return SNAKE_CASE.convert(this);
+    return SNAKE_CASE.convert(this.replaceAll('-', ' '));
   }
 
   String _wordToPast(String word) {
