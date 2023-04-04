@@ -55,13 +55,14 @@ extension MapUtils on Map<String, dynamic> {
   T? getEnum<T>({
     required String key,
     required List<T> values,
+    String separator = '_',
   }) {
     if (hasKey(key)) {
       final value = getValue(key);
       if (value is String) {
         for (final element in values) {
-          if (value.snake.replaceAll('_', '') ==
-              element.snake.replaceAll('_', '')) {
+          if (value.snake.replaceAll(separator, '') ==
+              element.snake.replaceAll(separator, '')) {
             return element;
           }
         }
