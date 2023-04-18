@@ -13,6 +13,9 @@ class Strings {
   static const String lastMonth = 'Last month';
   static const String last7Days = 'Last 7 days';
   static const String last30Days = 'Last 30 days';
+  static const String last3Months = 'Last 3 months';
+  static const String last6Months = 'Last 6 months';
+  static const String fromTheBeginning = 'From the beginning';
   static const String custom = 'Custom';
 }
 

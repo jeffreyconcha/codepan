@@ -362,6 +362,36 @@ class Time extends Equatable {
           end: this,
           period: period,
         );
+      case TimePeriod.last3Months:
+        final v = value;
+        final dt = DateTime(
+          v.year,
+          v.month - 3,
+          v.day,
+        );
+        return TimeRange(
+          start: Time.value(dt),
+          end: this,
+          period: period,
+        );
+      case TimePeriod.last6Months:
+        final v = value;
+        final dt = DateTime(
+          v.year,
+          v.month - 6,
+          v.day,
+        );
+        return TimeRange(
+          start: Time.value(dt),
+          end: this,
+          period: period,
+        );
+      case TimePeriod.fromTheBeginning:
+        return TimeRange(
+          start: Time.zero,
+          end: this,
+          period: period,
+        );
       default:
         return TimeRange(
           start: this,

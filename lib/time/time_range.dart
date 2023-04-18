@@ -13,6 +13,9 @@ enum TimePeriod {
   lastMonth,
   last7Days,
   last30Days,
+  last3Months,
+  last6Months,
+  fromTheBeginning,
   custom,
 }
 
@@ -35,6 +38,12 @@ extension TimePeriodExt on TimePeriod {
         return Strings.last7Days;
       case TimePeriod.last30Days:
         return Strings.last30Days;
+      case TimePeriod.last3Months:
+        return Strings.last3Months;
+      case TimePeriod.last6Months:
+        return Strings.last6Months;
+      case TimePeriod.fromTheBeginning:
+        return Strings.fromTheBeginning;
       case TimePeriod.custom:
         return Strings.custom;
     }
@@ -68,9 +77,9 @@ class TimeRange extends Equatable {
           final range = '${start.displayDay} - ${end.displayDay}';
           return '${start.displayMonth} $range, ${start.displayYear}';
         }
-        final range = '${start.displayMonthDay} - ${end.displayMonthDay}';
-        return '$range ${start.displayYear}';
+        return '${start.displayMonthDay} - ${end.displayMonthDay}';
       }
+      return '${start.displayDate} - ${end.displayDate}';
     }
     return start.displayDate;
   }
@@ -87,9 +96,9 @@ class TimeRange extends Equatable {
           final range = '${start.displayDay} - ${end.displayDay}';
           return '${start.abbrMonth} $range, ${start.displayYear}';
         }
-        final range = '${start.abbrMonthDay} - ${end.abbrMonthDay}';
-        return '$range, ${start.displayYear}';
+        return '${start.abbrMonthDay} - ${end.abbrMonthDay}';
       }
+      return '${start.abbrDate} - ${end.abbrDate}';
     }
     return start.abbrDate;
   }
@@ -99,9 +108,11 @@ class TimeRange extends Equatable {
       switch (period) {
         case TimePeriod.today:
         case TimePeriod.yesterday:
-          return '${period?.title}, $displayDate';
+          return '${period!.title}, $displayDate';
+        case TimePeriod.fromTheBeginning:
+          return period!.title;
         default:
-          return '${period?.title} (${displayDate.split(',').first})';
+          return '${period?.title} ($displayDate)';
       }
     }
     return displayDate;
@@ -113,8 +124,10 @@ class TimeRange extends Equatable {
         case TimePeriod.today:
         case TimePeriod.yesterday:
           return '${period?.title}, $abbrDate';
+        case TimePeriod.fromTheBeginning:
+          return period!.title;
         default:
-          return '${period?.title} (${abbrDate.split(',').first})';
+          return '${period?.title} ($abbrDate)';
       }
     }
     return abbrDate;
