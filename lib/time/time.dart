@@ -441,7 +441,7 @@ class Time extends Equatable {
   }
 
   bool isSameMonth(Time other) {
-    return value.month == other.value.month;
+    return isSameYear(other) && value.month == other.value.month;
   }
 
   bool isSameYear(Time other) {

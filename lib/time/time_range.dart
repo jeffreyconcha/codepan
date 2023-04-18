@@ -74,8 +74,8 @@ class TimeRange extends Equatable {
           if (start.trimmedDate == end.trimmedDate) {
             return start.displayDate;
           }
-          final range = '${start.displayDay} - ${end.displayDay}';
-          return '${start.displayMonth} $range, ${start.displayYear}';
+          final dayRange = '${start.displayDay} - ${end.displayDay}';
+          return '${start.displayMonth} $dayRange';
         }
         return '${start.displayMonthDay} - ${end.displayMonthDay}';
       }
@@ -93,8 +93,8 @@ class TimeRange extends Equatable {
           if (start.trimmedDate == end.trimmedDate) {
             return start.abbrDate;
           }
-          final range = '${start.displayDay} - ${end.displayDay}';
-          return '${start.abbrMonth} $range, ${start.displayYear}';
+          final dayRange = '${start.displayDay} - ${end.displayDay}';
+          return '${start.abbrMonth} $dayRange';
         }
         return '${start.abbrMonthDay} - ${end.abbrMonthDay}';
       }
