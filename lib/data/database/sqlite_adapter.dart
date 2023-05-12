@@ -10,7 +10,7 @@ import 'package:codepan/data/database/sqlite_statement.dart';
 import 'package:codepan/utils/codepan_utils.dart';
 import 'package:flutter/foundation.dart';
 import 'package:path/path.dart';
-import 'package:sqflite_common_ffi/sqflite_ffi.dart';
+import 'package:sqflite_common_ffi/sqflite_ffi.dart' as ffi;
 import 'package:sqflite_sqlcipher/sqflite.dart';
 import 'package:sqlite3/open.dart';
 
@@ -107,7 +107,7 @@ class SqliteAdapter implements DatabaseExecutor {
     required OnDatabaseVersionChangeFn onDowngrade,
   }) async {
     if (Platform.isWindows || Platform.isMacOS) {
-      final factory = createDatabaseFactoryFfi(ffiInit: _ffiInit);
+      final factory = ffi.createDatabaseFactoryFfi(ffiInit: _ffiInit);
       final directory = await PanUtils.getAppDirectory();
       final slash = Platform.pathSeparator;
       return await factory.openDatabase(
