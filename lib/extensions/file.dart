@@ -37,14 +37,26 @@ extension ImageUtils on File {
       final x = (image.width - nw) ~/ 2;
       final y = 0;
       print('new size: $x, $y, $nw, $nh');
-      cropped = i.copyCrop(image, x, y, nw, nh);
+      cropped = i.copyCrop(
+        image,
+        x: x,
+        y: y,
+        width: nw,
+        height: nh,
+      );
     } else {
       final nw = image.width;
       final nh = (nw * pr).toInt();
       final x = 0;
       final y = (image.height - nh) ~/ 2;
       print('new size: $x, $y, $nw, $nh');
-      cropped = i.copyCrop(image, x, y, nw, nh);
+      cropped = i.copyCrop(
+        image,
+        x: x,
+        y: y,
+        width: nw,
+        height: nh,
+      );
     }
     final encoded = i.encodeJpg(cropped);
     final data = Uint8List.fromList(encoded);
@@ -59,7 +71,7 @@ extension ImageUtils on File {
     final raw = i.decodeImage(this.readAsBytesSync())!;
     final image = i.bakeOrientation(raw);
     final exif = image.exif.exifIfd;
-    final rotation = (exif.hasOrientation ? exif.Orientation : 0) as num;
+    final rotation = (exif.hasOrientation ? exif.orientation : 0) as num;
     final scale = image.width / d.maxWidth;
     final painter = builder.call(image.width, image.height, scale);
     final rendered = await painter.renderImage(
@@ -68,9 +80,15 @@ extension ImageUtils on File {
     );
     final byte = await rendered.toByteData(format: ImageByteFormat.png);
     final watermark = i.decodeImage(byte!.buffer.asUint8List())!;
-    final rotated = i.copyRotate(watermark, rotation);
-    final stamped = i.drawImage(image, rotated);
-    final original = i.copyRotate(stamped, 360 - rotation);
+    final rotated = i.copyRotate(
+      watermark,
+      angle: rotation,
+    );
+    final stamped = drawImage(image, rotated);
+    final original = i.copyRotate(
+      stamped,
+      angle: 360 - rotation,
+    );
     final encoded = i.encodeJpg(original);
     final data = Uint8List.fromList(encoded);
     return await this.writeAsBytes(data);
@@ -110,4 +128,48 @@ extension ImageUtils on File {
     );
     await writeAsBytes(compressed.rawBytes);
   }
+}
+
+i.Image drawImage(
+  i.Image dst,
+  i.Image src, {
+  int? dstX,
+  int? dstY,
+  int? dstW,
+  int? dstH,
+  int? srcX,
+  int? srcY,
+  int? srcW,
+  int? srcH,
+  bool blend = true,
+}) {
+  dstX ??= 0;
+  dstY ??= 0;
+  srcX ??= 0;
+  srcY ??= 0;
+  srcW ??= src.width;
+  srcH ??= src.height;
+  dstW ??= (dst.width < src.width) ? dstW = dst.width : src.width;
+  dstH ??= (dst.height < src.height) ? dst.height : src.height;
+
+  if (blend) {
+    for (var y = 0; y < dstH; ++y) {
+      for (var x = 0; x < dstW; ++x) {
+        final stepX = (x * (srcW / dstW)).toInt();
+        final stepY = (y * (srcH / dstH)).toInt();
+        final srcPixel = src.getPixel(srcX + stepX, srcY + stepY);
+        i.drawPixel(dst, dstX + x, dstY + y, srcPixel);
+      }
+    }
+  } else {
+    for (var y = 0; y < dstH; ++y) {
+      for (var x = 0; x < dstW; ++x) {
+        final stepX = (x * (srcW / dstW)).toInt();
+        final stepY = (y * (srcH / dstH)).toInt();
+        final srcPixel = src.getPixel(srcX + stepX, srcY + stepY);
+        dst.setPixel(dstX + x, dstY + y, srcPixel);
+      }
+    }
+  }
+  return dst;
 }

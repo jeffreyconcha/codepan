@@ -564,26 +564,26 @@ packages:
     dependency: "direct main"
     description:
       name: image
-      sha256: "8e9d133755c3e84c73288363e6343157c383a0c6c56fc51afcc5d4d7180306d6"
+      sha256: a72242c9a0ffb65d03de1b7113bc4e189686fc07c7147b8b41811d0dd0e0d9bf
       url: "https://pub.dev"
     source: hosted
-    version: "3.3.0"
+    version: "4.0.17"
   image_compression:
     dependency: transitive
     description:
       name: image_compression
-      sha256: "911ae4a59196ebcc33c70a38bbc1fa0e2d07243589803dd616120e1a6125bfe9"
+      sha256: c381639e3d4e6328d91939a2ab3c53f3231bf543d7ea061202c215eccfde6ba3
       url: "https://pub.dev"
     source: hosted
-    version: "1.0.3"
+    version: "1.0.4"
   image_compression_flutter:
     dependency: "direct main"
     description:
       name: image_compression_flutter
-      sha256: b6229024cd32c50c14c1718e32c7d434956ce21646d792467e3e1b3a1f9eac54
+      sha256: "7c14e5fc4f549509585c562cf6477a6405d9db885f391acc42d66906dc43bedb"
       url: "https://pub.dev"
     source: hosted
-    version: "1.0.2"
+    version: "1.0.3"
   inflection3:
     dependency: "direct main"
     description:
@@ -1185,10 +1185,10 @@ packages:
     dependency: transitive
     description:
       name: url_launcher_android
-      sha256: "22f8db4a72be26e9e3a4aa3f194b1f7afbc76d20ec141f84be1d787db2155cbd"
+      sha256: "7aac14be5f4731b923cc697ae2d42043945076cd0dbb8806baecc92c1dc88891"
       url: "https://pub.dev"
     source: hosted
-    version: "6.0.31"
+    version: "6.0.33"
   url_launcher_ios:
     dependency: transitive
     description:
