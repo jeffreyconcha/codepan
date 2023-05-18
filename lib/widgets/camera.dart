@@ -165,7 +165,8 @@ class _PanCameraState extends LifecycleState<PanCamera> {
   }
 
   void _loadNewCamera(CameraDescription camera) async {
-    // _controller?.dispose();
+    print('Camera: ${camera.name}');
+    print('Lens: ${camera.lensDirection}');
     if (!isInitialized) {
       _controller = _CameraController(
         camera,
@@ -173,8 +174,6 @@ class _PanCameraState extends LifecycleState<PanCamera> {
         enableAudio: false,
         imageFormatGroup: ImageFormatGroup.jpeg,
       );
-      print('Camera: ${camera.name}');
-      print('Lens: ${camera.lensDirection}');
       _controller!.addListener(() {
         if (mounted) setState(() {});
         if (value?.hasError ?? false) {
@@ -183,10 +182,6 @@ class _PanCameraState extends LifecycleState<PanCamera> {
       });
       try {
         await _controller!.initialize();
-        await _controller!.unlockCaptureOrientation();
-        await _controller!.setFlashMode(FlashMode.off);
-        _minAvailableZoom = await _controller!.getMinZoomLevel();
-        _maxAvailableZoom = await _controller!.getMaxZoomLevel();
       } on CameraException catch (error, stackTrace) {
         print('camera error $error');
         printError(error, stackTrace);
@@ -194,6 +189,10 @@ class _PanCameraState extends LifecycleState<PanCamera> {
     } else {
       _controller!.setDescription(camera);
     }
+    await _controller!.unlockCaptureOrientation();
+    await _controller!.setFlashMode(FlashMode.off);
+    _minAvailableZoom = await _controller!.getMinZoomLevel();
+    _maxAvailableZoom = await _controller!.getMaxZoomLevel();
     if (mounted) setState(() {});
   }
 
