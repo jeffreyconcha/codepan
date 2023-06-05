@@ -58,6 +58,7 @@ class LoadingIndicator extends StatelessWidget {
               return Rotating(
                 child: PanIcon(
                   icon: icon!,
+                  color: color,
                   width: size ?? width,
                   height: size ?? height,
                 ),

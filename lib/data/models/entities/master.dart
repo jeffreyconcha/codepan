@@ -61,18 +61,6 @@ abstract class MasterData extends TransactionData implements Selectable {
   Map<String, dynamic> toMap();
 
   @override
-  MasterData copyWith({
-    int? id,
-    String? dateCreated,
-    String? timeCreated,
-    String? dateUpdated,
-    String? timeUpdated,
-    bool? isDeleted,
-    int? webId,
-    String? name,
-  });
-
-  @override
   String toString() {
     return '${this.runtimeType}($id, $webId, $name)';
   }
