@@ -8,9 +8,10 @@ abstract class Gettable {
   });
 }
 
-abstract class Synchronizable {
+abstract class Synchronizable<T extends EntityData> {
   Future<bool> syncData({
     required Client client,
+    T data,
   });
 }
 
@@ -27,5 +28,7 @@ abstract class ServiceFor<T extends EntityData> {
     required this.db,
   });
 
-  Future<List<T>> loadData();
+  Future<T> fromId(int id);
+
+  Future<List<T>> get data;
 }
