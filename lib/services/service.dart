@@ -2,6 +2,7 @@ import 'package:codepan/data/database/schema.dart';
 import 'package:codepan/data/database/sqlite_adapter.dart';
 import 'package:codepan/data/database/sqlite_query.dart';
 import 'package:codepan/data/models/entities/transaction.dart';
+import 'package:flutter/cupertino.dart';
 
 abstract class ServiceFor<T extends TransactionData> {
   final SqliteAdapter db;
@@ -15,6 +16,18 @@ abstract class ServiceFor<T extends TransactionData> {
   });
 
   T? fromQuery(Map<String, dynamic>? record);
+
+  @protected
+  List<T> recordsToList(List<Map<String, dynamic>> records) {
+    final list = <T>[];
+    for (final record in records) {
+      final data = fromQuery(record);
+      if (data != null) {
+        list.add(data);
+      }
+    }
+    return list;
+  }
 
   Future<T?> getRecord(
     int id, [
@@ -32,7 +45,6 @@ abstract class ServiceFor<T extends TransactionData> {
   }
 
   Future<List<T>> loadRecords() async {
-    final list = <T>[];
     final query = SqliteQuery.all(
       schema: schema,
       where: {
@@ -41,12 +53,6 @@ abstract class ServiceFor<T extends TransactionData> {
       type: JoinType.left,
     );
     final records = await db.read(query.build());
-    for (final record in records) {
-      final data = fromQuery(record);
-      if (data != null) {
-        list.add(data);
-      }
-    }
-    return list;
+    return recordsToList(records);
   }
 }
