@@ -15,6 +15,7 @@ abstract class ServiceFor<T extends TransactionData> {
     required this.db,
   });
 
+  @protected
   T? fromQuery(Map<String, dynamic>? record);
 
   @protected
