@@ -11,9 +11,7 @@ abstract class ServiceFor<T extends TransactionData> {
 
   TableSchema get schema => db.schema.of(entity);
 
-  const ServiceFor({
-    required this.db,
-  });
+  const ServiceFor(this.db);
 
   @protected
   T? fromQuery(Map<String, dynamic>? record);
