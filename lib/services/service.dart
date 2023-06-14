@@ -28,7 +28,7 @@ abstract class ServiceFor<T extends EntityData> {
     required this.db,
   });
 
-  Future<T> fromId(int id);
+  Future<T?> fromId(int id);
 
   Future<List<T>> get data;
 }
