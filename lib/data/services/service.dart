@@ -13,13 +13,13 @@ abstract class ServiceFor<T extends TransactionData> {
 
   const ServiceFor(this.db);
 
-  T? fromQuery(Map<String, dynamic>? record);
+  T? parse(Map<String, dynamic>? record);
 
   @protected
   List<T> recordsToList(List<Map<String, dynamic>> records) {
     final list = <T>[];
     for (final record in records) {
-      final data = fromQuery(record);
+      final data = parse(record);
       if (data != null) {
         list.add(data);
       }
@@ -39,7 +39,7 @@ abstract class ServiceFor<T extends TransactionData> {
       type: JoinType.left,
     );
     final record = await db.getRecord(query.build());
-    return fromQuery(record);
+    return parse(record);
   }
 
   Future<List<T>> loadRecords() async {
