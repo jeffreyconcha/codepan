@@ -42,7 +42,7 @@ abstract class ServiceFor<T extends TransactionData> {
     return fromQuery(record);
   }
 
-  Future<List<T>> get records async {
+  Future<List<T>> loadRecords() async {
     final query = SqliteQuery.all(
       schema: schema,
       where: {
