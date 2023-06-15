@@ -7,7 +7,6 @@ abstract class GetRequest<T> extends HttpRequest<T> {
   const GetRequest({
     required super.db,
     required super.client,
-    super.timeout,
   });
 
   Future<Map<String, String?>> get params;

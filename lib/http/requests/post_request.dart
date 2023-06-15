@@ -9,7 +9,6 @@ abstract class PostRequest<T> extends HttpRequest<T> {
   const PostRequest({
     required super.db,
     required super.client,
-    super.timeout,
   });
 
   Future<Map<String, dynamic>> get params;
