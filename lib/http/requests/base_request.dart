@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:codepan/data/database/sqlite_adapter.dart';
+import 'package:codepan/http/handlers/handler.dart';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart';
 
@@ -21,10 +22,6 @@ abstract class HttpRequestResult<T> {
   Future<T> onSuccess(List<Map<String, dynamic>> json);
 
   Future<String> onError(int code);
-}
-
-abstract class InitHandler {
-  List<Map<String, dynamic>> init(Map<String, dynamic> body);
 }
 
 abstract class HttpRequest<T> implements HttpRequestResult<T> {

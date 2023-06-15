@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:codepan/extensions/map.dart';
-import 'package:codepan/http/base_request.dart';
+import 'package:codepan/http/requests/base_request.dart';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart';
 
