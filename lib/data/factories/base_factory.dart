@@ -6,8 +6,8 @@ abstract class BaseFactory<T extends EntityData> {
 
   const BaseFactory(this.map);
 
-  T get product => create(map);
+  T create() => convert(map);
 
   @protected
-  T create(Map<String, dynamic> json);
+  T convert(Map<String, dynamic> json);
 }
