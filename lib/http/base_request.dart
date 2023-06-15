@@ -2,11 +2,11 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:codepan/data/database/sqlite_adapter.dart';
-import 'package:codepan/extensions/extensions.dart';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart';
 
-const timeout = Duration(seconds: 30);
+const _timeout = Duration(seconds: 30);
+
 const postHeaders = <String, String>{
   'Content-Type': 'application/json',
 };
@@ -30,10 +30,12 @@ abstract class InitHandler {
 abstract class HttpRequest<T> implements HttpRequestResult<T> {
   final SqliteAdapter db;
   final Client client;
+  final Duration? timeout;
 
   const HttpRequest({
     required this.db,
     required this.client,
+    this.timeout,
   });
 
   String get authority;
@@ -47,7 +49,7 @@ abstract class HttpRequest<T> implements HttpRequestResult<T> {
   InitHandler get handler;
 
   Future<T> invoke() async {
-    final response = await request.timeout(timeout);
+    final response = await request.timeout(timeout ?? _timeout);
     debugPrint('Body: ${response.body}');
     debugPrint('Response Code: ${response.statusCode}');
     if (response.statusCode == HttpStatus.ok) {
@@ -57,50 +59,5 @@ abstract class HttpRequest<T> implements HttpRequestResult<T> {
     } else {
       throw await onError(response.statusCode);
     }
-  }
-}
-
-abstract class GetRequest<T> extends HttpRequest<T> {
-  const GetRequest({
-    required super.db,
-    required super.client,
-  });
-
-  Future<Map<String, String?>> get params;
-
-  @override
-  Future<Response> get request async {
-    final p = await params;
-    final h = await headers;
-    final uri = Uri.https(authority, path, p..clean());
-    debugPrint('Url: ${uri.toString()}');
-    debugPrint('Headers: ${h.toString()}');
-    return client.get(
-      uri,
-      headers: h..addAll(getHeaders),
-    );
-  }
-}
-
-abstract class PostRequest<T> extends HttpRequest<T> {
-  const PostRequest({
-    required super.db,
-    required super.client,
-  });
-
-  Future<Map<String, dynamic>> get params;
-
-  @override
-  Future<Response> get request async {
-    final p = await params;
-    final h = await headers;
-    final uri = Uri.https(authority, path);
-    debugPrint('Url: ${uri.toString()}');
-    return client.post(
-      uri,
-      headers: h..addAll(postHeaders),
-      body: json.encode(p..clean()),
-      encoding: utf8,
-    );
   }
 }
