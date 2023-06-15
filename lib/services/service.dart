@@ -13,7 +13,6 @@ abstract class ServiceFor<T extends TransactionData> {
 
   const ServiceFor(this.db);
 
-  @protected
   T? fromQuery(Map<String, dynamic>? record);
 
   @protected
