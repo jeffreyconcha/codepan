@@ -19,22 +19,15 @@ abstract class MasterData extends TransactionData implements Selectable {
   List<String?> get searchable => [name];
 
   const MasterData({
-    int? id,
-    String? dateCreated,
-    String? timeCreated,
-    String? dateUpdated,
-    String? timeUpdated,
-    bool? isDeleted,
+    super.id,
+    super.dateCreated,
+    super.timeCreated,
+    super.dateUpdated,
+    super.timeUpdated,
+    super.isDeleted,
     this.webId,
     this.name,
-  }) : super(
-          id: id,
-          dateCreated: dateCreated,
-          timeCreated: timeCreated,
-          dateUpdated: dateUpdated,
-          timeUpdated: timeUpdated,
-          isDeleted: isDeleted,
-        );
+  });
 
   @override
   Map<String, dynamic> get map {
