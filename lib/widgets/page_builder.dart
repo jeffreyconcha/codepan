@@ -15,6 +15,7 @@ typedef BlocObserver<S extends ParentState> = void Function(
 typedef BlocCreator = ParentBloc Function(
   BuildContext context,
 );
+
 enum PageScrollBehaviour {
   whole,
   none,
@@ -28,10 +29,10 @@ class PageBlocBuilder<E extends ParentEvent, B extends ParentBloc<E, S>,
   final PageScrollBehaviour behaviour;
   final WidgetBlocBuilder<S>? bottom;
   final WidgetBlocBuilder<S> builder;
+  final bool extendBody, bodyOnly;
   final BlocObserver<S> observer;
   final Brightness? brightness;
   final BlocCreator creator;
-  final bool extendBody;
 
   const PageBlocBuilder({
     super.key,
@@ -47,6 +48,7 @@ class PageBlocBuilder<E extends ParentEvent, B extends ParentBloc<E, S>,
     this.bottomNavigationBar,
     this.persistentFooterButtons,
     this.extendBody = true,
+    this.bodyOnly = false,
   });
 
   @override
@@ -59,6 +61,21 @@ class PageBlocBuilder<E extends ParentEvent, B extends ParentBloc<E, S>,
         listener: observer,
         child: BlocBuilder<B, S>(
           builder: (context, state) {
+            final body = Builder(
+              builder: (context) {
+                switch (behaviour) {
+                  case PageScrollBehaviour.none:
+                    return builder.call(context, state);
+                  default:
+                    return SingleChildScrollView(
+                      child: builder.call(context, state),
+                    );
+                }
+              },
+            );
+            if (bodyOnly) {
+              return body;
+            }
             return Scaffold(
               backgroundColor: backgroundColor,
               appBar: PreferredSize(
@@ -68,18 +85,7 @@ class PageBlocBuilder<E extends ParentEvent, B extends ParentBloc<E, S>,
                   backgroundColor: statusBarColor ?? backgroundColor,
                 ),
               ),
-              body: Builder(
-                builder: (context) {
-                  switch (behaviour) {
-                    case PageScrollBehaviour.none:
-                      return builder.call(context, state);
-                    default:
-                      return SingleChildScrollView(
-                        child: builder.call(context, state),
-                      );
-                  }
-                },
-              ),
+              body: body,
               bottomNavigationBar:
                   bottomNavigationBar ?? bottom?.call(context, state),
               persistentFooterButtons: persistentFooterButtons,
@@ -98,10 +104,10 @@ class PageBuilder extends StatelessWidget {
   final List<Widget>? persistentFooterButtons;
   final Color? background, statusBarColor;
   final PageScrollBehaviour behaviour;
+  final bool extendBody, bodyOnly;
   final Brightness? brightness;
   final WidgetBuilder? bottom;
   final WidgetBuilder builder;
-  final bool extendBody;
 
   const PageBuilder({
     super.key,
@@ -115,12 +121,28 @@ class PageBuilder extends StatelessWidget {
     this.bottomNavigationBar,
     this.persistentFooterButtons,
     this.extendBody = true,
+    this.bodyOnly = false,
   });
 
   @override
   Widget build(BuildContext context) {
     final t = Theme.of(context);
     final _background = background ?? t.backgroundColor;
+    final body = Builder(
+      builder: (context) {
+        switch (behaviour) {
+          case PageScrollBehaviour.none:
+            return builder.call(context);
+          default:
+            return SingleChildScrollView(
+              child: builder.call(context),
+            );
+        }
+      },
+    );
+    if (bodyOnly) {
+      return body;
+    }
     return Scaffold(
       backgroundColor: _background,
       appBar: PreferredSize(
@@ -130,18 +152,7 @@ class PageBuilder extends StatelessWidget {
           backgroundColor: statusBarColor ?? _background,
         ),
       ),
-      body: Builder(
-        builder: (context) {
-          switch (behaviour) {
-            case PageScrollBehaviour.none:
-              return builder.call(context);
-            default:
-              return SingleChildScrollView(
-                child: builder.call(context),
-              );
-          }
-        },
-      ),
+      body: body,
       bottomNavigationBar: bottomNavigationBar ?? bottom?.call(context),
       persistentFooterButtons: persistentFooterButtons,
       bottomSheet: bottomSheet,
