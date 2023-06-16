@@ -176,6 +176,11 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
                           height: height,
                           imageUrl: _thumbnailUrl ?? '',
                           fit: BoxFit.contain,
+                          errorWidget: (context, url, error) {
+                            return Container(
+                              color: Colors.black,
+                            );
+                          },
                         ),
                         IfElseBuilder(
                           condition: _isLoading,

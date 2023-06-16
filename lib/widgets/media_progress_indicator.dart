@@ -11,6 +11,7 @@ class MediaProgressIndicator extends StatelessWidget {
   final double? current;
   final double? max;
   final double? barHeight;
+  final double? barRadius;
   final Color? activeColor;
   final Color? inactiveColor;
   final Color bufferedColor;
@@ -35,6 +36,7 @@ class MediaProgressIndicator extends StatelessWidget {
     this.max = 0,
     this.current = 0,
     this.barHeight,
+    this.barRadius,
     this.activeColor,
     this.inactiveColor,
     this.bufferedColor = Colors.white,
@@ -87,40 +89,46 @@ class MediaProgressIndicator extends StatelessWidget {
         ),
         Container(
           height: d.at(20),
-          margin: EdgeInsets.only(bottom: d.at(10)),
-          child: Stack(
-            children: <Widget>[
-              Center(
-                child: Container(
-                  height: trackHeight,
-                  padding: EdgeInsets.symmetric(horizontal: d.at(2)),
-                  child: LinearProgressIndicator(
-                    backgroundColor:
-                        inactiveColor ?? Colors.white.withOpacity(0.3),
-                    value: buffered,
-                    valueColor: AlwaysStoppedAnimation<Color>(bufferedColor),
+          margin: EdgeInsets.only(
+            bottom: d.at(10),
+          ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(barRadius ?? 0),
+            child: Stack(
+              children: <Widget>[
+                Center(
+                  child: Container(
+                    height: trackHeight,
+                    padding: EdgeInsets.symmetric(horizontal: d.at(2)),
+                    child: LinearProgressIndicator(
+                      backgroundColor:
+                          inactiveColor ?? Colors.white.withOpacity(0.3),
+                      value: buffered,
+                      valueColor: AlwaysStoppedAnimation<Color>(bufferedColor),
+                    ),
                   ),
                 ),
-              ),
-              SliderTheme(
-                data: SliderThemeData(
-                  thumbColor: activeColor,
-                  trackShape: TrackShape(),
-                  trackHeight: trackHeight,
-                  thumbShape: RectangularThumb(
-                    width: d.at(4),
-                    height: d.at(13),
+                SliderTheme(
+                  data: SliderThemeData(
+                    thumbColor: activeColor,
+                    trackShape: TrackShape(),
+                    trackHeight: trackHeight,
+                    thumbShape: RectangularThumb(
+                      width: d.at(5),
+                      height: d.at(13),
+                      radius: d.at(2),
+                    ),
+                  ),
+                  child: Slider(
+                    max: max!,
+                    value: current!,
+                    activeColor: activeColor,
+                    inactiveColor: Colors.transparent,
+                    onChanged: onSeekProgress,
                   ),
                 ),
-                child: Slider(
-                  max: max!,
-                  value: current!,
-                  activeColor: activeColor,
-                  inactiveColor: Colors.transparent,
-                  onChanged: onSeekProgress,
-                ),
-              ),
-            ],
+              ],
+            ),
           ),
         )
       ],
@@ -134,8 +142,8 @@ class TrackShape extends RectangularSliderTrackShape {
   @override
   Rect getPreferredRect({
     required RenderBox parentBox,
-    Offset offset = Offset.zero,
     required SliderThemeData sliderTheme,
+    Offset offset = Offset.zero,
     bool isEnabled = false,
     bool isDiscrete = false,
   }) {
@@ -151,10 +159,12 @@ class TrackShape extends RectangularSliderTrackShape {
 class RectangularThumb extends SliderComponentShape {
   final double? width;
   final double? height;
+  final double? radius;
 
   const RectangularThumb({
     this.width,
     this.height,
+    this.radius,
   });
 
   @override
@@ -183,9 +193,13 @@ class RectangularThumb extends SliderComponentShape {
       width: width!,
       height: height!,
     );
+    RRect rRect = RRect.fromRectAndRadius(
+      rect,
+      Radius.circular(radius ?? 0),
+    );
     final paint = Paint()
       ..color = sliderTheme.activeTrackColor!
       ..style = PaintingStyle.fill;
-    canvas.drawRect(rect, paint);
+    canvas.drawRRect(rRect, paint);
   }
 }
