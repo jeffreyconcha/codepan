@@ -23,9 +23,9 @@ const int delay = 5000;
 
 class PanVideoPlayer extends StatefulWidget {
   final OnProgressChanged? onProgressChanged;
+  final Color? color, playButtonColor;
   final OnCompleted? onCompleted;
   final bool isFullScreen;
-  final Color? color;
   final double? width;
   final double? height;
   final dynamic data;
@@ -39,6 +39,7 @@ class PanVideoPlayer extends StatefulWidget {
     super.key,
     required this.data,
     this.color,
+    this.playButtonColor,
     this.width,
     this.height,
     this.state,
@@ -208,6 +209,7 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
                       ifBuilder: (context) {
                         return VideoController(
                           color: widget.color,
+                          playButtonColor: widget.playButtonColor,
                           isInitialized: _isInitialized,
                           isLoading: _isLoading,
                           isFullscreen: _isFullscreen,

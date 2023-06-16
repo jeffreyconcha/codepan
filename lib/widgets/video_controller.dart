@@ -8,6 +8,7 @@ import 'package:codepan/widgets/text.dart';
 import 'package:flutter/material.dart';
 
 class VideoController extends StatelessWidget {
+  final Color? color, playButtonColor;
   final OnSeekProgress? onSeekProgress;
   final VoidCallback? onFullScreen;
   final VoidCallback? onPlay;
@@ -15,7 +16,6 @@ class VideoController extends StatelessWidget {
   final bool? isInitialized;
   final bool? isPlaying;
   final bool? isFullscreen;
-  final Color? color;
   final double? buffered;
   final double? current;
   final double? max;
@@ -27,6 +27,7 @@ class VideoController extends StatelessWidget {
     this.isPlaying,
     this.isFullscreen,
     this.color,
+    this.playButtonColor,
     this.buffered,
     this.current,
     this.max,
@@ -62,7 +63,7 @@ class VideoController extends StatelessWidget {
                     child: Center(
                       child: PanButton(
                         background: !isInitialized!
-                            ? color ?? Theme.of(context).primaryColor
+                            ? playButtonColor ?? Theme.of(context).primaryColor
                             : Colors.transparent,
                         radius: d.at(70),
                         width: d.at(70),
