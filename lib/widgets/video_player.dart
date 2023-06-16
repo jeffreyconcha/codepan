@@ -383,7 +383,7 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
             data: widget.data,
             color: widget.color,
             isFullScreen: !_isFullscreen,
-            onSaveState: !_isInitialized ? _onSaveState : null,
+            onSaveState: _onSaveState,
             thumbnailUrl: _thumbnailUrl,
             state: this,
           ),
