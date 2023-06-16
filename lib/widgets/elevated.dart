@@ -34,16 +34,19 @@ class Elevated extends StatelessWidget {
   Widget build(BuildContext context) {
     final d = Dimension.of(context);
     final t = Theme.of(context);
-    final _borderRadius =
+    final br =
         boxShape == BoxShape.rectangle ? BorderRadius.circular(radius) : null;
+    final child = Padding(
+      padding: padding ?? EdgeInsets.zero,
+      child: this.child,
+    );
     return Container(
       width: width,
       height: height,
       margin: margin,
-      padding: padding,
       decoration: BoxDecoration(
         color: color,
-        borderRadius: borderRadius ?? _borderRadius,
+        borderRadius: borderRadius ?? br,
         shape: boxShape,
         boxShadow: boxShadow ??
             <BoxShadow>[
