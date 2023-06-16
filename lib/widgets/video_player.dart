@@ -92,6 +92,7 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
 
   @override
   void initState() {
+    super.initState();
     if (_isFullscreen) {
       _onSaveState(widget.state!);
     } else {
@@ -104,7 +105,6 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
       }
       _debouncer = Debouncer(milliseconds: delay);
     }
-    super.initState();
   }
 
   @override
@@ -374,7 +374,7 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
       DeviceOrientation.landscapeLeft,
       DeviceOrientation.landscapeRight,
     ]);
-    await SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual);
+    await SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
     Navigator.of(context).push(
       FadeRoute(
         enter: WillPopScope(
@@ -402,7 +402,7 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
       DeviceOrientation.portraitDown,
     ]);
     await SystemChrome.setEnabledSystemUIMode(
-      SystemUiMode.manual,
+      SystemUiMode.immersiveSticky,
       overlays: SystemUiOverlay.values,
     );
     _orientationChanged = true;
