@@ -159,67 +159,69 @@ class _PanTextFieldState extends State<PanTextField> {
       suffixIcon = widget.suffixIcon;
     }
     return Container(
-      width: widget.width,
-      height: widget.height,
       margin: widget.margin,
       alignment: widget.alignment,
-      decoration: BoxDecoration(
-        color: widget.background,
-        border: border,
-        borderRadius: borderRadius,
-      ),
       child: Focus(
-        child: TextFormField(
-          expands: widget.expands,
-          autofocus: widget.autofocus,
-          initialValue: widget.text,
-          enabled: widget.enabled,
-          enableInteractiveSelection: widget.enableInteractiveSelection,
-          textCapitalization: widget.textCapitalization,
-          onChanged: widget.onChanged,
-          inputFormatters: widget.inputFormatters,
-          keyboardType: widget.keyboardType,
-          textAlign: widget.textAlign,
-          textAlignVertical: widget.textAlignVertical,
-          controller: widget.controller,
-          obscureText: _obscureText,
-          textInputAction: widget.textInputAction,
-          focusNode: widget.focusNode,
-          cursorHeight: widget.cursorHeight,
-          cursorColor: widget.cursorColor,
-          showCursor: widget.showCursor,
-          onFieldSubmitted: (value) {
-            if (widget.nextFocusNode != null) {
-              FocusScope.of(context).requestFocus(widget.nextFocusNode);
-            }
-            widget.onFieldSubmitted?.call(value);
-          },
-          maxLines: widget.isPassword ? 1 : widget.maxLength,
-          minLines: widget.minLines,
-          maxLength: widget.maxLength,
-          style: TextStyle(
-            color: widget.fontColor,
-            fontFamily: widget.fontFamily,
-            fontStyle: widget.fontStyle,
-            fontWeight: widget.fontWeight,
-            fontSize: widget.fontSize,
-            height: widget.fontHeight,
+        child: Container(
+          width: widget.width,
+          height: widget.height,
+          decoration: BoxDecoration(
+            color: widget.background,
+            border: border,
+            borderRadius: borderRadius,
           ),
-          decoration: InputDecoration(
-            border: InputBorder.none,
-            focusedBorder: InputBorder.none,
-            disabledBorder: InputBorder.none,
-            enabledBorder: InputBorder.none,
-            contentPadding: widget.padding,
-            isDense: true,
-            hintText: widget.hint,
-            hintStyle: TextStyle(
-              color: widget.hintFontColor,
+          child: TextFormField(
+            expands: widget.expands,
+            autofocus: widget.autofocus,
+            initialValue: widget.text,
+            enabled: widget.enabled,
+            enableInteractiveSelection: widget.enableInteractiveSelection,
+            textCapitalization: widget.textCapitalization,
+            onChanged: widget.onChanged,
+            inputFormatters: widget.inputFormatters,
+            keyboardType: widget.keyboardType,
+            textAlign: widget.textAlign,
+            textAlignVertical: widget.textAlignVertical,
+            controller: widget.controller,
+            obscureText: _obscureText,
+            textInputAction: widget.textInputAction,
+            focusNode: widget.focusNode,
+            cursorHeight: widget.cursorHeight,
+            cursorColor: widget.cursorColor,
+            showCursor: widget.showCursor,
+            onFieldSubmitted: (value) {
+              if (widget.nextFocusNode != null) {
+                FocusScope.of(context).requestFocus(widget.nextFocusNode);
+              }
+              widget.onFieldSubmitted?.call(value);
+            },
+            maxLines: widget.isPassword ? 1 : widget.maxLength,
+            minLines: widget.minLines,
+            maxLength: widget.maxLength,
+            style: TextStyle(
+              color: widget.fontColor,
               fontFamily: widget.fontFamily,
+              fontStyle: widget.fontStyle,
+              fontWeight: widget.fontWeight,
               fontSize: widget.fontSize,
+              height: widget.fontHeight,
             ),
-            suffixIcon: suffixIcon,
-            prefixIcon: widget.prefixIcon,
+            decoration: InputDecoration(
+              border: InputBorder.none,
+              focusedBorder: InputBorder.none,
+              disabledBorder: InputBorder.none,
+              enabledBorder: InputBorder.none,
+              contentPadding: widget.padding,
+              isDense: true,
+              hintText: widget.hint,
+              hintStyle: TextStyle(
+                color: widget.hintFontColor,
+                fontFamily: widget.fontFamily,
+                fontSize: widget.fontSize,
+              ),
+              suffixIcon: suffixIcon,
+              prefixIcon: widget.prefixIcon,
+            ),
           ),
         ),
         onFocusChange: (hasFocus) {
