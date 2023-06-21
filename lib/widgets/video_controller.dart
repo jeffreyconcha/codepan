@@ -112,7 +112,6 @@ class VideoController extends StatelessWidget {
                 buffered: buffered,
                 current: current,
                 max: max,
-                barRadius: d.at(2),
                 onSeekProgress: (value) {
                   onSeekProgress?.call(value);
                 },

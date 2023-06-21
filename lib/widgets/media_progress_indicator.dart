@@ -11,7 +11,6 @@ class MediaProgressIndicator extends StatelessWidget {
   final double? current;
   final double? max;
   final double? barHeight;
-  final double? barRadius;
   final Color? activeColor;
   final Color? inactiveColor;
   final Color bufferedColor;
@@ -36,7 +35,6 @@ class MediaProgressIndicator extends StatelessWidget {
     this.max = 0,
     this.current = 0,
     this.barHeight,
-    this.barRadius,
     this.activeColor,
     this.inactiveColor,
     this.bufferedColor = Colors.white,
@@ -48,7 +46,7 @@ class MediaProgressIndicator extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final d = Dimension.of(context);
-    final trackHeight = barHeight ?? d.at(4);
+    final trackHeight = barHeight ?? d.at(3);
     final shadow = withShadow
         ? <Shadow>[
             Shadow(
@@ -92,43 +90,42 @@ class MediaProgressIndicator extends StatelessWidget {
           margin: EdgeInsets.only(
             bottom: d.at(10),
           ),
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(barRadius ?? 0),
-            child: Stack(
-              children: <Widget>[
-                Center(
-                  child: Container(
-                    height: trackHeight,
-                    padding: EdgeInsets.symmetric(horizontal: d.at(2)),
-                    child: LinearProgressIndicator(
-                      backgroundColor:
-                          inactiveColor ?? Colors.white.withOpacity(0.3),
-                      value: buffered,
-                      valueColor: AlwaysStoppedAnimation<Color>(bufferedColor),
-                    ),
+          child: Stack(
+            children: <Widget>[
+              Center(
+                child: Container(
+                  height: trackHeight,
+                  padding: EdgeInsets.symmetric(
+                    horizontal: d.at(2),
+                  ),
+                  child: LinearProgressIndicator(
+                    backgroundColor:
+                        inactiveColor ?? Colors.white.withOpacity(0.3),
+                    value: buffered,
+                    valueColor: AlwaysStoppedAnimation<Color>(bufferedColor),
                   ),
                 ),
-                SliderTheme(
-                  data: SliderThemeData(
-                    thumbColor: activeColor,
-                    trackShape: TrackShape(),
-                    trackHeight: trackHeight,
-                    thumbShape: RectangularThumb(
-                      width: d.at(5),
-                      height: d.at(13),
-                      radius: d.at(2),
-                    ),
-                  ),
-                  child: Slider(
-                    max: max!,
-                    value: current!,
-                    activeColor: activeColor,
-                    inactiveColor: Colors.transparent,
-                    onChanged: onSeekProgress,
+              ),
+              SliderTheme(
+                data: SliderThemeData(
+                  thumbColor: activeColor,
+                  trackShape: TrackShape(),
+                  trackHeight: trackHeight,
+                  thumbShape: RectangularThumb(
+                    width: d.at(10),
+                    height: d.at(10),
+                    radius: d.at(5),
                   ),
                 ),
-              ],
-            ),
+                child: Slider(
+                  max: max!,
+                  value: current!,
+                  activeColor: activeColor,
+                  inactiveColor: Colors.transparent,
+                  onChanged: onSeekProgress,
+                ),
+              ),
+            ],
           ),
         )
       ],
