@@ -10,12 +10,14 @@ class PanTextField extends StatefulWidget {
   final Color? borderColor,
       cursorColor,
       focusedBorderColor,
+      disabledBorderColor,
       hintFontColor,
       iconColor,
       fontColor;
   final double? borderWidth,
       cursorHeight,
       focusedBorderWidth,
+      disabledBorderWidth,
       fontHeight,
       fontSize,
       height,
@@ -28,6 +30,7 @@ class PanTextField extends StatefulWidget {
       showCursor,
       expands,
       enabled;
+
   final List<TextInputFormatter>? inputFormatters;
   final ValueChanged<String>? onFieldSubmitted;
   final TextCapitalization textCapitalization;
@@ -59,6 +62,8 @@ class PanTextField extends StatefulWidget {
     this.controller,
     this.cursorColor,
     this.cursorHeight,
+    this.disabledBorderColor,
+    this.disabledBorderWidth,
     this.enabled = true,
     this.enableInteractiveSelection = true,
     this.focusedBorderColor,
@@ -105,7 +110,6 @@ class PanTextField extends StatefulWidget {
 
 class _PanTextFieldState extends State<PanTextField> {
   bool _obscureText = false;
-  bool _hasFocus = false;
 
   Color? get borderColor => widget.borderColor;
 
@@ -128,18 +132,6 @@ class _PanTextFieldState extends State<PanTextField> {
 
   @override
   Widget build(BuildContext context) {
-    var border;
-    if (borderWidth != null && borderColor != null) {
-      final side = BorderSide(
-        color: _hasFocus ? focusedBorderColor! : borderColor!,
-        width: _hasFocus ? focusedBorderWidth! : borderWidth!,
-      );
-      border = widget.bottomBorderOnly
-          ? Border(bottom: side)
-          : Border.fromBorderSide(side);
-    }
-    final borderRadius =
-        widget.radius != null ? BorderRadius.circular(widget.radius!) : null;
     var suffixIcon;
     if (widget.isPassword) {
       final d = Dimension.of(context);
@@ -165,11 +157,6 @@ class _PanTextFieldState extends State<PanTextField> {
         child: Container(
           width: widget.width,
           height: widget.height,
-          decoration: BoxDecoration(
-            color: widget.background,
-            border: border,
-            borderRadius: borderRadius,
-          ),
           child: TextFormField(
             expands: widget.expands,
             autofocus: widget.autofocus,
@@ -207,10 +194,25 @@ class _PanTextFieldState extends State<PanTextField> {
               height: widget.fontHeight,
             ),
             decoration: InputDecoration(
-              border: InputBorder.none,
-              focusedBorder: InputBorder.none,
-              disabledBorder: InputBorder.none,
-              enabledBorder: InputBorder.none,
+              fillColor: widget.background,
+              enabledBorder: _getBorder(
+                color: widget.borderColor,
+                width: widget.borderWidth,
+                radius: widget.radius,
+                isUnderlined: widget.bottomBorderOnly,
+              ),
+              focusedBorder: _getBorder(
+                color: widget.focusedBorderColor,
+                width: widget.focusedBorderWidth,
+                radius: widget.radius,
+                isUnderlined: widget.bottomBorderOnly,
+              ),
+              disabledBorder: _getBorder(
+                color: widget.disabledBorderColor,
+                width: widget.disabledBorderWidth,
+                radius: widget.radius,
+                isUnderlined: widget.bottomBorderOnly,
+              ),
               contentPadding: widget.padding,
               isDense: true,
               hintText: widget.hint,
@@ -224,14 +226,36 @@ class _PanTextFieldState extends State<PanTextField> {
             ),
           ),
         ),
-        onFocusChange: (hasFocus) {
-          setState(() {
-            _hasFocus = hasFocus;
-          });
-          widget.onFocusChange?.call(hasFocus);
-        },
+        onFocusChange: widget.onFocusChange,
       ),
     );
+  }
+
+  InputBorder _getBorder({
+    Color? color,
+    double? width,
+    double? radius,
+    bool isUnderlined = false,
+  }) {
+    if (color != null && width != null) {
+      if (isUnderlined) {
+        return UnderlineInputBorder(
+          borderSide: BorderSide(
+            color: color,
+            width: width,
+          ),
+        );
+      } else {
+        return OutlineInputBorder(
+          borderSide: BorderSide(
+            color: color,
+            width: width,
+          ),
+          borderRadius: BorderRadius.circular(radius ?? 0),
+        );
+      }
+    }
+    return InputBorder.none;
   }
 }
 
