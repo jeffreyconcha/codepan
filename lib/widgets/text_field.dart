@@ -182,7 +182,7 @@ class _PanTextFieldState extends State<PanTextField> {
               }
               widget.onFieldSubmitted?.call(value);
             },
-            maxLines: widget.isPassword ? 1 : widget.maxLength,
+            maxLines: widget.isPassword ? 1 : widget.maxLines,
             minLines: widget.minLines,
             maxLength: widget.maxLength,
             style: TextStyle(
