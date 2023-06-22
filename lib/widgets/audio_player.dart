@@ -13,21 +13,25 @@ import 'package:codepan/widgets/media_progress_indicator.dart';
 import 'package:flutter/material.dart';
 
 class PanAudioPlayer extends StatefulWidget {
+  final Color? progressBarColor;
+  final Color playButtonColor;
   final OnProgressChanged? onProgressChanged;
   final OnCompleted? onCompleted;
+  final String? loadingIcon;
   final Color background;
   final OnError? onError;
   final dynamic data;
-  final Color? color;
 
   const PanAudioPlayer({
     super.key,
     this.background = Colors.white,
-    this.color,
+    this.progressBarColor,
+    this.playButtonColor = PanColors.text,
     this.data,
     this.onCompleted,
     this.onError,
     this.onProgressChanged,
+    this.loadingIcon,
   });
 
   @override
@@ -100,34 +104,37 @@ class _PanAudioPlayerState extends State<PanAudioPlayer> {
   Widget build(BuildContext context) {
     final d = Dimension.of(context);
     final t = Theme.of(context);
-    final color = widget.color ?? t.primaryColor;
+    final progressBarColor = widget.progressBarColor ?? t.primaryColor;
     return Material(
       color: Colors.white,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
           IfElseBuilder(
-            width: d.at(50),
-            height: d.at(50),
+            width: d.at(40),
+            height: d.at(40),
             condition: !_isLoading,
+            margin: EdgeInsets.only(
+              right: d.at(5),
+            ),
             ifBuilder: (context) {
               return PanButton(
-                radius: d.at(100),
-                width: d.at(50),
-                height: d.at(50),
+                radius: d.at(80),
+                width: d.at(40),
+                height: d.at(40),
                 child: Icon(
                   _isPlaying ? Icons.pause : Icons.play_arrow,
-                  size: d.at(40),
-                  color: PanColors.text,
+                  size: d.at(30),
+                  color: widget.playButtonColor,
                 ),
                 onTap: play,
               );
             },
             elseBuilder: (context) {
               return LoadingIndicator(
-                width: d.at(25),
-                height: d.at(25),
-                color: color,
+                icon: widget.loadingIcon,
+                radius: d.at(12),
+                color: progressBarColor,
               );
             },
           ),
@@ -137,8 +144,8 @@ class _PanAudioPlayerState extends State<PanAudioPlayer> {
                 right: d.at(20),
               ),
               child: MediaProgressIndicator(
-                activeColor: color,
-                inactiveColor: color.withOpacity(0.3),
+                activeColor: progressBarColor,
+                inactiveColor: progressBarColor.withOpacity(0.3),
                 bufferedColor: Colors.transparent,
                 max: _max,
                 current: _current,

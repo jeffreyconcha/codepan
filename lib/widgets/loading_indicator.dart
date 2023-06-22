@@ -9,8 +9,6 @@ import 'package:flutter/material.dart';
 
 class LoadingIndicator extends StatelessWidget {
   final EdgeInsets? margin;
-  final double? width;
-  final double? height;
   final double? radius;
   final Color? color;
   final String? icon;
@@ -18,8 +16,6 @@ class LoadingIndicator extends StatelessWidget {
 
   const LoadingIndicator({
     super.key,
-    this.width,
-    this.height,
     this.radius,
     this.icon,
     this.margin,
@@ -30,11 +26,13 @@ class LoadingIndicator extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final d = Dimension.of(context);
+    final radius = this.radius ?? d.at(15);
+    final size = radius * 2;
     return Center(
       child: IfElseBuilder(
-        width: width,
-        height: height,
         margin: margin,
+        width: size,
+        height: size,
         alignment: Alignment.center,
         condition: isPlatformDependent && Platform.isAndroid,
         ifBuilder: (context) {
@@ -47,20 +45,19 @@ class LoadingIndicator extends StatelessWidget {
             condition: icon == null,
             ifBuilder: (context) {
               return PanActivityIndicator(
-                radius: radius ?? d.at(15),
+                radius: radius,
                 isAnimating: true,
                 activeColor: color!,
                 inactiveColor: color!.withOpacity(0.5),
               );
             },
             elseBuilder: (context) {
-              final size = radius != null ? radius! * 2 : null;
               return Rotating(
                 child: PanIcon(
                   icon: icon!,
                   color: color,
-                  width: size ?? width,
-                  height: size ?? height,
+                  width: size,
+                  height: size,
                 ),
               );
             },
