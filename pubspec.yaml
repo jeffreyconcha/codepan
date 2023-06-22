@@ -10,7 +10,7 @@ dependencies:
   flutter:
     sdk: flutter
   app_settings: ^4.1.0
-  audioplayers: ^3.0.1
+  audioplayers: ^4.1.0
   cached_network_image: ^3.2.0
   camera: ^0.10.5
   camera_platform_interface: ^2.3.0
@@ -44,7 +44,7 @@ dependencies:
   time_ago_provider: ^4.0.0
   url_launcher: ^6.1.4
   uuid: ^3.0.6
-  video_player: ^2.1.1
+  video_player: ^2.6.1
   visibility_detector: ^0.3.3
 
 dev_dependencies:

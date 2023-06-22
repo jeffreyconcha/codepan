@@ -77,6 +77,8 @@ class _PanAudioPlayerState extends State<PanAudioPlayer> {
         case PlayerState.stopped:
           _setPlaying(false);
           break;
+        default:
+          break;
       }
     }, onError: (msg) {
       widget.onError?.call(Errors.failedToPlayAudio);
@@ -97,6 +99,8 @@ class _PanAudioPlayerState extends State<PanAudioPlayer> {
   @override
   Widget build(BuildContext context) {
     final d = Dimension.of(context);
+    final t = Theme.of(context);
+    final color = widget.color ?? t.primaryColor;
     return Material(
       color: Colors.white,
       child: Row(
@@ -123,7 +127,7 @@ class _PanAudioPlayerState extends State<PanAudioPlayer> {
               return LoadingIndicator(
                 width: d.at(25),
                 height: d.at(25),
-                color: widget.color,
+                color: color,
               );
             },
           ),
@@ -133,8 +137,8 @@ class _PanAudioPlayerState extends State<PanAudioPlayer> {
                 right: d.at(20),
               ),
               child: MediaProgressIndicator(
-                activeColor: widget.color,
-                inactiveColor: widget.color!.withOpacity(0.3),
+                activeColor: color,
+                inactiveColor: color.withOpacity(0.3),
                 bufferedColor: Colors.transparent,
                 max: _max,
                 current: _current,
@@ -158,7 +162,8 @@ class _PanAudioPlayerState extends State<PanAudioPlayer> {
     _setLoading(true);
     if (!_isPlaying) {
       if (data is String) {
-        await _audio.play(data);
+        final source = UrlSource(data);
+        await _audio.play(source);
       } else if (data is File) {
         final file = data as File;
         final source = BytesSource(await file.readAsBytes());
