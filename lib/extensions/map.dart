@@ -97,6 +97,10 @@ extension MapUtils on Map<String, dynamic> {
     return null;
   }
 
+  bool isNotNull(String key) {
+    return !isNull(key);
+  }
+
   bool isNull(String key) {
     return get(key) == null;
   }
