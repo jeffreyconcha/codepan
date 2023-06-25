@@ -23,6 +23,7 @@ const int delay = 5000;
 
 class PanVideoPlayer extends StatefulWidget {
   final OnProgressChanged? onProgressChanged;
+  final ValueChanged<bool>? onFullscreenChanged;
   final Color? color, playButtonColor;
   final OnCompleted? onCompleted;
   final bool isFullScreen;
@@ -44,6 +45,7 @@ class PanVideoPlayer extends StatefulWidget {
     this.height,
     this.state,
     this.onProgressChanged,
+    this.onFullscreenChanged,
     this.onCompleted,
     this.onSaveState,
     this.onError,
@@ -369,6 +371,7 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
       context.pop();
     }
     _autoHideController();
+    widget.onFullscreenChanged?.call(!_isFullscreen);
   }
 
   void _enterFullScreen() async {
@@ -384,8 +387,9 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
           child: PanVideoPlayer(
             data: widget.data,
             color: widget.color,
-            isFullScreen: !_isFullscreen,
+            isFullScreen: true,
             onSaveState: _onSaveState,
+            onFullscreenChanged: widget.onFullscreenChanged,
             thumbnailUrl: _thumbnailUrl,
             state: this,
           ),

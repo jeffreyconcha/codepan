@@ -192,6 +192,7 @@ class _PanAudioPlayerState extends State<PanAudioPlayer> {
       await _audio.play(source);
     } catch (error) {
       widget.onError?.call(Errors.failedToPlayAudio);
+      _setLoading(false);
     }
   }
 
