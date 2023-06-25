@@ -98,6 +98,7 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
     super.initState();
     if (_isFullscreen) {
       _onSaveState(widget.state!);
+      widget.onFullscreenChanged?.call(true);
     } else {
       if (_data is String) {
         _controller = VideoPlayerController.network(_data);
@@ -371,7 +372,6 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
       context.pop();
     }
     _autoHideController();
-    widget.onFullscreenChanged?.call(!_isFullscreen);
   }
 
   void _enterFullScreen() async {
@@ -381,24 +381,25 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
     ]);
     _orientationChanged = true;
     await SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
-    await Navigator.of(context).push(
-      FadeRoute(
-        enter: WillPopScope(
-          child: PanVideoPlayer(
-            data: widget.data,
-            color: widget.color,
-            isFullScreen: true,
-            onSaveState: _onSaveState,
-            onFullscreenChanged: widget.onFullscreenChanged,
-            thumbnailUrl: _thumbnailUrl,
-            state: this,
-          ),
-          onWillPop: () async {
-            _exitFullScreen();
-            return true;
-          },
+    context.fadeIn(
+      page: WillPopScope(
+        child: PanVideoPlayer(
+          data: widget.data,
+          color: widget.color,
+          isFullScreen: true,
+          onSaveState: _onSaveState,
+          onFullscreenChanged: widget.onFullscreenChanged,
+          thumbnailUrl: _thumbnailUrl,
+          state: this,
         ),
+        onWillPop: () async {
+          _exitFullScreen();
+          return true;
+        },
       ),
+      onExit: (value) {
+        widget.onFullscreenChanged?.call(false);
+      },
     );
   }
 
