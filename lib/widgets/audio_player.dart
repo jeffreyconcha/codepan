@@ -169,17 +169,29 @@ class _PanAudioPlayerState extends State<PanAudioPlayer> {
     _setLoading(true);
     if (!_isPlaying) {
       if (data is String) {
-        final source = UrlSource(data);
-        await _audio.play(source);
+        _play(
+          source: UrlSource(data),
+        );
       } else if (data is File) {
         final file = data as File;
-        final source = BytesSource(await file.readAsBytes());
-        await _audio.play(source);
+        _play(
+          source: BytesSource(await file.readAsBytes()),
+        );
       } else {
         throw ArgumentError(invalidArgument);
       }
     } else {
       await _audio.pause();
+    }
+  }
+
+  Future<void> _play({
+    required Source source,
+  }) async {
+    try {
+      await _audio.play(source);
+    } catch (error) {
+      widget.onError?.call(Errors.failedToPlayAudio);
     }
   }
 
