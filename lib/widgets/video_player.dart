@@ -24,6 +24,7 @@ const int delay = 5000;
 class PanVideoPlayer extends StatefulWidget {
   final OnProgressChanged? onProgressChanged;
   final ValueChanged<bool>? onFullscreenChanged;
+  final Widget? thumbnailErrorWidget;
   final Color? color, playButtonColor;
   final OnCompleted? onCompleted;
   final bool isFullScreen;
@@ -52,6 +53,7 @@ class PanVideoPlayer extends StatefulWidget {
     this.isFullScreen = false,
     this.showBuffer = true,
     this.thumbnailUrl,
+    this.thumbnailErrorWidget,
   });
 
   @override
@@ -181,9 +183,8 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
                           imageUrl: _thumbnailUrl ?? '',
                           fit: BoxFit.contain,
                           errorWidget: (context, url, error) {
-                            return Container(
-                              color: Colors.black,
-                            );
+                            return widget.thumbnailErrorWidget ??
+                                Container(color: Colors.black);
                           },
                         ),
                         IfElseBuilder(
