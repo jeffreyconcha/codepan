@@ -52,9 +52,10 @@ abstract class HttpRequest<T> implements HttpRequestResult<T> {
     if (response.statusCode == HttpStatus.ok) {
       final body = json.decode(response.body);
       final data = handler.init(body);
-      return await onSuccess(data);
-    } else {
-      throw await onError(response.statusCode);
+      if (data.isNotEmpty || handler.allowEmpty) {
+        return await onSuccess(data);
+      }
     }
+    throw await onError(response.statusCode);
   }
 }

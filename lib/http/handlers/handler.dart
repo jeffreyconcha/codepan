@@ -1,5 +1,11 @@
 abstract class InitHandler {
-  const InitHandler();
+  final bool allowEmpty;
 
-  List<Map<String, dynamic>> init(Map<String, dynamic> body);
+  const InitHandler([
+    this.allowEmpty = true,
+  ]);
+
+  List<Map<String, dynamic>> init(
+    Map<String, dynamic> body,
+  );
 }
