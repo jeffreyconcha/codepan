@@ -52,7 +52,7 @@ class MediaProgressIndicator extends StatelessWidget {
             Shadow(
               offset: Offset(d.at(1), d.at(1)),
               blurRadius: d.at(3),
-              color: Colors.black,
+              color: Colors.black.withOpacity(0.5),
             ),
           ]
         : null;

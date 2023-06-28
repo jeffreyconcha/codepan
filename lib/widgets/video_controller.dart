@@ -112,6 +112,7 @@ class VideoController extends StatelessWidget {
                 buffered: buffered,
                 current: current,
                 max: max,
+                withShadow: false,
                 onSeekProgress: (value) {
                   onSeekProgress?.call(value);
                 },
