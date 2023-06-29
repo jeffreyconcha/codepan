@@ -22,8 +22,10 @@ extension BuildContextUtils on BuildContext {
   void push({
     required Widget page,
     ValueChanged<Object?>? onExit,
+    RouteSettings? settings,
   }) {
     final route = CupertinoPageRoute(
+      settings: settings,
       builder: (context) {
         return page;
       },
@@ -37,10 +39,12 @@ extension BuildContextUtils on BuildContext {
     required Widget page,
     Duration? duration,
     ValueChanged<Object?>? onExit,
+    RouteSettings? settings,
   }) {
     final route = FadeRoute(
       enter: page,
       duration: duration,
+      settings: settings,
     );
     Navigator.of(this).pushReplacement(route).then((value) {
       onExit?.call(value);
@@ -51,10 +55,12 @@ extension BuildContextUtils on BuildContext {
     required Widget page,
     Duration? duration,
     ValueChanged<Object?>? onExit,
+    RouteSettings? settings,
   }) {
     final route = FadeRoute(
       enter: page,
       duration: duration,
+      settings: settings,
     );
     Navigator.of(this).push(route).then((value) {
       onExit?.call(value);
@@ -65,10 +71,12 @@ extension BuildContextUtils on BuildContext {
     required Widget page,
     Duration? duration,
     ValueChanged<Object?>? onExit,
+    RouteSettings? settings,
   }) {
     final route = BottomModalRoute(
       enter: page,
       duration: duration,
+      settings: settings,
     );
     Navigator.of(this).push(route).then((value) {
       onExit?.call(value);
