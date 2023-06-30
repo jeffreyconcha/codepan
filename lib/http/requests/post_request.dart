@@ -5,6 +5,8 @@ import 'package:codepan/http/requests/base_request.dart';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart';
 
+const indent = '    ';
+
 abstract class PostRequest<T> extends HttpRequest<T> {
   const PostRequest({
     required super.db,
@@ -18,11 +20,14 @@ abstract class PostRequest<T> extends HttpRequest<T> {
     final p = await params;
     final h = await headers;
     final uri = Uri.https(authority, path);
+    final encoder = JsonEncoder.withIndent(indent);
+    final body = encoder.convert(p..clean());
     debugPrint('Url: ${uri.toString()}');
+    debugPrint('Payload: ${body.toString()}');
     return client.post(
       uri,
       headers: h..addAll(postHeaders),
-      body: json.encode(p..clean()),
+      body: body,
       encoding: utf8,
     );
   }
