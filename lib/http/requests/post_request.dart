@@ -23,7 +23,7 @@ abstract class PostRequest<T> extends HttpRequest<T> {
     final encoder = JsonEncoder.withIndent(indent);
     final body = encoder.convert(p..clean());
     debugPrint('Url: ${uri.toString()}');
-    debugPrint('Payload: ${body.toString()}');
+    debugPrint('Payload:\n${body.toString()}');
     return client.post(
       uri,
       headers: h..addAll(postHeaders),
