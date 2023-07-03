@@ -90,8 +90,11 @@ class Condition extends SqliteModel {
         for (final v in _value) {
           if (v is TransactionData) {
             buffer.write(v.id);
+          } else if (PanUtils.isEnum(v)) {
+            final value = PanUtils.enumValue(v);
+            buffer.write('\'${SNAKE_CASE.convert(value)}\'');
           } else {
-            buffer.write(v.toString());
+            buffer.write('\'${v.toString()}\'');
           }
           if (v != list!.last) {
             buffer.write(',');
