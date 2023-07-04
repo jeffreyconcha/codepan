@@ -39,23 +39,23 @@ abstract class HttpRequest<T> implements HttpRequestResult<T> {
 
   Future<Map<String, String>> get headers;
 
-  Future<Response> get request;
+  Future<Response> get response;
 
   InitHandler get handler;
 
   Future<T> send({
     Duration? timeout,
   }) async {
-    final response = await request.timeout(timeout ?? _timeout);
-    debugPrint('Body: ${response.body}');
-    debugPrint('Response Code: ${response.statusCode}');
-    if (response.statusCode == HttpStatus.ok) {
-      final body = json.decode(response.body);
+    final result = await response.timeout(timeout ?? _timeout);
+    debugPrint('Body: ${result.body}');
+    debugPrint('Response Code: ${result.statusCode}');
+    if (result.statusCode == HttpStatus.ok) {
+      final body = json.decode(result.body);
       final data = handler.init(body);
       if (data.isNotEmpty || handler.allowEmpty) {
         return await onSuccess(data);
       }
     }
-    throw await onError(response.statusCode);
+    throw await onError(result.statusCode);
   }
 }

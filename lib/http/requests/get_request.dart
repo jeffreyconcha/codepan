@@ -12,7 +12,7 @@ abstract class GetRequest<T> extends HttpRequest<T> {
   Future<Map<String, String?>> get params;
 
   @override
-  Future<Response> get request async {
+  Future<Response> get response async {
     final p = await params;
     final h = await headers;
     final uri = Uri.https(authority, path, p..clean());
