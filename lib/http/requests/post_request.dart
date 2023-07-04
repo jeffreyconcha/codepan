@@ -41,12 +41,13 @@ abstract class UploadRequest<T> extends HttpRequest<T> {
 
   Future<Map<String, String>> get fields;
 
-  List<MultipartFile> get files;
+  Future<List<MultipartFile>> get files;
 
   @override
   Future<Response> get response async {
     final f = await fields;
     final h = await headers;
+    final m = await files;
     final uri = Uri.https(authority, path);
     final encoder = JsonEncoder.withIndent(indent);
     final body = encoder.convert(f..clean());
@@ -55,7 +56,7 @@ abstract class UploadRequest<T> extends HttpRequest<T> {
     final request = MultipartRequest('POST', uri);
     request.headers.addAll(h..addAll(uploadHeaders));
     request.fields.addAll(f);
-    request.files.addAll(files);
+    request.files.addAll(m);
     final stream = await request.send();
     return await Response.fromStream(stream);
   }
