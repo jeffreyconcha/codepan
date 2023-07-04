@@ -3,6 +3,7 @@ import 'package:codepan/data/database/sqlite_adapter.dart';
 import 'package:codepan/data/database/sqlite_binder.dart';
 import 'package:codepan/data/database/sqlite_exception.dart';
 import 'package:codepan/data/database/sqlite_statement.dart';
+import 'package:codepan/extensions/extensions.dart';
 import 'package:flutter/foundation.dart';
 import 'package:sqflite_sqlcipher/sqflite.dart';
 
@@ -168,14 +169,14 @@ class DefaultDatabaseInitializer extends DatabaseInitializer {
       if (stmt.hasFields) {
         final fieldList = stmt.fieldList!;
         final columnList = await db.getColumnList(table);
-        if (fieldList.length > columnList.length) {
-          fieldList.forEach((f) {
-            if (!columnList.contains(f.field)) {
-              binder.addColumn(table, f);
-              debugPrint('Column ${f.field} added to $table');
-            }
-          });
-        }
+        // if (fieldList.length > columnList.length) {
+        fieldList.loop((item, index) {
+          if (!columnList.contains(item.field)) {
+            binder.addColumn(table, item);
+            debugPrint('Column ${item.field} added to $table');
+          }
+        });
+        // }
         binder.apply();
       }
     }
