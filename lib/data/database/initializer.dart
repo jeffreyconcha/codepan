@@ -169,14 +169,12 @@ class DefaultDatabaseInitializer extends DatabaseInitializer {
       if (stmt.hasFields) {
         final fieldList = stmt.fieldList!;
         final columnList = await db.getColumnList(table);
-        // if (fieldList.length > columnList.length) {
         fieldList.loop((item, index) {
           if (!columnList.contains(item.field)) {
             binder.addColumn(table, item);
             debugPrint('Column ${item.field} added to $table');
           }
         });
-        // }
         binder.apply();
       }
     }
