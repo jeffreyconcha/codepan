@@ -169,6 +169,7 @@ class DefaultDatabaseInitializer extends DatabaseInitializer {
       if (stmt.hasFields) {
         final fieldList = stmt.fieldList!;
         final columnList = await db.getColumnList(table);
+        //Do not compare the count of field list and column list
         fieldList.loop((item, index) {
           if (!columnList.contains(item.field)) {
             binder.addColumn(table, item);
