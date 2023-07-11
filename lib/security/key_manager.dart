@@ -55,8 +55,8 @@ class KeyManager {
     if (prepareSeed) {
       debugPrint('encrypted: $encrypted');
       debugPrint('mac: $mac');
-      debugPrint(prepare(encrypted));
-      debugPrint(prepare(mac));
+      debugPrint('encrypted: ${prepare(encrypted)}');
+      debugPrint('mac: ${prepare(mac)}');
     }
     return encrypted;
   }
