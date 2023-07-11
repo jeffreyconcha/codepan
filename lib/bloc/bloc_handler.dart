@@ -59,9 +59,7 @@ mixin ErrorState<S extends ParentState> {
       return Errors.unableToConnectToServer;
     } else if (error is TimeoutException) {
       return Errors.requestTimedOut;
-    } else if (error is String) {
-      return error.toString();
     }
-    return Errors.somethingWentWrong;
+    return error.toString();
   }
 }
