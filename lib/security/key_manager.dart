@@ -43,7 +43,7 @@ class KeyManager {
 
   Future<String> encrypt(
     String text, [
-    bool showLog = false,
+    bool prepareSeed = false,
   ]) async {
     final box = await cipher.encrypt(
       utf8.encode(text),
@@ -52,9 +52,11 @@ class KeyManager {
     );
     final encrypted = base64.encode(box.cipherText);
     final mac = base64.encode(box.mac.bytes);
-    if (showLog) {
+    if (prepareSeed) {
       debugPrint('encrypted: $encrypted');
       debugPrint('mac: $mac');
+      debugPrint(prepare(encrypted));
+      debugPrint(prepare(mac));
     }
     return encrypted;
   }
@@ -91,7 +93,7 @@ class KeyManager {
     return KeyManager(seed);
   }
 
-  static String prepare(String input, [int maxCol = 20]) {
+  String prepare(String input, [int maxCol = 20]) {
     final buffer = StringBuffer('{');
     buffer.write('\n\t');
     bool alternate = true;
