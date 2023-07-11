@@ -1,5 +1,7 @@
+import 'package:codepan/extensions/extensions.dart';
 import 'package:codepan/resources/colors.dart';
 import 'package:codepan/resources/dimensions.dart';
+import 'package:codepan/utils/codepan_utils.dart';
 import 'package:codepan/widgets/dialogs/menu_dialog.dart';
 import 'package:codepan/widgets/line_divider.dart';
 import 'package:codepan/widgets/text.dart';
@@ -224,6 +226,9 @@ class _PanTextFieldState extends State<PanTextField> {
               suffixIcon: suffixIcon,
               prefixIcon: widget.prefixIcon,
             ),
+            onTapOutside: (event) {
+              context.hideKeyboard();
+            },
           ),
         ),
         onFocusChange: widget.onFocusChange,
