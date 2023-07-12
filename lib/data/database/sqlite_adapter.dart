@@ -24,6 +24,8 @@ typedef OnDatabaseVersionChange = FutureOr<void> Function(
   int newVersion,
 );
 
+const fileIsNotADatabase = 26;
+
 class SqliteAdapter implements DatabaseExecutor {
   late final String _path;
   final OnDatabaseVersionChange? onDowngrade;
@@ -124,14 +126,32 @@ class SqliteAdapter implements DatabaseExecutor {
       );
     } else {
       final directory = await getDatabasesPath();
-      return await openDatabase(
-        _path = join(directory, name),
-        version: version,
-        password: password,
-        onCreate: onCreate,
-        onUpgrade: onUpgrade,
-        onDowngrade: onDowngrade,
-      );
+      try {
+        return await openDatabase(
+          _path = join(directory, name),
+          version: version,
+          password: password,
+          onCreate: onCreate,
+          onUpgrade: onUpgrade,
+          onDowngrade: onDowngrade,
+        );
+      } catch (error) {
+        if (error is DatabaseException) {
+          final code = error.getResultCode();
+          if (code == fileIsNotADatabase) {
+            await deleteDatabase(_path);
+            return await openDatabase(
+              _path,
+              version: version,
+              password: password,
+              onCreate: onCreate,
+              onUpgrade: onUpgrade,
+              onDowngrade: onDowngrade,
+            );
+          }
+        }
+        rethrow;
+      }
     }
   }
 
