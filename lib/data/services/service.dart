@@ -4,6 +4,8 @@ import 'package:codepan/data/database/sqlite_query.dart';
 import 'package:codepan/data/models/entities/transaction.dart';
 import 'package:flutter/cupertino.dart';
 
+typedef Parser<T> = T? Function(Map<String, dynamic> record);
+
 abstract class ServiceFor<T extends TransactionData> {
   final SqliteAdapter db;
 
@@ -16,10 +18,13 @@ abstract class ServiceFor<T extends TransactionData> {
   T? parse(Map<String, dynamic>? record);
 
   @protected
-  List<T> recordsToList(List<Map<String, dynamic>> records) {
+  List<T> recordsToList(
+    List<Map<String, dynamic>> records, [
+    Parser<T>? parser,
+  ]) {
     final list = <T>[];
     for (final record in records) {
-      final data = parse(record);
+      final data = parser?.call(record) ?? parse(record);
       if (data != null) {
         list.add(data);
       }
@@ -27,7 +32,8 @@ abstract class ServiceFor<T extends TransactionData> {
     return list;
   }
 
-  Future<T?> getRecord(int? id, [
+  Future<T?> getRecord(
+    int? id, [
     bool isWebId = false,
   ]) async {
     final query = SqliteQuery.all(
