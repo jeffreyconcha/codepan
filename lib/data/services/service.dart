@@ -27,8 +27,7 @@ abstract class ServiceFor<T extends TransactionData> {
     return list;
   }
 
-  Future<T?> getRecord(
-    int id, [
+  Future<T?> getRecord(int? id, [
     bool isWebId = false,
   ]) async {
     final query = SqliteQuery.all(
