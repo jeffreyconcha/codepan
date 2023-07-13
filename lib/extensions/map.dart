@@ -70,6 +70,15 @@ extension MapUtils on Map<String, dynamic> {
     return null;
   }
 
+  dynamic opt(List<String> keys) {
+    keys.loop((key, index) {
+      if (hasKey(key)) {
+        return get(key);
+      }
+    });
+    return null;
+  }
+
   dynamic get(String key) {
     if (hasKey(key)) {
       final value = getValue(key);
