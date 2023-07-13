@@ -13,6 +13,8 @@ abstract class ServiceFor<T extends TransactionData> {
 
   TableSchema get schema => db.schema.of(entity);
 
+  Future<List<T>> get records => loadRecords();
+
   const ServiceFor(this.db);
 
   T? parse(Map<String, dynamic>? record);
