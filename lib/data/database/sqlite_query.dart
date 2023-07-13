@@ -95,7 +95,7 @@ class SqliteQuery with QueryProperties {
     List<dynamic>? groupBy,
     bool randomOrder = false,
     int? limit,
-    JoinType type = JoinType.inner,
+    JoinType type = JoinType.left,
     RecursiveJoin? recursive,
   }) {
     return SqliteQuery(
@@ -161,7 +161,7 @@ class SqliteQuery with QueryProperties {
 
   void join({
     required SqliteQuery query,
-    JoinType type = JoinType.inner,
+    JoinType type = JoinType.left,
   }) {
     query._setJoinType(type);
     _joinList ??= [];
@@ -203,7 +203,7 @@ class SqliteQuery with QueryProperties {
   }
 
   void joinAllForeignKeys({
-    JoinType type = JoinType.inner,
+    JoinType type = JoinType.left,
     JoinOption option = JoinOption.all,
   }) {
     if (schema != null) {
@@ -221,7 +221,7 @@ class SqliteQuery with QueryProperties {
   void joinForeignKeys({
     required Iterable<Field> foreignKeys,
     tb.Table? table,
-    JoinType type = JoinType.inner,
+    JoinType type = JoinType.left,
     JoinOption option = JoinOption.all,
   }) {
     if (foreignKeys.isNotEmpty) {
