@@ -22,6 +22,15 @@ extension MapUtils on Map<String, dynamic> {
     return null;
   }
 
+  int? optInt(List<String> keys) {
+    for (final key in keys) {
+      if (hasKey(key)) {
+        return getInt(key);
+      }
+    }
+    return null;
+  }
+
   double? getDouble(String key) {
     if (hasKey(key)) {
       final value = getValue(key);
@@ -30,10 +39,28 @@ extension MapUtils on Map<String, dynamic> {
     return null;
   }
 
+  double? optDouble(List<String> keys) {
+    for (final key in keys) {
+      if (hasKey(key)) {
+        return getDouble(key);
+      }
+    }
+    return null;
+  }
+
   bool? getBool(String key) {
     if (hasKey(key)) {
       final value = getValue(key);
       return PanUtils.parseBool(value);
+    }
+    return null;
+  }
+
+  bool? optBool(List<String> keys) {
+    for (final key in keys) {
+      if (hasKey(key)) {
+        return getBool(key);
+      }
     }
     return null;
   }
@@ -47,6 +74,15 @@ extension MapUtils on Map<String, dynamic> {
           list.add(item as T);
         });
         return list;
+      }
+    }
+    return null;
+  }
+
+  List<T>? optList<T>(List<String> keys) {
+    for (final key in keys) {
+      if (hasKey(key)) {
+        return getList<T>(key);
       }
     }
     return null;
@@ -71,11 +107,11 @@ extension MapUtils on Map<String, dynamic> {
   }
 
   dynamic opt(List<String> keys) {
-    keys.loop((key, index) {
+    for (final key in keys) {
       if (hasKey(key)) {
         return get(key);
       }
-    });
+    }
     return null;
   }
 
