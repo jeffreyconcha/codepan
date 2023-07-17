@@ -1,11 +1,11 @@
 import 'dart:typed_data';
 
-abstract class InitHandler<I, O> {
+abstract class InitHandler<Input, Output> {
   final bool allowEmpty;
 
   const InitHandler(this.allowEmpty);
 
-  O init(I body);
+  Output init(Input input);
 }
 
 abstract class DataInitHandler
