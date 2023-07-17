@@ -34,8 +34,7 @@ abstract class DownloadRequest<T> extends HttpRequest<T, Uint8List> {
   @override
   Future<T> onResponse(Response response) async {
     if (response.statusCode == HttpStatus.ok) {
-      final body = json.decode(response.body);
-      final data = handler.init(body);
+      final data = handler.init(response.bodyBytes);
       if (data.isNotEmpty || handler.allowEmpty) {
         return await onSuccess(data);
       }

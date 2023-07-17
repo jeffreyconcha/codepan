@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:codepan/data/database/sqlite_adapter.dart';
 import 'package:codepan/http/handlers.dart';
+import 'package:codepan/http/requests/download_request.dart';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart';
 
@@ -48,7 +49,9 @@ abstract class HttpRequest<T, B> implements HttpRequestResult<T, B> {
     Duration? timeout,
   }) async {
     final result = await response.timeout(timeout ?? _timeout);
-    debugPrint('Body: ${result.body}');
+    if (this is! DownloadRequest) {
+      debugPrint('Body: ${result.body}');
+    }
     debugPrint('Response Code: ${result.statusCode}');
     return onResponse(result);
   }
