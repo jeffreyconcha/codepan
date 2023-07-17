@@ -7,26 +7,33 @@ import 'package:codepan/http/requests/base_request.dart';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart';
 
-abstract class GetRequest<T>
+abstract class UploadRequest<T>
     extends HttpRequest<T, List<Map<String, dynamic>>> {
-  const GetRequest({
+  const UploadRequest({
     required super.db,
     required super.client,
   });
 
-  Future<Map<String, String?>> get params;
+  Future<Map<String, String>> get fields;
+
+  Future<List<MultipartFile>> get files;
 
   @override
   Future<Response> get response async {
-    final p = await params;
+    final f = await fields;
     final h = await headers;
-    final uri = Uri.https(authority, path, p..clean());
+    final m = await files;
+    final uri = Uri.https(authority, path);
+    final encoder = JsonEncoder.withIndent(indent);
+    final body = encoder.convert(f..clean());
     debugPrint('Url: ${uri.toString()}');
-    debugPrint('Headers: ${h.toString()}');
-    return client.get(
-      uri,
-      headers: h..addAll(getHeaders),
-    );
+    debugPrint('Payload:\n${body.toString()}');
+    final request = MultipartRequest('POST', uri);
+    request.headers.addAll(h..addAll(uploadHeaders));
+    request.fields.addAll(f);
+    request.files.addAll(m);
+    final stream = await request.send();
+    return await Response.fromStream(stream);
   }
 
   @override

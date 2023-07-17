@@ -7,9 +7,8 @@ import 'package:codepan/http/requests/base_request.dart';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart';
 
-abstract class GetRequest<T>
-    extends HttpRequest<T, List<Map<String, dynamic>>> {
-  const GetRequest({
+abstract class DownloadRequest<T> extends HttpRequest<T, Uint8List> {
+  const DownloadRequest({
     required super.db,
     required super.client,
   });
@@ -30,7 +29,7 @@ abstract class GetRequest<T>
   }
 
   @override
-  DataInitHandler get handler;
+  ByteInitHandler get handler => const ByteInitHandler(false);
 
   @override
   Future<T> onResponse(Response response) async {
