@@ -2,9 +2,9 @@ import 'package:codepan/bloc/parent_bloc.dart';
 import 'package:codepan/bloc/parent_event.dart';
 import 'package:codepan/bloc/parent_state.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_bloc/flutter_bloc.dart' as b;
 
-typedef WidgetBlocBuilder<S extends ParentState> = Widget Function(
+typedef BlocBuilder<S extends ParentState> = Widget Function(
   BuildContext context,
   S state,
 );
@@ -27,8 +27,8 @@ class PageBlocBuilder<E extends ParentEvent, B extends ParentBloc<E, S>,
   final List<Widget>? persistentFooterButtons;
   final Color? background, statusBarColor;
   final PageScrollBehaviour behaviour;
-  final WidgetBlocBuilder<S>? bottom;
-  final WidgetBlocBuilder<S> builder;
+  final BlocBuilder<S>? bottom;
+  final BlocBuilder<S> builder;
   final bool extendBody, bodyOnly;
   final BlocObserver<S> observer;
   final Brightness? brightness;
@@ -55,11 +55,11 @@ class PageBlocBuilder<E extends ParentEvent, B extends ParentBloc<E, S>,
   Widget build(BuildContext context) {
     final t = Theme.of(context);
     final backgroundColor = background ?? t.backgroundColor;
-    return BlocProvider<B>(
+    return b.BlocProvider<B>(
       create: creator as B Function(BuildContext),
-      child: BlocListener<B, S>(
+      child: b.BlocListener<B, S>(
         listener: observer,
-        child: BlocBuilder<B, S>(
+        child: b.BlocBuilder<B, S>(
           builder: (context, state) {
             final body = Builder(
               builder: (context) {
@@ -157,6 +157,35 @@ class PageBuilder extends StatelessWidget {
       persistentFooterButtons: persistentFooterButtons,
       bottomSheet: bottomSheet,
       extendBody: extendBody,
+    );
+  }
+}
+
+class WidgetBlocBuilder<E extends ParentEvent, B extends ParentBloc<E, S>,
+    S extends ParentState> extends StatelessWidget {
+  final BlocCreator creator;
+  final BlocObserver<S> observer;
+  final BlocBuilder<S> builder;
+
+  const WidgetBlocBuilder({
+    super.key,
+    required this.creator,
+    required this.observer,
+    required this.builder,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return b.BlocProvider<B>(
+      create: creator as B Function(BuildContext),
+      child: b.BlocListener<B, S>(
+        listener: observer,
+        child: b.BlocBuilder<B, S>(
+          builder: (context, state) {
+            return builder.call(context, state);
+          },
+        ),
+      ),
     );
   }
 }
