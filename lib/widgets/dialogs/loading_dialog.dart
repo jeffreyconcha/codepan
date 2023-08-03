@@ -3,12 +3,13 @@ import 'package:codepan/resources/colors.dart';
 import 'package:codepan/resources/dimensions.dart';
 import 'package:codepan/resources/strings.dart';
 import 'package:codepan/widgets/elevated.dart';
+import 'package:codepan/widgets/if_else_builder.dart';
 import 'package:codepan/widgets/loading_indicator.dart';
 import 'package:codepan/widgets/text.dart';
 import 'package:flutter/material.dart';
 
 class LoadingDialog extends StatelessWidget {
-  final Widget? indicator;
+  final Widget? indicator, child;
   final bool dismissible;
   final Color fontColor;
   final String? message;
@@ -23,6 +24,7 @@ class LoadingDialog extends StatelessWidget {
     this.dismissible = true,
     this.fontColor = PanColors.text,
     this.indicator,
+    this.child,
   });
 
   @override
@@ -45,31 +47,39 @@ class LoadingDialog extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
-                  Elevated(
-                    width: width ?? d.at(200),
-                    height: height,
-                    radius: d.at(3),
-                    padding: EdgeInsets.symmetric(
-                      vertical: d.at(10),
-                      horizontal: d.at(15),
-                    ),
-                    child: Row(
-                      children: <Widget>[
-                        indicator ?? LoadingIndicator(),
-                        Expanded(
-                          child: PanText(
-                            text: message,
-                            fontColor: fontColor,
-                            fontSize: d.at(13),
-                            margin: EdgeInsets.only(
-                              left: d.at(10),
-                            ),
-                            textAlign: TextAlign.left,
-                            alignment: Alignment.centerLeft,
-                          ),
+                  IfElseBuilder(
+                    condition: child != null,
+                    ifBuilder: (context) {
+                      return child!;
+                    },
+                    elseBuilder: (context) {
+                      return Elevated(
+                        width: width ?? d.at(200),
+                        height: height,
+                        radius: d.at(3),
+                        padding: EdgeInsets.symmetric(
+                          vertical: d.at(10),
+                          horizontal: d.at(15),
                         ),
-                      ],
-                    ),
+                        child: Row(
+                          children: <Widget>[
+                            indicator ?? LoadingIndicator(),
+                            Expanded(
+                              child: PanText(
+                                text: message,
+                                fontColor: fontColor,
+                                fontSize: d.at(13),
+                                margin: EdgeInsets.only(
+                                  left: d.at(10),
+                                ),
+                                textAlign: TextAlign.left,
+                                alignment: Alignment.centerLeft,
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    },
                   ),
                 ],
               ),

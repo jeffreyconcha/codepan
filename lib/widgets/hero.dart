@@ -29,17 +29,14 @@ class PanHero extends StatelessWidget {
       placeholderBuilder: placeholderBuilder,
       flightShuttleBuilder: flightShuttleBuilder,
       createRectTween: tween,
-      child: Material(
-        color: t.backgroundColor,
-        child: IfElseBuilder(
-          condition: !flexible,
-          ifBuilder: (context) => child,
-          elseBuilder: (context) {
-            return SingleChildScrollView(
-              child: child,
-            );
-          },
-        ),
+      child: IfElseBuilder(
+        condition: !flexible,
+        ifBuilder: (context) => child,
+        elseBuilder: (context) {
+          return SingleChildScrollView(
+            child: child,
+          );
+        },
       ),
     );
   }
