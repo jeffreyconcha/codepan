@@ -6,11 +6,12 @@ import 'package:pull_to_refresh/pull_to_refresh.dart';
 class PullToRefresh extends StatefulWidget {
   final WidgetBuilder? loadingBuilder, placeholderBuilder, errorBuilder;
   final VoidCallback? onRefresh, onLoading, onScrollToMax;
-  final bool isLoading, isError, enablePullDown, isCompleted;
+  final bool isLoading, isError, enablePullDown;
   final RefreshController controller;
   final Widget? header, floating;
   final WidgetBuilder builder;
   final int? itemCount;
+  final bool? isCompleted;
 
   const PullToRefresh({
     super.key,
@@ -20,8 +21,8 @@ class PullToRefresh extends StatefulWidget {
     this.loadingBuilder,
     this.errorBuilder,
     this.header,
+    this.isCompleted,
     this.isLoading = false,
-    this.isCompleted = false,
     this.isError = false,
     this.enablePullDown = true,
     this.itemCount,
@@ -137,7 +138,7 @@ class _PullToRefreshState extends State<PullToRefresh> {
         _isError = true;
         return widget.errorBuilder?.call(context) ?? child;
       } else {
-        if (widget.itemCount == 0 && widget.isCompleted) {
+        if (widget.itemCount == 0 && (widget.isCompleted ?? true)) {
           return widget.placeholderBuilder?.call(context) ?? child;
         }
       }
