@@ -1,7 +1,9 @@
+import 'dart:async';
 import 'dart:isolate';
 import 'dart:ui';
 
 import 'package:codepan/extensions/extensions.dart';
+import 'package:flutter/cupertino.dart';
 
 typedef IsolateRunner<T extends MainPort> = void Function(T port);
 
@@ -20,6 +22,7 @@ abstract class MainPort {
 }
 
 abstract class IsolateHandler<T extends MainPort> {
+  final ValueChanged<SendPort>? onConnected;
   late final ReceivePort _mrp;
   final PortCreator<T> creator;
   final String name;
@@ -31,6 +34,7 @@ abstract class IsolateHandler<T extends MainPort> {
   IsolateHandler({
     required this.name,
     required this.creator,
+    this.onConnected,
   }) : _mrp = ReceivePort();
 
   Future<void> start() async {
@@ -51,7 +55,8 @@ abstract class IsolateHandler<T extends MainPort> {
 
   void _listener(dynamic data) {
     if (data is SendPort) {
-      this._isp = data;
+      onConnected?.call(data);
+      _isp = data;
     } else {
       IsolateNameServer.lookupPortByName(name)?.send(data);
       receiveFromIsolate(data);
