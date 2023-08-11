@@ -182,6 +182,10 @@ class Time extends Equatable {
     return Time.value(value);
   }
 
+  factory Time.utc() {
+    return Time.now().toUtc();
+  }
+
   factory Time.today() {
     final value = DateTime.now();
     final date = DateFormat(dateFormat);
@@ -229,6 +233,10 @@ class Time extends Equatable {
 
   Duration difference(Time other) {
     return value.difference(other.value);
+  }
+
+  Time toUtc() {
+    return Time.value(value.toUtc());
   }
 
   Time toFirstDayOfYear() {
