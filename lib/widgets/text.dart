@@ -12,7 +12,12 @@ enum OverflowState {
 typedef OnTextOverflow = Widget Function(int lines);
 
 class PanText extends StatelessWidget {
-  final double? width, height, fontSize, fontHeight, radius;
+  final double? width,
+      height,
+      fontSize,
+      fontHeight,
+      radius,
+      decorationThickness;
   final Color? fontColor, hintFontColor;
   final OnTextOverflow? onTextOverflow;
   final String? text, hint, fontFamily;
@@ -69,6 +74,7 @@ class PanText extends StatelessWidget {
     this.textStyle,
     this.hintFontColor,
     this.hint,
+    this.decorationThickness,
   });
 
   @override
@@ -94,6 +100,7 @@ class PanText extends StatelessWidget {
                   : fontSize! / mq.textScaleFactor
               : null,
           decoration: decoration,
+          decorationThickness: decorationThickness,
           shadows: shadows,
         );
     List<InlineSpan>? spanList;
