@@ -13,9 +13,9 @@ class SqliteCache {
   }) async {
     if (!cache.containsKey(name)) {
       final db = SqliteAdapter(
-          name: name,
-          password: password,
-          version: version,
+        name: name,
+        password: password,
+        version: version,
         libraryPath: libraryPath,
         schema: initializer.schema,
         onCreate: (db, version) async {
