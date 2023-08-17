@@ -7,27 +7,10 @@ import 'package:codepan/extensions/extensions.dart';
 import 'package:flutter/foundation.dart';
 import 'package:sqflite_sqlcipher/sqflite.dart';
 
-typedef DatabaseCreateNotifier = Future<void> Function(
-  SqliteAdapter db,
-  int version,
-);
-
-typedef DatabaseUpdateNotifier = Future<void> Function(
-  SqliteAdapter db,
-  int oldVersion,
-  int newVersion,
-);
-
 abstract class DatabaseInitializer {
   final DatabaseSchema schema;
-  final DatabaseCreateNotifier? createNotifier;
-  final DatabaseUpdateNotifier? updateNotifier;
 
-  DatabaseInitializer(
-    this.schema, {
-    this.createNotifier,
-    this.updateNotifier,
-  });
+  const DatabaseInitializer(this.schema);
 
   Future<void> onCreate(
     SqliteAdapter db,
@@ -47,12 +30,19 @@ abstract class DatabaseInitializer {
   );
 }
 
-class DefaultDatabaseInitializer extends DatabaseInitializer {
-  DefaultDatabaseInitializer(
-    super.schema, {
-    super.createNotifier,
-    super.updateNotifier,
-  });
+abstract class DefaultDatabaseInitializer extends DatabaseInitializer {
+  const DefaultDatabaseInitializer(super.schema);
+
+  Future<void> onDatabaseCreated(
+    SqliteAdapter db,
+    int version,
+  );
+
+  Future<void> onDatabaseUpdated(
+    SqliteAdapter db,
+    int oldVersion,
+    int newVersion,
+  );
 
   @override
   Future<void> onCreate(SqliteAdapter db, int version) async {
@@ -65,7 +55,7 @@ class DefaultDatabaseInitializer extends DatabaseInitializer {
           await _createTimeTriggers(binder);
         },
       );
-      await createNotifier?.call(db, version);
+      await onDatabaseCreated(db, version);
     } catch (error) {
       final message = "${SqliteException.initializationFailed}\n$error";
       throw SqliteException(message);
@@ -89,7 +79,7 @@ class DefaultDatabaseInitializer extends DatabaseInitializer {
           await _createTimeTriggers(binder);
         },
       );
-      await updateNotifier?.call(db, oldVersion, newVersion);
+      await onDatabaseUpdated(db, oldVersion, newVersion);
     } catch (error) {
       await db.instance!.setVersion(oldVersion);
       final message = "${SqliteException.initializationFailed}\n$error";
@@ -114,7 +104,7 @@ class DefaultDatabaseInitializer extends DatabaseInitializer {
           await _createTimeTriggers(binder);
         },
       );
-      await updateNotifier?.call(db, oldVersion, newVersion);
+      await onDatabaseUpdated(db, oldVersion, newVersion);
     } catch (error) {
       await db.instance!.setVersion(oldVersion);
       final message = "${SqliteException.initializationFailed}\n$error";

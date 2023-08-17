@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:ffi';
 import 'dart:io';
 
+import 'package:codepan/data/database/initializer.dart';
 import 'package:codepan/data/database/schema.dart';
 import 'package:codepan/data/database/sqlite_binder.dart';
 import 'package:codepan/data/database/sqlite_exception.dart';
@@ -28,10 +29,7 @@ const fileIsNotADatabase = 26;
 
 class SqliteAdapter implements DatabaseExecutor {
   late final String _path;
-  final OnDatabaseVersionChange? onDowngrade;
-  final OnDatabaseVersionChange? onUpgrade;
-  final OnDatabaseCreate? onCreate;
-  final DatabaseSchema schema;
+  final DatabaseInitializer initializer;
   final String? libraryPath;
   final String password;
   final String name;
@@ -46,6 +44,8 @@ class SqliteAdapter implements DatabaseExecutor {
     return _db;
   }
 
+  DatabaseSchema get schema => initializer.schema;
+
   @override
   Database get database => instance!;
 
@@ -58,17 +58,15 @@ class SqliteAdapter implements DatabaseExecutor {
   SqliteAdapter({
     required this.name,
     required this.version,
-    required this.schema,
     required this.password,
+    required this.initializer,
     this.libraryPath,
-    this.onCreate,
-    this.onUpgrade,
-    this.onDowngrade,
   });
 
   /// Always use await when opening a database
   Future<void> openConnection() async {
     if (_db == null || !_db!.isOpen) {
+      debugPrint('Initializing database($name) please wait...');
       bool isCreated = false;
       bool isUpgraded = false;
       bool isDowngraded = false;
@@ -89,13 +87,13 @@ class SqliteAdapter implements DatabaseExecutor {
         },
       );
       if (isCreated) {
-        await onCreate?.call(this, version);
+        await initializer.onCreate.call(this, version);
       }
       if (isUpgraded) {
-        await onUpgrade?.call(this, _oldVersion, version);
+        await initializer.onUpgrade.call(this, _oldVersion, version);
       }
       if (isDowngraded) {
-        await onDowngrade?.call(this, _oldVersion, version);
+        await initializer.onDowngrade.call(this, _oldVersion, version);
       }
       debugPrint('Database Path: $_path');
     }

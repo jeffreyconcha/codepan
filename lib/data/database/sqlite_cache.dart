@@ -17,16 +17,7 @@ class SqliteCache {
         password: password,
         version: version,
         libraryPath: libraryPath,
-        schema: initializer.schema,
-        onCreate: (db, version) async {
-          await initializer.onCreate(db, version);
-        },
-        onUpgrade: (db, ov, nv) async {
-          await initializer.onUpgrade(db, ov, nv);
-        },
-        onDowngrade: (db, ov, nv) async {
-          await initializer.onDowngrade(db, ov, nv);
-        },
+        initializer: initializer,
       );
       await db.openConnection();
       await db.checkVersion();
