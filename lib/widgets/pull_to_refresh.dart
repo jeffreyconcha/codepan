@@ -12,6 +12,7 @@ class PullToRefresh extends StatefulWidget {
   final WidgetBuilder builder;
   final int? itemCount;
   final bool? isCompleted;
+  final ScrollPhysics? physics;
 
   const PullToRefresh({
     super.key,
@@ -30,6 +31,7 @@ class PullToRefresh extends StatefulWidget {
     this.onLoading,
     this.onScrollToMax,
     this.floating,
+    this.physics,
   });
 
   @override
@@ -48,6 +50,8 @@ class _PullToRefreshState extends State<PullToRefresh> {
 
   double get height => _size?.height ?? 0;
 
+  ScrollPhysics? get physics => widget.physics;
+
   @override
   void initState() {
     super.initState();
@@ -64,7 +68,7 @@ class _PullToRefreshState extends State<PullToRefresh> {
           controller: controller,
           enablePullDown: widget.enablePullDown,
           child: _buildChild(context),
-          physics: controller.isRefresh ? NeverScrollableScrollPhysics() : null,
+          physics: controller.isRefresh ? NeverScrollableScrollPhysics() : physics,
           onRefresh: widget.onRefresh,
           onLoading: widget.onLoading,
         ),
