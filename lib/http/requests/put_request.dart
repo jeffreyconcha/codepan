@@ -3,8 +3,8 @@ import 'dart:convert';
 import 'package:codepan/http/requests/transmit_request.dart';
 import 'package:http/http.dart';
 
-abstract class PostRequest<T> extends TransmitRequest<T> {
-  const PostRequest({
+abstract class PutRequest<T> extends TransmitRequest<T> {
+  const PutRequest({
     required super.db,
     required super.client,
   });
@@ -16,7 +16,7 @@ abstract class PostRequest<T> extends TransmitRequest<T> {
     Object? body,
     Encoding? encoding,
   }) {
-    return client.post(
+    return client.put(
       uri,
       headers: headers,
       body: body,
