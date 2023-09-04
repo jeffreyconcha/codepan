@@ -441,6 +441,7 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
           onFullscreenChanged: widget.onFullscreenChanged,
           thumbnailUrl: _thumbnailUrl,
           subtitleUrl: widget.subtitleUrl,
+          subtitle: widget.subtitle,
           state: this,
         ),
         onWillPop: () async {
