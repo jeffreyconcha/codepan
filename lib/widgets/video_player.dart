@@ -20,8 +20,8 @@ import 'package:video_player/video_player.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
 typedef OnSaveState = void Function(
-  _PanVideoPlayerState state,
-);
+    _PanVideoPlayerState state,
+    );
 
 const int delay = 5000;
 
@@ -179,7 +179,7 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
                                   subtitleStyle: SubtitleStyle(
                                     textColor: Colors.white,
                                     fontSize:
-                                        _isFullscreen ? d.at(17) : d.at(12),
+                                    _isFullscreen ? d.at(17) : d.at(12),
                                     hasBorder: true,
                                     borderStyle: SubtitleBorderStyle(
                                       color: Colors.black,
@@ -472,6 +472,7 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
 
   void _onSaveState(_PanVideoPlayerState state) {
     _videoController = state._videoController;
+    _subController = state._subController;
     _isControllerVisible = state._isControllerVisible;
     _isInitialized = state._isInitialized;
     _isLoading = state._isLoading;
