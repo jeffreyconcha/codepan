@@ -10,6 +10,7 @@ import 'package:codepan/utils/debouncer.dart';
 import 'package:codepan/widgets/if_else_builder.dart';
 import 'package:codepan/widgets/loading_indicator.dart';
 import 'package:codepan/widgets/video_controller.dart';
+import 'package:codepan/widgets/wrapper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:subtitle_wrapper_package/data/data.dart';
@@ -39,6 +40,7 @@ class PanVideoPlayer extends StatefulWidget {
   final OnError? onError;
   final bool showBuffer;
   final String? thumbnailUrl, subtitleUrl;
+  final File? subtitle;
 
   PanVideoPlayer({
     super.key,
@@ -58,6 +60,7 @@ class PanVideoPlayer extends StatefulWidget {
     this.thumbnailUrl,
     this.thumbnailErrorWidget,
     this.subtitleUrl,
+    this.subtitle,
   });
 
   @override
@@ -65,8 +68,8 @@ class PanVideoPlayer extends StatefulWidget {
 }
 
 class _PanVideoPlayerState extends State<PanVideoPlayer> {
-  late final SubtitleController _subController;
   VideoPlayerController? _videoController;
+  SubtitleController? _subController;
   bool _orientationChanged = false;
   bool _isControllerVisible = true;
   bool _isInitialized = false;
@@ -116,11 +119,6 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
       }
       _debouncer = Debouncer(milliseconds: delay);
     }
-    _subController = SubtitleController(
-      subtitleDecoder: SubtitleDecoder.utf8,
-      subtitleUrl: widget.subtitleUrl,
-      showSubtitles: widget.subtitleUrl != null,
-    );
   }
 
   @override
@@ -170,19 +168,27 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
                         Center(
                           child: AspectRatio(
                             aspectRatio: _aspectRatio,
-                            child: SubtitleWrapper(
-                              subtitleController: _subController,
-                              videoPlayerController: _videoController!,
-                              videoChild: VideoPlayer(_videoController!),
-                              subtitleStyle: SubtitleStyle(
-                                textColor: Colors.transparent,
-                                fontSize: _isFullscreen ? d.at(17) : d.at(12),
-                                hasBorder: true,
-                                borderStyle: SubtitleBorderStyle(
-                                  color: Colors.black,
-                                  strokeWidth: d.at(2),
-                                ),
-                              ),
+                            child: WrapperBuilder(
+                              condition: widget.subtitle != null ||
+                                  widget.subtitleUrl != null,
+                              child: VideoPlayer(_videoController!),
+                              builder: (context, child) {
+                                return SubtitleWrapper(
+                                  subtitleController: _subController!,
+                                  videoPlayerController: _videoController!,
+                                  subtitleStyle: SubtitleStyle(
+                                    textColor: Colors.white,
+                                    fontSize:
+                                        _isFullscreen ? d.at(17) : d.at(12),
+                                    hasBorder: true,
+                                    borderStyle: SubtitleBorderStyle(
+                                      color: Colors.black,
+                                      strokeWidth: d.at(2),
+                                    ),
+                                  ),
+                                  videoChild: child,
+                                );
+                              },
                             ),
                           ),
                         ),
@@ -275,6 +281,7 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
         _setControllerVisible(false);
         await Future.delayed(Duration(milliseconds: 500));
         await _videoController!.initialize();
+        await _initializeSubtitle();
         _videoController!.addListener(_listener);
         setState(() {
           _max = _value!.duration.inMilliseconds.toDouble();
@@ -287,6 +294,25 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
         _setControllerVisible(true);
         rethrow;
       }
+    }
+  }
+
+  Future<void> _initializeSubtitle() async {
+    final file = widget.subtitle;
+    final url = widget.subtitleUrl;
+    if (file != null) {
+      final content = await file.readAsString();
+      _subController = SubtitleController(
+        subtitleDecoder: SubtitleDecoder.utf8,
+        showSubtitles: true,
+        subtitlesContent: content,
+      );
+    } else if (url != null) {
+      _subController = SubtitleController(
+        subtitleDecoder: SubtitleDecoder.utf8,
+        showSubtitles: true,
+        subtitleUrl: url,
+      );
     }
   }
 
