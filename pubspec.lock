@@ -1117,6 +1117,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.2.0"
+  subtitle_wrapper_package:
+    dependency: "direct main"
+    description:
+      name: subtitle_wrapper_package
+      sha256: "6a279ad7ef3b3646bca6efa29fa9d2e45650c1c28a0f668170d8648efccc3d21"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.1.1"
   synchronized:
     dependency: transitive
     description:

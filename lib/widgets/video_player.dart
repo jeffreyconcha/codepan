@@ -12,6 +12,9 @@ import 'package:codepan/widgets/loading_indicator.dart';
 import 'package:codepan/widgets/video_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:subtitle_wrapper_package/data/data.dart';
+import 'package:subtitle_wrapper_package/subtitle_controller.dart';
+import 'package:subtitle_wrapper_package/subtitle_wrapper.dart';
 import 'package:video_player/video_player.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
@@ -35,7 +38,7 @@ class PanVideoPlayer extends StatefulWidget {
   final OnSaveState? onSaveState;
   final OnError? onError;
   final bool showBuffer;
-  final String? thumbnailUrl;
+  final String? thumbnailUrl, subtitleUrl;
 
   PanVideoPlayer({
     super.key,
@@ -54,6 +57,7 @@ class PanVideoPlayer extends StatefulWidget {
     this.showBuffer = true,
     this.thumbnailUrl,
     this.thumbnailErrorWidget,
+    this.subtitleUrl,
   });
 
   @override
@@ -61,7 +65,8 @@ class PanVideoPlayer extends StatefulWidget {
 }
 
 class _PanVideoPlayerState extends State<PanVideoPlayer> {
-  VideoPlayerController? _controller;
+  late final SubtitleController _subController;
+  VideoPlayerController? _videoController;
   bool _orientationChanged = false;
   bool _isControllerVisible = true;
   bool _isInitialized = false;
@@ -74,7 +79,7 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
   double _current = 0;
   double _max = 0;
 
-  VideoPlayerValue? get _value => _controller?.value;
+  VideoPlayerValue? get _value => _videoController?.value;
 
   bool get _isFullscreen => widget.isFullScreen;
 
@@ -103,21 +108,26 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
       widget.onFullscreenChanged?.call(true);
     } else {
       if (_data is String) {
-        _controller = VideoPlayerController.network(_data);
+        _videoController = VideoPlayerController.network(_data);
       } else if (_data is File) {
-        _controller = VideoPlayerController.file(_data);
+        _videoController = VideoPlayerController.file(_data);
       } else {
         throw ArgumentError(invalidArgument);
       }
       _debouncer = Debouncer(milliseconds: delay);
     }
+    _subController = SubtitleController(
+      subtitleDecoder: SubtitleDecoder.utf8,
+      subtitleUrl: widget.subtitleUrl,
+      showSubtitles: widget.subtitleUrl != null,
+    );
   }
 
   @override
   void dispose() {
-    _controller?.removeListener(_listener);
+    _videoController?.removeListener(_listener);
     if (!_isFullscreen) {
-      _controller?.dispose();
+      _videoController?.dispose();
     }
     if (widget.onSaveState != null) {
       widget.onSaveState!(this);
@@ -160,7 +170,20 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
                         Center(
                           child: AspectRatio(
                             aspectRatio: _aspectRatio,
-                            child: VideoPlayer(_controller!),
+                            child: SubtitleWrapper(
+                              subtitleController: _subController,
+                              videoPlayerController: _videoController!,
+                              videoChild: VideoPlayer(_videoController!),
+                              subtitleStyle: SubtitleStyle(
+                                textColor: Colors.transparent,
+                                fontSize: _isFullscreen ? d.at(17) : d.at(12),
+                                hasBorder: true,
+                                borderStyle: SubtitleBorderStyle(
+                                  color: Colors.black,
+                                  strokeWidth: d.at(2),
+                                ),
+                              ),
+                            ),
                           ),
                         ),
                         IfElseBuilder(
@@ -251,8 +274,8 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
         _setLoading(true);
         _setControllerVisible(false);
         await Future.delayed(Duration(milliseconds: 500));
-        await _controller!.initialize();
-        _controller!.addListener(_listener);
+        await _videoController!.initialize();
+        _videoController!.addListener(_listener);
         setState(() {
           _max = _value!.duration.inMilliseconds.toDouble();
           _isInitialized = true;
@@ -274,10 +297,10 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
         await _onSeekProgress(1);
       }
       if (_value!.isPlaying) {
-        await _controller!.pause();
+        await _videoController!.pause();
       } else {
         _setLoading(true);
-        await _controller!.play();
+        await _videoController!.play();
         _setLoading(false);
         _isCompleted = false;
       }
@@ -309,7 +332,7 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
   Future<void> _onSeekProgress(double input) async {
     final milliseconds = input < 0.0 ? 0.0 : (input > _max ? _max : input);
     _setLoading(true);
-    await _controller!.seekTo(
+    await _videoController!.seekTo(
       Duration(
         milliseconds: milliseconds.toInt(),
       ),
@@ -391,6 +414,7 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
           onSaveState: _onSaveState,
           onFullscreenChanged: widget.onFullscreenChanged,
           thumbnailUrl: _thumbnailUrl,
+          subtitleUrl: widget.subtitleUrl,
           state: this,
         ),
         onWillPop: () async {
@@ -420,7 +444,7 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
   }
 
   void _onSaveState(_PanVideoPlayerState state) {
-    _controller = state._controller;
+    _videoController = state._videoController;
     _isControllerVisible = state._isControllerVisible;
     _isInitialized = state._isInitialized;
     _isLoading = state._isLoading;
@@ -431,7 +455,7 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
     _debouncer = state._debouncer;
     _max = state._max;
     if (_isInitialized) {
-      _controller!.addListener(_listener);
+      _videoController!.addListener(_listener);
     }
   }
 
