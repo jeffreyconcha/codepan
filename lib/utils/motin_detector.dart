@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:codepan/extensions/num.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:sensors_plus/sensors_plus.dart';
 import 'package:system_clock/system_clock.dart';

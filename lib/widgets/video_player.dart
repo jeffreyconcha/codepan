@@ -85,23 +85,23 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
   double _current = 0;
   double _max = 0;
 
-  VideoPlayerValue? get _value => _videoController?.value;
+  VideoPlayerValue? get value => _videoController?.value;
 
-  bool get _isFullscreen => widget.isFullScreen;
+  bool get isFullscreen => widget.isFullScreen;
 
-  double get _aspectRatio => _isInitialized ? _value!.aspectRatio : 16 / 9;
+  double get aspectRatio => _isInitialized ? value!.aspectRatio : 16 / 9;
 
-  dynamic get _data => widget.data;
+  dynamic get data => widget.data;
 
-  bool get _showBuffer => widget.showBuffer;
+  bool get showBuffer => widget.showBuffer;
 
-  String? get _thumbnailUrl => widget.thumbnailUrl;
+  String? get thumbnailUrl => widget.thumbnailUrl;
 
   String? get key {
-    if (_data is String) {
-      return _data;
-    } else if (_data is File) {
-      return (_data as File).path;
+    if (data is String) {
+      return data;
+    } else if (data is File) {
+      return (data as File).path;
     }
     return null;
   }
@@ -109,14 +109,14 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
   @override
   void initState() {
     super.initState();
-    if (_isFullscreen) {
+    if (isFullscreen) {
       _onSaveState(widget.state!);
       widget.onFullscreenChanged?.call(true);
     } else {
-      if (_data is String) {
-        _videoController = VideoPlayerController.network(_data);
-      } else if (_data is File) {
-        _videoController = VideoPlayerController.file(_data);
+      if (data is String) {
+        _videoController = VideoPlayerController.network(data);
+      } else if (data is File) {
+        _videoController = VideoPlayerController.file(data);
       } else {
         throw ArgumentError(invalidArgument);
       }
@@ -128,12 +128,12 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
           switch (orientation) {
             case DeviceOrientation.landscapeLeft:
             case DeviceOrientation.landscapeRight:
-              if (!_isFullscreen) {
+              if (!isFullscreen) {
                 _enterFullScreen(orientation);
               }
               break;
             case DeviceOrientation.portraitUp:
-              if (_isFullscreen) {
+              if (isFullscreen) {
                 _exitFullScreen();
                 context.pop();
               }
@@ -149,7 +149,7 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
   @override
   void dispose() {
     _videoController?.removeListener(_listener);
-    if (!_isFullscreen) {
+    if (!isFullscreen) {
       _videoController?.dispose();
     }
     if (widget.onSaveState != null) {
@@ -164,9 +164,8 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
   Widget build(BuildContext context) {
     final d = Dimension.of(context);
     final width = widget.width ?? d.maxWidth;
-    final height = _isFullscreen
-        ? d.maxHeight
-        : widget.height ?? d.maxWidth / _aspectRatio;
+    final height =
+        isFullscreen ? d.maxHeight : widget.height ?? d.maxWidth / aspectRatio;
     return VisibilityDetector(
       key: Key(key!),
       onVisibilityChanged: (info) {
@@ -193,7 +192,7 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
                       children: <Widget>[
                         Center(
                           child: AspectRatio(
-                            aspectRatio: _aspectRatio,
+                            aspectRatio: aspectRatio,
                             child: WrapperBuilder(
                               condition: widget.subtitle != null ||
                                   widget.subtitleUrl != null,
@@ -205,7 +204,7 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
                                   subtitleStyle: SubtitleStyle(
                                     textColor: Colors.white,
                                     fontSize:
-                                        _isFullscreen ? d.at(17) : d.at(12),
+                                        isFullscreen ? d.at(17) : d.at(12),
                                     hasBorder: true,
                                     borderStyle: SubtitleBorderStyle(
                                       color: Colors.black,
@@ -235,7 +234,7 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
                         CachedNetworkImage(
                           width: width,
                           height: height,
-                          imageUrl: _thumbnailUrl ?? '',
+                          imageUrl: thumbnailUrl ?? '',
                           fit: BoxFit.contain,
                           errorWidget: (context, url, error) {
                             return widget.thumbnailErrorWidget ??
@@ -271,11 +270,11 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
                           playButtonColor: widget.playButtonColor,
                           isInitialized: _isInitialized,
                           isLoading: _isLoading,
-                          isFullscreen: _isFullscreen,
+                          isFullscreen: isFullscreen,
                           isPlaying: _isPlaying,
                           current: _current,
                           max: _max,
-                          buffered: _showBuffer ? _buffered : 0,
+                          buffered: showBuffer ? _buffered : 0,
                           onPlay: _onPlay,
                           onFullScreen: _onFullScreen,
                           onSeekProgress: _onSeekProgress,
@@ -306,11 +305,11 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
         _setLoading(true);
         _setControllerVisible(false);
         await Future.delayed(Duration(milliseconds: 500));
-        await _videoController!.initialize();
         await _initializeSubtitle();
+        await _videoController!.initialize();
         _videoController!.addListener(_listener);
         setState(() {
-          _max = _value!.duration.inMilliseconds.toDouble();
+          _max = value!.duration.inMilliseconds.toDouble();
           _isInitialized = true;
         });
         _setLoading(false);
@@ -348,7 +347,7 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
       if (_current == _max) {
         await _onSeekProgress(1);
       }
-      if (_value!.isPlaying) {
+      if (value!.isPlaying) {
         await _videoController!.pause();
       } else {
         _setLoading(true);
@@ -356,8 +355,8 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
         _setLoading(false);
         _isCompleted = false;
       }
-      _setPlaying(_value!.isPlaying);
-      if (_value!.isPlaying) {
+      _setPlaying(value!.isPlaying);
+      if (value!.isPlaying) {
         _autoHideController();
       } else {
         _debouncer?.cancel();
@@ -366,19 +365,25 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
   }
 
   void _listener() async {
-    double value = _value!.position.inMilliseconds.toDouble();
-    if (value != _current) {
-      _setCurrent(value);
-      widget.onProgressChanged?.call(value, _max);
-    }
-    if (value == _max) {
-      _setPlaying(false);
-      if (!_isCompleted) {
-        widget.onCompleted?.call();
-        _isCompleted = true;
+    final player = value;
+    if (player != null) {
+      double milliseconds = player.position.inMilliseconds.toDouble();
+      if (milliseconds != _current) {
+        _setCurrent(milliseconds);
+        widget.onProgressChanged?.call(milliseconds, _max);
       }
+      if (milliseconds == _max) {
+        _setPlaying(false);
+        if (!_isCompleted) {
+          widget.onCompleted?.call();
+          _isCompleted = true;
+        }
+      }
+      if (_isPlaying != player.isPlaying) {
+        _setPlaying(player.isPlaying);
+      }
+      _updateBuffered();
     }
-    _updateBuffered();
   }
 
   Future<void> _onSeekProgress(double input) async {
@@ -425,7 +430,7 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
   }
 
   double _getBuffered() {
-    final range = _value!.buffered;
+    final range = value!.buffered;
     if (range.length > 0) {
       final iterable = range.map((element) {
         final start = element.start.inMilliseconds;
@@ -441,7 +446,7 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
 
   void _onFullScreen() async {
     _debouncer?.cancel();
-    if (!_isFullscreen) {
+    if (!isFullscreen) {
       _enterFullScreen();
     } else {
       _exitFullScreen();
@@ -472,7 +477,7 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
           onSaveState: _onSaveState,
           onFullscreenChanged: widget.onFullscreenChanged,
           autoFullScreen: widget.autoFullScreen,
-          thumbnailUrl: _thumbnailUrl,
+          thumbnailUrl: thumbnailUrl,
           subtitleUrl: widget.subtitleUrl,
           subtitle: widget.subtitle,
           state: this,
