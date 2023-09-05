@@ -7,6 +7,7 @@ import 'package:codepan/resources/dimensions.dart';
 import 'package:codepan/resources/strings.dart';
 import 'package:codepan/transitions/route_transition.dart';
 import 'package:codepan/utils/debouncer.dart';
+import 'package:codepan/utils/motin_detector.dart';
 import 'package:codepan/widgets/if_else_builder.dart';
 import 'package:codepan/widgets/loading_indicator.dart';
 import 'package:codepan/widgets/video_controller.dart';
@@ -20,8 +21,8 @@ import 'package:video_player/video_player.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
 typedef OnSaveState = void Function(
-    _PanVideoPlayerState state,
-    );
+  _PanVideoPlayerState state,
+);
 
 const int delay = 5000;
 
@@ -31,7 +32,7 @@ class PanVideoPlayer extends StatefulWidget {
   final Widget? thumbnailErrorWidget;
   final Color? color, playButtonColor;
   final OnCompleted? onCompleted;
-  final bool isFullScreen;
+  final bool isFullScreen, autoFullScreen;
   final double? width;
   final double? height;
   final dynamic data;
@@ -56,6 +57,7 @@ class PanVideoPlayer extends StatefulWidget {
     this.onSaveState,
     this.onError,
     this.isFullScreen = false,
+    this.autoFullScreen = false,
     this.showBuffer = true,
     this.thumbnailUrl,
     this.thumbnailErrorWidget,
@@ -68,6 +70,7 @@ class PanVideoPlayer extends StatefulWidget {
 }
 
 class _PanVideoPlayerState extends State<PanVideoPlayer> {
+  late final MotionDetector _detector;
   VideoPlayerController? _videoController;
   SubtitleController? _subController;
   bool _orientationChanged = false;
@@ -119,6 +122,28 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
       }
       _debouncer = Debouncer(milliseconds: delay);
     }
+    _detector = MotionDetector(
+      onOrientationChanged: (orientation) {
+        if (_isPlaying) {
+          switch (orientation) {
+            case DeviceOrientation.landscapeLeft:
+            case DeviceOrientation.landscapeRight:
+              if (!_isFullscreen) {
+                _enterFullScreen(orientation);
+              }
+              break;
+            case DeviceOrientation.portraitUp:
+              if (_isFullscreen) {
+                _exitFullScreen();
+                context.pop();
+              }
+              break;
+            default:
+              break;
+          }
+        }
+      },
+    );
   }
 
   @override
@@ -131,6 +156,7 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
       widget.onSaveState!(this);
     }
     _debouncer?.cancel();
+    _detector.close();
     super.dispose();
   }
 
@@ -179,7 +205,7 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
                                   subtitleStyle: SubtitleStyle(
                                     textColor: Colors.white,
                                     fontSize:
-                                    _isFullscreen ? d.at(17) : d.at(12),
+                                        _isFullscreen ? d.at(17) : d.at(12),
                                     hasBorder: true,
                                     borderStyle: SubtitleBorderStyle(
                                       color: Colors.black,
@@ -424,11 +450,17 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
     _autoHideController();
   }
 
-  void _enterFullScreen() async {
-    await SystemChrome.setPreferredOrientations([
-      DeviceOrientation.landscapeLeft,
-      DeviceOrientation.landscapeRight,
-    ]);
+  void _enterFullScreen([
+    DeviceOrientation? orientation,
+  ]) async {
+    if (orientation != null) {
+      await SystemChrome.setPreferredOrientations([orientation]);
+    } else {
+      await SystemChrome.setPreferredOrientations([
+        DeviceOrientation.landscapeLeft,
+        DeviceOrientation.landscapeRight,
+      ]);
+    }
     _orientationChanged = true;
     await SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
     context.fadeIn(
@@ -439,6 +471,7 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
           isFullScreen: true,
           onSaveState: _onSaveState,
           onFullscreenChanged: widget.onFullscreenChanged,
+          autoFullScreen: widget.autoFullScreen,
           thumbnailUrl: _thumbnailUrl,
           subtitleUrl: widget.subtitleUrl,
           subtitle: widget.subtitle,
