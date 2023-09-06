@@ -33,6 +33,7 @@ class PanVideoPlayer extends StatefulWidget {
   final Color? color, playButtonColor;
   final OnCompleted? onCompleted;
   final bool isFullScreen, autoFullScreen;
+  final SubtitlePosition? subtitlePosition;
   final double? width;
   final double? height;
   final dynamic data;
@@ -63,6 +64,7 @@ class PanVideoPlayer extends StatefulWidget {
     this.thumbnailErrorWidget,
     this.subtitleUrl,
     this.subtitle,
+    this.subtitlePosition,
   });
 
   @override
@@ -198,6 +200,10 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
                                   widget.subtitleUrl != null,
                               child: VideoPlayer(_videoController!),
                               builder: (context, child) {
+                                final position = widget.subtitlePosition ??
+                                    SubtitlePosition(
+                                      bottom: d.at(50),
+                                    );
                                 return SubtitleWrapper(
                                   subtitleController: _subController!,
                                   videoPlayerController: _videoController!,
@@ -205,6 +211,7 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
                                     textColor: Colors.white,
                                     fontSize:
                                         isFullscreen ? d.at(17) : d.at(12),
+                                    position: position,
                                     hasBorder: true,
                                     borderStyle: SubtitleBorderStyle(
                                       color: Colors.black,
