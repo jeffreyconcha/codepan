@@ -10,8 +10,8 @@ import 'package:flutter/material.dart';
 class VideoController extends StatelessWidget {
   final Color? color, playButtonColor;
   final OnSeekProgress? onSeekProgress;
-  final VoidCallback? onFullScreen;
-  final VoidCallback? onPlay;
+  final VoidCallback? onTapFullScreen;
+  final VoidCallback? onTapPlay;
   final bool? isLoading;
   final bool? isInitialized;
   final bool? isPlaying;
@@ -32,8 +32,8 @@ class VideoController extends StatelessWidget {
     this.current,
     this.max,
     this.onSeekProgress,
-    this.onFullScreen,
-    this.onPlay,
+    this.onTapFullScreen,
+    this.onTapPlay,
   });
 
   @override
@@ -75,7 +75,7 @@ class VideoController extends StatelessWidget {
                         ),
                         splashColor: Colors.white.withOpacity(0.4),
                         highlightColor: Colors.transparent,
-                        onTap: onPlay,
+                        onTap: onTapPlay,
                       ),
                     ),
                   ),
@@ -135,7 +135,7 @@ class VideoController extends StatelessWidget {
               size: d.at(30),
               color: Colors.white,
             ),
-            onTap: onFullScreen,
+            onTap: onTapFullScreen,
           ),
         ),
       ],

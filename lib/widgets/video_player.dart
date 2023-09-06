@@ -175,7 +175,7 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
             _isPlaying &&
             !_orientationChanged &&
             info.visibleFraction == 0.0) {
-          _onPlay();
+          _onTapPlay();
         }
         _orientationChanged = false;
       },
@@ -282,8 +282,8 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
                           current: _current,
                           max: _max,
                           buffered: showBuffer ? _buffered : 0,
-                          onPlay: _onPlay,
-                          onFullScreen: _onFullScreen,
+                          onTapPlay: _onTapPlay,
+                          onTapFullScreen: _onTapFullScreen,
                           onSeekProgress: _onSeekProgress,
                         );
                       },
@@ -348,7 +348,7 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
     }
   }
 
-  void _onPlay() async {
+  void _onTapPlay() async {
     await initializeVideo();
     if (_isInitialized) {
       if (_current == _max) {
@@ -451,7 +451,7 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
     return 0;
   }
 
-  void _onFullScreen() async {
+  void _onTapFullScreen() async {
     _debouncer?.cancel();
     if (!isFullscreen) {
       _enterFullScreen();
