@@ -32,7 +32,7 @@ class PanVideoPlayer extends StatefulWidget {
   final Widget? thumbnailErrorWidget;
   final Color? color, playButtonColor;
   final OnCompleted? onCompleted;
-  final VoidCallback? onPlay, onPause;
+  final VoidCallback? onPlay, onPause, onInitialized;
   final bool isFullScreen, autoFullScreen;
   final SubtitlePosition? subtitlePosition;
   final double? width;
@@ -68,6 +68,7 @@ class PanVideoPlayer extends StatefulWidget {
     this.subtitlePosition,
     this.onPlay,
     this.onPause,
+    this.onInitialized,
   });
 
   @override
@@ -321,6 +322,7 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
         setState(() {
           _max = value!.duration.inMilliseconds.toDouble();
           _isInitialized = true;
+          widget.onInitialized?.call();
         });
         _setLoading(false);
       } catch (error) {
