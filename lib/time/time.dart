@@ -499,7 +499,7 @@ class Time extends Equatable {
     return '$_date $_time';
   }
 
-  static const zero = const Time();
+  static const zero = Time();
 }
 
 class TimeController extends ValueNotifier<Time> {

@@ -215,6 +215,11 @@ class TimeRange extends Equatable {
     }
     return list;
   }
+
+  static const zero = TimeRange(
+    start: Time.zero,
+    end: Time.zero,
+  );
 }
 
 class TimeRangeController extends ValueNotifier<TimeRange> {
