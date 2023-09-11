@@ -142,7 +142,6 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
               case DeviceOrientation.portraitUp:
                 if (_isAutoFullScreen) {
                   context.pop();
-                  print('DEPANOT context.pop 1');
                 }
                 break;
               default:
