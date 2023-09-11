@@ -76,16 +76,17 @@ class PanVideoPlayer extends StatefulWidget {
 }
 
 class _PanVideoPlayerState extends State<PanVideoPlayer> {
-  late final MotionDetector _detector;
+  MotionDetector? _detector;
   VideoPlayerController? _videoController;
   SubtitleController? _subController;
-  bool _orientationChanged = false;
   bool _isControllerVisible = true;
   bool _isInitialized = false;
   bool _isLoading = false;
   bool _isPlaying = false;
   bool _isBuffering = false;
   bool _isCompleted = false;
+  bool _isManualFullScreen = false;
+  bool _isAutoFullScreen = false;
   Debouncer? _debouncer;
   double _buffered = 0;
   double _current = 0;
@@ -127,29 +128,30 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
         throw ArgumentError(invalidArgument);
       }
       _debouncer = Debouncer(milliseconds: delay);
-    }
-    _detector = MotionDetector(
-      onOrientationChanged: (orientation) {
-        if (_isPlaying) {
-          switch (orientation) {
-            case DeviceOrientation.landscapeLeft:
-            case DeviceOrientation.landscapeRight:
-              if (!isFullscreen) {
-                _enterFullScreen(orientation);
-              }
-              break;
-            case DeviceOrientation.portraitUp:
-              if (isFullscreen) {
-                _exitFullScreen();
-                context.pop();
-              }
-              break;
-            default:
-              break;
+      _detector = MotionDetector(
+        onOrientationChanged: (orientation) {
+          if ((value?.isPlaying ?? false) && !_isManualFullScreen) {
+            switch (orientation) {
+              case DeviceOrientation.landscapeLeft:
+              case DeviceOrientation.landscapeRight:
+                if (!_isAutoFullScreen) {
+                  _enterFullScreen(orientation);
+                  _isAutoFullScreen = true;
+                }
+                break;
+              case DeviceOrientation.portraitUp:
+                if (_isAutoFullScreen) {
+                  context.pop();
+                  print('DEPANOT context.pop 1');
+                }
+                break;
+              default:
+                break;
+            }
           }
-        }
-      },
-    );
+        },
+      );
+    }
   }
 
   @override
@@ -162,7 +164,7 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
       widget.onSaveState!(this);
     }
     _debouncer?.cancel();
-    _detector.close();
+    _detector?.close();
     super.dispose();
   }
 
@@ -177,11 +179,10 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
       onVisibilityChanged: (info) {
         if (_isInitialized &&
             _isPlaying &&
-            !_orientationChanged &&
+            !isFullscreen &&
             info.visibleFraction == 0.0) {
           _onTapPlay();
         }
-        _orientationChanged = false;
       },
       child: Material(
         color: Colors.grey.shade900,
@@ -465,57 +466,63 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
     _debouncer?.cancel();
     if (!isFullscreen) {
       _enterFullScreen();
+      _isManualFullScreen = true;
     } else {
-      _exitFullScreen();
       context.pop();
     }
     _autoHideController();
   }
 
-  void _enterFullScreen([
-    DeviceOrientation? orientation,
+  Future<void> _enterFullScreen([
+    DeviceOrientation orientation = DeviceOrientation.landscapeLeft,
   ]) async {
-    if (orientation != null) {
-      await SystemChrome.setPreferredOrientations([orientation]);
+    //Orientation in iOS is inverted.
+    if (Platform.isIOS) {
+      switch (orientation) {
+        case DeviceOrientation.landscapeLeft:
+          await SystemChrome.setPreferredOrientations([
+            DeviceOrientation.landscapeRight,
+          ]);
+          break;
+        case DeviceOrientation.landscapeRight:
+          await SystemChrome.setPreferredOrientations([
+            DeviceOrientation.landscapeLeft,
+          ]);
+          break;
+        default:
+          break;
+      }
     } else {
-      await SystemChrome.setPreferredOrientations([
-        DeviceOrientation.landscapeLeft,
-        DeviceOrientation.landscapeRight,
-      ]);
+      await SystemChrome.setPreferredOrientations([orientation]);
     }
-    _orientationChanged = true;
     await SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
     context.fadeIn(
-      page: WillPopScope(
-        child: PanVideoPlayer(
-          data: widget.data,
-          color: widget.color,
-          isFullScreen: true,
-          onSaveState: _onSaveState,
-          onFullscreenChanged: widget.onFullscreenChanged,
-          autoFullScreen: widget.autoFullScreen,
-          thumbnailUrl: thumbnailUrl,
-          subtitleUrl: widget.subtitleUrl,
-          subtitle: widget.subtitle,
-          state: this,
-        ),
-        onWillPop: () async {
-          _exitFullScreen();
-          return true;
-        },
+      page: PanVideoPlayer(
+        data: widget.data,
+        color: widget.color,
+        isFullScreen: true,
+        onSaveState: _onSaveState,
+        onFullscreenChanged: widget.onFullscreenChanged,
+        autoFullScreen: widget.autoFullScreen,
+        thumbnailUrl: thumbnailUrl,
+        subtitleUrl: widget.subtitleUrl,
+        subtitle: widget.subtitle,
+        state: this,
       ),
       onExit: (value) {
+        _exitFullScreen();
         widget.onFullscreenChanged?.call(false);
+        _isManualFullScreen = false;
+        _isAutoFullScreen = false;
       },
     );
   }
 
-  void _exitFullScreen() async {
+  Future<void> _exitFullScreen() async {
     await SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
       DeviceOrientation.portraitDown,
     ]);
-    _orientationChanged = true;
     await SystemChrome.setEnabledSystemUIMode(
       SystemUiMode.manual,
       overlays: SystemUiOverlay.values,
@@ -537,7 +544,7 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
     _buffered = state._buffered;
     _debouncer = state._debouncer;
     _max = state._max;
-    if (_isInitialized) {
+    if (_isInitialized && mounted) {
       _videoController!.addListener(_listener);
     }
   }
