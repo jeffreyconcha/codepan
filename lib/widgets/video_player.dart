@@ -35,7 +35,7 @@ class PanVideoPlayer extends StatefulWidget {
   final VoidCallback? onPlay, onPause, onInitialized;
   final bool isFullScreen, autoFullScreen;
   final SubtitlePosition? subtitlePosition;
-  final SubtitleType subtitleType;
+  final SubtitleController? subtitleController;
   final double? width;
   final double? height;
   final dynamic data;
@@ -43,8 +43,7 @@ class PanVideoPlayer extends StatefulWidget {
   final OnSaveState? onSaveState;
   final OnError? onError;
   final bool showBuffer;
-  final String? thumbnailUrl, subtitleUrl;
-  final File? subtitle;
+  final String? thumbnailUrl;
 
   PanVideoPlayer({
     super.key,
@@ -64,10 +63,8 @@ class PanVideoPlayer extends StatefulWidget {
     this.showBuffer = true,
     this.thumbnailUrl,
     this.thumbnailErrorWidget,
-    this.subtitleUrl,
-    this.subtitle,
     this.subtitlePosition,
-    this.subtitleType = SubtitleType.srt,
+    this.subtitleController,
     this.onPlay,
     this.onPause,
     this.onInitialized,
@@ -80,7 +77,6 @@ class PanVideoPlayer extends StatefulWidget {
 class _PanVideoPlayerState extends State<PanVideoPlayer> {
   MotionDetector? _detector;
   VideoPlayerController? _videoController;
-  SubtitleController? _subController;
   bool _isControllerVisible = true;
   bool _isInitialized = false;
   bool _isLoading = false;
@@ -93,6 +89,8 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
   double _buffered = 0;
   double _current = 0;
   double _max = 0;
+
+  SubtitleController? get subController => widget.subtitleController;
 
   VideoPlayerValue? get value => _videoController?.value;
 
@@ -207,8 +205,7 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
                           child: AspectRatio(
                             aspectRatio: aspectRatio,
                             child: WrapperBuilder(
-                              condition: widget.subtitle != null ||
-                                  widget.subtitleUrl != null,
+                              condition: subController != null,
                               child: VideoPlayer(_videoController!),
                               builder: (context, child) {
                                 final position = widget.subtitlePosition ??
@@ -217,7 +214,7 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
                                           isFullScreen ? d.at(30) : d.at(15),
                                     );
                                 return SubtitleWrapper(
-                                  subtitleController: _subController!,
+                                  subtitleController: subController!,
                                   videoPlayerController: _videoController!,
                                   subtitleStyle: SubtitleStyle(
                                     textColor: Colors.white,
@@ -324,7 +321,6 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
         _setLoading(true);
         _setControllerVisible(false);
         await Future.delayed(Duration(milliseconds: 500));
-        await _initializeSubtitle();
         await _videoController!.initialize();
         _videoController!.addListener(_listener);
         setState(() {
@@ -339,26 +335,6 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
         _setControllerVisible(true);
         rethrow;
       }
-    }
-  }
-
-  Future<void> _initializeSubtitle() async {
-    final file = widget.subtitle;
-    final url = widget.subtitleUrl;
-    if (file != null) {
-      final content = await file.readAsString();
-      _subController = SubtitleController(
-        subtitleDecoder: SubtitleDecoder.utf8,
-        showSubtitles: true,
-        subtitlesContent: content,
-      );
-    } else if (url != null) {
-      _subController = SubtitleController(
-        subtitleDecoder: SubtitleDecoder.utf8,
-        showSubtitles: true,
-        subtitleType: widget.subtitleType,
-        subtitleUrl: url,
-      );
     }
   }
 
@@ -512,9 +488,9 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
         onSaveState: _onSaveState,
         onFullscreenChanged: widget.onFullscreenChanged,
         autoFullScreen: widget.autoFullScreen,
-        thumbnailUrl: thumbnailUrl,
-        subtitleUrl: widget.subtitleUrl,
-        subtitle: widget.subtitle,
+        thumbnailUrl: widget.thumbnailUrl,
+        subtitleController: widget.subtitleController,
+        subtitlePosition: widget.subtitlePosition,
         state: this,
       ),
       onExit: (value) {
@@ -542,7 +518,6 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
 
   void _onSaveState(_PanVideoPlayerState state) {
     _videoController = state._videoController;
-    _subController = state._subController;
     _isControllerVisible = state._isControllerVisible;
     _isInitialized = state._isInitialized;
     _isLoading = state._isLoading;
