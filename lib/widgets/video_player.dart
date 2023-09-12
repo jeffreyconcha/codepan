@@ -36,8 +36,8 @@ class PanVideoPlayer extends StatefulWidget {
   final bool isFullScreen, autoFullScreen;
   final SubtitlePosition? subtitlePosition;
   final SubtitleController? subtitleController;
-  final double? width;
-  final double? height;
+  final double? width, height;
+  final Duration? start;
   final dynamic data;
   final _PanVideoPlayerState? state;
   final OnSaveState? onSaveState;
@@ -68,6 +68,7 @@ class PanVideoPlayer extends StatefulWidget {
     this.onPlay,
     this.onPause,
     this.onInitialized,
+    this.start,
   });
 
   @override
@@ -185,7 +186,7 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
             isNormalView &&
             info.visibleFraction == 0.0) {
           _onTapPlay();
-          print('here on tap play');
+          debugPrint('Auto pause video.');
         }
       },
       child: Material(
@@ -328,6 +329,13 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
           _isInitialized = true;
           widget.onInitialized?.call();
         });
+        final start = widget.start;
+        if (start != null) {
+          final milliseconds = start.inMilliseconds.toDouble();
+          if(milliseconds < _max) {
+            _onSeekProgress(start.inMilliseconds.toDouble());
+          }
+        }
         _setLoading(false);
       } catch (error) {
         widget.onError?.call(Errors.failedToPlayVideo);
@@ -422,6 +430,9 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
   void _setPlaying(bool isPlaying) {
     setState(() {
       _isPlaying = isPlaying;
+      if(isPlaying) {
+        _isLoading = false;
+      }
     });
   }
 
