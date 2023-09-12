@@ -94,13 +94,17 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
 
   VideoPlayerValue? get value => _videoController?.value;
 
-  bool get isFullscreen => widget.isFullScreen;
+  bool get isFullScreen => widget.isFullScreen;
 
   double get aspectRatio => _isInitialized ? value!.aspectRatio : 16 / 9;
 
   dynamic get data => widget.data;
 
   bool get showBuffer => widget.showBuffer;
+
+  bool get isNormalView {
+    return !isFullScreen && !_isManualFullScreen && !_isAutoFullScreen;
+  }
 
   String? get thumbnailUrl => widget.thumbnailUrl;
 
@@ -116,7 +120,7 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
   @override
   void initState() {
     super.initState();
-    if (isFullscreen) {
+    if (isFullScreen) {
       _onSaveState(widget.state!);
       widget.onFullscreenChanged?.call(true);
     } else {
@@ -156,7 +160,7 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
   @override
   void dispose() {
     _videoController?.removeListener(_listener);
-    if (!isFullscreen) {
+    if (!isFullScreen) {
       _videoController?.dispose();
     }
     if (widget.onSaveState != null) {
@@ -172,15 +176,16 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
     final d = Dimension.of(context);
     final width = widget.width ?? d.maxWidth;
     final height =
-        isFullscreen ? d.maxHeight : widget.height ?? d.maxWidth / aspectRatio;
+        isFullScreen ? d.maxHeight : widget.height ?? d.maxWidth / aspectRatio;
     return VisibilityDetector(
       key: Key(key!),
       onVisibilityChanged: (info) {
         if (_isInitialized &&
             _isPlaying &&
-            !isFullscreen &&
+            isNormalView &&
             info.visibleFraction == 0.0) {
           _onTapPlay();
+          print('here on tap play');
         }
       },
       child: Material(
@@ -214,7 +219,7 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
                                   subtitleStyle: SubtitleStyle(
                                     textColor: Colors.white,
                                     fontSize:
-                                        isFullscreen ? d.at(17) : d.at(12),
+                                        isFullScreen ? d.at(17) : d.at(12),
                                     position: position,
                                     hasBorder: true,
                                     borderStyle: SubtitleBorderStyle(
@@ -281,7 +286,7 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
                           playButtonColor: widget.playButtonColor,
                           isInitialized: _isInitialized,
                           isLoading: _isLoading,
-                          isFullscreen: isFullscreen,
+                          isFullscreen: isFullScreen,
                           isPlaying: _isPlaying,
                           current: _current,
                           max: _max,
@@ -463,7 +468,7 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
 
   void _onTapFullScreen() async {
     _debouncer?.cancel();
-    if (!isFullscreen) {
+    if (!isFullScreen) {
       _enterFullScreen();
       _isManualFullScreen = true;
     } else {
