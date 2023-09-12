@@ -35,6 +35,7 @@ class PanVideoPlayer extends StatefulWidget {
   final VoidCallback? onPlay, onPause, onInitialized;
   final bool isFullScreen, autoFullScreen;
   final SubtitlePosition? subtitlePosition;
+  final SubtitleType subtitleType;
   final double? width;
   final double? height;
   final dynamic data;
@@ -66,6 +67,7 @@ class PanVideoPlayer extends StatefulWidget {
     this.subtitleUrl,
     this.subtitle,
     this.subtitlePosition,
+    this.subtitleType = SubtitleType.srt,
     this.onPlay,
     this.onPause,
     this.onInitialized,
@@ -211,7 +213,8 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
                               builder: (context, child) {
                                 final position = widget.subtitlePosition ??
                                     SubtitlePosition(
-                                      bottom: d.at(50),
+                                      bottom:
+                                          isFullScreen ? d.at(30) : d.at(15),
                                     );
                                 return SubtitleWrapper(
                                   subtitleController: _subController!,
@@ -353,6 +356,7 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
       _subController = SubtitleController(
         subtitleDecoder: SubtitleDecoder.utf8,
         showSubtitles: true,
+        subtitleType: widget.subtitleType,
         subtitleUrl: url,
       );
     }
