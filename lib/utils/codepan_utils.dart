@@ -228,6 +228,7 @@ class PanUtils {
       context: context,
       firstDate: firstDate.value,
       lastDate: lastDate.value,
+      initialDateRange: initialDateRange?.value,
       builder: (context, child) {
         return Theme(
           data: ThemeData.light().copyWith(
