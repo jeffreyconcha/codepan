@@ -3,6 +3,7 @@ import 'dart:ffi';
 import 'dart:io';
 
 import 'package:codepan/data/database/initializer.dart';
+import 'package:codepan/data/database/models/field.dart';
 import 'package:codepan/data/database/schema.dart';
 import 'package:codepan/data/database/sqlite_binder.dart';
 import 'package:codepan/data/database/sqlite_exception.dart';
@@ -248,6 +249,27 @@ class SqliteAdapter implements DatabaseExecutor {
       return record.values.first > 0;
     }
     return false;
+  }
+
+  Future<int> nextIdOf<E extends DatabaseEntity>(E entity) async {
+    final schema = this.schema.of(entity);
+    final query = SqliteQuery(
+      select: [SqliteStatement.id],
+      from: schema,
+      orderBy: [
+        Field.order(
+          field: SqliteStatement.id,
+          order: Order.descending,
+        ),
+      ],
+      limit: 1,
+    );
+
+    final record = await getRecord(query.build());
+    if (record != null) {
+      return record.values.first + 1;
+    }
+    return 1;
   }
 
   Future<void> checkVersion() async {
