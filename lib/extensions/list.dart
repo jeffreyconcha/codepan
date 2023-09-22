@@ -1,12 +1,14 @@
 import 'package:codepan/data/models/entities/master.dart';
 import 'package:codepan/data/models/entities/transaction.dart';
+import 'package:flutter/foundation.dart';
 
 typedef AsyncTypeConverter<T, N> = Future<N?> Function(T item, int index);
 typedef TypeConverter<T, N> = N? Function(T item, int index);
 typedef UnevenTypeConverter<T, N> = List<N>? Function(T item, int index);
 typedef AsyncLooper<T> = Future<void> Function(T item, int index);
 typedef Looper<T> = void Function(T item, int index);
-typedef Validator<T> = num Function(T item);
+typedef NumValidator<T> = num Function(T item);
+typedef BoolValidator<T> = bool Function(T item);
 
 enum Type {
   max,
@@ -30,15 +32,15 @@ extension ListUtils<T> on List<T> {
     }
   }
 
-  T? max(Validator<T> validator) {
+  T? max(NumValidator<T> validator) {
     return _best(validator, Type.max);
   }
 
-  T? min(Validator<T> validator) {
+  T? min(NumValidator<T> validator) {
     return _best(validator, Type.min);
   }
 
-  T? _best(Validator<T> validator, Type type) {
+  T? _best(NumValidator<T> validator, Type type) {
     if (isNotEmpty) {
       int index = 0;
       num? oldValue;
@@ -152,6 +154,16 @@ extension ListUtils<T> on List<T> {
       }
     });
     return list;
+  }
+
+  T? find(BoolValidator<T> validator) {
+    for (T element in this) {
+      final result = validator.call(element);
+      if (result) {
+        return element;
+      }
+    }
+    return null;
   }
 }
 

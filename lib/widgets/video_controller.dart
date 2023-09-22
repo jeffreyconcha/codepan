@@ -8,17 +8,15 @@ import 'package:codepan/widgets/text.dart';
 import 'package:flutter/material.dart';
 
 class VideoController extends StatelessWidget {
+  final bool? isLoading, isInitialized, isPlaying, isFullscreen;
+  final VoidCallback? onTapFullScreen, onTapPlay, onTapSubtitle;
+  final WidgetBuilder? subtitleBuilder;
   final Color? color, playButtonColor;
   final OnSeekProgress? onSeekProgress;
-  final VoidCallback? onTapFullScreen;
-  final VoidCallback? onTapPlay;
-  final bool? isLoading;
-  final bool? isInitialized;
-  final bool? isPlaying;
-  final bool? isFullscreen;
   final double? buffered;
   final double? current;
   final double? max;
+  final bool withSubtitle;
 
   const VideoController({
     super.key,
@@ -34,6 +32,9 @@ class VideoController extends StatelessWidget {
     this.onSeekProgress,
     this.onTapFullScreen,
     this.onTapPlay,
+    this.onTapSubtitle,
+    this.withSubtitle = false,
+    this.subtitleBuilder,
   });
 
   @override
@@ -120,6 +121,30 @@ class VideoController extends StatelessWidget {
             );
           },
         ),
+        IfElseBuilder(
+          condition: withSubtitle,
+          ifBuilder: (context) {
+            return Align(
+              alignment: Alignment.topLeft,
+              child: subtitleBuilder?.call(context) ??
+                  PanButton(
+                    radius: d.at(50),
+                    width: d.at(40),
+                    height: d.at(40),
+                    margin: EdgeInsets.all(d.at(5)),
+                    alignment: Alignment.center,
+                    splashColor: Colors.white.withOpacity(0.4),
+                    highlightColor: Colors.transparent,
+                    child: Icon(
+                      Icons.subtitles_outlined,
+                      size: d.at(25),
+                      color: Colors.white,
+                    ),
+                    onTap: onTapSubtitle,
+                  ),
+            );
+          },
+        ),
         Align(
           alignment: Alignment.topRight,
           child: PanButton(
@@ -179,6 +204,7 @@ class SkipButton extends StatelessWidget {
           highlightColor: Colors.transparent,
           child: Column(
             mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               PanIcon(
                 icon: isForward ? 'fast_forward' : 'fast_rewind',

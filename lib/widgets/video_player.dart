@@ -32,7 +32,8 @@ class PanVideoPlayer extends StatefulWidget {
   final Widget? thumbnailErrorWidget;
   final Color? color, playButtonColor;
   final OnCompleted? onCompleted;
-  final VoidCallback? onPlay, onPause, onInitialized;
+  final VoidCallback? onPlay, onPause, onInitialized, onTapSubtitle;
+  final WidgetBuilder? subtitleBuilder;
   final bool isFullScreen, autoFullScreen;
   final SubtitlePosition? subtitlePosition;
   final SubtitleController? subtitleController;
@@ -58,6 +59,7 @@ class PanVideoPlayer extends StatefulWidget {
     this.onCompleted,
     this.onSaveState,
     this.onError,
+    this.onTapSubtitle,
     this.isFullScreen = false,
     this.autoFullScreen = false,
     this.showBuffer = true,
@@ -69,6 +71,7 @@ class PanVideoPlayer extends StatefulWidget {
     this.onPause,
     this.onInitialized,
     this.start,
+    this.subtitleBuilder,
   });
 
   @override
@@ -284,6 +287,8 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
                       ifBuilder: (context) {
                         return VideoController(
                           color: widget.color,
+                          withSubtitle: subController != null,
+                          subtitleBuilder: widget.subtitleBuilder,
                           playButtonColor: widget.playButtonColor,
                           isInitialized: _isInitialized,
                           isLoading: _isLoading,
@@ -295,6 +300,7 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
                           onTapPlay: _onTapPlay,
                           onTapFullScreen: _onTapFullScreen,
                           onSeekProgress: _onSeekProgress,
+                          onTapSubtitle: widget.onTapSubtitle,
                         );
                       },
                     ),
@@ -332,7 +338,7 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
         final start = widget.start;
         if (start != null) {
           final milliseconds = start.inMilliseconds.toDouble();
-          if(milliseconds < _max) {
+          if (milliseconds < _max) {
             _onSeekProgress(start.inMilliseconds.toDouble());
           }
         }
@@ -430,7 +436,7 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
   void _setPlaying(bool isPlaying) {
     setState(() {
       _isPlaying = isPlaying;
-      if(isPlaying) {
+      if (isPlaying) {
         _isLoading = false;
       }
     });
