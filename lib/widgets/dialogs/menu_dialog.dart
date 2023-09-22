@@ -28,14 +28,14 @@ abstract class Selectable implements Searchable {
 }
 
 class MenuDialog<T extends Selectable> extends StatefulWidget {
-  final Widget? searchIcon, checkedIcon, uncheckedIcon;
+  final Widget? searchIcon, checkedIcon, uncheckedIcon, selectedIcon;
   final String? title, titleFont, positive, negative;
   final ValueChanged<List<T>>? onSelectItems;
   final MenuSearchBuilder? searchBuilder;
   final ValueChanged<T>? onSelectItem;
   final List<T>? disabledItems;
   final List<T>? selectedItems;
-  final bool isMultiple;
+  final bool isMultiple, showSelected;
   final Color fontColor;
   final List<T> items;
 
@@ -53,9 +53,11 @@ class MenuDialog<T extends Selectable> extends StatefulWidget {
     this.searchBuilder,
     this.checkedIcon,
     this.uncheckedIcon,
+    this.selectedIcon,
     this.positive,
     this.negative,
     this.isMultiple = false,
+    this.showSelected = false,
   });
 
   @override
@@ -97,7 +99,7 @@ class _MenuDialogState<T extends Selectable> extends State<MenuDialog<T>>
       titleFont: widget.titleFont,
       fontColor: widget.fontColor,
       positive: isMultiple ? widget.positive : null,
-      negative: isMultiple ?widget.negative : null,
+      negative: isMultiple ? widget.negative : null,
       margin: EdgeInsets.all(d.at(10)),
       autoDismiss: false,
       withDivider: true,
@@ -167,9 +169,11 @@ class _MenuDialogState<T extends Selectable> extends State<MenuDialog<T>>
                             withDivider: item != items.last,
                             checkedIcon: widget.checkedIcon,
                             uncheckedIcon: widget.uncheckedIcon,
+                            selectedIcon: widget.selectedIcon,
                             isMultiple: isMultiple,
                             isSelected: _selectedItems.contains(item),
                             isDisabled: disabledItems?.contains(item) ?? false,
+                            showSelected: widget.showSelected,
                             onSelectItem: _onSelectItem,
                           );
                         },
@@ -259,8 +263,8 @@ class _MenuDialogState<T extends Selectable> extends State<MenuDialog<T>>
 }
 
 class _MenuItem<T extends Selectable> extends StatelessWidget {
-  final bool withDivider, isDisabled, isMultiple, isSelected;
-  final Widget? checkedIcon, uncheckedIcon;
+  final bool withDivider, isDisabled, isMultiple, isSelected, showSelected;
+  final Widget? checkedIcon, uncheckedIcon, selectedIcon;
   final ValueChanged<T>? onSelectItem;
   final Color fontColor;
   final T item;
@@ -274,8 +278,10 @@ class _MenuItem<T extends Selectable> extends StatelessWidget {
     this.fontColor = PanColors.text,
     this.checkedIcon,
     this.uncheckedIcon,
+    this.selectedIcon,
     this.isMultiple = false,
     this.isSelected = false,
+    this.showSelected = false,
   });
 
   @override
@@ -323,6 +329,20 @@ class _MenuItem<T extends Selectable> extends StatelessWidget {
                     constraints:
                         BoxConstraints(minHeight: d.at(_itemMinHeight)),
                   ),
+                ),
+                IfElseBuilder(
+                  condition: showSelected,
+                  ifBuilder: (context) {
+                    return IfElseBuilder(
+                      condition: isSelected,
+                      margin: EdgeInsets.only(
+                        right: d.at(10),
+                      ),
+                      ifBuilder: (context) {
+                        return checkedIcon!;
+                      },
+                    );
+                  },
                 ),
               ],
             ),
