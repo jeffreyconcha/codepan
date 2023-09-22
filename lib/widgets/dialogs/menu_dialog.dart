@@ -331,17 +331,9 @@ class _MenuItem<T extends Selectable> extends StatelessWidget {
                   ),
                 ),
                 IfElseBuilder(
-                  condition: showSelected,
+                  condition: showSelected && isSelected,
                   ifBuilder: (context) {
-                    return IfElseBuilder(
-                      condition: isSelected,
-                      margin: EdgeInsets.only(
-                        right: d.at(10),
-                      ),
-                      ifBuilder: (context) {
-                        return checkedIcon!;
-                      },
-                    );
+                    return selectedIcon!;
                   },
                 ),
               ],
