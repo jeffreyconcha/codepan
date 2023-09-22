@@ -508,6 +508,7 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
         thumbnailUrl: widget.thumbnailUrl,
         subtitleController: widget.subtitleController,
         subtitlePosition: widget.subtitlePosition,
+        onTapSubtitle: widget.onTapSubtitle,
         state: this,
       ),
       onExit: (value) {
