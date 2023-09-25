@@ -10,7 +10,7 @@ import 'package:flutter/material.dart';
 class VideoController extends StatelessWidget {
   final bool? isLoading, isInitialized, isPlaying, isFullscreen;
   final VoidCallback? onTapFullScreen, onTapPlay, onTapSubtitle;
-  final WidgetBuilder? subtitleBuilder;
+  final WidgetBuilder? subtitleButtonBuilder;
   final Color? color, playButtonColor;
   final OnSeekProgress? onSeekProgress;
   final double? buffered;
@@ -34,7 +34,7 @@ class VideoController extends StatelessWidget {
     this.onTapPlay,
     this.onTapSubtitle,
     this.withSubtitle = false,
-    this.subtitleBuilder,
+    this.subtitleButtonBuilder,
   });
 
   @override
@@ -126,7 +126,7 @@ class VideoController extends StatelessWidget {
           ifBuilder: (context) {
             return Align(
               alignment: Alignment.topLeft,
-              child: subtitleBuilder?.call(context) ??
+              child: subtitleButtonBuilder?.call(context) ??
                   PanButton(
                     radius: d.at(50),
                     width: d.at(40),

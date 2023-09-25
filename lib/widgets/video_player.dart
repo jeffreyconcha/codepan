@@ -1,27 +1,28 @@
 import 'dart:io';
-
+import 'package:codepan/widgets/text.dart';
+import 'package:http/http.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:codepan/extensions/extensions.dart';
 import 'package:codepan/media/media.dart';
 import 'package:codepan/resources/dimensions.dart';
 import 'package:codepan/resources/strings.dart';
-import 'package:codepan/transitions/route_transition.dart';
 import 'package:codepan/utils/debouncer.dart';
 import 'package:codepan/utils/motin_detector.dart';
 import 'package:codepan/widgets/if_else_builder.dart';
 import 'package:codepan/widgets/loading_indicator.dart';
 import 'package:codepan/widgets/video_controller.dart';
-import 'package:codepan/widgets/wrapper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:subtitle_wrapper_package/data/data.dart';
-import 'package:subtitle_wrapper_package/subtitle_controller.dart';
-import 'package:subtitle_wrapper_package/subtitle_wrapper.dart';
 import 'package:video_player/video_player.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
 typedef OnSaveState = void Function(
   _PanVideoPlayerState state,
+);
+
+typedef SubtitleTextBuilder = Widget Function(
+  BuildContext context,
+  String text,
 );
 
 const int delay = 5000;
@@ -33,9 +34,9 @@ class PanVideoPlayer extends StatefulWidget {
   final Color? color, playButtonColor;
   final OnCompleted? onCompleted;
   final VoidCallback? onPlay, onPause, onInitialized, onTapSubtitle;
-  final WidgetBuilder? subtitleBuilder;
+  final WidgetBuilder? subtitleButtonBuilder;
+  final SubtitleTextBuilder? subtitleTextBuilder;
   final bool isFullScreen, autoFullScreen;
-  final SubtitlePosition? subtitlePosition;
   final SubtitleController? subtitleController;
   final double? width, height;
   final Duration? start;
@@ -65,13 +66,13 @@ class PanVideoPlayer extends StatefulWidget {
     this.showBuffer = true,
     this.thumbnailUrl,
     this.thumbnailErrorWidget,
-    this.subtitlePosition,
     this.subtitleController,
     this.onPlay,
     this.onPause,
     this.onInitialized,
     this.start,
-    this.subtitleBuilder,
+    this.subtitleButtonBuilder,
+    this.subtitleTextBuilder,
   });
 
   @override
@@ -128,13 +129,6 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
       _onSaveState(widget.state!);
       widget.onFullscreenChanged?.call(true);
     } else {
-      if (data is String) {
-        _videoController = VideoPlayerController.network(data);
-      } else if (data is File) {
-        _videoController = VideoPlayerController.file(data);
-      } else {
-        throw ArgumentError(invalidArgument);
-      }
       _debouncer = Debouncer(milliseconds: delay);
       _detector = MotionDetector(
         onOrientationChanged: (orientation) {
@@ -159,6 +153,22 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
         },
       );
     }
+    subController?.addListener(() {
+      if (_isInitialized) {
+        final controller = subController!;
+        if (!controller.isOff) {
+          final subtitleData = controller.data;
+          final subtitleType = controller.type;
+          final closedCaptionFile = _loadSubtitle(
+            subtitleData,
+            subtitleType,
+          );
+          _videoController!.setClosedCaptionFile(closedCaptionFile);
+        } else {
+          _videoController!.setClosedCaptionFile(null);
+        }
+      }
+    });
   }
 
   @override
@@ -208,33 +218,7 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
                         Center(
                           child: AspectRatio(
                             aspectRatio: aspectRatio,
-                            child: WrapperBuilder(
-                              condition: subController != null,
-                              child: VideoPlayer(_videoController!),
-                              builder: (context, child) {
-                                final position = widget.subtitlePosition ??
-                                    SubtitlePosition(
-                                      bottom:
-                                          isFullScreen ? d.at(30) : d.at(15),
-                                    );
-                                return SubtitleWrapper(
-                                  subtitleController: subController!,
-                                  videoPlayerController: _videoController!,
-                                  subtitleStyle: SubtitleStyle(
-                                    textColor: Colors.white,
-                                    fontSize:
-                                        isFullScreen ? d.at(17) : d.at(12),
-                                    position: position,
-                                    hasBorder: true,
-                                    borderStyle: SubtitleBorderStyle(
-                                      color: Colors.black,
-                                      strokeWidth: d.at(2),
-                                    ),
-                                  ),
-                                  videoChild: child,
-                                );
-                              },
-                            ),
+                            child: VideoPlayer(_videoController!),
                           ),
                         ),
                         IfElseBuilder(
@@ -274,6 +258,33 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
                   },
                 ),
               ),
+              IfElseBuilder(
+                condition: _isInitialized,
+                ifBuilder: (context) {
+                  final text = _videoController!.value.caption.text;
+                  if (widget.subtitleTextBuilder != null) {
+                    return PanText(
+                      text: text,
+                      fontColor: Colors.white,
+                      fontWeight: FontWeight.w500,
+                      fontSize: isFullScreen ? d.at(17) : d.at(12),
+                      alignment: Alignment.bottomCenter,
+                      margin: EdgeInsets.only(
+                        bottom: d.at(10),
+                      ),
+                      shadows: [
+                        Shadow(
+                          offset: Offset(d.at(1), d.at(1)),
+                          blurRadius: d.at(3),
+                          color: Colors.black.withOpacity(0.5),
+                        ),
+                      ],
+                    );
+                  } else {
+                    return widget.subtitleTextBuilder!.call(context, text);
+                  }
+                },
+              ),
               SizedBox(
                 width: width,
                 height: height,
@@ -288,7 +299,7 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
                         return VideoController(
                           color: widget.color,
                           withSubtitle: subController != null,
-                          subtitleBuilder: widget.subtitleBuilder,
+                          subtitleButtonBuilder: widget.subtitleButtonBuilder,
                           playButtonColor: widget.playButtonColor,
                           isInitialized: _isInitialized,
                           isLoading: _isLoading,
@@ -327,6 +338,24 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
       try {
         _setLoading(true);
         _setControllerVisible(false);
+        final subtitleData = subController?.data;
+        final subtitleType = subController?.type;
+        final closedCaptionFile = subtitleData != null && subtitleType != null
+            ? _loadSubtitle(subtitleData, subtitleType)
+            : null;
+        if (data is String) {
+          _videoController = VideoPlayerController.network(
+            data,
+            closedCaptionFile: closedCaptionFile,
+          );
+        } else if (data is File) {
+          _videoController = VideoPlayerController.file(
+            data,
+            closedCaptionFile: closedCaptionFile,
+          );
+        } else {
+          throw ArgumentError(invalidArgument);
+        }
         await Future.delayed(Duration(milliseconds: 500));
         await _videoController!.initialize();
         _videoController!.addListener(_listener);
@@ -350,6 +379,26 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
         rethrow;
       }
     }
+  }
+
+  Future<ClosedCaptionFile> _loadSubtitle(
+    dynamic data,
+    SubtitleType type,
+  ) async {
+    String? content;
+    if (data is String) {
+      final client = Client();
+      final response = await client.get(Uri.parse(data));
+      content = response.body;
+    } else if (data is File) {
+      content = await data.readAsString();
+    }
+    if (content?.isNotEmpty ?? false) {
+      return type == SubtitleType.srt
+          ? SubRipCaptionFile(content!)
+          : WebVTTCaptionFile(content!);
+    }
+    throw ArgumentError(invalidArgument);
   }
 
   void _onTapPlay() async {
@@ -507,7 +556,6 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
         autoFullScreen: widget.autoFullScreen,
         thumbnailUrl: widget.thumbnailUrl,
         subtitleController: widget.subtitleController,
-        subtitlePosition: widget.subtitlePosition,
         onTapSubtitle: widget.onTapSubtitle,
         state: this,
       ),
@@ -554,5 +602,47 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
     _debouncer?.run(() {
       _setControllerVisible(false);
     });
+  }
+}
+
+enum SubtitleType {
+  srt,
+  webvtt,
+}
+
+class SubtitleController extends ChangeNotifier {
+  dynamic _data;
+  SubtitleType _type;
+  bool _isOff = false;
+
+  String get data => _data;
+
+  SubtitleType get type => _type;
+
+  bool get isOff => _isOff;
+
+  SubtitleController({
+    required dynamic data,
+    SubtitleType type = SubtitleType.srt,
+  })  : assert(
+          data is String || data is File,
+          'Illegal argument, data must be an instance of String or File',
+        ),
+        _data = data,
+        _type = type;
+
+  void update(
+    dynamic data, {
+    SubtitleType? type,
+  }) {
+    _data = data;
+    _type = type ?? _type;
+    _isOff = false;
+    notifyListeners();
+  }
+
+  void off() {
+    _isOff = true;
+    notifyListeners();
   }
 }

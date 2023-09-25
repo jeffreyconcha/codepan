@@ -41,7 +41,6 @@ dependencies:
   shimmer: ^2.0.0
   sqflite_common_ffi: ^2.3.0
   sqflite_sqlcipher: ^2.2.0
-  subtitle_wrapper_package: ^2.1.1
   system_clock: ^2.0.0
   time_ago_provider: ^4.0.0
   url_launcher: ^6.1.4
