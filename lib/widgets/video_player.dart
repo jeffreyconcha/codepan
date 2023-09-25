@@ -262,27 +262,25 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
                 condition: _isInitialized,
                 ifBuilder: (context) {
                   final text = _videoController!.value.caption.text;
-                  if (widget.subtitleTextBuilder != null) {
-                    return PanText(
-                      text: text,
-                      fontColor: Colors.white,
-                      fontWeight: FontWeight.w500,
-                      fontSize: isFullScreen ? d.at(17) : d.at(12),
-                      alignment: Alignment.bottomCenter,
-                      margin: EdgeInsets.only(
-                        bottom: d.at(10),
-                      ),
-                      shadows: [
-                        Shadow(
-                          offset: Offset(d.at(1), d.at(1)),
-                          blurRadius: d.at(3),
-                          color: Colors.black.withOpacity(0.5),
+                  return widget.subtitleTextBuilder?.call(context, text) ??
+                      PanText(
+                        text: text,
+                        fontColor: Colors.white,
+                        fontWeight: FontWeight.w500,
+                        fontSize: isFullScreen ? d.at(17) : d.at(12),
+                        alignment: Alignment.bottomCenter,
+                        textAlign: TextAlign.center,
+                        margin: EdgeInsets.only(
+                          bottom: d.at(10),
                         ),
-                      ],
-                    );
-                  } else {
-                    return widget.subtitleTextBuilder!.call(context, text);
-                  }
+                        shadows: [
+                          Shadow(
+                            offset: Offset(d.at(1), d.at(1)),
+                            blurRadius: d.at(3),
+                            color: Colors.black.withOpacity(0.5),
+                          ),
+                        ],
+                      );
                 },
               ),
               SizedBox(
