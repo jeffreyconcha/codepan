@@ -613,7 +613,7 @@ class SubtitleController extends ChangeNotifier {
   SubtitleType _type;
   bool _isOff = false;
 
-  String get data => _data;
+  dynamic get data => _data;
 
   SubtitleType get type => _type;
 
