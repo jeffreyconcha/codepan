@@ -31,7 +31,9 @@ abstract class PermissionState<T extends StatefulWidget>
   @override
   void initState() {
     super.initState();
-    _checkPermissions(request: true);
+    if (permissions.isNotEmpty) {
+      _checkPermissions(request: true);
+    }
   }
 
   @override
@@ -43,10 +45,12 @@ abstract class PermissionState<T extends StatefulWidget>
   @mustCallSuper
   void onResume() {
     super.onResume();
-    if (_isGranted) {
-      _checkPermissions(request: true);
-    } else {
-      _checkPermissions(request: false);
+    if (permissions.isNotEmpty) {
+      if (_isGranted) {
+        _checkPermissions(request: true);
+      } else {
+        _checkPermissions(request: false);
+      }
     }
   }
 
@@ -54,7 +58,9 @@ abstract class PermissionState<T extends StatefulWidget>
     return AppSettings.openAppSettings();
   }
 
-  void _checkPermissions({required bool request}) async {
+  void _checkPermissions({
+    required bool request,
+  }) async {
     for (final permission in permissions) {
       if (request) {
         try {

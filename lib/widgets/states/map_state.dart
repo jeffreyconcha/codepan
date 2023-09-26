@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:codepan/resources/dimensions.dart';
 import 'package:codepan/utils/debouncer.dart';
 import 'package:codepan/utils/stored_network_image.dart';
+import 'package:codepan/widgets/states/permission_state.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart' as lt;
@@ -9,7 +10,7 @@ import 'package:latlong2/latlong.dart' as lt;
 const _folder = 'MapTiles';
 const _tileCacheLimit = 20000;
 
-abstract class MapState<T extends StatefulWidget> extends State<T>
+abstract class MapState<T extends StatefulWidget> extends PermissionState<T>
     with SingleTickerProviderStateMixin {
   late StoredNetworkImageTileProvider _tileProvider;
   late AnimationController _animController;
