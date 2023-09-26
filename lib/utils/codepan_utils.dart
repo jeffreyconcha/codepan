@@ -257,8 +257,8 @@ class PanUtils {
             return lt.LatLng(latitude, longitude);
           }
         }
-      } catch (error) {
-        print(error);
+      } catch (error, stackTrace) {
+        printError(error, stackTrace);
       }
     }
     return null;
