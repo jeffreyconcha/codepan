@@ -36,7 +36,6 @@ class PanTextField extends StatefulWidget {
   final List<TextInputFormatter>? inputFormatters;
   final ValueChanged<String>? onFieldSubmitted;
   final TextCapitalization textCapitalization;
-  final EdgeInsetsGeometry? margin, padding;
   final FocusNode? focusNode, nextFocusNode;
   final TextAlignVertical? textAlignVertical;
   final int? maxLines, minLines, maxLength;
@@ -51,6 +50,8 @@ class PanTextField extends StatefulWidget {
   final Alignment alignment;
   final FontStyle fontStyle;
   final TextAlign textAlign;
+  final EdgeInsets? margin;
+  final EdgeInsets padding;
   final Color background;
 
   const PanTextField({
@@ -92,14 +93,14 @@ class PanTextField extends StatefulWidget {
     this.onChanged,
     this.onFieldSubmitted,
     this.onFocusChange,
-    this.padding,
+    this.padding = EdgeInsets.zero,
     this.prefixIcon,
     this.radius,
     this.showCursor = true,
     this.suffixIcon,
     this.text,
     this.textAlign = TextAlign.start,
-    this.textAlignVertical,
+    this.textAlignVertical = TextAlignVertical.center,
     this.textCapitalization = TextCapitalization.none,
     this.textInputAction = TextInputAction.done,
     this.width,
@@ -216,6 +217,7 @@ class _PanTextFieldState extends State<PanTextField> {
                 isUnderlined: widget.bottomBorderOnly,
               ),
               contentPadding: widget.padding,
+              filled: true,
               isDense: true,
               hintText: widget.hint,
               hintStyle: TextStyle(
