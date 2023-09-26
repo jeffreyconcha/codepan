@@ -182,6 +182,8 @@ class _PanTextFieldState extends State<PanTextField> {
             onFieldSubmitted: (value) {
               if (widget.nextFocusNode != null) {
                 FocusScope.of(context).requestFocus(widget.nextFocusNode);
+              } else {
+                FocusScope.of(context).nextFocus();
               }
               widget.onFieldSubmitted?.call(value);
             },
