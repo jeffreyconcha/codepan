@@ -1,3 +1,4 @@
+import 'package:codepan/extensions/extensions.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SharedPreferencesManager {
@@ -19,9 +20,9 @@ class SharedPreferencesManager {
     });
   }
 
-  void set({
+  void set<T>({
     required String key,
-    required dynamic value,
+    required T value,
   }) {
     if (value is int) {
       prefs.setInt(key, value);
@@ -33,6 +34,8 @@ class SharedPreferencesManager {
       prefs.setString(key, value);
     } else if (value is List<String>) {
       prefs.setStringList(key, value);
+    } else {
+      prefs.setString(key, value.toCapitalizedWords());
     }
   }
 
@@ -40,6 +43,22 @@ class SharedPreferencesManager {
     final value = prefs.get(key);
     if (value != null) {
       return value as T;
+    }
+    return null;
+  }
+
+  T? getEnum<T>({
+    required String key,
+    required List<T> values,
+  }) {
+    final value = prefs.get(key);
+    if (value is String) {
+      for (final element in values) {
+        if (value.snake.replaceAll('_', '') ==
+            element.snake.replaceAll('_', '')) {
+          return element;
+        }
+      }
     }
     return null;
   }
