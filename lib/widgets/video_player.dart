@@ -111,6 +111,8 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
     return !isFullScreen && !_isManualFullScreen && !_isAutoFullScreen;
   }
 
+  bool get isCompleted => _current >= _max;
+
   String? get thumbnailUrl => widget.thumbnailUrl;
 
   String? get key {
@@ -132,7 +134,8 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
       _debouncer = Debouncer(milliseconds: delay);
       _detector = MotionDetector(
         onOrientationChanged: (orientation) {
-          if ((value?.isPlaying ?? false) && !_isManualFullScreen) {
+          if (((value?.isPlaying ?? false) || isCompleted) &&
+              !_isManualFullScreen) {
             switch (orientation) {
               case DeviceOrientation.landscapeLeft:
               case DeviceOrientation.landscapeRight:
