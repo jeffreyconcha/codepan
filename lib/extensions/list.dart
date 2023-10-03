@@ -165,6 +165,13 @@ extension ListUtils<T> on List<T> {
     }
     return null;
   }
+
+  void replace(T element) {
+    if (contains(element)) {
+      final index = indexOf(element);
+      this[index] = element;
+    }
+  }
 }
 
 typedef Identifier<K, T> = K? Function(T item);
