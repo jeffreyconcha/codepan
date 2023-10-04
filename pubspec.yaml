@@ -16,6 +16,7 @@ dependencies:
   camera_platform_interface: ^2.3.0
   connectivity_plus:
   cryptography: ^2.0.5
+  device_auto_rotate_checker: ^0.0.1+1
   equatable: ^2.0.3
   exif: ^3.0.0
   flutter_animation_progress_bar: ^2.0.0

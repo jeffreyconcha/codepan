@@ -1,5 +1,7 @@
+import 'dart:async';
 import 'dart:io';
 import 'package:codepan/widgets/text.dart';
+import 'package:device_auto_rotate_checker/device_auto_rotate_checker.dart';
 import 'package:http/http.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:codepan/extensions/extensions.dart';
@@ -80,8 +82,9 @@ class PanVideoPlayer extends StatefulWidget {
 }
 
 class _PanVideoPlayerState extends State<PanVideoPlayer> {
-  MotionDetector? _detector;
+  late StreamSubscription<bool> _stream;
   VideoPlayerController? _videoController;
+  MotionDetector? _detector;
   bool _isControllerVisible = true;
   bool _isInitialized = false;
   bool _isLoading = false;
@@ -94,6 +97,7 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
   double _buffered = 0;
   double _current = 0;
   double _max = 0;
+  bool _isAutoRotateEnabled = false;
 
   SubtitleController? get subController => widget.subtitleController;
 
@@ -111,7 +115,7 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
     return !isFullScreen && !_isManualFullScreen && !_isAutoFullScreen;
   }
 
-  bool get isCompleted => _current >= _max;
+  bool get isCompleted => _current > 0 && _current >= _max;
 
   String? get thumbnailUrl => widget.thumbnailUrl;
 
@@ -131,15 +135,20 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
       _onSaveState(widget.state!);
       widget.onFullscreenChanged?.call(true);
     } else {
+      DeviceAutoRotateChecker.checkAutoRotate().then((isEnabled) {
+        _isAutoRotateEnabled = isEnabled;
+      });
+      _stream = DeviceAutoRotateChecker.autoRotateStream.listen((isEnabled) {
+        _isAutoRotateEnabled = isEnabled;
+      });
       _debouncer = Debouncer(milliseconds: delay);
       _detector = MotionDetector(
         onOrientationChanged: (orientation) {
-          if (((value?.isPlaying ?? false) || isCompleted) &&
-              !_isManualFullScreen) {
+          if (((value?.isPlaying ?? false)) && !_isManualFullScreen) {
             switch (orientation) {
               case DeviceOrientation.landscapeLeft:
               case DeviceOrientation.landscapeRight:
-                if (!_isAutoFullScreen) {
+                if (!_isAutoFullScreen && _isAutoRotateEnabled) {
                   _enterFullScreen(orientation);
                   _isAutoFullScreen = true;
                 }
@@ -183,6 +192,7 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
     if (widget.onSaveState != null) {
       widget.onSaveState!(this);
     }
+    _stream.cancel();
     _debouncer?.cancel();
     _detector?.close();
     super.dispose();
@@ -432,6 +442,9 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
       if (milliseconds != _current) {
         _setCurrent(milliseconds);
         widget.onProgressChanged?.call(milliseconds, _max);
+        if (isCompleted && isFullScreen) {
+          context.pop();
+        }
       }
       if (milliseconds == _max) {
         _setPlaying(false);
