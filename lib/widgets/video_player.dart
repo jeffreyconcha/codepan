@@ -1,5 +1,7 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
+import 'package:codepan/utils/codepan_utils.dart';
 import 'package:codepan/widgets/text.dart';
 import 'package:device_auto_rotate_checker/device_auto_rotate_checker.dart';
 import 'package:http/http.dart';
@@ -400,7 +402,7 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
     if (data is String) {
       final client = Client();
       final response = await client.get(Uri.parse(data));
-      content = response.body;
+      content = utf8.decode(response.bodyBytes);
     } else if (data is File) {
       content = await data.readAsString();
     }
