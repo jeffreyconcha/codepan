@@ -19,6 +19,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:video_player/video_player.dart';
 import 'package:visibility_detector/visibility_detector.dart';
+import 'package:wakelock/wakelock.dart';
 
 typedef OnSaveState = void Function(
   _PanVideoPlayerState state,
@@ -197,6 +198,7 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
     _stream.cancel();
     _debouncer?.cancel();
     _detector?.close();
+    Wakelock.disable();
     super.dispose();
   }
 
@@ -459,8 +461,10 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
         _setPlaying(player.isPlaying);
         if (player.isPlaying) {
           widget.onPlay?.call();
+          Wakelock.enable();
         } else {
           widget.onPause?.call();
+          Wakelock.disable();
         }
       }
       _updateBuffered();
