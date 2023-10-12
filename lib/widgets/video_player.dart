@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:codepan/utils/codepan_utils.dart';
 import 'package:codepan/widgets/text.dart';
+import 'package:codepan/widgets/wrapper.dart';
 import 'package:device_auto_rotate_checker/device_auto_rotate_checker.dart';
 import 'package:http/http.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -17,6 +18,7 @@ import 'package:codepan/widgets/loading_indicator.dart';
 import 'package:codepan/widgets/video_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:screenshot/screenshot.dart';
 import 'package:video_player/video_player.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 import 'package:wakelock/wakelock.dart';
@@ -35,6 +37,7 @@ const int delay = 5000;
 class PanVideoPlayer extends StatefulWidget {
   final OnProgressChanged? onProgressChanged;
   final ValueChanged<bool>? onFullscreenChanged;
+  final ScreenshotController? screenshotController;
   final Widget? thumbnailErrorWidget;
   final Color? color, playButtonColor;
   final OnCompleted? onCompleted;
@@ -78,6 +81,7 @@ class PanVideoPlayer extends StatefulWidget {
     this.start,
     this.subtitleButtonBuilder,
     this.subtitleTextBuilder,
+    this.screenshotController,
   });
 
   @override
@@ -235,7 +239,16 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
                         Center(
                           child: AspectRatio(
                             aspectRatio: aspectRatio,
-                            child: VideoPlayer(_videoController!),
+                            child: WrapperBuilder(
+                              condition: widget.screenshotController != null,
+                              child: VideoPlayer(_videoController!),
+                              builder: (context, child) {
+                                return Screenshot(
+                                  controller: widget.screenshotController!,
+                                  child: child,
+                                );
+                              },
+                            ),
                           ),
                         ),
                         IfElseBuilder(
