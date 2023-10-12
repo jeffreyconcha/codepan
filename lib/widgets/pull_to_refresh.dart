@@ -8,6 +8,7 @@ class PullToRefresh extends StatefulWidget {
   final VoidCallback? onRefresh, onLoading, onScrollToMax;
   final bool isLoading, isError, enablePullDown;
   final RefreshController controller;
+  final ScrollController? scrollController;
   final Widget? header, floating;
   final WidgetBuilder builder;
   final int? itemCount;
@@ -17,6 +18,7 @@ class PullToRefresh extends StatefulWidget {
     super.key,
     required this.controller,
     required this.builder,
+    this.scrollController,
     this.placeholderBuilder,
     this.loadingBuilder,
     this.errorBuilder,
@@ -62,6 +64,7 @@ class _PullToRefreshState extends State<PullToRefresh> {
         child: SmartRefresher(
           header: widget.header,
           controller: controller,
+          scrollController: widget.scrollController,
           enablePullDown: widget.enablePullDown,
           child: _buildChild(context),
           physics: controller.isRefresh ? NeverScrollableScrollPhysics() : null,
