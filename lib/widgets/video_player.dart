@@ -588,6 +588,8 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
         onFullscreenChanged: widget.onFullscreenChanged,
         autoFullScreen: widget.autoFullScreen,
         thumbnailUrl: widget.thumbnailUrl,
+        thumbnailErrorWidget: widget.thumbnailErrorWidget,
+        start: widget.start,
         subtitleController: widget.subtitleController,
         onTapSubtitle: widget.onTapSubtitle,
         state: this,
