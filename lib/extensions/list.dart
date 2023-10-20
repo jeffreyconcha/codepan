@@ -4,7 +4,7 @@ import 'package:flutter/foundation.dart';
 
 typedef AsyncTypeConverter<T, N> = Future<N?> Function(T item, int index);
 typedef TypeConverter<T, N> = N? Function(T item, int index);
-typedef UnevenTypeConverter<T, N> = List<N>? Function(T item, int index);
+typedef UnevenTypeConverter<T, N> = dynamic Function(T item, int index);
 typedef AsyncLooper<T> = Future<void> Function(T item, int index);
 typedef Looper<T> = void Function(T item, int index);
 typedef NumValidator<T> = num Function(T item);
@@ -109,12 +109,16 @@ extension ListUtils<T> on List<T> {
     int index = 0;
     for (T element in this) {
       final transformed = action(element, index);
-      if (transformed != null) {
+      if (transformed is List<N>) {
         list.addAll(transformed);
+      } else {
+        if (transformed is N) {
+          list.add(transformed);
+        }
       }
       index++;
     }
-    return sort ? (list..sort()) : list;
+    return (sort ? (list..sort()) : list);
   }
 
   Future<List<N>> asyncTransform<N>(
