@@ -30,6 +30,7 @@ typedef OnSaveState = void Function(
 typedef SubtitleTextBuilder = Widget Function(
   BuildContext context,
   String text,
+  bool isFullscreen,
 );
 
 const int delay = 5000;
@@ -110,7 +111,7 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
 
   VideoPlayerValue? get value => _videoController?.value;
 
-  bool get isFullScreen => widget.isFullScreen;
+  bool get isFullscreen => widget.isFullScreen;
 
   double get aspectRatio => _isInitialized ? value!.aspectRatio : 16 / 9;
 
@@ -119,7 +120,7 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
   bool get showBuffer => widget.showBuffer;
 
   bool get isNormalView {
-    return !isFullScreen && !_isManualFullScreen && !_isAutoFullScreen;
+    return !isFullscreen && !_isManualFullScreen && !_isAutoFullScreen;
   }
 
   bool get isCompleted => _current > 0 && _current >= _max;
@@ -138,7 +139,7 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
   @override
   void initState() {
     super.initState();
-    if (isFullScreen) {
+    if (isFullscreen) {
       _onSaveState(widget.state!);
       widget.onFullscreenChanged?.call(true);
     } else {
@@ -193,7 +194,7 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
   @override
   void dispose() {
     _videoController?.removeListener(_listener);
-    if (!isFullScreen) {
+    if (!isFullscreen) {
       _videoController?.dispose();
     }
     if (widget.onSaveState != null) {
@@ -211,7 +212,7 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
     final d = Dimension.of(context);
     final width = widget.width ?? d.maxWidth;
     final height =
-        isFullScreen ? d.maxHeight : widget.height ?? d.maxWidth / aspectRatio;
+        isFullscreen ? d.maxHeight : widget.height ?? d.maxWidth / aspectRatio;
     return VisibilityDetector(
       key: Key(key!),
       onVisibilityChanged: (info) {
@@ -292,12 +293,13 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
                 condition: _isInitialized,
                 ifBuilder: (context) {
                   final text = _videoController!.value.caption.text;
-                  return widget.subtitleTextBuilder?.call(context, text) ??
+                  return widget.subtitleTextBuilder
+                          ?.call(context, text, isFullscreen) ??
                       PanText(
                         text: text,
                         fontColor: Colors.white,
                         fontWeight: FontWeight.w500,
-                        fontSize: isFullScreen ? d.at(17) : d.at(12),
+                        fontSize: isFullscreen ? d.at(17) : d.at(12),
                         alignment: Alignment.bottomCenter,
                         textAlign: TextAlign.center,
                         margin: EdgeInsets.only(
@@ -331,7 +333,7 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
                           playButtonColor: widget.playButtonColor,
                           isInitialized: _isInitialized,
                           isLoading: _isLoading,
-                          isFullscreen: isFullScreen,
+                          isFullscreen: isFullscreen,
                           isPlaying: _isPlaying,
                           current: _current,
                           max: _max,
@@ -459,7 +461,7 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
       if (milliseconds != _current) {
         _setCurrent(milliseconds);
         widget.onProgressChanged?.call(milliseconds, _max);
-        if (isCompleted && isFullScreen) {
+        if (isCompleted && isFullscreen) {
           context.pop();
         }
       }
@@ -547,7 +549,7 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
 
   void _onTapFullScreen() async {
     _debouncer?.cancel();
-    if (!isFullScreen) {
+    if (!isFullscreen) {
       _enterFullScreen();
       _isManualFullScreen = true;
     } else {
@@ -591,6 +593,8 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
         thumbnailErrorWidget: widget.thumbnailErrorWidget,
         start: widget.start,
         subtitleController: widget.subtitleController,
+        subtitleTextBuilder: widget.subtitleTextBuilder,
+        subtitleButtonBuilder: widget.subtitleButtonBuilder,
         onTapSubtitle: widget.onTapSubtitle,
         state: this,
       ),
