@@ -7,6 +7,7 @@ abstract class PatchRequest<T> extends TransmitRequest<T> {
   const PatchRequest({
     required super.db,
     required super.client,
+    super.logResponse,
   });
 
   @override

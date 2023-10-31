@@ -7,6 +7,7 @@ abstract class PutRequest<T> extends TransmitRequest<T> {
   const PutRequest({
     required super.db,
     required super.client,
+    super.logResponse,
   });
 
   @override

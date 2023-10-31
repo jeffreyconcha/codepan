@@ -7,6 +7,7 @@ abstract class DeleteRequest<T> extends TransmitRequest<T> {
   const DeleteRequest({
     required super.db,
     required super.client,
+    super.logResponse,
   });
 
   @override

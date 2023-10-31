@@ -29,10 +29,12 @@ abstract class HttpRequestResult<T, B> {
 abstract class HttpRequest<T, B> implements HttpRequestResult<T, B> {
   final SqliteAdapter db;
   final Client client;
+  final bool logResponse;
 
   const HttpRequest({
     required this.db,
     required this.client,
+    this.logResponse = true,
   });
 
   String get authority;
@@ -49,7 +51,7 @@ abstract class HttpRequest<T, B> implements HttpRequestResult<T, B> {
     Duration? timeout,
   }) async {
     final result = await response.timeout(timeout ?? _timeout);
-    if (this is! DownloadRequest) {
+    if (this is! DownloadRequest && logResponse) {
       debugPrint('Body: ${result.body}');
     }
     debugPrint('Response Code: ${result.statusCode}');

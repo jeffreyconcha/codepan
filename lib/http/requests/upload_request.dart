@@ -12,6 +12,7 @@ abstract class UploadRequest<T>
   const UploadRequest({
     required super.db,
     required super.client,
+    super.logResponse,
   });
 
   Future<Map<String, String>> get fields;

@@ -12,6 +12,7 @@ abstract class GetRequest<T>
   const GetRequest({
     required super.db,
     required super.client,
+    super.logResponse,
   });
 
   Future<Map<String, String?>> get params;

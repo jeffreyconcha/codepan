@@ -10,6 +10,8 @@ import 'package:codepan/data/database/sqlite_query.dart';
 import 'package:codepan/data/database/sqlite_statement.dart';
 import 'package:codepan/data/models/entities/transaction.dart';
 import 'package:codepan/extensions/duration.dart';
+import 'package:codepan/extensions/dynamic.dart';
+import 'package:codepan/extensions/extensions.dart';
 import 'package:codepan/time/time.dart';
 import 'package:codepan/utils/codepan_utils.dart';
 import 'package:flutter/foundation.dart';
@@ -32,6 +34,7 @@ class SqliteBinder {
   late DateTime _time;
   late Batch _batch;
   final SqliteAdapter db;
+  List<TableSchema>? _logFilters;
   bool _showLog = false;
   bool _chain = false;
 
@@ -55,11 +58,14 @@ class SqliteBinder {
 
   /// [body] - Enclosed in try catch to automatically remove the binder or
   /// any pending transaction when an error occurred to avoid database lock.
+  /// [logFilters] - Filter logs of sql statement by selected tables.
   Future<T> transact<T>({
     required BinderBody body,
     bool showLog = false,
+    List<TableSchema>? logFilters,
   }) async {
     this._showLog = showLog;
+    this._logFilters = logFilters;
     if (_showLog) {
       _time = DateTime.now();
       debugPrint('$tag: BEGIN TRANSACTION');
@@ -146,6 +152,8 @@ class SqliteBinder {
             );
         if (existingId != null) {
           return _map[key] = existingId;
+        } else {
+          return _map[key] = await _getNextId(table);
         }
       }
     }
@@ -236,7 +244,16 @@ class SqliteBinder {
 
   void addStatement(final String sql) {
     if (_showLog) {
-      print(sql);
+      if (_logFilters?.isNotEmpty ?? false) {
+        _logFilters!.loop((item, index) {
+          final name = item.tableName;
+          if (sql.contains(name)) {
+            print(sql);
+          }
+        });
+      } else {
+        print(sql);
+      }
     }
     _batch.execute(sql);
   }

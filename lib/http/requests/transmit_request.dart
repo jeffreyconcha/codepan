@@ -12,6 +12,7 @@ abstract class TransmitRequest<T>
   const TransmitRequest({
     required super.db,
     required super.client,
+    super.logResponse,
   });
 
   Future<Map<String, dynamic>> get params;

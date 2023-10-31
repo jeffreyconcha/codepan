@@ -7,6 +7,7 @@ abstract class PostRequest<T> extends TransmitRequest<T> {
   const PostRequest({
     required super.db,
     required super.client,
+    super.logResponse,
   });
 
   @override
