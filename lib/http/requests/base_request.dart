@@ -23,7 +23,7 @@ const uploadHeaders = <String, String>{
 abstract class HttpRequestResult<T, B> {
   Future<T> onSuccess(B body);
 
-  Future<String> onError(int code);
+  Future<String> onError(int code, [String? message]);
 }
 
 abstract class HttpRequest<T, B> implements HttpRequestResult<T, B> {

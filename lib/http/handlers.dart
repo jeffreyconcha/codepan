@@ -5,7 +5,7 @@ abstract class InitHandler<Input, Output> {
 
   const InitHandler(this.allowEmpty);
 
-  Output init(Input input);
+  Output init(Input body);
 }
 
 abstract class DataInitHandler

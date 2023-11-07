@@ -37,9 +37,13 @@ abstract class GetRequest<T>
   Future<T> onResponse(Response response) async {
     if (response.statusCode == HttpStatus.ok) {
       final body = json.decode(response.body);
-      final data = handler.init(body);
-      if (data.isNotEmpty || handler.allowEmpty) {
-        return await onSuccess(data);
+      try {
+        final data = handler.init(body);
+        if (data.isNotEmpty || handler.allowEmpty) {
+          return await onSuccess(data);
+        }
+      } catch (error) {
+        throw await onError(response.statusCode, error.toString());
       }
     }
     throw await onError(response.statusCode);
