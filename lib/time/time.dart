@@ -284,7 +284,7 @@ class Time extends Equatable {
     int month = value.month - 1;
     int year = value.year;
     if (month == 0) {
-      month = 1;
+      month = 12;
       year -= 1;
     }
     final time = DateTime.utc(

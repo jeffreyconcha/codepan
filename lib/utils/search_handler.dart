@@ -28,7 +28,7 @@ mixin SearchHandlerMixin<S extends StatefulWidget, M extends Searchable>
     _debouncer.cancel();
   }
 
-  void onSearch(text) {
+  void onSearch(String text) {
     _debouncer.cancel();
     _debouncer.run(() {
       _search = text.toLowerCase();
