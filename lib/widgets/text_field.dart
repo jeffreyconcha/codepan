@@ -31,8 +31,10 @@ class PanTextField extends StatefulWidget {
       isPassword,
       showCursor,
       expands,
-      enabled;
+      enabled,
+      obscureText;
 
+  final String? text, hint, fontFamily;
   final List<TextInputFormatter>? inputFormatters;
   final ValueChanged<String>? onFieldSubmitted;
   final TextCapitalization textCapitalization;
@@ -43,9 +45,9 @@ class PanTextField extends StatefulWidget {
   final ValueChanged<bool>? onFocusChange;
   final ValueChanged<String>? onChanged;
   final TextInputAction textInputAction;
-  final String? text, hint, fontFamily;
   final Widget? prefixIcon, suffixIcon;
   final TextInputType? keyboardType;
+  final String obscuringCharacter;
   final FontWeight fontWeight;
   final Alignment alignment;
   final FontStyle fontStyle;
@@ -69,6 +71,7 @@ class PanTextField extends StatefulWidget {
     this.disabledBorderWidth,
     this.enabled = true,
     this.enableInteractiveSelection = true,
+    this.obscureText = false,
     this.focusedBorderColor,
     this.focusedBorderWidth,
     this.focusNode,
@@ -105,6 +108,7 @@ class PanTextField extends StatefulWidget {
     this.textInputAction = TextInputAction.done,
     this.width,
     this.expands = false,
+    this.obscuringCharacter = '•',
   });
 
   @override
@@ -125,7 +129,7 @@ class _PanTextFieldState extends State<PanTextField> {
   @override
   void initState() {
     super.initState();
-    _obscureText = widget.isPassword;
+    _obscureText = widget.isPassword || widget.obscureText;
   }
 
   @override
@@ -174,6 +178,7 @@ class _PanTextFieldState extends State<PanTextField> {
             textAlignVertical: widget.textAlignVertical,
             controller: widget.controller,
             obscureText: _obscureText,
+            obscuringCharacter: widget.obscuringCharacter,
             textInputAction: widget.textInputAction,
             focusNode: widget.focusNode,
             cursorHeight: widget.cursorHeight,
