@@ -397,7 +397,7 @@ class Time extends Equatable {
       case TimePeriod.fromTheBeginning:
         return TimeRange(
           start: Time.zero,
-          end: this,
+          end: this.add(const Duration(days: 30)),
           period: period,
         );
       default:
