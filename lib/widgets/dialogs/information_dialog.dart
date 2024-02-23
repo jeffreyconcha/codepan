@@ -15,7 +15,8 @@ class InformationDialog extends StatefulWidget {
   final bool dismissible, withDivider, autoDismiss;
   final InformationController? controller;
   final List<InlineSpan>? children;
-  final EdgeInsets? margin;
+  final EdgeInsets? margin, titlePadding;
+  final TextAlign titleTextAlign;
   final Color fontColor;
   final Widget? child;
 
@@ -37,6 +38,8 @@ class InformationDialog extends StatefulWidget {
     this.fontColor = PanColors.text,
     this.margin,
     this.autoDismiss = true,
+    this.titlePadding,
+    this.titleTextAlign = TextAlign.left,
   });
 
   @override
@@ -94,11 +97,12 @@ class _InformationDialogState extends State<InformationDialog> {
                   fontWeight: FontWeight.w600,
                   fontColor: widget.fontColor,
                   alignment: Alignment.centerLeft,
-                  textAlign: TextAlign.left,
-                  padding: EdgeInsets.symmetric(
-                    horizontal: d.at(20),
-                    vertical: d.at(13),
-                  ),
+                  textAlign: widget.titleTextAlign,
+                  padding: widget.titlePadding ??
+                      EdgeInsets.symmetric(
+                        horizontal: d.at(20),
+                        vertical: d.at(13),
+                      ),
                 ),
               ),
               IfElseBuilder(
@@ -160,68 +164,69 @@ class _InformationDialogState extends State<InformationDialog> {
             },
           ),
           IfElseBuilder(
-              color: Colors.white,
-              condition: positive != null || negative != null,
-              ifBuilder: (context) {
-                return Padding(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: d.at(20),
-                    vertical: d.at(7),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      IfElseBuilder(
-                        condition: positive != null,
-                        ifBuilder: (context) {
-                          return PanButton(
-                            text: widget.positive,
-                            fontColor: t.primaryColor,
-                            fontSize: d.at(13),
-                            fontWeight: FontWeight.w600,
-                            radius: d.at(3),
-                            padding: EdgeInsets.symmetric(
-                              horizontal: d.at(15),
-                              vertical: d.at(10),
-                            ),
-                            onTap: () {
-                              if (widget.autoDismiss) {
-                                context.pop();
-                              }
-                              widget.onPositiveTap?.call();
-                            },
-                          );
-                        },
-                      ),
-                      SizedBox(
-                        width: d.at(10),
-                      ),
-                      IfElseBuilder(
-                        condition: negative != null,
-                        ifBuilder: (context) {
-                          return PanButton(
-                            text: widget.negative,
-                            fontColor: widget.fontColor,
-                            fontSize: d.at(13),
-                            fontWeight: FontWeight.w600,
-                            radius: d.at(3),
-                            padding: EdgeInsets.symmetric(
-                              horizontal: d.at(15),
-                              vertical: d.at(10),
-                            ),
-                            onTap: () {
-                              if (widget.autoDismiss) {
-                                context.pop();
-                              }
-                              widget.onNegativeTap?.call();
-                            },
-                          );
-                        },
-                      ),
-                    ],
-                  ),
-                );
-              }),
+            color: Colors.white,
+            condition: positive != null || negative != null,
+            ifBuilder: (context) {
+              return Padding(
+                padding: EdgeInsets.symmetric(
+                  horizontal: d.at(20),
+                  vertical: d.at(7),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    IfElseBuilder(
+                      condition: positive != null,
+                      ifBuilder: (context) {
+                        return PanButton(
+                          text: widget.positive,
+                          fontColor: t.primaryColor,
+                          fontSize: d.at(13),
+                          fontWeight: FontWeight.w600,
+                          radius: d.at(3),
+                          padding: EdgeInsets.symmetric(
+                            horizontal: d.at(15),
+                            vertical: d.at(10),
+                          ),
+                          onTap: () {
+                            if (widget.autoDismiss) {
+                              context.pop();
+                            }
+                            widget.onPositiveTap?.call();
+                          },
+                        );
+                      },
+                    ),
+                    SizedBox(
+                      width: d.at(10),
+                    ),
+                    IfElseBuilder(
+                      condition: negative != null,
+                      ifBuilder: (context) {
+                        return PanButton(
+                          text: widget.negative,
+                          fontColor: widget.fontColor,
+                          fontSize: d.at(13),
+                          fontWeight: FontWeight.w600,
+                          radius: d.at(3),
+                          padding: EdgeInsets.symmetric(
+                            horizontal: d.at(15),
+                            vertical: d.at(10),
+                          ),
+                          onTap: () {
+                            if (widget.autoDismiss) {
+                              context.pop();
+                            }
+                            widget.onNegativeTap?.call();
+                          },
+                        );
+                      },
+                    ),
+                  ],
+                ),
+              );
+            },
+          ),
         ],
       ),
     );

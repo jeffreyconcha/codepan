@@ -154,6 +154,10 @@ class SqliteAdapter implements DatabaseExecutor {
     }
   }
 
+  Future<void> deleteDatabaseFile() async {
+    return deleteDatabase(_path);
+  }
+
   void _ffiInit() {
     open.overrideFor(OperatingSystem.windows, () {
       if (libraryPath != null) {
