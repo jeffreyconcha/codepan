@@ -374,8 +374,9 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
             ? _loadSubtitle(subtitleData, subtitleType)
             : null;
         if (data is String) {
-          _videoController = VideoPlayerController.network(
-            data,
+          debugPrint('video url: $data');
+          _videoController = VideoPlayerController.networkUrl(
+            Uri.parse(data),
             closedCaptionFile: closedCaptionFile,
           );
         } else if (data is File) {
