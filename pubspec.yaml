@@ -1,6 +1,6 @@
 name: codepan
 description: General purpose library for dart.
-version: 2.1.6
+version: 2.1.7+19
 homepage: https://github.com/jeffreyconcha/codepan.git
 
 environment:
