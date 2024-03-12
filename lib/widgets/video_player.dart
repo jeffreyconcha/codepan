@@ -36,13 +36,17 @@ typedef SubtitleTextBuilder = Widget Function(
 const int delay = 5000;
 
 class PanVideoPlayer extends StatefulWidget {
+  final VoidCallback? onPlay,
+      onPause,
+      onInitialized,
+      onInitializing,
+      onTapSubtitle;
   final OnProgressChanged? onProgressChanged;
   final ValueChanged<bool>? onFullscreenChanged;
   final ScreenshotController? screenshotController;
   final Widget? thumbnailErrorWidget;
   final Color? color, playButtonColor;
   final OnCompleted? onCompleted;
-  final VoidCallback? onPlay, onPause, onInitialized, onTapSubtitle;
   final WidgetBuilder? subtitleButtonBuilder;
   final SubtitleTextBuilder? subtitleTextBuilder;
   final bool isFullScreen, autoFullScreen;
@@ -79,6 +83,7 @@ class PanVideoPlayer extends StatefulWidget {
     this.onPlay,
     this.onPause,
     this.onInitialized,
+    this.onInitializing,
     this.start,
     this.subtitleButtonBuilder,
     this.subtitleTextBuilder,
@@ -368,6 +373,7 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
       try {
         _setLoading(true);
         _setControllerVisible(false);
+        widget.onInitializing?.call();
         final subtitleData = subController?.data;
         final subtitleType = subController?.type;
         final closedCaptionFile = subtitleData != null && subtitleType != null
