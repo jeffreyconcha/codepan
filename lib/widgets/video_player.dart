@@ -95,7 +95,7 @@ class PanVideoPlayer extends StatefulWidget {
 }
 
 class _PanVideoPlayerState extends State<PanVideoPlayer> {
-  late StreamSubscription<bool> _stream;
+  StreamSubscription<bool>? _stream;
   VideoPlayerController? _videoController;
   MotionDetector? _detector;
   bool _isControllerVisible = true;
@@ -148,12 +148,14 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
       _onSaveState(widget.state!);
       widget.onFullscreenChanged?.call(true);
     } else {
-      DeviceAutoRotateChecker.checkAutoRotate().then((isEnabled) {
-        _isAutoRotateEnabled = isEnabled;
-      });
-      _stream = DeviceAutoRotateChecker.autoRotateStream.listen((isEnabled) {
-        _isAutoRotateEnabled = isEnabled;
-      });
+      if (Platform.isAndroid) {
+        DeviceAutoRotateChecker.checkAutoRotate().then((isEnabled) {
+          _isAutoRotateEnabled = isEnabled;
+        });
+        _stream = DeviceAutoRotateChecker.autoRotateStream.listen((isEnabled) {
+          _isAutoRotateEnabled = isEnabled;
+        });
+      }
       _debouncer = Debouncer(milliseconds: delay);
       _detector = MotionDetector(
         onOrientationChanged: (orientation) {
@@ -205,7 +207,7 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
     if (widget.onSaveState != null) {
       widget.onSaveState!(this);
     }
-    _stream.cancel();
+    _stream?.cancel();
     _debouncer?.cancel();
     _detector?.close();
     Wakelock.disable();
