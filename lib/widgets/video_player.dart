@@ -404,6 +404,7 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
             maxLoadTime,
             onTimeout: () async {
               debugPrint('Loading of video timed out after $maxLoadTime.');
+              _videoController!.dispose();
               _videoController = VideoPlayerController.networkUrl(
                 Uri.parse(data),
                 closedCaptionFile: closedCaptionFile,
@@ -430,10 +431,17 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
         }
         _setLoading(false);
       } catch (error) {
-        widget.onError?.call(Errors.failedToPlayVideo);
-        _setLoading(false);
-        _setControllerVisible(true);
-        rethrow;
+        if (error is PlatformException &&
+            error.code == 'VideoError' &&
+            (error.message?.contains('request timed out') ?? false)) {
+          debugPrint('Request timed out reloading video...');
+          initializeVideo();
+        } else {
+          widget.onError?.call(Errors.failedToPlayVideo);
+          _setLoading(false);
+          _setControllerVisible(true);
+          rethrow;
+        }
       }
     }
   }
