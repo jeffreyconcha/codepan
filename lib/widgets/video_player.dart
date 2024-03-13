@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
-import 'package:codepan/utils/codepan_utils.dart';
 import 'package:codepan/widgets/text.dart';
 import 'package:codepan/widgets/wrapper.dart';
 import 'package:device_auto_rotate_checker/device_auto_rotate_checker.dart';
@@ -148,6 +147,7 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
       _onSaveState(widget.state!);
       widget.onFullscreenChanged?.call(true);
     } else {
+      _debouncer = Debouncer(milliseconds: delay);
       if (Platform.isAndroid) {
         DeviceAutoRotateChecker.checkAutoRotate().then((isEnabled) {
           _isAutoRotateEnabled = isEnabled;
@@ -155,30 +155,29 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
         _stream = DeviceAutoRotateChecker.autoRotateStream.listen((isEnabled) {
           _isAutoRotateEnabled = isEnabled;
         });
-      }
-      _debouncer = Debouncer(milliseconds: delay);
-      _detector = MotionDetector(
-        onOrientationChanged: (orientation) {
-          if (((value?.isPlaying ?? false)) && !_isManualFullScreen) {
-            switch (orientation) {
-              case DeviceOrientation.landscapeLeft:
-              case DeviceOrientation.landscapeRight:
-                if (!_isAutoFullScreen && _isAutoRotateEnabled) {
-                  _enterFullScreen(orientation);
-                  _isAutoFullScreen = true;
-                }
-                break;
-              case DeviceOrientation.portraitUp:
-                if (_isAutoFullScreen) {
-                  context.pop();
-                }
-                break;
-              default:
-                break;
+        _detector = MotionDetector(
+          onOrientationChanged: (orientation) {
+            if (((value?.isPlaying ?? false)) && !_isManualFullScreen) {
+              switch (orientation) {
+                case DeviceOrientation.landscapeLeft:
+                case DeviceOrientation.landscapeRight:
+                  if (!_isAutoFullScreen && _isAutoRotateEnabled) {
+                    _enterFullScreen(orientation);
+                    _isAutoFullScreen = true;
+                  }
+                  break;
+                case DeviceOrientation.portraitUp:
+                  if (_isAutoFullScreen) {
+                    context.pop();
+                  }
+                  break;
+                default:
+                  break;
+              }
             }
-          }
-        },
-      );
+          },
+        );
+      }
     }
     subController?.addListener(() {
       if (_isInitialized) {
