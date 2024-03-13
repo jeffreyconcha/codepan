@@ -22,6 +22,8 @@ import 'package:video_player/video_player.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 import 'package:wakelock/wakelock.dart';
 
+const maxLoadTime = Duration(seconds: 5);
+
 typedef OnSaveState = void Function(
   _PanVideoPlayerState state,
 );
@@ -394,8 +396,25 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
         } else {
           throw ArgumentError(invalidArgument);
         }
-        await Future.delayed(Duration(milliseconds: 500));
-        await _videoController!.initialize();
+        await Future.delayed(
+          Duration(milliseconds: 500),
+        );
+        if (data is String) {
+          await _videoController!.initialize().timeout(
+            maxLoadTime,
+            onTimeout: () async {
+              debugPrint('Loading of video timed out after $maxLoadTime.');
+              _videoController = VideoPlayerController.networkUrl(
+                Uri.parse(data),
+                closedCaptionFile: closedCaptionFile,
+              );
+              debugPrint('Reloading video...');
+              await _videoController!.initialize();
+            },
+          );
+        } else {
+          await _videoController!.initialize();
+        }
         _videoController!.addListener(_listener);
         setState(() {
           _max = value!.duration.inMilliseconds.toDouble();
