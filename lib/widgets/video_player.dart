@@ -114,6 +114,7 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
   bool _isCompleted = false;
   bool _isManualFullScreen = false;
   bool _isAutoFullScreen = false;
+  bool _hasError = false;
   Debouncer? _debouncer;
   double _buffered = 0;
   double _current = 0;
@@ -411,9 +412,10 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
             error.code == 'VideoError' &&
             (error.message?.contains('request timed out') ?? false)) {
           debugPrint('Request timed out reloading video...');
-          _initializeVideo();
           if (_isLoading) {
             _completer.completeError(error, stackTrace);
+          } else {
+            _initializeVideo();
           }
         }
       }
@@ -447,18 +449,14 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
           }
         }
         _setLoading(false);
+        _hasError = false;
       } catch (error, stackTrace) {
         printError(error, stackTrace);
-        if (error is PlatformException &&
-            error.code == 'VideoError' &&
-            (error.message?.contains('request timed out') ?? false)) {
-          return _loadVideo();
-        } else {
-          widget.onError?.call(Errors.failedToPlayVideo);
-          _setLoading(false);
-          _setControllerVisible(true);
-          rethrow;
-        }
+        widget.onError?.call(Errors.failedToPlayVideo);
+        _hasError = true;
+        _setLoading(false);
+        _setControllerVisible(true);
+        rethrow;
       }
     }
   }
@@ -484,6 +482,9 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
   }
 
   void _onTapPlay() async {
+    if (_hasError) {
+      _initializeVideo();
+    }
     await _loadVideo();
     if (_isInitialized) {
       if (_current == _max) {
