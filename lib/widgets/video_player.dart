@@ -25,7 +25,7 @@ import 'package:video_player/video_player.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 import 'package:wakelock/wakelock.dart';
 
-const maxLoadTime = Duration(seconds: 5);
+const _longLoadTime = Duration(seconds: 10);
 
 typedef OnSaveState = void Function(
   _PanVideoPlayerState state,
@@ -58,6 +58,7 @@ class PanVideoPlayer extends StatefulWidget {
   final SubtitleController? subtitleController;
   final double? width, height;
   final Duration? start;
+  final Duration longLoadTime;
   final dynamic data;
   final _PanVideoPlayerState? state;
   final OnSaveState? onSaveState;
@@ -94,6 +95,7 @@ class PanVideoPlayer extends StatefulWidget {
     this.subtitleTextBuilder,
     this.screenshotController,
     this.onLoadingTimeReached,
+    this.longLoadTime = _longLoadTime,
   });
 
   @override
@@ -159,7 +161,7 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
     } else {
       _initializeVideo();
       _watcher = Debouncer(
-        milliseconds: maxLoadTime.inMilliseconds,
+        milliseconds: widget.longLoadTime.inMilliseconds,
       );
       _debouncer = Debouncer(milliseconds: delay);
       if (Platform.isAndroid) {
