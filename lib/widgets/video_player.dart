@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'package:async/async.dart';
+import 'package:codepan/time/periodic_timer.dart';
 import 'package:codepan/utils/codepan_utils.dart';
 import 'package:codepan/widgets/text.dart';
 import 'package:codepan/widgets/wrapper.dart';
@@ -43,7 +44,8 @@ class PanVideoPlayer extends StatefulWidget {
       onPause,
       onInitialized,
       onInitializing,
-      onTapSubtitle;
+      onTapSubtitle,
+      onLoadingTimeReached;
   final OnProgressChanged? onProgressChanged;
   final ValueChanged<bool>? onFullscreenChanged;
   final ScreenshotController? screenshotController;
@@ -91,6 +93,7 @@ class PanVideoPlayer extends StatefulWidget {
     this.subtitleButtonBuilder,
     this.subtitleTextBuilder,
     this.screenshotController,
+    this.onLoadingTimeReached,
   });
 
   @override
@@ -99,6 +102,7 @@ class PanVideoPlayer extends StatefulWidget {
 
 class _PanVideoPlayerState extends State<PanVideoPlayer> {
   late Completer _completer;
+  late Debouncer _watcher;
   StreamSubscription<bool>? _stream;
   VideoPlayerController? _videoController;
   MotionDetector? _detector;
@@ -153,6 +157,9 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
       widget.onFullscreenChanged?.call(true);
     } else {
       _initializeVideo();
+      _watcher = Debouncer(
+        milliseconds: maxLoadTime.inMilliseconds,
+      );
       _debouncer = Debouncer(milliseconds: delay);
       if (Platform.isAndroid) {
         DeviceAutoRotateChecker.checkAutoRotate().then((isEnabled) {
@@ -212,6 +219,7 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
     if (widget.onSaveState != null) {
       widget.onSaveState!(this);
     }
+    _watcher.cancel();
     _stream?.cancel();
     _debouncer?.cancel();
     _detector?.close();
@@ -420,8 +428,12 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
         _setLoading(true);
         _setControllerVisible(false);
         widget.onInitializing?.call();
+        _watcher.run(() {
+          widget.onLoadingTimeReached?.call();
+        });
         await _completer.future;
         _videoController!.addListener(_listener);
+        _watcher.cancel();
         setState(() {
           _max = value!.duration.inMilliseconds.toDouble();
           _isInitialized = true;
