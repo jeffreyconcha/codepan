@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'package:async/async.dart';
+import 'package:codepan/utils/codepan_utils.dart';
 import 'package:codepan/widgets/text.dart';
 import 'package:codepan/widgets/wrapper.dart';
 import 'package:device_auto_rotate_checker/device_auto_rotate_checker.dart';
@@ -96,6 +98,7 @@ class PanVideoPlayer extends StatefulWidget {
 }
 
 class _PanVideoPlayerState extends State<PanVideoPlayer> {
+  late Completer _completer;
   StreamSubscription<bool>? _stream;
   VideoPlayerController? _videoController;
   MotionDetector? _detector;
@@ -149,6 +152,7 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
       _onSaveState(widget.state!);
       widget.onFullscreenChanged?.call(true);
     } else {
+      _initializeVideo();
       _debouncer = Debouncer(milliseconds: delay);
       if (Platform.isAndroid) {
         DeviceAutoRotateChecker.checkAutoRotate().then((isEnabled) {
@@ -371,51 +375,48 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
     );
   }
 
-  Future<void> initializeVideo() async {
+  void _initializeVideo() {
+    _completer = Completer();
+    final subtitleData = subController?.data;
+    final subtitleType = subController?.type;
+    final closedCaptionFile = subtitleData != null && subtitleType != null
+        ? _loadSubtitle(subtitleData, subtitleType)
+        : null;
+    if (data is String) {
+      debugPrint('Video URL: $data');
+      _videoController = VideoPlayerController.networkUrl(
+        Uri.parse(data),
+        closedCaptionFile: closedCaptionFile,
+      );
+      _completer.complete(_videoController!.initialize());
+    } else if (data is File) {
+      _videoController = VideoPlayerController.file(
+        data,
+        closedCaptionFile: closedCaptionFile,
+      );
+      _videoController!.initialize().then((value) {
+        _completer.complete();
+      }).onError((error, stackTrace) {
+        printError(error, stackTrace);
+        if (error is PlatformException &&
+            error.code == 'VideoError' &&
+            (error.message?.contains('request timed out') ?? false)) {
+          debugPrint('Request timed out reloading video...');
+          _initializeVideo();
+        }
+      });
+    } else {
+      throw ArgumentError(invalidArgument);
+    }
+  }
+
+  Future<void> _loadVideo() async {
     if (!_isInitialized) {
       try {
         _setLoading(true);
         _setControllerVisible(false);
         widget.onInitializing?.call();
-        final subtitleData = subController?.data;
-        final subtitleType = subController?.type;
-        final closedCaptionFile = subtitleData != null && subtitleType != null
-            ? _loadSubtitle(subtitleData, subtitleType)
-            : null;
-        if (data is String) {
-          debugPrint('video url: $data');
-          _videoController = VideoPlayerController.networkUrl(
-            Uri.parse(data),
-            closedCaptionFile: closedCaptionFile,
-          );
-        } else if (data is File) {
-          _videoController = VideoPlayerController.file(
-            data,
-            closedCaptionFile: closedCaptionFile,
-          );
-        } else {
-          throw ArgumentError(invalidArgument);
-        }
-        await Future.delayed(
-          Duration(milliseconds: 500),
-        );
-        if (data is String) {
-          await _videoController!.initialize().timeout(
-            maxLoadTime,
-            onTimeout: () async {
-              debugPrint('Loading of video timed out after $maxLoadTime.');
-              _videoController!.dispose();
-              _videoController = VideoPlayerController.networkUrl(
-                Uri.parse(data),
-                closedCaptionFile: closedCaptionFile,
-              );
-              debugPrint('Reloading video...');
-              await _videoController!.initialize();
-            },
-          );
-        } else {
-          await _videoController!.initialize();
-        }
+        await _completer.future;
         _videoController!.addListener(_listener);
         setState(() {
           _max = value!.duration.inMilliseconds.toDouble();
@@ -430,18 +431,12 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
           }
         }
         _setLoading(false);
-      } catch (error) {
-        if (error is PlatformException &&
-            error.code == 'VideoError' &&
-            (error.message?.contains('request timed out') ?? false)) {
-          debugPrint('Request timed out reloading video...');
-          initializeVideo();
-        } else {
-          widget.onError?.call(Errors.failedToPlayVideo);
-          _setLoading(false);
-          _setControllerVisible(true);
-          rethrow;
-        }
+      } catch (error, stackTrace) {
+        printError(error, stackTrace);
+        widget.onError?.call(Errors.failedToPlayVideo);
+        _setLoading(false);
+        _setControllerVisible(true);
+        rethrow;
       }
     }
   }
@@ -467,7 +462,7 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
   }
 
   void _onTapPlay() async {
-    await initializeVideo();
+    await _loadVideo();
     if (_isInitialized) {
       if (_current == _max) {
         await _onSeekProgress(1);

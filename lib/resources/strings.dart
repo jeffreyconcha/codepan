@@ -20,8 +20,8 @@ class Strings {
 }
 
 class Errors {
-  static const String failedToPlayVideo = 'Failed to play video.';
-  static const String failedToPlayAudio = 'Failed to play audio';
+  static const String failedToPlayVideo = 'Please try to play the video again.';
+  static const String failedToPlayAudio = 'Please try to play the audio again.';
   static const String failedToRefresh = 'Failed to refresh.';
   static const String unableToConnectToServer =
       'Unable to connect to server. Please check your network connection and try again.';
