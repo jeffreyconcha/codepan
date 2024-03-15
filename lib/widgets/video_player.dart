@@ -375,7 +375,7 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
     );
   }
 
-  void _initializeVideo() {
+  Future<void> _initializeVideo() async {
     _completer = Completer();
     final subtitleData = subController?.data;
     final subtitleType = subController?.type;
@@ -394,17 +394,21 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
         data,
         closedCaptionFile: closedCaptionFile,
       );
-      _videoController!.initialize().then((value) {
+      try {
+        await _videoController!.initialize();
         _completer.complete();
-      }).onError((error, stackTrace) {
+      } catch (error, stackTrace) {
         printError(error, stackTrace);
         if (error is PlatformException &&
             error.code == 'VideoError' &&
             (error.message?.contains('request timed out') ?? false)) {
           debugPrint('Request timed out reloading video...');
           _initializeVideo();
+          if (_isLoading) {
+            _completer.completeError(error, stackTrace);
+          }
         }
-      });
+      }
     } else {
       throw ArgumentError(invalidArgument);
     }
@@ -433,10 +437,16 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
         _setLoading(false);
       } catch (error, stackTrace) {
         printError(error, stackTrace);
-        widget.onError?.call(Errors.failedToPlayVideo);
-        _setLoading(false);
-        _setControllerVisible(true);
-        rethrow;
+        if (error is PlatformException &&
+            error.code == 'VideoError' &&
+            (error.message?.contains('request timed out') ?? false)) {
+          return _loadVideo();
+        } else {
+          widget.onError?.call(Errors.failedToPlayVideo);
+          _setLoading(false);
+          _setControllerVisible(true);
+          rethrow;
+        }
       }
     }
   }
