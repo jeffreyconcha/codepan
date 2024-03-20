@@ -7,7 +7,7 @@ import 'package:codepan/extensions/painter.dart';
 import 'package:codepan/resources/dimensions.dart';
 import 'package:flutter/material.dart';
 import 'package:image/image.dart' as i;
-import 'package:image_compression_flutter/image_compression_flutter.dart';
+import 'package:image_compression/image_compression.dart';
 
 typedef PainterBuilder = CustomPainter Function(
   int width,
@@ -118,11 +118,11 @@ extension ImageUtils on File {
       filePath: path,
       rawBytes: await readAsBytes(),
     );
-    final compressed = await compressor.compress(
+    final compressed = compress(
       ImageFileConfiguration(
         input: image,
         config: Configuration(
-          quality: quality,
+          jpgQuality: quality,
         ),
       ),
     );
