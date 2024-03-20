@@ -9,8 +9,8 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  app_settings: ^4.1.0
-  audioplayers: ^4.1.0
+  app_settings: ^5.1.1
+  audioplayers: ^5.0.0
   cached_network_image: ^3.2.0
   camera: ^0.10.5+9
   camera_platform_interface: ^2.3.0
