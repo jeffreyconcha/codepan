@@ -23,7 +23,7 @@ import 'package:flutter/services.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:video_player/video_player.dart';
 import 'package:visibility_detector/visibility_detector.dart';
-import 'package:wakelock/wakelock.dart';
+import 'package:wakelock_plus/wakelock_plus.dart';
 
 const _longLoadTime = Duration(seconds: 10);
 
@@ -226,7 +226,7 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
     _stream?.cancel();
     _debouncer?.cancel();
     _detector?.close();
-    Wakelock.disable();
+    WakelockPlus.disable();
     super.dispose();
   }
 
@@ -531,10 +531,10 @@ class _PanVideoPlayerState extends State<PanVideoPlayer> {
         _setPlaying(player.isPlaying);
         if (player.isPlaying) {
           widget.onPlay?.call();
-          Wakelock.enable();
+          WakelockPlus.enable();
         } else {
           widget.onPause?.call();
-          Wakelock.disable();
+          WakelockPlus.disable();
         }
       }
       _updateBuffered();
