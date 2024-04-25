@@ -15,6 +15,7 @@ enum TimePeriod {
   last30Days,
   last3Months,
   last6Months,
+  thisYear,
   fromTheBeginning,
   custom,
 }
@@ -42,6 +43,8 @@ extension TimePeriodExt on TimePeriod {
         return Strings.last3Months;
       case TimePeriod.last6Months:
         return Strings.last6Months;
+      case TimePeriod.thisYear:
+        return Strings.thisYear;
       case TimePeriod.fromTheBeginning:
         return Strings.fromTheBeginning;
       case TimePeriod.custom:

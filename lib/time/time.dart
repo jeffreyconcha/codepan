@@ -239,7 +239,7 @@ class Time extends Equatable {
     return Time.value(value.toUtc());
   }
 
-  Time toFirstDayOfYear() {
+  Time toFirstDayOfThisYear() {
     final first = DateTime.utc(
       value.year,
       1,
@@ -391,6 +391,12 @@ class Time extends Equatable {
         );
         return TimeRange(
           start: Time.value(dt),
+          end: this,
+          period: period,
+        );
+      case TimePeriod.thisYear:
+        return TimeRange(
+          start: toFirstDayOfThisYear(),
           end: this,
           period: period,
         );
