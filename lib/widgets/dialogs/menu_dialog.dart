@@ -230,7 +230,12 @@ class _MenuDialogState<T extends Selectable> extends State<MenuDialog<T>>
       },
       onNegativeTap: () {
         setState(() {
-          _selectedItems.clear();
+          if(_selectedItems.isEmpty) {
+            _selectedItems.addAll(items);
+          }
+          else {
+            _selectedItems.clear();
+          }
         });
       },
     );
