@@ -21,6 +21,11 @@ typedef MenuSearchBuilder = Widget Function(ValueChanged<String> onSearch);
 
 typedef MenuAsyncItemBuilder<T extends Selectable> = Future<List<T>> Function();
 
+typedef MenuInfoBuilder<T extends Selectable> = Widget Function(
+  BuildContext context,
+  T item,
+);
+
 abstract class Selectable implements Searchable {
   dynamic get identifier;
 
@@ -31,6 +36,7 @@ class MenuDialog<T extends Selectable> extends StatefulWidget {
   final Widget? searchIcon, checkedIcon, uncheckedIcon, selectedIcon;
   final String? title, titleFont, positive, negative;
   final ValueChanged<List<T>>? onSelectItems;
+  final MenuInfoBuilder<T>? infoBuilder;
   final MenuSearchBuilder? searchBuilder;
   final ValueChanged<T>? onSelectItem;
   final List<T>? disabledItems;
@@ -58,6 +64,7 @@ class MenuDialog<T extends Selectable> extends StatefulWidget {
     this.negative,
     this.isMultiple = false,
     this.showSelected = false,
+    this.infoBuilder,
   });
 
   @override
@@ -170,6 +177,7 @@ class _MenuDialogState<T extends Selectable> extends State<MenuDialog<T>>
                             checkedIcon: widget.checkedIcon,
                             uncheckedIcon: widget.uncheckedIcon,
                             selectedIcon: widget.selectedIcon,
+                            infoBuilder: widget.infoBuilder,
                             isMultiple: isMultiple,
                             isSelected: _selectedItems.contains(item),
                             isDisabled: disabledItems?.contains(item) ?? false,
@@ -230,10 +238,9 @@ class _MenuDialogState<T extends Selectable> extends State<MenuDialog<T>>
       },
       onNegativeTap: () {
         setState(() {
-          if(_selectedItems.isEmpty) {
+          if (_selectedItems.isEmpty) {
             _selectedItems.addAll(items);
-          }
-          else {
+          } else {
             _selectedItems.clear();
           }
         });
@@ -270,6 +277,7 @@ class _MenuDialogState<T extends Selectable> extends State<MenuDialog<T>>
 class _MenuItem<T extends Selectable> extends StatelessWidget {
   final bool withDivider, isDisabled, isMultiple, isSelected, showSelected;
   final Widget? checkedIcon, uncheckedIcon, selectedIcon;
+  final MenuInfoBuilder<T>? infoBuilder;
   final ValueChanged<T>? onSelectItem;
   final Color fontColor;
   final T item;
@@ -287,6 +295,7 @@ class _MenuItem<T extends Selectable> extends StatelessWidget {
     this.isMultiple = false,
     this.isSelected = false,
     this.showSelected = false,
+    this.infoBuilder,
   });
 
   @override
@@ -319,20 +328,30 @@ class _MenuItem<T extends Selectable> extends StatelessWidget {
                   },
                 ),
                 Expanded(
-                  child: PanText(
-                    text: item.title,
-                    fontSize: d.at(13),
-                    fontColor:
-                        isDisabled ? fontColor.withOpacity(0.4) : fontColor,
-                    alignment: Alignment.centerLeft,
-                    textAlign: TextAlign.left,
-                    maxLines: 3,
-                    overflow: TextOverflow.ellipsis,
+                  child: Container(
                     padding: EdgeInsets.symmetric(
                       vertical: d.at(10),
                     ),
-                    constraints:
-                        BoxConstraints(minHeight: d.at(_itemMinHeight)),
+                    constraints: BoxConstraints(
+                      minHeight: d.at(_itemMinHeight),
+                    ),
+                    child: Column(
+                      children: [
+                        PanText(
+                          text: item.title,
+                          fontSize: d.at(13),
+                          fontColor:
+                              isDisabled ? fontColor.withOpacity(0.4) : fontColor,
+                          alignment: Alignment.centerLeft,
+                          textAlign: TextAlign.left,
+                          maxLines: 3,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        Container(
+                          child: infoBuilder?.call(context, item),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
                 IfElseBuilder(
