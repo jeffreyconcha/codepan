@@ -28,25 +28,30 @@ abstract class MapState<T extends StatefulWidget> extends PermissionState<T>
 
   @protected
   LatLngBounds get bounds {
-    final ne = lt.LatLng(0, 0);
-    final sw = lt.LatLng(0, 0);
+    double neLat = 0;
+    double neLng = 0;
+    double swLat = 0;
+    double swLng = 0;
     for (final point in coordinates) {
       if (point.latitude != 0 && point.longitude != 0) {
-        if (point.latitude < ne.latitude || ne.latitude == 0) {
-          ne.latitude = point.latitude;
+        if (point.latitude < neLat || neLat == 0) {
+          neLat = point.latitude;
         }
-        if (point.longitude < ne.longitude || ne.longitude == 0) {
-          ne.longitude = point.longitude;
+        if (point.longitude < neLng || neLng == 0) {
+          neLng = point.longitude;
         }
-        if (point.latitude > sw.latitude) {
-          sw.latitude = point.latitude;
+        if (point.latitude > swLat) {
+          swLat = point.latitude;
         }
-        if (point.longitude > sw.longitude) {
-          sw.longitude = point.longitude;
+        if (point.longitude > swLng) {
+          swLng = point.longitude;
         }
       }
     }
-    return LatLngBounds(ne, sw);
+    return LatLngBounds(
+      lt.LatLng(neLat, neLng),
+      lt.LatLng(swLat, swLng),
+    );
   }
 
   @override
@@ -88,25 +93,25 @@ abstract class MapState<T extends StatefulWidget> extends PermissionState<T>
 
   @protected
   void recenterCamera({
-    FitBoundsOptions? options,
+    EdgeInsets? padding,
   }) {
     final d = Dimension.of(context);
-    final cz = mapController.centerZoomFitBounds(
-      bounds,
-      options: options ??
-          FitBoundsOptions(
-            padding: EdgeInsets.all(d.at(20)),
-          ),
+    final fit = CameraFit.bounds(
+      bounds: bounds,
+      padding: padding ?? EdgeInsets.all(d.at(20)),
     );
-    animateCamera(cz);
+    final c = fit.fit(mapController.camera);
+    animateCamera(
+      CenterZoom(center: c.center, zoom: c.zoom),
+    );
   }
 
   @protected
   void animateCamera(CenterZoom cz) {
     _tween = _CenterZoomTween(
       begin: CenterZoom(
-        center: _mapController.center,
-        zoom: _mapController.zoom,
+        center: _mapController.camera.center,
+        zoom: _mapController.camera.zoom,
       ),
       end: cz,
     );
@@ -146,7 +151,7 @@ class _CenterZoomTween extends Tween<CenterZoom> {
 class CachedTileProvider extends TileProvider {
   @override
   ImageProvider<Object> getImage(
-    Coords<num> coords,
+    TileCoordinates coords,
     TileLayer options,
   ) {
     final url = getTileUrl(coords, options);
@@ -165,7 +170,7 @@ class StoredNetworkImageTileProvider extends TileProvider {
 
   @override
   ImageProvider<Object> getImage(
-    Coords<num> coords,
+    TileCoordinates coords,
     TileLayer options,
   ) {
     return StoredNetworkImage(
