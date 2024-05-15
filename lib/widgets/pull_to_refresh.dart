@@ -1,7 +1,7 @@
 import 'package:codepan/resources/dimensions.dart';
 import 'package:codepan/widgets/size_listener.dart';
 import 'package:flutter/material.dart';
-import 'package:pull_to_refresh/pull_to_refresh.dart';
+import 'package:pull_to_refresh_flutter3/pull_to_refresh_flutter3.dart';
 
 class PullToRefresh extends StatefulWidget {
   final WidgetBuilder? loadingBuilder, placeholderBuilder, errorBuilder;

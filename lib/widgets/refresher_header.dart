@@ -3,7 +3,7 @@ import 'package:codepan/resources/dimensions.dart';
 import 'package:codepan/resources/strings.dart';
 import 'package:codepan/widgets/pan_activity_indicator.dart';
 import 'package:flutter/material.dart';
-import 'package:pull_to_refresh/pull_to_refresh.dart';
+import 'package:pull_to_refresh_flutter3/pull_to_refresh_flutter3.dart';
 
 class RefresherHeader extends StatelessWidget {
   final double? indicatorRadius, statusIconSize, arrowIconSize, fontSize;

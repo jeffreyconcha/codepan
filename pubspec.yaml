@@ -1,6 +1,6 @@
 name: codepan
 description: General purpose library for dart.
-version: 2.2.5
+version: 2.2.6
 homepage: https://github.com/jeffreyconcha/codepan.git
 
 environment:
@@ -36,7 +36,7 @@ dependencies:
   package_info_plus: ^4.2.0
   path_provider: ^2.1.2
   permission_handler: ^10.4.5
-  pull_to_refresh: ^2.0.0
+  pull_to_refresh_flutter3: ^2.0.2
   screenshot: ^3.0.0
   sensors_plus: ^3.1.0
   shared_preferences: ^2.2.2
