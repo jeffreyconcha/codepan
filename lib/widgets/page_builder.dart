@@ -54,7 +54,7 @@ class PageBlocBuilder<E extends ParentEvent, B extends ParentBloc<E, S>,
   @override
   Widget build(BuildContext context) {
     final t = Theme.of(context);
-    final backgroundColor = background ?? t.backgroundColor;
+    final backgroundColor = background ?? Colors.white;
     return b.BlocProvider<B>(
       create: creator as B Function(BuildContext),
       child: b.BlocListener<B, S>(
@@ -126,8 +126,7 @@ class PageBuilder extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final t = Theme.of(context);
-    final _background = background ?? t.backgroundColor;
+    final _background = background ?? Colors.white;
     final body = Builder(
       builder: (context) {
         switch (behaviour) {
