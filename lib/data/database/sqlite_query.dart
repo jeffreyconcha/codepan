@@ -31,7 +31,7 @@ class SqliteQuery with QueryProperties {
   late bool _randomOrder;
   late tb.Table _table;
   JoinType? _type;
-  int? _limit;
+  int? _limit, _offset;
 
   JoinType? get type => _type;
 
@@ -47,6 +47,8 @@ class SqliteQuery with QueryProperties {
 
   int? get limit => _limit;
 
+  int? get offset => _offset;
+
   bool get hasJoin => _joinList?.isNotEmpty ?? false;
 
   bool get hasOrder => _orderList?.isNotEmpty ?? false;
@@ -54,6 +56,8 @@ class SqliteQuery with QueryProperties {
   bool get hasGroup => _groupList?.isNotEmpty ?? false;
 
   bool get hasLimit => _limit != null && _limit != 0;
+
+  bool get hasOffset => _offset != null && _offset != 0;
 
   /// select - Can only be a list of String or Field.
   /// table - Can only be a type of Table or TableSchema.
@@ -300,6 +304,9 @@ class SqliteQuery with QueryProperties {
       }
       if (hasLimit) {
         buffer.write(' LIMIT $limit');
+      }
+      if (hasOffset) {
+        buffer.write(' OFFSET $offset');
       }
       return buffer.toString();
     }
