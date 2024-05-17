@@ -72,6 +72,7 @@ class SqliteQuery with QueryProperties {
     bool randomOrder = false,
     RecursiveJoin? recursive,
     int? limit,
+    int? offset,
   }) {
     if (from is tb.Table) {
       this._table = from;
@@ -99,6 +100,7 @@ class SqliteQuery with QueryProperties {
     List<dynamic>? groupBy,
     bool randomOrder = false,
     int? limit,
+    int? offset,
     JoinType type = JoinType.left,
     RecursiveJoin? recursive,
   }) {
