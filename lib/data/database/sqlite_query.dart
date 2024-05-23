@@ -334,7 +334,7 @@ class SqliteQuery with QueryProperties {
       }
       final query = buffer.toString();
       if (hasRowSkip) {
-        return 'SELECT * FROM ($query) WHERE rowNumber % $rowSkip';
+        return 'SELECT * FROM ($query) WHERE rowNumber % $rowSkip = 0';
       }
       return query;
     }
