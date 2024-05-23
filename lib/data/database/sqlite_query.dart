@@ -31,7 +31,7 @@ class SqliteQuery with QueryProperties {
   late bool _randomOrder;
   late tb.Table _table;
   JoinType? _type;
-  int? _limit, _offset;
+  int? _limit, _offset, _rowSkip;
 
   JoinType? get type => _type;
 
@@ -49,6 +49,8 @@ class SqliteQuery with QueryProperties {
 
   int? get offset => _offset;
 
+  int? get rowSkip => _rowSkip;
+
   bool get hasJoin => _joinList?.isNotEmpty ?? false;
 
   bool get hasOrder => _orderList?.isNotEmpty ?? false;
@@ -58,6 +60,8 @@ class SqliteQuery with QueryProperties {
   bool get hasLimit => _limit != null && _limit != 0;
 
   bool get hasOffset => _offset != null && _offset != 0;
+
+  bool get hasRowSkip => _rowSkip != null && _rowSkip != 0;
 
   /// select - Can only be a list of String or Field.
   /// table - Can only be a type of Table or TableSchema.
@@ -73,6 +77,7 @@ class SqliteQuery with QueryProperties {
     RecursiveJoin? recursive,
     int? limit,
     int? offset,
+    int? rowSkip,
   }) {
     if (from is tb.Table) {
       this._table = from;
@@ -91,6 +96,8 @@ class SqliteQuery with QueryProperties {
     this._randomOrder = randomOrder;
     this._recursive = recursive;
     this._limit = limit;
+    this._offset = offset;
+    this._rowSkip = rowSkip;
   }
 
   factory SqliteQuery.all({
@@ -101,6 +108,7 @@ class SqliteQuery with QueryProperties {
     bool randomOrder = false,
     int? limit,
     int? offset,
+    int? rowSkip,
     JoinType type = JoinType.left,
     RecursiveJoin? recursive,
   }) {
@@ -112,6 +120,8 @@ class SqliteQuery with QueryProperties {
       groupBy: groupBy,
       randomOrder: randomOrder,
       limit: limit,
+      offset: offset,
+      rowSkip: rowSkip,
       recursive: recursive,
     )..joinAllForeignKeys(
         type: type,
@@ -282,6 +292,16 @@ class SqliteQuery with QueryProperties {
           bq.write(' $type JOIN ${tb.name} as ${tb.alias} ON ${q.conditions}');
         }
         buffer.write('SELECT $fieldsWithAlias');
+        if (hasRowSkip) {
+          //row_number() function is added as field
+          if (hasOrder) {
+            final order = getCommandFields(orderList);
+            buffer.write(', ROW_NUMBER() OVER (ORDER BY $order)');
+          } else {
+            buffer.write(', ROW_NUMBER() OVER ()');
+          }
+          buffer.write(' as rowNumber');
+        }
         buffer.write(bf.toString());
         buffer.write(' FROM ${table.name} as ${table.alias}');
         buffer.write(bq.toString());
@@ -299,8 +319,10 @@ class SqliteQuery with QueryProperties {
         buffer.write(' GROUP BY $group');
       }
       if (hasOrder) {
-        final order = getCommandFields(orderList);
-        buffer.write(' ORDER BY $order');
+        if (!hasRowSkip) {
+          final order = getCommandFields(orderList);
+          buffer.write(' ORDER BY $order');
+        }
       } else if (_randomOrder) {
         buffer.write(' ORDER BY RANDOM()');
       }
@@ -310,7 +332,11 @@ class SqliteQuery with QueryProperties {
       if (hasOffset) {
         buffer.write(' OFFSET $offset');
       }
-      return buffer.toString();
+      final query = buffer.toString();
+      if (hasRowSkip) {
+        return 'SELECT * FROM ($query) WHERE rowNumber % $rowSkip';
+      }
+      return query;
     }
     throw SqliteException.noFieldsInQuery;
   }
