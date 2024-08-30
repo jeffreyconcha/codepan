@@ -33,7 +33,7 @@ dependencies:
   image: ^4.1.7
   inflection3: ^0.5.3+2
   intl: ^0.18.1
-  package_info_plus: ^4.2.0
+  package_info_plus: ^8.0.2
   path_provider: ^2.1.2
   permission_handler: ^10.4.5
   pull_to_refresh_flutter3: ^2.0.2
@@ -50,7 +50,7 @@ dependencies:
   video_player: ^2.7.2
   vector_math: ^2.1.4
   visibility_detector: ^0.3.3
-  wakelock_plus: ^1.1.4
+  wakelock_plus: ^1.2.8
 
 dev_dependencies:
   flutter_lints: ^2.0.1
