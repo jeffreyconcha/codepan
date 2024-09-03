@@ -75,11 +75,9 @@ class PanUtils {
   }
 
   static Future<Directory> getAppDirectory() async {
-    final slash = Platform.pathSeparator;
-    final info = await PackageInfo.fromPlatform();
     final root = await getApplicationDocumentsDirectory();
     if (Platform.isWindows || Platform.isMacOS) {
-      return Directory('${root.path}$slash${info.appName}');
+      return getApplicationSupportDirectory();
     } else {
       return root;
     }
