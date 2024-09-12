@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:codepan/extensions/map.dart';
 import 'package:codepan/http/handlers.dart';
 import 'package:codepan/http/requests/base_request.dart';
+import 'package:codepan/utils/codepan_utils.dart';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart';
 
@@ -36,14 +37,16 @@ abstract class GetRequest<T>
   @override
   Future<T> onResponse(Response response) async {
     if (response.statusCode == HttpStatus.ok) {
-      final body = json.decode(response.body);
       try {
+        final body = json.decode(response.body);
         final data = handler.init(body);
         if (data.isNotEmpty || handler.allowEmpty) {
           return await onSuccess(data);
         }
-      } catch (error) {
-        throw await onError(response.statusCode, error.toString());
+      } on DataInitException catch (e) {
+        throw await onError(response.statusCode, e.toString());
+      } catch (e, s) {
+        printError(e, s);
       }
     }
     throw await onError(response.statusCode);
