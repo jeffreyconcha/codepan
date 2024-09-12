@@ -122,7 +122,7 @@ extension MapUtils on Map<String, dynamic> {
       if (boolPrefixes.contains(split.first)) {
         return PanUtils.parseBool(value);
       } else if (value is String) {
-        return value.unescaped;
+        return value.unescaped.trim();
       }
       return value;
     }
