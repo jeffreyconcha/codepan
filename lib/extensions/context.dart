@@ -12,7 +12,10 @@ extension BuildContextUtils on BuildContext {
   }
 
   void pop<T>([T? result]) {
-    Navigator.of(this).pop(result);
+    final navigator = Navigator.of(this);
+    if (navigator.canPop()) {
+      navigator.pop(result);
+    }
   }
 
   void popUntil(RoutePredicate predicate) {
