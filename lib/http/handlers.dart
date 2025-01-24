@@ -17,6 +17,9 @@ class DataInitException {
   final String message;
 
   const DataInitException(this.message);
+
+  @override
+  String toString() => message;
 }
 
 class ByteInitHandler extends InitHandler<Uint8List, Uint8List> {

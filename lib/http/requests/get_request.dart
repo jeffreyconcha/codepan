@@ -44,7 +44,7 @@ abstract class GetRequest<T>
           return await onSuccess(data);
         }
       } on DataInitException catch (e) {
-        throw await onError(response.statusCode, e.toString());
+        throw await onError(response.statusCode, e.message);
       } catch (e, s) {
         printError(e, s);
       }
