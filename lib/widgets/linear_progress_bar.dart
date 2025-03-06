@@ -10,12 +10,12 @@ import 'package:flutter_animation_progress_bar/flutter_animation_progress_bar.da
 
 class LinearProgressBar extends StatefulWidget {
   final double? width, height, radius, targetExcess, targetWidth;
-  final Color? progressColor, targetColor, targetFontColor;
+  final Color? progressColor, targetColor;
   final Color backgroundColor, fontColor;
   final EdgeInsets? margin, padding;
   final bool showPercentage;
-  final String? targetLabel;
   final int? progress, max, target;
+  final WidgetBuilder? targetLabelBuilder;
 
   const LinearProgressBar({
     super.key,
@@ -31,20 +31,17 @@ class LinearProgressBar extends StatefulWidget {
     this.backgroundColor = PanColors.grey1,
     this.fontColor = PanColors.text,
     this.progressColor,
-    this.targetLabel,
     this.targetColor,
-    this.targetFontColor,
+    this.targetLabelBuilder,
     this.margin,
     this.padding,
   });
 
   @override
-  State<LinearProgressBar> createState() =>
-      LinearProgressBarState();
+  State<LinearProgressBar> createState() => LinearProgressBarState();
 }
 
-class LinearProgressBarState
-    extends State<LinearProgressBar> {
+class LinearProgressBarState extends State<LinearProgressBar> {
   Size? _size;
 
   @override
@@ -72,10 +69,8 @@ class LinearProgressBarState
                       child: FAProgressBar(
                         backgroundColor: widget.backgroundColor,
                         currentValue: widget.progress!.toDouble(),
-                        maxValue:
-                            widget.max != 0 ? widget.max!.toDouble() : 1,
-                        progressColor:
-                            widget.progressColor ?? t.primaryColor,
+                        maxValue: widget.max != 0 ? widget.max!.toDouble() : 1,
+                        progressColor: widget.progressColor ?? t.primaryColor,
                         borderRadius: BorderRadius.zero,
                       ),
                     ),
@@ -112,7 +107,7 @@ class LinearProgressBarState
                         final position = (widget.target! / widget.max!) *
                             constraints.maxWidth;
                         return Positioned(
-                          bottom: height - d.at(4),
+                          bottom: height,
                           left: math.max(
                               math.min(position - (width / 2),
                                   constraints.maxWidth - width),
@@ -125,17 +120,7 @@ class LinearProgressBarState
                                 });
                               }
                             },
-                            child: PanText(
-                              text: widget.targetLabel,
-                              fontWeight: FontWeight.w500,
-                              fontColor: widget.targetFontColor,
-                              fontSize: d.at(10),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              margin: EdgeInsets.only(
-                                bottom: d.at(5),
-                              ),
-                            ),
+                            child: widget.targetLabelBuilder?.call(context),
                           ),
                         );
                       },
