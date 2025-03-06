@@ -106,7 +106,7 @@ class LinearProgressBarState
                       },
                     ),
                     IfElseBuilder(
-                      condition: widget.targetLabel != null,
+                      condition: widget.target != null,
                       ifBuilder: (context) {
                         final width = _size?.width ?? 0;
                         final position = (widget.target! / widget.max!) *
