@@ -45,7 +45,7 @@ dependencies:
   sqflite_sqlcipher: ^2.2.0
   system_clock: ^2.0.0
   time_ago_provider: ^4.0.0
-  url_launcher: ^6.1.14
+  url_launcher: ^6.3.1
   uuid: ^3.0.7
   video_player: ^2.7.2
   vector_math: ^2.1.4
