@@ -1,6 +1,6 @@
 name: codepan
 description: General purpose library for dart.
-version: 2.3.3
+version: 2.3.4
 homepage: https://github.com/jeffreyconcha/codepan.git
 
 environment:
@@ -24,7 +24,6 @@ dependencies:
   image_compression: ^1.0.5
   flutter_map: ^6.0.0
   flutter_map_marker_cluster: ^1.1.0
-  flutter_native_image: ^0.0.6
   flutter_svg: ^2.0.9
   geocoding: ^2.2.2
   geolocator: ^9.0.2
