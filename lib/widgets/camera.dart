@@ -29,8 +29,33 @@ enum LensDirection {
   const LensDirection(this.value);
 }
 
+enum ResolutionQuality {
+  /// 352x288 on iOS, ~240p on Android and Web
+  low(ResolutionPreset.low),
+
+  /// ~480p
+  medium(ResolutionPreset.medium),
+
+  /// ~720p
+  high(ResolutionPreset.high),
+
+  /// ~1080p
+  veryHigh(ResolutionPreset.veryHigh),
+
+  /// ~2160p
+  ultraHigh(ResolutionPreset.ultraHigh),
+
+  /// The highest resolution available.
+  max(ResolutionPreset.max);
+
+  final ResolutionPreset value;
+
+  const ResolutionQuality(this.value);
+}
+
 class PanCamera extends StatefulWidget {
   final String? leftWatermark, rightWatermark;
+  final ResolutionQuality quality;
   final LensDirection lensDirection;
   final PanCameraController controller;
   final ValueChanged<File> onCapture;
@@ -45,6 +70,7 @@ class PanCamera extends StatefulWidget {
     required this.onError,
     this.leftWatermark,
     this.rightWatermark,
+    this.quality = ResolutionQuality.high,
     this.lensDirection = LensDirection.back,
   });
 
@@ -170,7 +196,7 @@ class _PanCameraState extends LifecycleState<PanCamera> {
     if (!isInitialized) {
       _controller = _CameraController(
         camera,
-        ResolutionPreset.high,
+        widget.quality.value,
         enableAudio: false,
         imageFormatGroup: ImageFormatGroup.jpeg,
       );
