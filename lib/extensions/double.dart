@@ -2,12 +2,11 @@ import 'package:codepan/extensions/string.dart';
 import 'package:intl/intl.dart';
 
 extension DoubleUtils on double {
-  String toMoneyFormat() {
-    final nf = NumberFormat.simpleCurrency(
-      decimalDigits: 2,
-      name: '',
-    );
-    return nf.format(this);
+  String toMoneyFormat([String? currencyCode]) {
+    final symbol = NumberFormat.simpleCurrency(
+      name: currencyCode ?? '',
+    ).currencySymbol;
+    return '$symbol ${format(2, true)}';
   }
 
   String toCompact([int decimalDigits = 0]) {
