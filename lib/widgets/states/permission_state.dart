@@ -74,6 +74,9 @@ abstract class PermissionState<T extends StatefulWidget>
                 } else {
                   final status = await permission.request();
                   _isGranted = status.isGranted;
+                  if (!_isGranted && status.isPermanentlyDenied) {
+                    goToSettings();
+                  }
                 }
               },
             );
