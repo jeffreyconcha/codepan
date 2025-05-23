@@ -33,7 +33,7 @@ class Errors {
 }
 
 class PermissionInfo {
-  static const String title = 'Permission Denied';
+  static const String title = 'Permission Request';
   static const String message =
       'Please allow this app to access the \$type. Go to settings and enable the required permission.';
 }
