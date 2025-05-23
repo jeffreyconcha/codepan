@@ -21,18 +21,19 @@ abstract class PermissionState<T extends StatefulWidget>
   /// Return [bool] value of true when prompting a dialog to the user.<br/>
   /// [onDialogDetach] - Callback function to notify the permission
   /// handler that the dialog has been detached.
-  bool onPermissionDenied(
+  bool onShowPermissionDisclosure(
     Permission permission,
     String title,
     String message,
-    VoidCallback onDialogDetach,
+    VoidCallback onDetach,
+    VoidCallback onContinue,
   );
 
   @override
   void initState() {
     super.initState();
     if (permissions.isNotEmpty) {
-      _checkPermissions(request: true);
+      _checkPermissions();
     }
   }
 
@@ -46,11 +47,7 @@ abstract class PermissionState<T extends StatefulWidget>
   void onResume() {
     super.onResume();
     if (permissions.isNotEmpty) {
-      if (_isGranted) {
-        _checkPermissions(request: true);
-      } else {
-        _checkPermissions(request: false);
-      }
+      _checkPermissions();
     }
   }
 
@@ -58,45 +55,42 @@ abstract class PermissionState<T extends StatefulWidget>
     return AppSettings.openAppSettings();
   }
 
-  void _checkPermissions({
-    required bool request,
-  }) async {
-    for (final permission in permissions) {
-      if (request) {
-        try {
-          if (Platform.isAndroid || Platform.isIOS) {
-            final status = await permission.request();
-            _isGranted = status.isGranted;
-          } else {
-            _isGranted = true;
-          }
-        } on PlatformException catch (error) {
-          debugPrint(error.toString());
-        }
-      } else {
+  void _checkPermissions() async {
+    if (Platform.isAndroid || Platform.isIOS) {
+      for (final permission in permissions) {
         _isGranted = await permission.isGranted;
-      }
-      String? name = _getPermissionName(permission.value);
-      debugPrint('Permission($name).isGranted: $_isGranted ", '
-          'Request($request)');
-      if (!_isGranted) {
-        if (!_hasDialog) {
-          _hasDialog = onPermissionDenied(
-            permission,
-            PermissionInfo.title,
-            PermissionInfo.message.complete('\"$name\"'),
-            () => _hasDialog = false,
-          );
+        String? name = _getPermissionName(permission.value);
+        debugPrint('Permission($name).isGranted: $_isGranted');
+        if (!_isGranted) {
+          if (!_hasDialog) {
+            _hasDialog = onShowPermissionDisclosure(
+              permission,
+              PermissionInfo.title,
+              PermissionInfo.message.complete('\"$name\"'),
+              () => _hasDialog = false,
+              () async {
+                if (await permission.shouldShowRequestRationale) {
+                  goToSettings();
+                } else {
+                  final status = await permission.request();
+                  _isGranted = status.isGranted;
+                }
+              },
+            );
+          }
+          break;
         }
-        break;
       }
-    }
-    if (_isGranted) {
-      if (_hasDialog) {
-        _hasDialog = false;
-        context.pop();
+      if (_isGranted) {
+        if (_hasDialog) {
+          _hasDialog = false;
+          context.pop();
+        }
+        onPermissionsGranted();
       }
+    } else {
       onPermissionsGranted();
+      _isGranted = true;
     }
   }
 
