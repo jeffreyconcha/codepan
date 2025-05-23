@@ -1,3 +1,4 @@
+import 'package:codepan/extensions/extensions.dart';
 import 'package:codepan/resources/colors.dart';
 import 'package:codepan/widgets/if_else_builder.dart';
 import 'package:codepan/widgets/wrapper.dart';
@@ -197,10 +198,12 @@ class PanText extends StatelessWidget {
 class SpannableText {
   final List<String> identifiers;
   final TextStyle style;
+  final Map<String, TextStyle> styles;
 
   const SpannableText({
     required this.identifiers,
     required this.style,
+    this.styles = const {},
   });
 
   List<TextSpan> toSpanList(String? text) {
@@ -213,11 +216,14 @@ class SpannableText {
     for (final identifier in identifiers) {
       _text = _text?.replaceAll(identifier, standard);
     }
-    final clean = _text?.replaceAll(standard, '');
+    String? clean = _text?.replaceAll(standard, '');
+    styles.keys.forEach((key) {
+      clean = clean?.replaceAll(key, '');
+    });
     final buffer = StringBuffer();
     _text?.runes.forEach((code) {
       final character = String.fromCharCode(code);
-      if (character == standard) {
+      if (character == standard || styles.containsKey(character)) {
         matchCount++;
         if (matchCount.isOdd) {
           start = index - matchCount + 1;
@@ -231,7 +237,7 @@ class SpannableText {
           list.add(
             TextSpan(
               text: clean!.substring(start, end),
-              style: style,
+              style: styles[character] ?? style,
             ),
           );
         }
