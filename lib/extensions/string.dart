@@ -257,23 +257,20 @@ extension StringUtils on String {
     return Color(int.parse(_hex, radix: 16));
   }
 
-  bool isValidMobile(String? mobileNo) {
-    if (mobileNo != null) {
-      int length = mobileNo.length;
-      if (length >= 10 && length <= 13) {
-        if (length == 10) {
-          if (mobileNo[0] == '0') {
-            return false;
-          }
+  bool get isPhoneNumber {
+    if (length >= 10 && length <= 13) {
+      if (length == 10) {
+        if (this[0] == '0') {
+          return false;
         }
-        String text = mobileNo.replaceAll('+', '');
-        return isNumeric(text);
       }
+      String text = this.replaceAll('+', '');
+      return text.isNumeric;
     }
     return false;
   }
 
-  bool isNumeric(String str) {
-    return RegExp(r'^\d+$').hasMatch(str);
+  bool get isNumeric {
+    return RegExp(r'^\d+$').hasMatch(this);
   }
 }
