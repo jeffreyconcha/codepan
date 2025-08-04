@@ -83,6 +83,7 @@ class PageBlocBuilder<E extends ParentEvent, B extends ParentBloc<E, S>,
                 child: AppBar(
                   elevation: 0,
                   backgroundColor: statusBarColor ?? backgroundColor,
+                  automaticallyImplyLeading: false,
                 ),
               ),
               body: body,
@@ -149,6 +150,7 @@ class PageBuilder extends StatelessWidget {
         child: AppBar(
           elevation: 0,
           backgroundColor: statusBarColor ?? _background,
+          automaticallyImplyLeading: false,
         ),
       ),
       body: body,
