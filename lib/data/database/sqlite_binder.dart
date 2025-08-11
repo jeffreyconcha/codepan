@@ -151,9 +151,12 @@ class SqliteBinder {
               unique,
             );
         if (existingId != null) {
+          print('EXISTING ID: $existingId');
           return _map[key] = existingId;
         } else {
-          return _map[key] = await _getNextId(table);
+          final nextId = await _getNextId(table);
+          print('NEXT ID: $nextId');
+          return _map[key] = nextId;
         }
       }
     }
