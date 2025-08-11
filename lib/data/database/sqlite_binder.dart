@@ -217,7 +217,13 @@ class SqliteBinder {
         }
       }
     }
-    return query.hasConditions ? await db.getValue(query.build()) : null;
+
+    if (query.hasConditions) {
+      final sql = query.build();
+      print('QUERY FROM UNIQUE: $sql');
+      return await db.getValue(sql);
+    }
+    return null;
   }
 
   Future<int> _getNextId(String table) async {
