@@ -142,21 +142,25 @@ class SqliteBinder {
     dynamic unique,
   ) async {
     if (unique != null) {
-      final key = _getKeyFromUnique(stmt, table, unique);
-      if (key != null) {
-        final existingId = _map[key] ??
-            await _queryIdFromUnique(
-              stmt,
-              table,
-              unique,
-            );
-        if (existingId != null) {
-          print('EXISTING ID: $existingId');
-          return _map[key] = existingId;
-        } else {
-          final nextId = await _getNextId(table);
-          print('NEXT ID: $nextId');
-          return _map[key] = nextId;
+      if (unique is String && unique == primaryKey) {
+        return stmt.map![primaryKey];
+      } else {
+        final key = _getKeyFromUnique(stmt, table, unique);
+        if (key != null) {
+          final existingId = _map[key] ??
+              await _queryIdFromUnique(
+                stmt,
+                table,
+                unique,
+              );
+          if (existingId != null) {
+            print('EXISTING ID: $existingId');
+            return _map[key] = existingId;
+          } else {
+            final nextId = await _getNextId(table);
+            print('NEXT ID: $nextId');
+            return _map[key] = nextId;
+          }
         }
       }
     }
@@ -318,7 +322,7 @@ class SqliteBinder {
     final name = _getTableName(table);
     final _unique = map[primaryKey] != null ? primaryKey : unique;
     addStatement(stmt.insert(name, unique: _unique));
-    return ignoreId ? null : await _mapId(stmt, name, unique);
+    return ignoreId ? null : await _mapId(stmt, name, _unique);
   }
 
   void updateData({
