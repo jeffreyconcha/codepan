@@ -133,6 +133,7 @@ class Condition extends SqliteModel {
     String field,
     dynamic value, {
     super.table,
+    super.useRawField,
     dynamic start,
     dynamic end,
     Operator? operator = Operator.equals,
@@ -144,13 +145,16 @@ class Condition extends SqliteModel {
         _end = end,
         _operator = operator,
         _scan = scan,
-        super(field: field);
+        super(
+          field: field,
+        );
 
   @override
   Condition copyWith({
     String? field,
     dynamic value,
     Table? table,
+    bool? useRawField,
     dynamic start,
     dynamic end,
     Operator? operator,
@@ -162,10 +166,13 @@ class Condition extends SqliteModel {
       field ?? super.field,
       value ?? _value,
       table: table ?? super.table,
+      useRawField: useRawField ?? super.useRawField,
       start: start ?? _start,
       end: end ?? _end,
       operator: operator ?? _operator,
       scan: scan ?? _scan,
+      orList: orList ?? this.orList,
+      andList: andList ?? this.andList,
     );
   }
 

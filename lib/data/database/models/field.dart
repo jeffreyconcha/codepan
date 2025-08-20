@@ -74,6 +74,7 @@ class Field extends SqliteModel {
   const Field({
     required super.field,
     super.table,
+    super.useRawField,
     this.type,
     this.constraints,
     this.reference,
@@ -91,6 +92,7 @@ class Field extends SqliteModel {
   Field copyWith({
     String? field,
     Table? table,
+    bool? useRawField,
     DataType? type,
     List<Constraint>? constraints,
     Table? reference,
@@ -106,6 +108,7 @@ class Field extends SqliteModel {
     return Field(
       field: field ?? this.field,
       table: table ?? this.table,
+      useRawField: useRawField ?? this.useRawField,
       type: type ?? this.type,
       constraints: constraints ?? this.constraints,
       reference: reference ?? this.reference,
