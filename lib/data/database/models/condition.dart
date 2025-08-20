@@ -421,6 +421,8 @@ class Condition extends SqliteModel {
     if (input != null) {
       if (input is String) {
         return '\'${input.toString()}\'';
+      } else if (input is Field) {
+        return input.field;
       }
     }
     return input.toString();
