@@ -1,5 +1,6 @@
 import 'package:codepan/data/database/schema.dart';
 import 'package:codepan/data/database/sqlite_adapter.dart';
+import 'package:codepan/data/database/sqlite_binder.dart';
 import 'package:codepan/data/database/sqlite_query.dart';
 import 'package:codepan/data/models/entities/transaction.dart';
 import 'package:flutter/cupertino.dart';
@@ -59,5 +60,16 @@ abstract class ServiceFor<T extends TransactionData> {
     );
     final records = await db.read(query.build());
     return recordsToList(records);
+  }
+
+  Future<bool> deleteRecord(T data) async {
+    final binder = SqliteBinder.of(db);
+    return await binder.transact(
+      body: (binder) async {
+        binder.updateData(
+          data: data.copyWith(isDeleted: true),
+        );
+      },
+    );
   }
 }
