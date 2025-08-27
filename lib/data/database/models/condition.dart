@@ -176,6 +176,13 @@ class Condition extends SqliteModel {
     );
   }
 
+  @override
+  Condition rawField() {
+    return copyWith(
+      useRawField: true,
+    );
+  }
+
   factory Condition.or(List<Condition> orList) {
     return Condition(
       '',
