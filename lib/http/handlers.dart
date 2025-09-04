@@ -14,12 +14,12 @@ abstract class DataInitHandler
 }
 
 class DataInitException {
-  final String message;
+  final String? message;
 
   const DataInitException(this.message);
 
   @override
-  String toString() => message;
+  String toString() => '$message';
 }
 
 class ByteInitHandler extends InitHandler<Uint8List, Uint8List> {
