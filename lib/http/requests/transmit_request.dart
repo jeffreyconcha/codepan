@@ -49,7 +49,8 @@ abstract class TransmitRequest<T>
   Future<T> onResponse(Response response) async {
     if (response.statusCode == HttpStatus.ok) {
       try {
-        final body = json.decode(response.body);
+        final decoded = utf8.decode(response.bodyBytes);
+        final body = json.decode(decoded);
         final data = handler.init(body);
         if (data.isNotEmpty || handler.allowEmpty) {
           return await onSuccess(data);
