@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:ui';
 
+import 'package:collection/equality.dart';
 import 'package:html_unescape/html_unescape.dart';
 import 'package:inflection3/inflection3.dart';
 
@@ -29,6 +30,22 @@ extension StringUtils on String {
       return this.toLowerCase() == other.toLowerCase();
     }
     return false;
+  }
+
+  bool equalsIgnoringWordOrder(String? other) {
+    if (other != null) {
+      return ListEquality().equals(normalized, other.normalized);
+    }
+    return false;
+  }
+
+  List<String> get normalized {
+    return this
+        .toLowerCase()
+        .split(RegExp(r'\s+'))
+        .where((w) => w.isNotEmpty)
+        .toList()
+      ..sort();
   }
 
   String capitalize([bool isSentence = false]) {
