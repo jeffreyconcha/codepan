@@ -34,18 +34,15 @@ extension StringUtils on String {
 
   bool equalsIgnoringWordOrder(String? other) {
     if (other != null) {
-      return ListEquality().equals(normalized, other.normalized);
+      return normalized == other.normalized;
     }
     return false;
   }
 
-  List<String> get normalized {
-    return this
-        .toLowerCase()
-        .split(RegExp(r'\s+'))
-        .where((w) => w.isNotEmpty)
-        .toList()
-      ..sort();
+  String get normalized {
+    final words = this.split(RegExp(r'\s+'));
+    words.sort((a, b) => a.toLowerCase().compareTo(b.toLowerCase()));
+    return words.join(' ');
   }
 
   String capitalize([bool isSentence = false]) {
