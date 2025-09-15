@@ -9,6 +9,8 @@ enum JoinType {
   left,
   right,
   inner,
+
+  /// - SQLite does not support FULL OUTER JOIN directly.
   outer,
 }
 

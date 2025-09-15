@@ -9,8 +9,6 @@ import 'package:codepan/data/database/sqlite_exception.dart';
 import 'package:codepan/data/database/sqlite_query.dart';
 import 'package:codepan/data/database/sqlite_statement.dart';
 import 'package:codepan/data/models/entities/transaction.dart';
-import 'package:codepan/extensions/duration.dart';
-import 'package:codepan/extensions/dynamic.dart';
 import 'package:codepan/extensions/extensions.dart';
 import 'package:codepan/time/time.dart';
 import 'package:codepan/utils/codepan_utils.dart';
