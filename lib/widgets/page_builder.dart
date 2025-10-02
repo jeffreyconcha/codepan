@@ -1,6 +1,7 @@
 import 'package:codepan/bloc/parent_bloc.dart';
 import 'package:codepan/bloc/parent_event.dart';
 import 'package:codepan/bloc/parent_state.dart';
+import 'package:codepan/resources/dimensions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart' as b;
 
@@ -53,7 +54,7 @@ class PageBlocBuilder<E extends ParentEvent, B extends ParentBloc<E, S>,
 
   @override
   Widget build(BuildContext context) {
-    final t = Theme.of(context);
+    final d = Dimension.of(context);
     final backgroundColor = background ?? Colors.white;
     return b.BlocProvider<B>(
       create: creator as B Function(BuildContext),
@@ -87,10 +88,18 @@ class PageBlocBuilder<E extends ParentEvent, B extends ParentBloc<E, S>,
                 ),
               ),
               body: body,
-              bottomNavigationBar:
-                  bottomNavigationBar ?? bottom?.call(context, state),
+              bottomNavigationBar: bottomNavigationBar ??
+                  Padding(
+                    padding: EdgeInsets.only(
+                      bottom: d.bottomPadding,
+                    ),
+                    child: bottom?.call(context, state),
+                  ),
               persistentFooterButtons: persistentFooterButtons,
-              bottomSheet: bottomSheet,
+              bottomSheet: Padding(
+                padding: EdgeInsets.only(bottom: d.bottomPadding),
+                child: bottomSheet,
+              ),
               extendBody: extendBody,
             );
           },
@@ -127,6 +136,7 @@ class PageBuilder extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final d = Dimension.of(context);
     final _background = background ?? Colors.white;
     final body = Builder(
       builder: (context) {
@@ -153,8 +163,14 @@ class PageBuilder extends StatelessWidget {
           automaticallyImplyLeading: false,
         ),
       ),
-      body: body,
-      bottomNavigationBar: bottomNavigationBar ?? bottom?.call(context),
+      body: SafeArea(child: body),
+      bottomNavigationBar: bottomNavigationBar ??
+          Padding(
+            padding: EdgeInsets.only(
+              bottom: d.bottomPadding,
+            ),
+            child: bottom?.call(context),
+          ),
       persistentFooterButtons: persistentFooterButtons,
       bottomSheet: bottomSheet,
       extendBody: extendBody,
