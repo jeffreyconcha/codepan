@@ -19,6 +19,7 @@ class PanText extends StatelessWidget {
       fontHeight,
       radius,
       decorationThickness;
+  final List<String>? fontFamilyFallback;
   final Color? fontColor, hintFontColor;
   final OnTextOverflow? onTextOverflow;
   final String? text, hint, fontFamily;
@@ -76,6 +77,7 @@ class PanText extends StatelessWidget {
     this.hintFontColor,
     this.hint,
     this.decorationThickness,
+    this.fontFamilyFallback,
   });
 
   @override
@@ -103,6 +105,7 @@ class PanText extends StatelessWidget {
           decoration: decoration,
           decorationThickness: decorationThickness,
           shadows: shadows,
+          fontFamilyFallback: fontFamilyFallback,
         );
     List<InlineSpan>? spanList;
     if (spannable != null) {
