@@ -162,7 +162,7 @@ class PageBuilder extends StatelessWidget {
           automaticallyImplyLeading: false,
         ),
       ),
-      body: SafeArea(child: body),
+      body: body,
       bottomNavigationBar: bottomNavigationBar ??
           (bottom != null
               ? Padding(
