@@ -89,17 +89,16 @@ class PageBlocBuilder<E extends ParentEvent, B extends ParentBloc<E, S>,
               ),
               body: body,
               bottomNavigationBar: bottomNavigationBar ??
-                  Padding(
-                    padding: EdgeInsets.only(
-                      bottom: d.bottomPadding,
-                    ),
-                    child: bottom?.call(context, state),
-                  ),
+                  (bottom != null
+                      ? Padding(
+                          padding: EdgeInsets.only(
+                            bottom: d.bottomPadding,
+                          ),
+                          child: bottom!.call(context, state),
+                        )
+                      : null),
               persistentFooterButtons: persistentFooterButtons,
-              bottomSheet: Padding(
-                padding: EdgeInsets.only(bottom: d.bottomPadding),
-                child: bottomSheet,
-              ),
+              bottomSheet: bottomSheet,
               extendBody: extendBody,
             );
           },
@@ -165,12 +164,14 @@ class PageBuilder extends StatelessWidget {
       ),
       body: SafeArea(child: body),
       bottomNavigationBar: bottomNavigationBar ??
-          Padding(
-            padding: EdgeInsets.only(
-              bottom: d.bottomPadding,
-            ),
-            child: bottom?.call(context),
-          ),
+          (bottom != null
+              ? Padding(
+                  padding: EdgeInsets.only(
+                    bottom: d.bottomPadding,
+                  ),
+                  child: bottom!.call(context),
+                )
+              : null),
       persistentFooterButtons: persistentFooterButtons,
       bottomSheet: bottomSheet,
       extendBody: extendBody,
