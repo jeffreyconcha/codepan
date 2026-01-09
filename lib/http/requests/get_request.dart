@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:codepan/data/database/sqlite_exception.dart';
 import 'package:codepan/extensions/map.dart';
 import 'package:codepan/http/handlers.dart';
 import 'package:codepan/http/requests/base_request.dart';
@@ -47,6 +48,10 @@ abstract class GetRequest<T>
       } on DataInitException catch (e) {
         throw await onError(response.statusCode, e.message);
       } catch (e, s) {
+        if (e.toString().contains('SqliteException(2067)')) {
+          throw await onError(
+              response.statusCode, SqliteException.duplicateRecord);
+        }
         printError(e, s);
       }
     }

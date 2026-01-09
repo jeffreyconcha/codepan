@@ -18,6 +18,7 @@ class SqliteException extends DatabaseException {
   static const String invalidTableType =
       'Invalid table type, table can only be a type of String, Table or TableSchema.';
   static const String noFieldsInQuery = 'No fields found in query.';
+  static const String duplicateRecord = 'Duplicate record found.';
 
   SqliteException(super.message);
 
