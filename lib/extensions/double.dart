@@ -6,7 +6,7 @@ extension DoubleUtils on double {
     final symbol = NumberFormat.simpleCurrency(
       name: currencyCode ?? '',
     ).currencySymbol;
-    return '$symbol ${format(2, true)}';
+    return '$symbol${format(2, true)}';
   }
 
   String toCompact([int decimalDigits = 0]) {
