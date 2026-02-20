@@ -288,4 +288,27 @@ extension StringUtils on String {
   bool get isNumeric {
     return RegExp(r'^\d+$').hasMatch(this);
   }
+
+  String toMultiline(int maxLength) {
+    if (length <= maxLength) {
+      return this;
+    }
+    final words = split(' ');
+    final lines = <String>[];
+    var currentLine = '';
+    for (final word in words) {
+      if (currentLine.isEmpty) {
+        currentLine = word;
+      } else if (currentLine.length + word.length + 1 <= maxLength) {
+        currentLine += ' ' + word;
+      } else {
+        lines.add(currentLine);
+        currentLine = word;
+      }
+    }
+    if (currentLine.isNotEmpty) {
+      lines.add(currentLine);
+    }
+    return lines.join('\n');
+  }
 }

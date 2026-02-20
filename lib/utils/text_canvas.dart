@@ -2,7 +2,11 @@ import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
 
-class TextCanvas extends CustomPainter {
+abstract class CanvasLayer {
+  void paint(Canvas canvas, Size size);
+}
+
+class TextCanvas implements CanvasLayer {
   final ui.TextDirection textDirection;
   final double? textScaleFactor;
   final TextAlign textAlign;
@@ -39,6 +43,21 @@ class TextCanvas extends CustomPainter {
       _painter.paint(canvas, Offset(dx, offset.dy));
     } else {
       _painter.paint(canvas, offset);
+    }
+  }
+}
+
+class StackPainter extends CustomPainter {
+  final List<CanvasLayer> children;
+
+  const StackPainter({
+    required this.children,
+  });
+
+  @override
+  void paint(ui.Canvas canvas, ui.Size size) {
+    for (final child in children) {
+      child.paint(canvas, size);
     }
   }
 

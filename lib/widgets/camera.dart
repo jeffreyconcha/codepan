@@ -276,33 +276,55 @@ class _PanCameraState extends LifecycleState<PanCamera> {
 
   Future<File> _stampImage({
     required File file,
-    required String watermark,
+    required String leftWatermark,
+    required String rightWatermark,
   }) async {
     final d = Dimension.of(context);
     return await file.stampImage(
       context: context,
       builder: (width, height, scale) {
-        final lineCount = watermark.split('\n').length;
         final fontSize = d.at(11);
         final margin = d.at(8);
-        final contentHeight = (fontSize * scale * lineCount) + margin;
-        final dx = margin;
-        final dy = height.toDouble() - contentHeight;
-        return TextCanvas(
-          text: watermark,
-          textScaleFactor: scale,
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: fontSize,
-            shadows: <Shadow>[
-              Shadow(
-                color: Colors.black26,
-                blurRadius: d.at(2),
-                offset: Offset(-d.at(1), d.at(1)),
-              )
-            ],
-          ),
-          offset: Offset(dx, dy),
+        final leftLineCount = leftWatermark.split('\n').length;
+        final leftContentHeight =
+            (fontSize * scale * leftLineCount) + (margin * scale);
+        final leftDx = margin;
+        final leftDy = height.toDouble() - leftContentHeight;
+        final rightLineCount = rightWatermark.split('\n').length;
+        final rightContentHeight =
+            (fontSize * scale * rightLineCount) + (margin * scale);
+        final rightDx = margin;
+        final rightDy = height.toDouble() - rightContentHeight;
+        final shadow = Shadow(
+          color: Colors.black26,
+          blurRadius: d.at(2),
+          offset: Offset(-d.at(1), d.at(1)),
+        );
+        return StackPainter(
+          children: [
+            TextCanvas(
+              text: leftWatermark,
+              textScaleFactor: scale,
+              textAlign: TextAlign.left,
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: fontSize,
+                shadows: <Shadow>[shadow],
+              ),
+              offset: Offset(leftDx, leftDy),
+            ),
+            TextCanvas(
+              text: rightWatermark,
+              textScaleFactor: scale,
+              textAlign: TextAlign.right,
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: fontSize,
+                shadows: <Shadow>[shadow],
+              ),
+              offset: Offset(rightDx, rightDy),
+            ),
+          ],
         );
       },
     );
@@ -330,10 +352,12 @@ class _PanCameraState extends LifecycleState<PanCamera> {
           preferredWidth: _maxWidth,
           preferredHeight: _maxHeight,
         );
-        final watermark = widget.leftWatermark;
-        if (watermark != null) {
-          final stamped =
-              await _stampImage(file: cropped, watermark: watermark);
+        if (widget.leftWatermark != null || widget.leftWatermark != null) {
+          final stamped = await _stampImage(
+            file: cropped,
+            leftWatermark: widget.leftWatermark ?? '',
+            rightWatermark: widget.rightWatermark ?? '',
+          );
           final photo = await copied.writeAsBytes(stamped.readAsBytesSync());
           widget.onCapture(photo);
         } else {
