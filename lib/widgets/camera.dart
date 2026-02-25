@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:camera/camera.dart';
 import 'package:codepan/extensions/file.dart';
@@ -54,7 +55,6 @@ enum ResolutionQuality {
 }
 
 class PanCamera extends StatefulWidget {
-  final String? leftWatermark, rightWatermark;
   final ResolutionQuality quality;
   final LensDirection lensDirection;
   final PanCameraController controller;
@@ -68,8 +68,6 @@ class PanCamera extends StatefulWidget {
     required this.directory,
     required this.onCapture,
     required this.onError,
-    this.leftWatermark,
-    this.rightWatermark,
     this.quality = ResolutionQuality.high,
     this.lensDirection = LensDirection.back,
   });
@@ -352,12 +350,18 @@ class _PanCameraState extends LifecycleState<PanCamera> {
           preferredWidth: _maxWidth,
           preferredHeight: _maxHeight,
         );
-        if (widget.leftWatermark != null || widget.leftWatermark != null) {
-          final stamped = await _stampImage(
+        final leftWatermark = controller.leftWatermark;
+        final rightWatermark = controller.rightWatermark;
+        final attachment = controller.attachment;
+        if (leftWatermark != null || rightWatermark != null) {
+          File stamped = await _stampImage(
             file: cropped,
-            leftWatermark: widget.leftWatermark ?? '',
-            rightWatermark: widget.rightWatermark ?? '',
+            leftWatermark: leftWatermark ?? '',
+            rightWatermark: rightWatermark ?? '',
           );
+          if (attachment != null) {
+            stamped = await stamped.appendImage(attachment: attachment);
+          }
           final photo = await copied.writeAsBytes(stamped.readAsBytesSync());
           widget.onCapture(photo);
         } else {
@@ -375,6 +379,10 @@ class _PanCameraState extends LifecycleState<PanCamera> {
 }
 
 class PanCameraController extends ValueNotifier<PanCameraEvents> {
+  String? leftWatermark;
+  String? rightWatermark;
+  Uint8List? attachment;
+
   PanCameraController() : super(PanCameraEvents.idle);
 
   bool _isTakingPhoto = false;
@@ -383,8 +391,15 @@ class PanCameraController extends ValueNotifier<PanCameraEvents> {
     return _isTakingPhoto;
   }
 
-  void capture() {
+  void capture({
+    String? leftWatermark,
+    String? rightWatermark,
+    Uint8List? attachment,
+  }) {
     value = PanCameraEvents.capture;
+    this.leftWatermark = leftWatermark;
+    this.rightWatermark = rightWatermark;
+    this.attachment = attachment;
   }
 
   void switchCamera() {

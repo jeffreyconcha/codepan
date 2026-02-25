@@ -128,6 +128,37 @@ extension ImageUtils on File {
     );
     await writeAsBytes(compressed.rawBytes);
   }
+
+  Future<File> appendImage({
+    required Uint8List attachment,
+  }) async {
+    final baseRaw = i.decodeImage(readAsBytesSync())!;
+    final base = i.bakeOrientation(baseRaw);
+    final attachmentRaw = i.decodeImage(attachment)!;
+    final attachmentImg = i.bakeOrientation(attachmentRaw);
+    final scale = base.width / attachmentImg.width;
+    final newHeight = (attachmentImg.height * scale).toInt();
+    final result = i.Image(
+      width: base.width,
+      height: base.height + newHeight,
+    );
+    for (var y = 0; y < base.height; y++) {
+      for (var x = 0; x < base.width; x++) {
+        result.setPixel(x, y, base.getPixel(x, y));
+      }
+    }
+    drawImage(
+      result,
+      attachmentImg,
+      dstX: 0,
+      dstY: base.height,
+      dstW: base.width,
+      dstH: newHeight,
+    );
+    final encoded = i.encodeJpg(result);
+    final data = Uint8List.fromList(encoded);
+    return await writeAsBytes(data);
+  }
 }
 
 i.Image drawImage(
