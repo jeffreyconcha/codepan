@@ -364,8 +364,7 @@ class _PanCameraState extends LifecycleState<PanCamera> {
         if (attachment != null) {
           image = await image.appendImage(attachment: attachment);
         }
-        final photo = await copied.writeAsBytes(cropped.readAsBytesSync());
-        widget.onCapture(photo);
+        widget.onCapture(image);
       } catch (error, stackTrace) {
         widget.onError(error.toString());
         printError(error, stackTrace);

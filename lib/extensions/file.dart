@@ -27,7 +27,7 @@ extension ImageUtils on File {
     required double preferredWidth,
     required double preferredHeight,
   }) async {
-    final image = i.decodeImage(this.readAsBytesSync())!;
+    final image = i.decodeImage(await readAsBytes())!;
     final pr = preferredWidth / preferredHeight;
     final ir = image.width / image.height;
     i.Image cropped;
@@ -68,7 +68,7 @@ extension ImageUtils on File {
     required BuildContext context,
   }) async {
     final d = Dimension.of(context);
-    final raw = i.decodeImage(this.readAsBytesSync())!;
+    final raw = i.decodeImage(await readAsBytes())!;
     final image = i.bakeOrientation(raw);
     final exif = image.exif.exifIfd;
     final rotation = (exif.hasOrientation ? exif.orientation : 0) as num;
@@ -95,7 +95,7 @@ extension ImageUtils on File {
   }
 
   Future<i.Image> getRotatedImage() async {
-    final image = i.decodeImage(this.readAsBytesSync())!;
+    final image = i.decodeImage(await readAsBytes())!;
     return i.bakeOrientation(image);
   }
 
@@ -132,7 +132,7 @@ extension ImageUtils on File {
   Future<File> appendImage({
     required Uint8List attachment,
   }) async {
-    final baseRaw = i.decodeImage(readAsBytesSync())!;
+    final baseRaw = i.decodeImage(await readAsBytes())!;
     final base = i.bakeOrientation(baseRaw);
     final attachmentRaw = i.decodeImage(attachment)!;
     final attachmentImg = i.bakeOrientation(attachmentRaw);
