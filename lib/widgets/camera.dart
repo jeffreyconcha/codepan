@@ -350,24 +350,22 @@ class _PanCameraState extends LifecycleState<PanCamera> {
           preferredWidth: _maxWidth,
           preferredHeight: _maxHeight,
         );
+        File image = cropped;
         final leftWatermark = controller.leftWatermark;
         final rightWatermark = controller.rightWatermark;
         final attachment = controller.attachment;
         if (leftWatermark != null || rightWatermark != null) {
-          File stamped = await _stampImage(
+          image = await _stampImage(
             file: cropped,
             leftWatermark: leftWatermark ?? '',
             rightWatermark: rightWatermark ?? '',
           );
-          if (attachment != null) {
-            stamped = await stamped.appendImage(attachment: attachment);
-          }
-          final photo = await copied.writeAsBytes(stamped.readAsBytesSync());
-          widget.onCapture(photo);
-        } else {
-          final photo = await copied.writeAsBytes(cropped.readAsBytesSync());
-          widget.onCapture(photo);
         }
+        if (attachment != null) {
+          image = await image.appendImage(attachment: attachment);
+        }
+        final photo = await copied.writeAsBytes(cropped.readAsBytesSync());
+        widget.onCapture(photo);
       } catch (error, stackTrace) {
         widget.onError(error.toString());
         printError(error, stackTrace);
