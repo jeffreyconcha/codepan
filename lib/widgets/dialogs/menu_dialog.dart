@@ -336,6 +336,7 @@ class _MenuItem<T extends Selectable> extends StatelessWidget {
                       minHeight: d.at(_itemMinHeight),
                     ),
                     child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         PanText(
                           text: item.title,
