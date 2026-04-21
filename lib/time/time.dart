@@ -251,6 +251,18 @@ class Time extends Equatable {
     return Time.value(first);
   }
 
+  Time toLastDayOfThisYear() {
+    final first = DateTime.utc(
+      value.year,
+      12,
+      31,
+      value.hour,
+      value.minute,
+      value.second,
+    );
+    return Time.value(first);
+  }
+
   Time toFirstDayOfThisWeek() {
     for (final d in range(0, 6)) {
       final date = this.subtract(Duration(days: d));
@@ -344,6 +356,12 @@ class Time extends Equatable {
           end: toLastDayOfThisMonth(),
           period: period,
         );
+      case TimePeriod.monthToDate:
+        return TimeRange(
+          start: toFirstDayOfThisMonth(),
+          end: this,
+          period: period,
+        );
       case TimePeriod.lastWeek:
         final date = this.subtract(
           const Duration(days: 7),
@@ -405,6 +423,12 @@ class Time extends Equatable {
           period: period,
         );
       case TimePeriod.thisYear:
+        return TimeRange(
+          start: toFirstDayOfThisYear(),
+          end: toLastDayOfThisYear(),
+          period: period,
+        );
+      case TimePeriod.yearToDate:
         return TimeRange(
           start: toFirstDayOfThisYear(),
           end: this,

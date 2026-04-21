@@ -9,6 +9,7 @@ class Strings {
   static const String yesterday = 'Yesterday';
   static const String thisWeek = 'This week';
   static const String thisMonth = 'This month';
+  static const String monthToDate = 'Month-to-date';
   static const String lastWeek = 'Last week';
   static const String lastMonth = 'Last month';
   static const String last7Days = 'Last 7 days';
@@ -16,6 +17,7 @@ class Strings {
   static const String last3Months = 'Last 3 months';
   static const String last6Months = 'Last 6 months';
   static const String thisYear = 'This year';
+  static const String yearToDate = 'Year-to-date';
   static const String fromTheBeginning = 'From the beginning';
   static const String custom = 'Custom';
 }
